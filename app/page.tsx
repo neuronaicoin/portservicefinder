@@ -251,7 +251,7 @@ export default function Home() {
           .ctapad{padding:60px 20px!important;}
           .dc2{grid-template-columns:1fr!important;}
         }
-      `}`}</style>
+      `}</style>
 
       <div style={{background:'#08100a',color:'#f5f0e8',fontFamily:"'Outfit',sans-serif",fontWeight:300,minHeight:'100vh'}}>
 
