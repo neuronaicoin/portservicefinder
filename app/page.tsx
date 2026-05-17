@@ -2,6 +2,13 @@
 import { useState } from 'react';
 
 // ============================================================
+// COUNTRY → FLAG MAP
+// ============================================================
+const FLAG: Record<string, string> = {
+  'Albania':'🇦🇱','Algeria':'🇩🇿','Angola':'🇦🇴','Argentina':'🇦🇷','Australia':'🇦🇺','Bahrain':'🇧🇭','Bangladesh':'🇧🇩','Belgium':'🇧🇪','Brazil':'🇧🇷','Bulgaria':'🇧🇬','Canada':'🇨🇦','Chile':'🇨🇱','China':'🇨🇳','Colombia':'🇨🇴','Croatia':'🇭🇷','Cyprus':'🇨🇾','Denmark':'🇩🇰','Djibouti':'🇩🇯','Ecuador':'🇪🇨','Egypt':'🇪🇬','Estonia':'🇪🇪','Finland':'🇫🇮','France':'🇫🇷','Germany':'🇩🇪','Ghana':'🇬🇭','Greece':'🇬🇷','Honduras':'🇭🇳','Hong Kong':'🇭🇰','India':'🇮🇳','Indonesia':'🇮🇩','Iran':'🇮🇷','Iraq':'🇮🇶','Ireland':'🇮🇪','Israel':'🇮🇱','Italy':'🇮🇹','Japan':'🇯🇵','Jordan':'🇯🇴','Kenya':'🇰🇪','Kuwait':'🇰🇼','Latvia':'🇱🇻','Libya':'🇱🇾','Lithuania':'🇱🇹','Malaysia':'🇲🇾','Malta':'🇲🇹','Mauritius':'🇲🇺','Mexico':'🇲🇽','Morocco':'🇲🇦','Mozambique':'🇲🇿','Myanmar':'🇲🇲','Namibia':'🇳🇦','Netherlands':'🇳🇱','New Zealand':'🇳🇿','Nigeria':'🇳🇬','Norway':'🇳🇴','Oman':'🇴🇲','Pakistan':'🇵🇰','Panama':'🇵🇦','Peru':'🇵🇪','Philippines':'🇵🇭','Poland':'🇵🇱','Portugal':'🇵🇹','Qatar':'🇶🇦','Romania':'🇷🇴','Russia':'🇷🇺','Saudi Arabia':'🇸🇦','Senegal':'🇸🇳','Singapore':'🇸🇬','Slovenia':'🇸🇮','South Africa':'🇿🇦','South Korea':'🇰🇷','Spain':'🇪🇸','Sri Lanka':'🇱🇰','Sudan':'🇸🇩','Sweden':'🇸🇪','Taiwan':'🇹🇼','Tanzania':'🇹🇿','Thailand':'🇹🇭','Togo':'🇹🇬','Tunisia':'🇹🇳','Turkey':'🇹🇷','UAE':'🇦🇪','Ukraine':'🇺🇦','United Kingdom':'🇬🇧','United States':'🇺🇸','Uruguay':'🇺🇾','Venezuela':'🇻🇪','Vietnam':'🇻🇳',
+};
+
+// ============================================================
 // DATA
 // ============================================================
 const PORT_DATA: Record<string, string[]> = {
@@ -211,8 +218,8 @@ export default function Home() {
   }
 
   const S = {
-    sel: {background:'rgba(8,16,10,.9)',border:'1px solid rgba(200,168,75,.3)',color:'#f5f0e8',padding:'12px 14px',fontSize:14,width:'100%',outline:'none'} as React.CSSProperties,
-    lbl: {display:'block',fontFamily:rj,fontSize:11,fontWeight:700,letterSpacing:'1.5px',textTransform:'uppercase' as const,color:'#c8a84b',marginBottom:5},
+    sel: {background:'rgba(8,16,10,.9)',border:'1px solid rgba(200,168,75,.3)',color:'#f5f0e8',padding:'15px 16px',fontSize:16,width:'100%',outline:'none',transition:'border-color .25s'} as React.CSSProperties,
+    lbl: {display:'block',fontFamily:rj,fontSize:13,fontWeight:700,letterSpacing:'1.8px',textTransform:'uppercase' as const,color:'#c8a84b',marginBottom:7},
     sec: {padding:'90px 56px'} as React.CSSProperties,
   };
 
@@ -226,19 +233,52 @@ export default function Home() {
         @keyframes fu{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
         @keyframes spinSlow{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
         @keyframes scrollBanner{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+        @keyframes waveMove{0%{background-position:0 0}100%{background-position:1200px 0}}
         .a1{opacity:0;animation:fu .7s .1s forwards;}
         .a2{opacity:0;animation:fu .7s .25s forwards;}
         .a3{opacity:0;animation:fu .7s .4s forwards;}
         .a4{opacity:0;animation:fu .7s .55s forwards;}
         .nlnk:hover{color:#c8a84b!important;}
-        .rrow:hover{border-color:#c8a84b!important;cursor:pointer;}
-        .tier:hover,.step:hover{background:#162019!important;}
+
+        /* Hover animations */
+        .btn-gold{transition:transform .25s ease, box-shadow .25s ease, filter .25s ease;}
+        .btn-gold:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(200,168,75,.35);filter:brightness(1.08);}
+        .btn-ghost{transition:background .25s ease, color .25s ease, border-color .25s ease;}
+        .btn-ghost:hover{background:rgba(200,168,75,.12);border-color:#c8a84b!important;}
+        .rrow{transition:border-color .3s ease, transform .25s ease, box-shadow .25s ease;}
+        .rrow:hover{border-color:#c8a84b!important;cursor:pointer;transform:translateX(4px);box-shadow:-4px 0 0 #c8a84b;}
+        .tier{transition:transform .35s ease, box-shadow .35s ease, background .35s ease;}
+        .tier:hover{transform:translateY(-6px);box-shadow:0 14px 38px rgba(0,0,0,.45);background:#162019!important;}
+        .step{transition:transform .35s ease, background .35s ease;}
+        .step:hover{transform:translateY(-4px);background:#162019!important;}
+        .sel-focus:focus{border-color:#c8a84b!important;}
+
+        /* Subtle wave background overlay (whole page) */
+        .wave-bg{
+          position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.06;
+          background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='1200' height='120' viewBox='0 0 1200 120'><path d='M0 60 Q 150 20 300 60 T 600 60 T 900 60 T 1200 60' stroke='%23c8a84b' stroke-width='1.2' fill='none'/><path d='M0 90 Q 150 50 300 90 T 600 90 T 900 90 T 1200 90' stroke='%23c8a84b' stroke-width='0.8' fill='none' opacity='0.6'/></svg>");
+          background-repeat:repeat;
+          animation:waveMove 40s linear infinite;
+        }
+
+        /* Hero background — sunset harbour (Unsplash) with dark gradient overlay */
+        .hero-bg{
+          position:absolute;inset:0;z-index:0;
+          background:
+            linear-gradient(180deg, rgba(8,16,10,.78) 0%, rgba(8,16,10,.82) 50%, rgba(8,16,10,.96) 100%),
+            url('https://images.unsplash.com/photo-1494412651409-8963ce7935a7?auto=format&fit=crop&w=1920&q=70');
+          background-size:cover;
+          background-position:center;
+          background-repeat:no-repeat;
+        }
+        .hero-content{position:relative;z-index:2;}
+
         @media(max-width:768px){
           .nav-links,.nav-signin{display:none!important;}
           .nav-list{font-size:11px!important;padding:7px 14px!important;}
           .hero-sec{padding:80px 20px 50px!important;gap:24px!important;}
-          .hero-h1{font-size:clamp(32px,8vw,52px)!important;letter-spacing:-1px!important;}
-          .search-wrap{padding:20px 18px!important;max-width:100%!important;}
+          .hero-h1{font-size:clamp(30px,7vw,46px)!important;letter-spacing:-1px!important;}
+          .search-wrap{padding:22px 18px!important;max-width:100%!important;}
           .sgrid{grid-template-columns:1fr!important;}
           .vis-sec{padding:36px 20px!important;}
           .stats4{grid-template-columns:repeat(2,1fr)!important;}
@@ -252,7 +292,10 @@ export default function Home() {
         }
       `}</style>
 
-      <div style={{background:'#08100a',color:'#f5f0e8',fontFamily:"'Outfit',sans-serif",fontWeight:300,minHeight:'100vh'}}>
+      {/* Subtle wave background (whole page) */}
+      <div className="wave-bg"></div>
+
+      <div style={{background:'#08100a',color:'#f5f0e8',fontFamily:"'Outfit',sans-serif",fontWeight:300,minHeight:'100vh',position:'relative',zIndex:1}}>
 
         {/* NAV */}
         <nav style={{position:'fixed',top:0,width:'100%',zIndex:300,height:64,display:'flex',alignItems:'center',justifyContent:'space-between',padding:'0 32px',background:'rgba(8,16,10,.97)',backdropFilter:'blur(20px)',borderBottom:'1px solid rgba(200,168,75,.2)'}}>
@@ -260,88 +303,94 @@ export default function Home() {
           <div style={{display:'flex',alignItems:'center',gap:14}}>
             <span className="nlnk nav-links" style={{color:'#7a8a72',fontSize:12,letterSpacing:'1.5px',textTransform:'uppercase',cursor:'pointer',fontFamily:rj,fontWeight:600}} onClick={()=>document.getElementById('how')?.scrollIntoView({behavior:'smooth'})}>How It Works</span>
             <span className="nlnk nav-links" style={{color:'#7a8a72',fontSize:12,letterSpacing:'1.5px',textTransform:'uppercase',cursor:'pointer',fontFamily:rj,fontWeight:600}} onClick={()=>document.getElementById('pricing')?.scrollIntoView({behavior:'smooth'})}>Pricing</span>
-            <button className="nav-signin" style={{background:'transparent',border:'1px solid rgba(200,168,75,.4)',color:'#c8a84b',padding:'7px 16px',fontFamily:rj,fontSize:12,letterSpacing:'1.5px',textTransform:'uppercase',fontWeight:700,cursor:'pointer'}} onClick={()=>{setTab('login');setModal(true);}}>Sign In</button>
-            <button className="nav-list" style={{background:'#c8a84b',color:'#08100a',border:'none',padding:'7px 16px',fontFamily:rj,fontSize:12,letterSpacing:'1.5px',textTransform:'uppercase',fontWeight:700,cursor:'pointer',whiteSpace:'nowrap'}} onClick={()=>{setTab('register');setModal(true);}}>List Your Business</button>
+            <button className="btn-ghost nav-signin" style={{background:'transparent',border:'1px solid rgba(200,168,75,.4)',color:'#c8a84b',padding:'7px 16px',fontFamily:rj,fontSize:12,letterSpacing:'1.5px',textTransform:'uppercase',fontWeight:700,cursor:'pointer'}} onClick={()=>{setTab('login');setModal(true);}}>Sign In</button>
+            <button className="btn-gold nav-list" style={{background:'#c8a84b',color:'#08100a',border:'none',padding:'7px 16px',fontFamily:rj,fontSize:12,letterSpacing:'1.5px',textTransform:'uppercase',fontWeight:700,cursor:'pointer',whiteSpace:'nowrap'}} onClick={()=>{setTab('register');setModal(true);}}>List Your Business</button>
           </div>
         </nav>
 
-        {/* HERO */}
-        <section className="hero-sec" style={{minHeight:'100vh',paddingTop:100,paddingBottom:60,paddingLeft:48,paddingRight:48,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',textAlign:'center',gap:28}}>
+        {/* HERO with sunset harbour background */}
+        <section className="hero-sec" style={{position:'relative',minHeight:'100vh',paddingTop:100,paddingBottom:60,paddingLeft:48,paddingRight:48,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',textAlign:'center',gap:28,overflow:'hidden'}}>
+          <div className="hero-bg"></div>
+          <div className="hero-content" style={{display:'flex',flexDirection:'column',alignItems:'center',gap:28,width:'100%'}}>
           <div className="a1" style={{fontFamily:rj,fontSize:11,letterSpacing:'4px',textTransform:'uppercase',color:'#c8a84b',display:'flex',alignItems:'center',gap:12}}>
             <span style={{width:32,height:1,background:'#c8a84b',display:'inline-block',opacity:.5}}/>
             Global Maritime Services Directory
             <span style={{width:32,height:1,background:'#c8a84b',display:'inline-block',opacity:.5}}/>
           </div>
-          <h1 className="a2 hero-h1" style={{fontFamily:lb,fontSize:'clamp(36px,5vw,68px)',fontWeight:700,lineHeight:1.05,letterSpacing:-2,maxWidth:820}}>
+          <h1 className="a2 hero-h1" style={{fontFamily:lb,fontSize:'clamp(32px,4vw,58px)',fontWeight:700,lineHeight:1.05,letterSpacing:-1.5,maxWidth:820,textShadow:'0 2px 14px rgba(0,0,0,.6)'}}>
             Every Port. Every <em style={g}>Service.</em><br/>One Platform.
           </h1>
-          <p className="a3" style={{fontSize:15,lineHeight:1.8,color:'#b0c0a4',maxWidth:460}}>
+          <p className="a3" style={{fontSize:15,lineHeight:1.8,color:'#d4dcc8',maxWidth:460,textShadow:'0 1px 6px rgba(0,0,0,.6)'}}>
             Find verified ship agents, shipchandlers and marine service companies at any port worldwide. Free to search.
           </p>
           <div className="a3" style={{display:'flex',gap:18,flexWrap:'wrap',justifyContent:'center'}}>
             {[['160+','Countries'],['1,000+','Ports'],['22','Categories']].map(([n,l])=>(
-              <span key={l} style={{fontFamily:rj,fontSize:12,color:'#7a8a72',fontWeight:600}}><strong style={g}>{n}</strong> {l}</span>
+              <span key={l} style={{fontFamily:rj,fontSize:12,color:'#b5bfa8',fontWeight:600}}><strong style={g}>{n}</strong> {l}</span>
             ))}
           </div>
 
-          {/* SEARCH */}
-          <div className="a4 search-wrap" style={{width:'100%',maxWidth:960,background:'rgba(10,20,14,.96)',border:'1px solid rgba(200,168,75,.3)',backdropFilter:'blur(20px)',padding:'28px 32px',marginTop:4}}>
-            <div className="sgrid" style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr auto',gap:10,alignItems:'flex-end'}}>
+          {/* SEARCH — ENLARGED */}
+          <div className="a4 search-wrap" style={{width:'100%',maxWidth:1080,background:'rgba(10,20,14,.92)',border:'1px solid rgba(200,168,75,.35)',backdropFilter:'blur(22px)',padding:'34px 38px',marginTop:4,boxShadow:'0 18px 48px rgba(0,0,0,.45)'}}>
+            <div className="sgrid" style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr auto',gap:14,alignItems:'flex-end'}}>
               <div>
                 <label style={S.lbl}>Country</label>
-                <select style={S.sel} value={country} onChange={e=>{setCountry(e.target.value);setPort('');setDone(false);}}>
+                <select className="sel-focus" style={S.sel} value={country} onChange={e=>{setCountry(e.target.value);setPort('');setDone(false);}}>
                   <option value="">Select country...</option>
                   {countries.map(c=><option key={c}>{c}</option>)}
                 </select>
               </div>
               <div>
                 <label style={S.lbl}>Port</label>
-                <select style={S.sel} value={port} onChange={e=>{setPort(e.target.value);doSearch(country,e.target.value,svcType,ms);}} disabled={!country}>
+                <select className="sel-focus" style={S.sel} value={port} onChange={e=>{setPort(e.target.value);doSearch(country,e.target.value,svcType,ms);}} disabled={!country}>
                   <option value="">Select port...</option>
                   {ports.map(p=><option key={p}>{p}</option>)}
                 </select>
               </div>
               <div>
                 <label style={S.lbl}>Service Type</label>
-                <select style={S.sel} value={svcType} onChange={e=>{setSvcType(e.target.value);setMs(new Set());doSearch(country,port,e.target.value,new Set());}}>
+                <select className="sel-focus" style={S.sel} value={svcType} onChange={e=>{setSvcType(e.target.value);setMs(new Set());doSearch(country,port,e.target.value,new Set());}}>
                   <option value="all">All Services</option>
                   <option value="agent">Ship Agent</option>
                   <option value="chandler">Shipchandler</option>
                   <option value="service">Marine Services</option>
                 </select>
               </div>
-              <button style={{background:'#c8a84b',color:'#08100a',border:'none',padding:'12px 24px',fontFamily:rj,fontSize:14,letterSpacing:'2px',textTransform:'uppercase',fontWeight:700,cursor:'pointer',height:46,whiteSpace:'nowrap'}} onClick={()=>doSearch(country,port,svcType,ms)}>Search</button>
+              <button className="btn-gold" style={{background:'#c8a84b',color:'#08100a',border:'none',padding:'14px 30px',fontFamily:rj,fontSize:15,letterSpacing:'2px',textTransform:'uppercase',fontWeight:700,cursor:'pointer',height:52,whiteSpace:'nowrap'}} onClick={()=>doSearch(country,port,svcType,ms)}>Search</button>
             </div>
             {svcType==='service'&&(
-              <div style={{marginTop:12,padding:'12px 14px',background:'rgba(200,168,75,.04)',border:'1px solid rgba(200,168,75,.15)'}}>
-                <div style={{fontFamily:rj,fontSize:9,letterSpacing:'2px',textTransform:'uppercase',color:'#c8a84b',marginBottom:8,fontWeight:700}}>Specific marine services (optional)</div>
-                <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(180px,1fr))',gap:4}}>
-                  {MARINE_SERVICES.map(s=>(<div key={s.key} onClick={()=>toggleMs(s.key)} style={{padding:'5px 9px',border:`1px solid ${ms.has(s.key)?'#c8a84b':'rgba(200,168,75,.18)'}`,background:ms.has(s.key)?'#c8a84b':'transparent',color:ms.has(s.key)?'#08100a':'#b0c0a4',fontFamily:rj,fontSize:10,fontWeight:600,cursor:'pointer',userSelect:'none'}}>{s.label}</div>))}
+              <div style={{marginTop:14,padding:'14px 16px',background:'rgba(200,168,75,.04)',border:'1px solid rgba(200,168,75,.15)'}}>
+                <div style={{fontFamily:rj,fontSize:10,letterSpacing:'2px',textTransform:'uppercase',color:'#c8a84b',marginBottom:9,fontWeight:700}}>Specific marine services (optional)</div>
+                <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(190px,1fr))',gap:5}}>
+                  {MARINE_SERVICES.map(s=>(<div key={s.key} onClick={()=>toggleMs(s.key)} style={{padding:'6px 10px',border:`1px solid ${ms.has(s.key)?'#c8a84b':'rgba(200,168,75,.18)'}`,background:ms.has(s.key)?'#c8a84b':'transparent',color:ms.has(s.key)?'#08100a':'#b0c0a4',fontFamily:rj,fontSize:11,fontWeight:600,cursor:'pointer',userSelect:'none',transition:'all .2s ease'}}>{s.label}</div>))}
                 </div>
               </div>
             )}
             {done&&(
-              <div style={{borderTop:'1px solid rgba(200,168,75,.15)',paddingTop:14,marginTop:14}}>
-                <div style={{fontFamily:rj,fontSize:10,letterSpacing:'2px',textTransform:'uppercase',color:'#c8a84b',marginBottom:10,fontWeight:700}}>
+              <div style={{borderTop:'1px solid rgba(200,168,75,.15)',paddingTop:16,marginTop:16}}>
+                <div style={{fontFamily:rj,fontSize:11,letterSpacing:'2px',textTransform:'uppercase',color:'#c8a84b',marginBottom:11,fontWeight:700}}>
                   {fb?`Other providers in ${country}`:`${results.length} provider${results.length!==1?'s':''} found at ${port}`}
                 </div>
-                {fb&&results.length>0&&(<div style={{padding:'9px 12px',background:'rgba(200,168,75,.06)',border:'1px solid rgba(200,168,75,.18)',fontSize:12,color:'#e2c06a',marginBottom:8,fontFamily:rj,lineHeight:1.5}}>No providers at <strong>{port}</strong> yet — showing others in <strong>{country}</strong>.</div>)}
+                {fb&&results.length>0&&(<div style={{padding:'10px 13px',background:'rgba(200,168,75,.06)',border:'1px solid rgba(200,168,75,.18)',fontSize:12,color:'#e2c06a',marginBottom:9,fontFamily:rj,lineHeight:1.5}}>No providers at <strong>{port}</strong> yet — showing others in <strong>{country}</strong>.</div>)}
                 {results.length===0&&(<div style={{padding:20,textAlign:'center',fontFamily:rj,fontSize:12,color:'#7a8a72'}}><strong style={{color:'#c8a84b',display:'block',marginBottom:4}}>No providers found.</strong><span style={{color:'#c8a84b',cursor:'pointer'}} onClick={()=>{setTab('register');setModal(true);}}>Register your business →</span></div>)}
                 {results.map(p=>(
-                  <div key={p.id} className="rrow" onClick={()=>setDetail(p)} style={{background:'rgba(8,16,10,.7)',border:'1px solid rgba(200,168,75,.2)',padding:'13px 16px',marginBottom:5,display:'grid',gridTemplateColumns:'40px 1fr auto',gap:12,alignItems:'center',transition:'border-color .3s'}}>
-                    <div style={{width:40,height:40,background:'rgba(200,168,75,.1)',border:'1px solid rgba(200,168,75,.2)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:17}}>{p.ico}</div>
+                  <div key={p.id} className="rrow" onClick={()=>setDetail(p)} style={{background:'rgba(8,16,10,.7)',border:'1px solid rgba(200,168,75,.2)',padding:'14px 18px',marginBottom:6,display:'grid',gridTemplateColumns:'44px 1fr auto',gap:14,alignItems:'center'}}>
+                    <div style={{width:44,height:44,background:'rgba(200,168,75,.1)',border:'1px solid rgba(200,168,75,.2)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:18}}>{p.ico}</div>
                     <div>
-                      <div style={{fontSize:13,fontWeight:600,marginBottom:1}}>{p.name}</div>
+                      <div style={{fontSize:14,fontWeight:600,marginBottom:2,display:'flex',alignItems:'center',gap:8}}>
+                        <span>{p.name}</span>
+                        <span style={{fontSize:16,lineHeight:1}}>{FLAG[p.country]||''}</span>
+                      </div>
                       <div style={{fontSize:11,color:'#b0c0a4',lineHeight:1.4}}>{p.bio.length>100?p.bio.slice(0,100)+'...':p.bio}</div>
                     </div>
                     <div style={{textAlign:'right',flexShrink:0}}>
-                      <div style={{fontFamily:rj,fontSize:9,letterSpacing:'1px',textTransform:'uppercase',color:'#7a8a72',marginBottom:4,fontWeight:600}}>{TL(p.type)}</div>
-                      <button onClick={e=>{e.stopPropagation();setDetail(p);}} style={{background:'#c8a84b',border:'none',color:'#08100a',padding:'5px 11px',fontFamily:rj,fontSize:10,letterSpacing:'1px',textTransform:'uppercase',fontWeight:700,cursor:'pointer'}}>View Contact</button>
+                      <div style={{fontFamily:rj,fontSize:9,letterSpacing:'1px',textTransform:'uppercase',color:'#7a8a72',marginBottom:5,fontWeight:600}}>{TL(p.type)}</div>
+                      <button className="btn-gold" onClick={e=>{e.stopPropagation();setDetail(p);}} style={{background:'#c8a84b',border:'none',color:'#08100a',padding:'6px 12px',fontFamily:rj,fontSize:10,letterSpacing:'1px',textTransform:'uppercase',fontWeight:700,cursor:'pointer'}}>View Contact</button>
                     </div>
                   </div>
                 ))}
               </div>
             )}
+          </div>
           </div>
         </section>
 
@@ -384,7 +433,7 @@ export default function Home() {
             {[{n:'01',ico:'🌍',t:'Select Country & Port',d:'Choose your destination from our global list. Completely free.'},
               {n:'02',ico:'🔍',t:'Filter by Service Type',d:'Select Ship Agent, Shipchandler or Marine Services.'},
               {n:'03',ico:'📡',t:'Smart Fallback',d:'No provider at your port? We show others in the same country.'}].map(s=>(
-              <div key={s.n} className="step" style={{background:'#111c13',padding:'34px 28px',position:'relative',overflow:'hidden',transition:'background .4s'}}>
+              <div key={s.n} className="step" style={{background:'#111c13',padding:'34px 28px',position:'relative',overflow:'hidden'}}>
                 <div style={{fontFamily:lb,fontSize:60,fontWeight:700,color:'rgba(200,168,75,.05)',position:'absolute',top:6,right:10,lineHeight:1}}>{s.n}</div>
                 <div style={{fontSize:24,marginBottom:12}}>{s.ico}</div>
                 <h3 style={{fontFamily:lb,fontSize:18,fontWeight:700,marginBottom:9}}>{s.t}</h3>
@@ -402,7 +451,7 @@ export default function Home() {
           <div className="tiers2" style={{display:'grid',gridTemplateColumns:'repeat(2,1fr)',gap:14,maxWidth:680,margin:'0 auto'}}>
             {[{name:'Monthly',amt:'$99',per:'/ month',yr:'Billed monthly · Cancel anytime',badge:null,items:['Listed at all your ports','Full company profile','Phone, email & WhatsApp','Verified provider badge','Performance dashboard']},
               {name:'Annual',amt:'$1,000',per:'/ year',yr:'$83/month equivalent — save $188',badge:'Save $188',items:['Everything in Monthly','Priority placement in results','$188 saved vs monthly','Verified provider badge','Priority support']}].map(tier=>(
-              <div key={tier.name} className="tier" style={{background:tier.badge?'linear-gradient(180deg,rgba(200,168,75,.06),transparent)':'#111c13',border:`1px solid ${tier.badge?'#c8a84b':'rgba(200,168,75,.2)'}`,padding:'28px 24px',position:'relative',transition:'all .4s',display:'flex',flexDirection:'column'}}>
+              <div key={tier.name} className="tier" style={{background:tier.badge?'linear-gradient(180deg,rgba(200,168,75,.06),transparent)':'#111c13',border:`1px solid ${tier.badge?'#c8a84b':'rgba(200,168,75,.2)'}`,padding:'28px 24px',position:'relative',display:'flex',flexDirection:'column'}}>
                 {tier.badge&&<div style={{position:'absolute',top:-10,left:'50%',transform:'translateX(-50%)',background:'#c8a84b',color:'#08100a',fontFamily:rj,fontSize:10,letterSpacing:'2px',fontWeight:700,padding:'4px 12px'}}>{tier.badge}</div>}
                 <div style={{fontFamily:rj,fontSize:10,letterSpacing:'2px',textTransform:'uppercase',color:'#c8a84b',marginBottom:10,fontWeight:700}}>{tier.name}</div>
                 <div style={{display:'flex',alignItems:'baseline',gap:5,marginBottom:4}}><span style={{fontFamily:lb,fontSize:38,fontWeight:700,lineHeight:1}}>{tier.amt}</span><span style={{fontFamily:rj,fontSize:12,color:'#7a8a72',fontWeight:600}}>{tier.per}</span></div>
@@ -410,7 +459,7 @@ export default function Home() {
                 <ul style={{listStyle:'none',flex:1,marginBottom:18,display:'flex',flexDirection:'column',gap:7}}>
                   {tier.items.map(item=>(<li key={item} style={{fontSize:12,color:'#b0c0a4',display:'flex',alignItems:'flex-start',gap:7,lineHeight:1.5}}><span style={{color:'#c8a84b',fontWeight:700,flexShrink:0}}>✓</span>{item}</li>))}
                 </ul>
-                <button onClick={()=>{setTab('register');setModal(true);}} style={{padding:11,background:tier.badge?'#c8a84b':'transparent',border:'1px solid rgba(200,168,75,.35)',color:tier.badge?'#08100a':'#c8a84b',fontFamily:rj,fontSize:11,letterSpacing:'2px',textTransform:'uppercase',fontWeight:700,cursor:'pointer',width:'100%'}}>Get Started</button>
+                <button className={tier.badge?'btn-gold':'btn-ghost'} onClick={()=>{setTab('register');setModal(true);}} style={{padding:11,background:tier.badge?'#c8a84b':'transparent',border:'1px solid rgba(200,168,75,.35)',color:tier.badge?'#08100a':'#c8a84b',fontFamily:rj,fontSize:11,letterSpacing:'2px',textTransform:'uppercase',fontWeight:700,cursor:'pointer',width:'100%'}}>Get Started</button>
               </div>
             ))}
           </div>
@@ -421,8 +470,8 @@ export default function Home() {
           <h2 style={{fontFamily:lb,fontSize:'clamp(26px,3.5vw,48px)',fontWeight:700,lineHeight:1.05,marginBottom:12}}>Be Found by Every Vessel <em style={g}>Worldwide</em></h2>
           <p style={{fontSize:14,color:'#b0c0a4',maxWidth:400,margin:'0 auto 28px',lineHeight:1.75}}>List on PortServiceFinder for <strong style={g}>$99/month</strong> or <strong style={g}>$1,000/year</strong>.</p>
           <div style={{display:'flex',gap:10,justifyContent:'center',flexWrap:'wrap'}}>
-            <button onClick={()=>{setTab('register');setModal(true);}} style={{background:'#c8a84b',color:'#08100a',border:'none',padding:'12px 28px',fontFamily:rj,fontSize:13,letterSpacing:'2px',textTransform:'uppercase',fontWeight:700,cursor:'pointer'}}>List Your Business</button>
-            <button onClick={()=>window.scrollTo({top:0,behavior:'smooth'})} style={{background:'transparent',color:'#f5f0e8',border:'1px solid rgba(200,168,75,.3)',padding:'11px 22px',fontFamily:rj,fontSize:13,letterSpacing:'2px',textTransform:'uppercase',fontWeight:600,cursor:'pointer'}}>Search Free</button>
+            <button className="btn-gold" onClick={()=>{setTab('register');setModal(true);}} style={{background:'#c8a84b',color:'#08100a',border:'none',padding:'12px 28px',fontFamily:rj,fontSize:13,letterSpacing:'2px',textTransform:'uppercase',fontWeight:700,cursor:'pointer'}}>List Your Business</button>
+            <button className="btn-ghost" onClick={()=>window.scrollTo({top:0,behavior:'smooth'})} style={{background:'transparent',color:'#f5f0e8',border:'1px solid rgba(200,168,75,.3)',padding:'11px 22px',fontFamily:rj,fontSize:13,letterSpacing:'2px',textTransform:'uppercase',fontWeight:600,cursor:'pointer'}}>Search Free</button>
           </div>
         </section>
 
@@ -456,8 +505,11 @@ export default function Home() {
               <div style={{padding:'22px 28px 16px',borderBottom:'1px solid rgba(200,168,75,.15)',display:'flex',gap:14,alignItems:'flex-start'}}>
                 <div style={{width:50,height:50,background:'rgba(200,168,75,.1)',border:'1px solid rgba(200,168,75,.2)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:22,flexShrink:0}}>{detail.ico}</div>
                 <div style={{flex:1}}>
-                  <div style={{fontFamily:lb,fontSize:20,fontWeight:700,marginBottom:3}}>{detail.name}</div>
-                  <div style={{fontFamily:rj,fontSize:10,letterSpacing:'2px',textTransform:'uppercase',color:'#c8a84b',fontWeight:700,marginBottom:5}}>{TL(detail.type)}</div>
+                  <div style={{fontFamily:lb,fontSize:20,fontWeight:700,marginBottom:3,display:'flex',alignItems:'center',gap:10}}>
+                    <span>{detail.name}</span>
+                    <span style={{fontSize:22,lineHeight:1}}>{FLAG[detail.country]||''}</span>
+                  </div>
+                  <div style={{fontFamily:rj,fontSize:10,letterSpacing:'2px',textTransform:'uppercase',color:'#c8a84b',fontWeight:700,marginBottom:5}}>{TL(detail.type)} · {detail.country}</div>
                   <span style={{fontFamily:rj,fontSize:9,color:'#4caf76',border:'1px solid rgba(76,175,118,.3)',padding:'2px 7px',letterSpacing:1,fontWeight:700}}>✓ VERIFIED</span>
                 </div>
                 <button onClick={()=>setDetail(null)} style={{background:'none',border:'none',color:'#7a8a72',fontSize:18,cursor:'pointer',flexShrink:0}}>✕</button>
@@ -476,9 +528,9 @@ export default function Home() {
                   {detail.ports.map(p=><span key={p} style={{fontFamily:rj,fontSize:9,letterSpacing:1,fontWeight:700,padding:'2px 6px',border:'1px solid rgba(200,168,75,.3)',color:'#c8a84b'}}>{p}</span>)}
                 </div>
                 <div style={{display:'flex',gap:7,flexWrap:'wrap'}}>
-                  <a href={`tel:${detail.phone.replace(/\s/g,'')}`} style={{flex:1,minWidth:110,padding:10,background:'#c8a84b',color:'#08100a',textDecoration:'none',fontFamily:rj,fontSize:10,letterSpacing:'1px',textTransform:'uppercase',fontWeight:700,textAlign:'center',display:'flex',alignItems:'center',justifyContent:'center'}}>📞 Call</a>
-                  <a href={`mailto:${detail.email}`} style={{flex:1,minWidth:110,padding:10,background:'#c8a84b',color:'#08100a',textDecoration:'none',fontFamily:rj,fontSize:10,letterSpacing:'1px',textTransform:'uppercase',fontWeight:700,textAlign:'center',display:'flex',alignItems:'center',justifyContent:'center'}}>✉ Email</a>
-                  <a href={`https://wa.me/${detail.wa.replace(/\D/g,'')}`} target="_blank" rel="noreferrer" style={{flex:1,minWidth:110,padding:10,background:'transparent',border:'1px solid rgba(200,168,75,.4)',color:'#c8a84b',textDecoration:'none',fontFamily:rj,fontSize:10,letterSpacing:'1px',textTransform:'uppercase',fontWeight:700,textAlign:'center',display:'flex',alignItems:'center',justifyContent:'center'}}>💬 WhatsApp</a>
+                  <a className="btn-gold" href={`tel:${detail.phone.replace(/\s/g,'')}`} style={{flex:1,minWidth:110,padding:10,background:'#c8a84b',color:'#08100a',textDecoration:'none',fontFamily:rj,fontSize:10,letterSpacing:'1px',textTransform:'uppercase',fontWeight:700,textAlign:'center',display:'flex',alignItems:'center',justifyContent:'center'}}>📞 Call</a>
+                  <a className="btn-gold" href={`mailto:${detail.email}`} style={{flex:1,minWidth:110,padding:10,background:'#c8a84b',color:'#08100a',textDecoration:'none',fontFamily:rj,fontSize:10,letterSpacing:'1px',textTransform:'uppercase',fontWeight:700,textAlign:'center',display:'flex',alignItems:'center',justifyContent:'center'}}>✉ Email</a>
+                  <a className="btn-ghost" href={`https://wa.me/${detail.wa.replace(/\D/g,'')}`} target="_blank" rel="noreferrer" style={{flex:1,minWidth:110,padding:10,background:'transparent',border:'1px solid rgba(200,168,75,.4)',color:'#c8a84b',textDecoration:'none',fontFamily:rj,fontSize:10,letterSpacing:'1px',textTransform:'uppercase',fontWeight:700,textAlign:'center',display:'flex',alignItems:'center',justifyContent:'center'}}>💬 WhatsApp</a>
                 </div>
               </div>
             </div>
@@ -501,7 +553,7 @@ export default function Home() {
                   <div>
                     <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:7,marginBottom:16}}>
                       {[{type:'agent',ico:'🏢',name:'Ship Agent'},{type:'chandler',ico:'⚓',name:'Shipchandler'},{type:'service',ico:'🔧',name:'Marine Service'}].map(s=>(
-                        <div key={s.type} onClick={()=>setSeg(s.type)} style={{border:`1px solid ${seg===s.type?'#c8a84b':'rgba(200,168,75,.2)'}`,padding:'11px 7px',textAlign:'center',cursor:'pointer',background:seg===s.type?'rgba(200,168,75,.1)':'transparent'}}>
+                        <div key={s.type} onClick={()=>setSeg(s.type)} style={{border:`1px solid ${seg===s.type?'#c8a84b':'rgba(200,168,75,.2)'}`,padding:'11px 7px',textAlign:'center',cursor:'pointer',background:seg===s.type?'rgba(200,168,75,.1)':'transparent',transition:'all .25s ease'}}>
                           <div style={{fontSize:17,marginBottom:3}}>{s.ico}</div>
                           <div style={{fontFamily:rj,fontSize:10,letterSpacing:1,textTransform:'uppercase',fontWeight:700}}>{s.name}</div>
                           <div style={{fontSize:9,color:'#c8a84b',marginTop:2,fontFamily:rj}}>$99/mo</div>
@@ -518,14 +570,14 @@ export default function Home() {
                       <textarea maxLength={500} placeholder="Brief description..." style={{background:'rgba(8,16,10,.7)',border:'1px solid rgba(200,168,75,.22)',color:'#f5f0e8',padding:'8px 11px',fontSize:12,width:'100%',resize:'vertical',minHeight:65}}/>
                     </div>
                     <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:9,marginBottom:9}}><FI l="Login Email" p="your@company.com" t="email"/><FI l="Password" p="Min 8 characters" t="password"/></div>
-                    <button onClick={()=>{setModal(false);setPayModal(true);}} style={{width:'100%',padding:12,background:'#c8a84b',border:'none',color:'#08100a',fontFamily:rj,fontSize:12,letterSpacing:'2px',textTransform:'uppercase',fontWeight:700,cursor:'pointer',marginTop:5}}>Continue to Payment</button>
+                    <button className="btn-gold" onClick={()=>{setModal(false);setPayModal(true);}} style={{width:'100%',padding:12,background:'#c8a84b',border:'none',color:'#08100a',fontFamily:rj,fontSize:12,letterSpacing:'2px',textTransform:'uppercase',fontWeight:700,cursor:'pointer',marginTop:5}}>Continue to Payment</button>
                     <p style={{fontSize:10,color:'#7a8a72',textAlign:'center',marginTop:7}}>$99/month or $1,000/year. Cancel anytime.</p>
                   </div>
                 ):(
                   <div>
                     <FI l="Email" p="your@company.com" t="email"/>
                     <FI l="Password" p="password" t="password"/>
-                    <button style={{width:'100%',padding:12,background:'#c8a84b',border:'none',color:'#08100a',fontFamily:rj,fontSize:12,letterSpacing:'2px',textTransform:'uppercase',fontWeight:700,cursor:'pointer',marginTop:5}}>Sign In</button>
+                    <button className="btn-gold" style={{width:'100%',padding:12,background:'#c8a84b',border:'none',color:'#08100a',fontFamily:rj,fontSize:12,letterSpacing:'2px',textTransform:'uppercase',fontWeight:700,cursor:'pointer',marginTop:5}}>Sign In</button>
                     <p style={{textAlign:'center',fontSize:11,color:'#7a8a72',marginTop:10}}>Not registered? <span style={{color:'#c8a84b',cursor:'pointer'}} onClick={()=>setTab('register')}>List your business →</span></p>
                   </div>
                 )}
@@ -543,7 +595,7 @@ export default function Home() {
               <p style={{fontSize:12,color:'#b0c0a4',marginBottom:18,lineHeight:1.6}}>Cancel anytime. No setup fee.</p>
               <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10,marginBottom:20}}>
                 {[{id:'monthly',label:'Monthly',price:'$99',period:'per month',note:'Billed monthly.',badge:null},{id:'yearly',label:'Annual',price:'$1,000',period:'per year',note:'$83/month — save $188.',badge:'Save $188'}].map(p=>(
-                  <div key={p.id} onClick={()=>setPlan(p.id as 'monthly'|'yearly')} style={{border:`2px solid ${plan===p.id?'#c8a84b':'rgba(200,168,75,.2)'}`,padding:'20px 16px',cursor:'pointer',position:'relative',background:plan===p.id?'rgba(200,168,75,.07)':'transparent'}}>
+                  <div key={p.id} onClick={()=>setPlan(p.id as 'monthly'|'yearly')} style={{border:`2px solid ${plan===p.id?'#c8a84b':'rgba(200,168,75,.2)'}`,padding:'20px 16px',cursor:'pointer',position:'relative',background:plan===p.id?'rgba(200,168,75,.07)':'transparent',transition:'all .25s ease'}}>
                     {p.badge&&<div style={{position:'absolute',top:10,right:10,background:'#c8a84b',color:'#08100a',fontFamily:rj,fontSize:9,letterSpacing:'1.5px',fontWeight:700,padding:'2px 6px'}}>{p.badge}</div>}
                     <div style={{fontFamily:rj,fontSize:10,letterSpacing:'2px',textTransform:'uppercase',color:'#c8a84b',fontWeight:700,marginBottom:7}}>{p.label}</div>
                     <div style={{fontFamily:lb,fontSize:30,fontWeight:700,lineHeight:1}}>{p.price}</div>
@@ -555,7 +607,7 @@ export default function Home() {
               <FI l="Cardholder Name" p="Name on card"/>
               <FI l="Card Number" p="1234 5678 9012 3456"/>
               <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:9}}><FI l="Expiry" p="MM/YY"/><FI l="CVC" p="123"/></div>
-              <button onClick={()=>{setPayModal(false);alert('Welcome to PortServiceFinder!');}} style={{width:'100%',padding:12,background:'#c8a84b',border:'none',color:'#08100a',fontFamily:rj,fontSize:12,letterSpacing:'2px',textTransform:'uppercase',fontWeight:700,cursor:'pointer',marginTop:14}}>
+              <button className="btn-gold" onClick={()=>{setPayModal(false);alert('Welcome to PortServiceFinder!');}} style={{width:'100%',padding:12,background:'#c8a84b',border:'none',color:'#08100a',fontFamily:rj,fontSize:12,letterSpacing:'2px',textTransform:'uppercase',fontWeight:700,cursor:'pointer',marginTop:14}}>
                 Pay {plan==='yearly'?'$1,000':'$99'} & Activate
               </button>
               <div style={{fontFamily:rj,fontSize:10,color:'#7a8a72',textAlign:'center',marginTop:9}}>🔒 Secure payment · Cancel anytime</div>
