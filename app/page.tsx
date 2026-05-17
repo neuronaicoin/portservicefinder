@@ -403,8 +403,8 @@ export default function Home() {
         .pay-card:hover{border-color:#c8a84b!important;transform:translateY(-3px);}
         .radar-wrap{filter:drop-shadow(0 4px 18px rgba(200,168,75,.15));}
         .radar-center{width:54px;height:54px;border-radius:50%;background:radial-gradient(circle at 35% 35%,rgba(200,168,75,.5),rgba(200,168,75,.08));border:1px solid rgba(200,168,75,.55);display:flex;align-items:center;justify-content:center;font-size:22px;animation:centerPulse 2.4s ease-in-out infinite;}
-        .radar-dot{position:absolute;width:9px;height:9px;border-radius:50%;background:rgba(200,168,75,.4);transform:translate(-50%,-50%);animation:dotBlink 6s linear infinite;z-index:3;}
-        .radar-label{position:absolute;left:14px;top:-2px;font-family:'Rajdhani',sans-serif;font-size:10px;font-weight:700;letter-spacing:1.2px;color:#ffd76a;white-space:nowrap;opacity:0;animation:labelShow 6s linear infinite;text-shadow:0 0 8px rgba(200,168,75,.5);pointer-events:none;}
+        .radar-dot{position:absolute;width:9px;height:9px;border-radius:50%;background:rgba(200,168,75,.4);transform:translate(-50%,-50%);animation:dotBlink 14s linear infinite;z-index:3;}
+        .radar-label{position:absolute;left:14px;top:-2px;font-family:'Rajdhani',sans-serif;font-size:10px;font-weight:700;letter-spacing:1.2px;color:#ffd76a;white-space:nowrap;opacity:0;animation:labelShow 14s linear infinite;text-shadow:0 0 8px rgba(200,168,75,.5);pointer-events:none;}
         .dot-r1-tl{top:38%;left:38%;animation-delay:-0.75s;}
         .dot-r1-tl .radar-label{animation-delay:-0.75s;}
         .dot-r1-br{top:62%;left:62%;animation-delay:-3.75s;}
@@ -553,7 +553,7 @@ export default function Home() {
               <div style={{position:'absolute',inset:'37.5%',borderRadius:'50%',border:'1px solid rgba(200,168,75,.15)'}}/>
               <div style={{position:'absolute',top:'50%',left:0,right:0,height:1,background:'rgba(200,168,75,.1)'}}/>
               <div style={{position:'absolute',left:'50%',top:0,bottom:0,width:1,background:'rgba(200,168,75,.1)'}}/>
-              <div className="radar-sweep" style={{position:'absolute',inset:0,borderRadius:'50%',background:'conic-gradient(from 0deg, rgba(200,168,75,.45) 0deg, rgba(200,168,75,.15) 30deg, transparent 60deg, transparent 360deg)',animation:'radarSpin 6s linear infinite'}}/>
+              <div className="radar-sweep" style={{position:'absolute',inset:0,borderRadius:'50%',background:'conic-gradient(from 0deg, rgba(200,168,75,.45) 0deg, rgba(200,168,75,.15) 30deg, transparent 60deg, transparent 360deg)',animation:'radarSpin 14s linear infinite'}}/>
               <div className="radar-dot dot-r4-top"><span className="radar-label">Rotterdam</span></div>
               <div className="radar-dot dot-r4-bottom"><span className="radar-label">Santos</span></div>
               <div className="radar-dot dot-r3-right"><span className="radar-label">Hong Kong</span></div>
