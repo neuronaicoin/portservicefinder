@@ -272,8 +272,6 @@ export default function Home() {
         select option{background:#111c13;color:#f5f0e8;}
         @keyframes fu{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
         @keyframes pulse{0%{r:3;opacity:.55}100%{r:14;opacity:0}}
-        @keyframes spinSlow{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
-        @keyframes scrollBanner{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
         .anim1{opacity:0;animation:fu .7s .1s forwards;}
         .anim2{opacity:0;animation:fu .7s .2s forwards;}
         .anim3{opacity:0;animation:fu .7s .3s forwards;}
@@ -315,18 +313,6 @@ export default function Home() {
           </div>
         </nav>
 
-
-
-
-
-          {[['160+', 'Countries Covered'], ['1,000+', 'Ports in Database'], ['22', 'Service Categories']].map(([n, l], i) => (
-            <div key={l} style={{ padding: '36px 20px', textAlign: 'center', borderRight: i < 2 ? '1px solid rgba(200,168,75,.15)' : 'none' }}>
-              <div style={S.statN}>{n}</div>
-              <div style={S.statL}>{l}</div>
-            </div>
-          ))}
-        </div>
-
         {/* ── HERO ── */}
         <section style={S.hero}>
           <div className="anim1" style={S.eyebrow}>
@@ -348,11 +334,57 @@ export default function Home() {
               </span>
             ))}
           </div>
+
+          {/* ── MAP ── */}
+          <div className="anim5" style={{ width: '100%', maxWidth: 1080, aspectRatio: '2/1', position: 'relative', marginTop: 8 }}>
+            <svg viewBox="0 0 1000 500" xmlns="http://www.w3.org/2000/svg" style={{ width: '100%', height: '100%', display: 'block' }} preserveAspectRatio="xMidYMid meet">
+              <defs><pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse"><path d="M 50 0 L 0 0 0 50" fill="none" stroke="rgba(200,168,75,0.04)" strokeWidth="0.5" /></pattern></defs>
+              <rect width="1000" height="500" fill="url(#grid)" />
+              <line className="map-graticule" x1="0" y1="250" x2="1000" y2="250" />
+              <line className="map-graticule" x1="500" y1="0" x2="500" y2="500" />
+              <line className="map-graticule" x1="0" y1="125" x2="1000" y2="125" />
+              <line className="map-graticule" x1="0" y1="375" x2="1000" y2="375" />
+              <line className="map-graticule" x1="250" y1="0" x2="250" y2="500" />
+              <line className="map-graticule" x1="750" y1="0" x2="750" y2="500" />
+              {/* Continents */}
+              <path className="map-land" d="M 145 120 Q 130 100 145 80 L 175 75 L 200 70 L 230 78 L 245 92 L 240 110 L 260 115 L 285 130 L 280 155 L 260 175 L 240 185 L 215 195 L 195 210 L 175 215 L 160 220 L 150 215 L 145 200 L 155 185 L 150 165 L 138 150 L 142 135 Z" />
+              <path className="map-land" d="M 275 280 L 290 270 L 310 270 L 330 280 L 345 300 L 350 325 L 350 355 L 345 385 L 335 415 L 325 440 L 312 460 L 300 470 L 290 460 L 285 440 L 290 415 L 285 390 L 275 365 L 268 340 L 268 315 L 272 295 Z" />
+              <path className="map-land" d="M 470 110 L 490 105 L 515 105 L 535 110 L 555 115 L 560 130 L 550 145 L 530 155 L 510 158 L 495 162 L 480 158 L 475 145 L 470 130 Z" />
+              <path className="map-land" d="M 490 175 L 515 170 L 540 172 L 560 180 L 575 200 L 580 230 L 580 260 L 575 290 L 565 320 L 555 350 L 540 375 L 525 395 L 510 405 L 498 400 L 490 380 L 488 355 L 490 325 L 485 295 L 478 265 L 475 235 L 478 210 L 482 190 Z" />
+              <path className="map-land" d="M 570 175 L 595 175 L 615 185 L 625 200 L 620 215 L 605 220 L 585 218 L 575 205 L 568 190 Z" />
+              <path className="map-land" d="M 560 100 L 600 92 L 650 88 L 700 88 L 750 92 L 800 96 L 845 100 L 860 115 L 855 130 L 830 135 L 800 138 L 770 138 L 740 135 L 710 132 L 680 130 L 650 128 L 620 128 L 590 130 L 570 125 Z" />
+              <path className="map-land" d="M 670 200 L 695 200 L 715 210 L 720 230 L 710 250 L 695 260 L 680 255 L 668 240 L 665 220 Z" />
+              <path className="map-land" d="M 720 145 L 760 140 L 790 145 L 810 160 L 815 180 L 800 200 L 775 210 L 750 208 L 730 200 L 718 180 L 715 160 Z" />
+              <path className="map-land" d="M 770 220 L 800 218 L 815 230 L 815 245 L 800 252 L 780 250 L 770 240 Z" />
+              <path className="map-land" d="M 825 165 L 835 162 L 842 172 L 840 185 L 832 188 L 826 178 Z" />
+              <path className="map-land" d="M 800 270 L 825 268 L 845 275 L 850 285 L 835 290 L 815 288 L 800 280 Z" />
+              <path className="map-land" d="M 820 320 L 855 315 L 890 318 L 910 330 L 905 350 L 880 360 L 850 358 L 825 352 L 815 340 Z" />
+              {/* Port Markers */}
+              {[
+                [515, 128, 'Rotterdam'], [525, 120, 'Hamburg'], [550, 165, 'Piraeus'],
+                [580, 170, 'Mersin'], [569, 153, 'Istanbul'], [575, 193, 'Port Said'],
+                [625, 210, 'Dubai'], [675, 230, 'Mumbai'], [782, 265, 'Singapore'],
+                [800, 185, 'Shanghai'], [820, 170, 'Busan'], [840, 175, 'Yokohama'],
+                [895, 348, 'Sydney'], [560, 375, 'Durban'], [495, 275, 'Lagos'],
+                [215, 200, 'Houston'], [270, 160, 'New York'], [165, 180, 'Los Angeles'],
+                [335, 370, 'Santos'], [310, 415, 'Buenos Aires'], [257, 278, 'Panama'],
+                [508, 125, 'Antwerp'], [465, 170, 'Algeciras'],
+              ].map(([x, y, label]) => (
+                <g key={String(label)} transform={`translate(${x},${y})`}>
+                  <circle className="port-pulse" cx="0" cy="0" r="3" />
+                  <circle className="port-dot" cx="0" cy="0" r="3" />
+                  <text className="port-label" x="6" y="-6">{label}</text>
+                </g>
+              ))}
+            </svg>
+          </div>
         </section>
 
         {/* ── SEARCH ── */}
         <section style={S.searchSec} id="search">
-          <h2 style={{ ...S.secTitle, marginBottom: 28 }}>Search the <em style={S.gold}>Directory</em></h2>
+          <h2 style={{ ...S.secTitle, fontFamily: "'Libre Baskerville', serif", marginBottom: 28 }}>
+            Search the <em style={S.gold}>Directory</em>
+          </h2>
           <div style={S.searchGrid}>
             <div>
               <label style={S.sfLabel}>Country</label>
@@ -379,16 +411,22 @@ export default function Home() {
             </div>
             <button style={S.btnSearch} onClick={() => doSearch(country, port, svcType, marineSvcs)}>Search →</button>
           </div>
+
+          {/* Marine sub-categories */}
           {svcType === 'service' && (
             <div style={{ marginTop: 18, padding: '18px 20px', background: 'rgba(200,168,75,.05)', border: '1px solid rgba(200,168,75,.2)' }}>
               <div style={{ fontFamily: "'Rajdhani', sans-serif", fontSize: 11, letterSpacing: '2px', textTransform: 'uppercase', color: '#c8a84b', marginBottom: 12, fontWeight: 700 }}>Choose specific marine services (optional)</div>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 6 }}>
                 {MARINE_SERVICES.map(s => (
-                  <div key={s.key} className="svc-sub-item" onClick={() => toggleMarineSvc(s.key)} style={{ padding: '8px 12px', border: `1px solid ${marineSvcs.has(s.key) ? '#c8a84b' : 'rgba(200,168,75,.2)'}`, background: marineSvcs.has(s.key) ? '#c8a84b' : 'rgba(8,16,10,.4)', color: marineSvcs.has(s.key) ? '#08100a' : '#b0c0a4', fontFamily: "'Rajdhani', sans-serif", fontSize: 12, fontWeight: 600, cursor: 'pointer', userSelect: 'none' }}>{s.label}</div>
+                  <div key={s.key} className="svc-sub-item" onClick={() => toggleMarineSvc(s.key)} style={{ padding: '8px 12px', border: `1px solid ${marineSvcs.has(s.key) ? '#c8a84b' : 'rgba(200,168,75,.2)'}`, background: marineSvcs.has(s.key) ? '#c8a84b' : 'rgba(8,16,10,.4)', color: marineSvcs.has(s.key) ? '#08100a' : '#b0c0a4', fontFamily: "'Rajdhani', sans-serif", fontSize: 12, fontWeight: 600, cursor: 'pointer', userSelect: 'none' }}>
+                    {s.label}
+                  </div>
                 ))}
               </div>
             </div>
           )}
+
+          {/* Results */}
           {searchDone && (
             <div style={{ borderTop: '1px solid rgba(200,168,75,.2)', paddingTop: 20, marginTop: 20 }}>
               <div style={{ fontFamily: "'Rajdhani', sans-serif", fontSize: 11, letterSpacing: '2px', textTransform: 'uppercase', color: '#c8a84b', marginBottom: 14, fontWeight: 700 }}>
@@ -402,7 +440,7 @@ export default function Home() {
               {results.length === 0 && (
                 <div style={{ padding: 28, textAlign: 'center', fontFamily: "'Rajdhani', sans-serif", fontSize: 13, color: '#7a8a72', fontWeight: 500, lineHeight: 1.7 }}>
                   <strong style={{ color: '#c8a84b', display: 'block', marginBottom: 6, fontSize: 14 }}>No providers found.</strong>
-                  <span style={{ color: '#c8a84b', cursor: 'pointer' }} onClick={() => { setModalTab('register'); setModalOpen(true); }}>Register your business →</span>
+                  We are still onboarding providers in this region. <span style={{ color: '#c8a84b', cursor: 'pointer' }} onClick={() => { setModalTab('register'); setModalOpen(true); }}>Register your business →</span>
                 </div>
               )}
               {results.map(p => (
@@ -426,47 +464,15 @@ export default function Home() {
           )}
         </section>
 
-        {/* ── VISUALS ── */}
-        <section style={{ background: '#08100a', padding: '60px 56px', textAlign: 'center' }}>
-          {/* Globe */}
-          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 40 }}>
-            <div style={{ position: 'relative', width: 140, height: 140 }}>
-              <div style={{ position: 'absolute', inset: 0, borderRadius: '50%', border: '1px solid rgba(200,168,75,.3)', animation: 'spinSlow 18s linear infinite' }} />
-              <div style={{ position: 'absolute', inset: 14, borderRadius: '50%', border: '1px solid rgba(200,168,75,.2)', animation: 'spinSlow 12s linear infinite reverse' }} />
-              <div style={{ position: 'absolute', inset: 28, borderRadius: '50%', border: '1px solid rgba(200,168,75,.15)', animation: 'spinSlow 8s linear infinite' }} />
-              <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <div style={{ width: 50, height: 50, borderRadius: '50%', background: 'radial-gradient(circle at 35% 35%, rgba(200,168,75,.4), rgba(200,168,75,.05))', border: '1px solid rgba(200,168,75,.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20 }}>⚓</div>
-              </div>
-              <div style={{ position: 'absolute', inset: 0, animation: 'spinSlow 6s linear infinite' }}>
-                <div style={{ position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', width: 7, height: 7, borderRadius: '50%', background: '#c8a84b' }} />
-              </div>
+        {/* ── STATS ── */}
+        <div style={S.statsBar}>
+          {[['160+', 'Countries Covered'], ['1,000+', 'Ports in Database'], ['22', 'Service Categories']].map(([n, l], i) => (
+            <div key={l} style={{ padding: '36px 20px', textAlign: 'center', borderRight: i < 2 ? '1px solid rgba(200,168,75,.15)' : 'none' }}>
+              <div style={S.statN}>{n}</div>
+              <div style={S.statL}>{l}</div>
             </div>
-          </div>
-          {/* Scrolling banner */}
-          <div style={{ overflow: 'hidden', borderTop: '1px solid rgba(200,168,75,.12)', borderBottom: '1px solid rgba(200,168,75,.12)', padding: '10px 0', marginBottom: 40 }}>
-            <div style={{ display: 'flex', gap: 40, animation: 'scrollBanner 28s linear infinite', whiteSpace: 'nowrap' }}>
-              {['Rotterdam · NL', 'Singapore · SG', 'Dubai · UAE', 'Shanghai · CN', 'Mersin · TR', 'Houston · US', 'Piraeus · GR', 'Santos · BR', 'Hamburg · DE', 'Mumbai · IN', 'Busan · KR', 'Yokohama · JP', 'Durban · ZA', 'Sydney · AU', 'Panama · PA', 'Antwerp · BE', 'Valencia · ES', 'Port Said · EG', 'Karachi · PK', 'Colombo · LK',
-                'Rotterdam · NL', 'Singapore · SG', 'Dubai · UAE', 'Shanghai · CN', 'Mersin · TR', 'Houston · US', 'Piraeus · GR', 'Santos · BR', 'Hamburg · DE', 'Mumbai · IN', 'Busan · KR', 'Yokohama · JP'].map((item, i) => (
-                <span key={i} style={{ fontFamily: "'Rajdhani', sans-serif", fontSize: 11, fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', color: i % 4 === 0 ? '#c8a84b' : '#2a3a22', flexShrink: 0 }}>{item}</span>
-              ))}
-            </div>
-          </div>
-          {/* Stat counters */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 1, background: 'rgba(200,168,75,.12)', maxWidth: 900, margin: '0 auto' }}>
-            {[
-              { value: '80+', label: 'Countries', sub: 'with active providers' },
-              { value: '1,000+', label: 'Ports', sub: 'in our database' },
-              { value: '37+', label: 'Providers', sub: 'verified & growing' },
-              { value: '$0', label: 'Search Fee', sub: 'forever free' },
-            ].map(s => (
-              <div key={s.label} style={{ background: '#0c1610', padding: '22px 16px', textAlign: 'center' }}>
-                <div style={{ fontFamily: "'Libre Baskerville', serif", fontSize: 32, fontWeight: 700, color: '#c8a84b', lineHeight: 1, marginBottom: 5 }}>{s.value}</div>
-                <div style={{ fontFamily: "'Rajdhani', sans-serif", fontSize: 11, fontWeight: 700, letterSpacing: 1, textTransform: 'uppercase', color: '#f5f0e8', marginBottom: 3 }}>{s.label}</div>
-                <div style={{ fontFamily: "'Rajdhani', sans-serif", fontSize: 9, color: '#7a8a72' }}>{s.sub}</div>
-              </div>
-            ))}
-          </div>
-        </section>
+          ))}
+        </div>
 
         {/* ── HOW IT WORKS ── */}
         <section style={S.sec} id="how">
@@ -687,7 +693,7 @@ export default function Home() {
                 {/* Tabs */}
                 <div style={{ display: 'flex', borderBottom: '1px solid rgba(200,168,75,.2)', marginBottom: 22 }}>
                   {(['register', 'login'] as const).map(tab => (
-                    <button key={tab} onClick={() => setModalTab(tab)} style={{ padding: '10px 20px', fontFamily: "'Rajdhani', sans-serif", fontSize: 12, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', color: modalTab === tab ? '#c8a84b' : '#7a8a72', marginBottom: -1, background: 'none', border: 'none', borderBottom: modalTab === tab ? '2px solid #c8a84b' : '2px solid transparent' }}>
+                    <button key={tab} onClick={() => setModalTab(tab)} style={{ padding: '10px 20px', fontFamily: "'Rajdhani', sans-serif", fontSize: 12, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', color: modalTab === tab ? '#c8a84b' : '#7a8a72', borderBottom: modalTab === tab ? '2px solid #c8a84b' : '2px solid transparent', marginBottom: -1, background: 'none', borderBottom: modalTab === tab ? '2px solid #c8a84b' : 'none' }}>
                       {tab === 'register' ? 'Register Business' : 'Sign In'}
                     </button>
                   ))}
@@ -792,3 +798,5 @@ function FInput({ label, placeholder, type = 'text' }: { label: string; placehol
     </div>
   );
 }
+
+
