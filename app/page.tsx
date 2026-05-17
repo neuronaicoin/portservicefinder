@@ -163,632 +163,324 @@ const PROVIDERS: Provider[] = [
 
 // ============================================================
 // SEARCH LOGIC
-// ============================================================
-function runSearch(country: string, port: string, cat: string, marineSvcs: Set<string>) {
-  const matchesCat = (p: Provider) => {
+
+function runSearch(country: string, port: string, cat: string, ms: Set<string>) {
+  const ok = (p: Provider) => {
     if (cat === 'all') return true;
     if (cat === 'agent') return p.type === 'agent';
     if (cat === 'chandler') return p.type === 'chandler';
-    if (cat === 'service') {
-      if (p.type !== 'service') return false;
-      if (marineSvcs.size === 0) return true;
-      return p.svc.some(s => marineSvcs.has(s));
-    }
+    if (cat === 'service') { if (p.type !== 'service') return false; return ms.size === 0 || p.svc.some(s => ms.has(s)); }
     return false;
   };
-  let results = PROVIDERS.filter(p => p.ports.includes(port) && matchesCat(p));
-  let fallback = false;
-  if (!results.length && country) {
-    results = PROVIDERS.filter(p => p.country === country && matchesCat(p));
-    fallback = true;
-  }
-  return { results, fallback };
+  let r = PROVIDERS.filter(p => p.ports.includes(port) && ok(p));
+  let fb = false;
+  if (!r.length && country) { r = PROVIDERS.filter(p => p.country === country && ok(p)); fb = true; }
+  return { r, fb };
 }
 
-// ============================================================
-// MAIN COMPONENT
-// ============================================================
 export default function Home() {
   const [country, setCountry] = useState('');
   const [port, setPort] = useState('');
   const [svcType, setSvcType] = useState('all');
-  const [marineSvcs, setMarineSvcs] = useState<Set<string>>(new Set());
-  const [searchDone, setSearchDone] = useState(false);
+  const [ms, setMs] = useState<Set<string>>(new Set());
+  const [done, setDone] = useState(false);
   const [results, setResults] = useState<Provider[]>([]);
-  const [fallback, setFallback] = useState(false);
-  const [detailProvider, setDetailProvider] = useState<Provider | null>(null);
-  const [modalOpen, setModalOpen] = useState(false);
-  const [modalTab, setModalTab] = useState<'register' | 'login'>('register');
-  const [selectedSegment, setSelectedSegment] = useState('agent');
-  const [payModalOpen, setPayModalOpen] = useState(false);
-  const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'yearly'>('monthly');
-  const [openSvc, setOpenSvc] = useState<string | null>(null);
-
+  const [fb, setFb] = useState(false);
+  const [detail, setDetail] = useState<Provider | null>(null);
+  const [modal, setModal] = useState(false);
+  const [tab, setTab] = useState<'register'|'login'>('register');
+  const [seg, setSeg] = useState('agent');
+  const [payModal, setPayModal] = useState(false);
+  const [plan, setPlan] = useState<'monthly'|'yearly'>('monthly');
   const countries = Object.keys(PORT_DATA).sort();
   const ports = country ? PORT_DATA[country] || [] : [];
+  const g = {color:'#c8a84b'} as React.CSSProperties;
+  const rj = "'Rajdhani',sans-serif";
+  const lb = "'Libre Baskerville',serif";
+  const nav = (k: string) => k === 'agent' ? 'Ship Agent' : k === 'chandler' ? 'Shipchandler' : 'Marine Service';
 
-  function doSearch(c: string, p: string, s: string, ms: Set<string>) {
-    if (!c || !p) { setSearchDone(false); return; }
-    const r = runSearch(c, p, s, ms);
-    setResults(r.results);
-    setFallback(r.fallback);
-    setSearchDone(true);
+  function search(c: string, p: string, s: string, m: Set<string>) {
+    if (!c || !p) { setDone(false); return; }
+    const {r, fb: f} = runSearch(c, p, s, m);
+    setResults(r); setFb(f); setDone(true);
   }
 
-  function toggleMarineSvc(key: string) {
-    const next = new Set(marineSvcs);
-    if (next.has(key)) next.delete(key); else next.add(key);
-    setMarineSvcs(next);
-    doSearch(country, port, svcType, next);
+  function toggleMs(key: string) {
+    const n = new Set(ms);
+    if (n.has(key)) n.delete(key); else n.add(key);
+    setMs(n); search(country, port, svcType, n);
   }
 
-  const typeLabel = (t: string) => t === 'agent' ? 'Ship Agent' : t === 'chandler' ? 'Shipchandler' : 'Marine Service';
-
-  const S = {
-    page: { background: '#08100a', color: '#f5f0e8', fontFamily: "'Outfit', sans-serif", fontWeight: 300, minHeight: '100vh' } as React.CSSProperties,
-    // NAVBAR
-    nav: { position: 'fixed', top: 0, width: '100%', zIndex: 300, height: 66, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 48px', background: 'rgba(8,16,10,.97)', backdropFilter: 'blur(20px)', borderBottom: '1px solid rgba(200,168,75,.22)' } as React.CSSProperties,
-    logoText: { fontFamily: "'Libre Baskerville', serif", fontSize: 20, fontWeight: 700, letterSpacing: 1, cursor: 'pointer' } as React.CSSProperties,
-    gold: { color: '#c8a84b' } as React.CSSProperties,
-    navR: { display: 'flex', alignItems: 'center', gap: 20 } as React.CSSProperties,
-    nlnk: { color: '#7a8a72', fontSize: 13, letterSpacing: '1.5px', textTransform: 'uppercase', cursor: 'pointer', fontFamily: "'Rajdhani', sans-serif", fontWeight: 600 } as React.CSSProperties,
-    nbtnOutline: { background: 'transparent', border: '1px solid rgba(200,168,75,.4)', color: '#c8a84b', padding: '9px 22px', fontFamily: "'Rajdhani', sans-serif", fontSize: 13, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer' } as React.CSSProperties,
-    nbtnSolid: { background: '#c8a84b', color: '#08100a', border: 'none', padding: '9px 22px', fontFamily: "'Rajdhani', sans-serif", fontSize: 13, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer' } as React.CSSProperties,
-    // HERO
-    hero: { minHeight: 'calc(100vh - 66px)', paddingTop: 100, paddingBottom: 60, paddingLeft: 56, paddingRight: 56, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', gap: 32 } as React.CSSProperties,
-    eyebrow: { fontFamily: "'Rajdhani', sans-serif", fontSize: 12, letterSpacing: '3px', textTransform: 'uppercase', color: '#c8a84b', display: 'flex', alignItems: 'center', gap: 12, justifyContent: 'center' } as React.CSSProperties,
-    h1: { fontFamily: "'Libre Baskerville', serif", fontSize: 'clamp(40px,5.5vw,72px)', fontWeight: 700, lineHeight: 1.05, letterSpacing: -1, maxWidth: 860 } as React.CSSProperties,
-    heroSub: { fontSize: 16, lineHeight: 1.75, color: '#b0c0a4', maxWidth: 540 } as React.CSSProperties,
-    counts: { display: 'flex', gap: 20, flexWrap: 'wrap', justifyContent: 'center' } as React.CSSProperties,
-    // SEARCH
-    searchSec: { background: '#0c1610', borderTop: '1px solid rgba(200,168,75,.2)', borderBottom: '1px solid rgba(200,168,75,.2)', padding: '48px 56px' } as React.CSSProperties,
-    searchGrid: { display: 'grid', gridTemplateColumns: '1fr 1fr 1fr auto', gap: 14, alignItems: 'flex-end' } as React.CSSProperties,
-    sfLabel: { display: 'block', fontFamily: "'Rajdhani', sans-serif", fontSize: 13, fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', color: '#c8a84b', marginBottom: 6 } as React.CSSProperties,
-    sfSelect: { background: 'rgba(8,16,10,.85)', border: '1px solid rgba(200,168,75,.3)', color: '#f5f0e8', padding: '13px 16px', fontFamily: "'Outfit', sans-serif", fontSize: 14, width: '100%', outline: 'none', appearance: 'none', cursor: 'pointer' } as React.CSSProperties,
-    btnSearch: { background: '#c8a84b', color: '#08100a', border: 'none', padding: '13px 32px', fontFamily: "'Rajdhani', sans-serif", fontSize: 16, letterSpacing: '2px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', height: 50, whiteSpace: 'nowrap' } as React.CSSProperties,
-    // STATS
-    statsBar: { display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', borderTop: '1px solid rgba(200,168,75,.15)', borderBottom: '1px solid rgba(200,168,75,.15)' } as React.CSSProperties,
-    statN: { fontFamily: "'Libre Baskerville', serif", fontSize: 48, fontWeight: 700, color: '#c8a84b', lineHeight: 1, letterSpacing: -1 } as React.CSSProperties,
-    statL: { fontFamily: "'Rajdhani', sans-serif", fontSize: 11, letterSpacing: '2px', textTransform: 'uppercase', color: '#7a8a72', marginTop: 6, fontWeight: 600 } as React.CSSProperties,
-    // SECTIONS
-    sec: { padding: '100px 56px' } as React.CSSProperties,
-    secAlt: { background: '#0c1610', borderTop: '1px solid rgba(200,168,75,.15)', borderBottom: '1px solid rgba(200,168,75,.15)' } as React.CSSProperties,
-    secEye: { fontFamily: "'Rajdhani', sans-serif", fontSize: 11, letterSpacing: '3px', textTransform: 'uppercase', color: '#c8a84b', display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14, fontWeight: 700 } as React.CSSProperties,
-    secTitle: { fontFamily: "'Libre Baskerville', serif", fontSize: 'clamp(28px,3.5vw,46px)', fontWeight: 700, lineHeight: 1.05, marginBottom: 48 } as React.CSSProperties,
-    // CARDS
-    card: { background: '#111c13', border: '1px solid rgba(200,168,75,.2)', padding: '40px 32px' } as React.CSSProperties,
-    // MODAL BG
-    modalBg: { position: 'fixed', inset: 0, background: 'rgba(8,16,10,.95)', backdropFilter: 'blur(16px)', zIndex: 500, display: 'flex', alignItems: 'flex-start', justifyContent: 'center', padding: '40px 20px', overflowY: 'auto' } as React.CSSProperties,
-  };
+  const sel = {background:'rgba(8,16,10,.85)',border:'1px solid rgba(200,168,75,.3)',color:'#f5f0e8',padding:'13px 16px',fontFamily:"'Outfit',sans-serif",fontSize:14,width:'100%',outline:'none',appearance:'none' as const};
+  const lbl = {display:'block',fontFamily:rj,fontSize:13,fontWeight:700,letterSpacing:'1.5px',textTransform:'uppercase' as const,color:'#c8a84b',marginBottom:6};
 
   return (
     <>
-      {/* GOOGLE FONTS */}
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;500;600;700&family=Rajdhani:wght@500;600;700&display=swap');
         *{margin:0;padding:0;box-sizing:border-box;}
-        html{scroll-behavior:smooth;}
-        body{overflow-x:hidden;background:#08100a;}
+        body{background:#08100a;overflow-x:hidden;}
         select option{background:#111c13;color:#f5f0e8;}
         @keyframes fu{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-        @keyframes pulse{0%{r:3;opacity:.55}100%{r:14;opacity:0}}
         @keyframes spinSlow{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
         @keyframes scrollBanner{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
-        .anim1{opacity:0;animation:fu .7s .1s forwards;}
-        .anim2{opacity:0;animation:fu .7s .2s forwards;}
-        .anim3{opacity:0;animation:fu .7s .3s forwards;}
-        .anim4{opacity:0;animation:fu .7s .4s forwards;}
-        .anim5{opacity:0;animation:fu .7s .55s forwards;}
-        .port-pulse{fill:#c8a84b;opacity:0;animation:pulse 3s ease-out infinite;}
-        .port-dot{fill:#c8a84b;stroke:rgba(200,168,75,.4);stroke-width:4;paint-order:stroke;}
-        .port-label{fill:#f5f0e8;font-family:'Rajdhani',sans-serif;font-size:10.5px;font-weight:700;letter-spacing:.4px;pointer-events:none;text-shadow:0 0 4px #08100a,0 0 4px #08100a;}
-        .map-land{fill:#1a2c1f;stroke:rgba(200,168,75,.18);stroke-width:.4;}
-        .map-graticule{stroke:rgba(200,168,75,.06);stroke-width:.3;fill:none;}
+        .a1{opacity:0;animation:fu .7s .1s forwards;}
+        .a2{opacity:0;animation:fu .7s .2s forwards;}
+        .a3{opacity:0;animation:fu .7s .3s forwards;}
+        .a4{opacity:0;animation:fu .7s .4s forwards;}
         .nlnk:hover{color:#c8a84b!important;}
-        .result-row:hover{border-color:#c8a84b!important;cursor:pointer;}
-        .svc-sub-item:hover{border-color:#c8a84b!important;color:#f5f0e8!important;}
-        .seg-card:hover{background:#162019!important;}
-        .tier:hover{background:#162019!important;border-color:#c8a84b!important;}
-        .why-card:hover{background:#162019!important;}
-        .step:hover{background:#162019!important;}
-        input, select, textarea{color:#f5f0e8!important;}
-        input::placeholder{color:#7a8a72;}
-        input:focus, select:focus, textarea:focus{border-color:#c8a84b!important;outline:none;}
-        ::-webkit-scrollbar{width:6px;}
-        ::-webkit-scrollbar-track{background:#08100a;}
-        ::-webkit-scrollbar-thumb{background:#c8a84b33;border-radius:3px;}
+        .rrow:hover{border-color:#c8a84b!important;cursor:pointer;}
+        .scard:hover,.tier:hover,.wcard:hover,.step:hover{background:#162019!important;}
       `}</style>
+      <div style={{background:'#08100a',color:'#f5f0e8',fontFamily:"'Outfit',sans-serif",fontWeight:300,minHeight:'100vh'}}>
 
-      <div style={S.page}>
-
-        {/* ── NAV ── */}
-        <nav style={S.nav}>
-          <div style={S.logoText}>
-            <span>PortService</span><span style={S.gold}>Finder</span>
-          </div>
-          <div style={S.navR}>
-            <span style={S.nlnk} className="nlnk" onClick={() => document.getElementById('how')?.scrollIntoView({ behavior: 'smooth' })}>How It Works</span>
-            <span style={S.nlnk} className="nlnk" onClick={() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })}>Pricing</span>
-            <span style={S.nlnk} className="nlnk" onClick={() => document.getElementById('why')?.scrollIntoView({ behavior: 'smooth' })}>Why Us</span>
-            <button style={S.nbtnOutline} onClick={() => { setModalTab('login'); setModalOpen(true); }}>Sign In</button>
-            <button style={S.nbtnSolid} onClick={() => { setModalTab('register'); setModalOpen(true); }}>List Your Business</button>
+        {/* NAV */}
+        <nav style={{position:'fixed',top:0,width:'100%',zIndex:300,height:66,display:'flex',alignItems:'center',justifyContent:'space-between',padding:'0 48px',background:'rgba(8,16,10,.97)',backdropFilter:'blur(20px)',borderBottom:'1px solid rgba(200,168,75,.22)'}}>
+          <div style={{fontFamily:lb,fontSize:20,fontWeight:700,letterSpacing:1}}>PortService<span style={g}>Finder</span></div>
+          <div style={{display:'flex',alignItems:'center',gap:20}}>
+            <span className="nlnk" style={{color:'#7a8a72',fontSize:13,letterSpacing:'1.5px',textTransform:'uppercase',cursor:'pointer',fontFamily:rj,fontWeight:600}} onClick={()=>document.getElementById('how')?.scrollIntoView({behavior:'smooth'})}>How It Works</span>
+            <span className="nlnk" style={{color:'#7a8a72',fontSize:13,letterSpacing:'1.5px',textTransform:'uppercase',cursor:'pointer',fontFamily:rj,fontWeight:600}} onClick={()=>document.getElementById('pricing')?.scrollIntoView({behavior:'smooth'})}>Pricing</span>
+            <button style={{background:'transparent',border:'1px solid rgba(200,168,75,.4)',color:'#c8a84b',padding:'9px 22px',fontFamily:rj,fontSize:13,letterSpacing:'1.5px',textTransform:'uppercase',fontWeight:700,cursor:'pointer'}} onClick={()=>{setTab('login');setModal(true);}}>Sign In</button>
+            <button style={{background:'#c8a84b',color:'#08100a',border:'none',padding:'9px 22px',fontFamily:rj,fontSize:13,letterSpacing:'1.5px',textTransform:'uppercase',fontWeight:700,cursor:'pointer'}} onClick={()=>{setTab('register');setModal(true);}}>List Your Business</button>
           </div>
         </nav>
 
-
-
-
-
-          {[['160+', 'Countries Covered'], ['1,000+', 'Ports in Database'], ['22', 'Service Categories']].map(([n, l], i) => (
-            <div key={l} style={{ padding: '36px 20px', textAlign: 'center', borderRight: i < 2 ? '1px solid rgba(200,168,75,.15)' : 'none' }}>
-              <div style={S.statN}>{n}</div>
-              <div style={S.statL}>{l}</div>
-            </div>
-          ))}
-        </div>
-
-        {/* ── HERO ── */}
-        <section style={S.hero}>
-          <div className="anim1" style={S.eyebrow}>
-            <span style={{ width: 32, height: 1, background: '#c8a84b', display: 'inline-block' }} />
-            Global Maritime Services Directory
-            <span style={{ width: 32, height: 1, background: '#c8a84b', display: 'inline-block' }} />
+        {/* HERO */}
+        <section style={{minHeight:'calc(100vh - 66px)',paddingTop:100,paddingBottom:60,paddingLeft:56,paddingRight:56,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',textAlign:'center',gap:32}}>
+          <div className="a1" style={{fontFamily:rj,fontSize:12,letterSpacing:'3px',textTransform:'uppercase',color:'#c8a84b',display:'flex',alignItems:'center',gap:12,justifyContent:'center'}}>
+            <span style={{width:32,height:1,background:'#c8a84b',display:'inline-block'}}/>Global Maritime Services Directory<span style={{width:32,height:1,background:'#c8a84b',display:'inline-block'}}/>
           </div>
-          <h1 className="anim2" style={S.h1}>
-            Every Port. Every <em style={S.gold}>Service.</em><br />One Platform.
-          </h1>
-          <p className="anim3" style={S.heroSub}>
-            Find verified ship agents, shipchandlers and marine service companies at any port worldwide. Free to search — no account required.
-          </p>
-          <div className="anim4" style={S.counts}>
-            {[['160+', 'Countries'], ['1,000+', 'Ports'], ['22', 'Service Categories']].map(([n, l]) => (
-              <span key={l} style={{ fontFamily: "'Rajdhani', sans-serif", fontSize: 14, color: '#7a8a72', fontWeight: 600 }}>
-                <strong style={S.gold}>{n}</strong> {l}
-                {l !== 'Service Categories' && <span style={{ marginLeft: 20, color: 'rgba(200,168,75,.3)' }}>·</span>}
-              </span>
+          <h1 className="a2" style={{fontFamily:lb,fontSize:'clamp(40px,5.5vw,72px)',fontWeight:700,lineHeight:1.05,letterSpacing:-1,maxWidth:860}}>Every Port. Every <em style={g}>Service.</em><br/>One Platform.</h1>
+          <p className="a3" style={{fontSize:16,lineHeight:1.75,color:'#b0c0a4',maxWidth:540}}>Find verified ship agents, shipchandlers and marine service companies at any port worldwide. Free to search.</p>
+          <div className="a4" style={{display:'flex',gap:20,flexWrap:'wrap',justifyContent:'center'}}>
+            {[['160+','Countries'],['1,000+','Ports'],['22','Service Categories']].map(([n,l])=>(
+              <span key={l} style={{fontFamily:rj,fontSize:14,color:'#7a8a72',fontWeight:600}}><strong style={g}>{n}</strong> {l}</span>
             ))}
           </div>
         </section>
 
-        {/* ── SEARCH ── */}
-        <section style={S.searchSec} id="search">
-          <h2 style={{ ...S.secTitle, marginBottom: 28 }}>Search the <em style={S.gold}>Directory</em></h2>
-          <div style={S.searchGrid}>
-            <div>
-              <label style={S.sfLabel}>Country</label>
-              <select style={S.sfSelect} value={country} onChange={e => { setCountry(e.target.value); setPort(''); setSearchDone(false); }}>
-                <option value="">Select country...</option>
-                {countries.map(c => <option key={c}>{c}</option>)}
-              </select>
-            </div>
-            <div>
-              <label style={S.sfLabel}>Port</label>
-              <select style={S.sfSelect} value={port} onChange={e => { setPort(e.target.value); doSearch(country, e.target.value, svcType, marineSvcs); }} disabled={!country}>
-                <option value="">Select port...</option>
-                {ports.map(p => <option key={p}>{p}</option>)}
-              </select>
-            </div>
-            <div>
-              <label style={S.sfLabel}>Service Type</label>
-              <select style={S.sfSelect} value={svcType} onChange={e => { setSvcType(e.target.value); setMarineSvcs(new Set()); doSearch(country, port, e.target.value, new Set()); }}>
-                <option value="all">All Services</option>
-                <option value="agent">Ship Agent</option>
-                <option value="chandler">Shipchandler</option>
-                <option value="service">Marine Services</option>
-              </select>
-            </div>
-            <button style={S.btnSearch} onClick={() => doSearch(country, port, svcType, marineSvcs)}>Search →</button>
+        {/* SEARCH */}
+        <section id="search" style={{background:'#0c1610',borderTop:'1px solid rgba(200,168,75,.2)',borderBottom:'1px solid rgba(200,168,75,.2)',padding:'48px 56px'}}>
+          <h2 style={{fontFamily:lb,fontSize:'clamp(28px,3.5vw,46px)',fontWeight:700,lineHeight:1.05,marginBottom:28}}>Search the <em style={g}>Directory</em></h2>
+          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr auto',gap:14,alignItems:'flex-end'}}>
+            <div><label style={lbl}>Country</label><select style={sel} value={country} onChange={e=>{setCountry(e.target.value);setPort('');setDone(false);}}><option value="">Select country...</option>{countries.map(c=><option key={c}>{c}</option>)}</select></div>
+            <div><label style={lbl}>Port</label><select style={sel} value={port} onChange={e=>{setPort(e.target.value);search(country,e.target.value,svcType,ms);}} disabled={!country}><option value="">Select port...</option>{ports.map(p=><option key={p}>{p}</option>)}</select></div>
+            <div><label style={lbl}>Service Type</label><select style={sel} value={svcType} onChange={e=>{setSvcType(e.target.value);setMs(new Set());search(country,port,e.target.value,new Set());}}><option value="all">All Services</option><option value="agent">Ship Agent</option><option value="chandler">Shipchandler</option><option value="service">Marine Services</option></select></div>
+            <button style={{background:'#c8a84b',color:'#08100a',border:'none',padding:'13px 32px',fontFamily:rj,fontSize:16,letterSpacing:'2px',textTransform:'uppercase',fontWeight:700,cursor:'pointer',height:50,whiteSpace:'nowrap'}} onClick={()=>search(country,port,svcType,ms)}>Search →</button>
           </div>
-          {svcType === 'service' && (
-            <div style={{ marginTop: 18, padding: '18px 20px', background: 'rgba(200,168,75,.05)', border: '1px solid rgba(200,168,75,.2)' }}>
-              <div style={{ fontFamily: "'Rajdhani', sans-serif", fontSize: 11, letterSpacing: '2px', textTransform: 'uppercase', color: '#c8a84b', marginBottom: 12, fontWeight: 700 }}>Choose specific marine services (optional)</div>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 6 }}>
-                {MARINE_SERVICES.map(s => (
-                  <div key={s.key} className="svc-sub-item" onClick={() => toggleMarineSvc(s.key)} style={{ padding: '8px 12px', border: `1px solid ${marineSvcs.has(s.key) ? '#c8a84b' : 'rgba(200,168,75,.2)'}`, background: marineSvcs.has(s.key) ? '#c8a84b' : 'rgba(8,16,10,.4)', color: marineSvcs.has(s.key) ? '#08100a' : '#b0c0a4', fontFamily: "'Rajdhani', sans-serif", fontSize: 12, fontWeight: 600, cursor: 'pointer', userSelect: 'none' }}>{s.label}</div>
-                ))}
-              </div>
-            </div>
-          )}
-          {searchDone && (
-            <div style={{ borderTop: '1px solid rgba(200,168,75,.2)', paddingTop: 20, marginTop: 20 }}>
-              <div style={{ fontFamily: "'Rajdhani', sans-serif", fontSize: 11, letterSpacing: '2px', textTransform: 'uppercase', color: '#c8a84b', marginBottom: 14, fontWeight: 700 }}>
-                {fallback ? `Other providers in ${country}` : `${results.length} provider${results.length !== 1 ? 's' : ''} found at ${port}`}
-              </div>
-              {fallback && results.length > 0 && (
-                <div style={{ padding: '12px 16px', background: 'rgba(200,168,75,.07)', border: '1px solid rgba(200,168,75,.2)', fontSize: 13, color: '#e2c06a', marginBottom: 12, fontFamily: "'Rajdhani', sans-serif", fontWeight: 500, lineHeight: 1.5 }}>
-                  📡 No providers registered at <strong>{port}</strong> yet. Showing other available providers in <strong>{country}</strong>.
-                </div>
-              )}
-              {results.length === 0 && (
-                <div style={{ padding: 28, textAlign: 'center', fontFamily: "'Rajdhani', sans-serif", fontSize: 13, color: '#7a8a72', fontWeight: 500, lineHeight: 1.7 }}>
-                  <strong style={{ color: '#c8a84b', display: 'block', marginBottom: 6, fontSize: 14 }}>No providers found.</strong>
-                  <span style={{ color: '#c8a84b', cursor: 'pointer' }} onClick={() => { setModalTab('register'); setModalOpen(true); }}>Register your business →</span>
-                </div>
-              )}
-              {results.map(p => (
-                <div key={p.id} className="result-row" onClick={() => setDetailProvider(p)} style={{ background: '#111c13', border: '1px solid rgba(200,168,75,.2)', padding: '18px 22px', marginBottom: 8, display: 'grid', gridTemplateColumns: '48px 1fr auto', gap: 14, alignItems: 'center', transition: 'border-color .3s' }}>
-                  <div style={{ width: 48, height: 48, background: 'rgba(200,168,75,.1)', border: '1px solid rgba(200,168,75,.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20 }}>{p.ico}</div>
-                  <div>
-                    <div style={{ fontSize: 15, fontWeight: 600, marginBottom: 3 }}>{p.name}</div>
-                    <div style={{ fontSize: 13, color: '#b0c0a4', marginBottom: 7, lineHeight: 1.4 }}>{p.bio.length > 150 ? p.bio.slice(0, 150) + '…' : p.bio}</div>
-                    <div style={{ display: 'flex', gap: 5, flexWrap: 'wrap' }}>
-                      {p.ports.map(pt => <span key={pt} style={{ fontFamily: "'Rajdhani', sans-serif", fontSize: 10, letterSpacing: 1, fontWeight: 700, padding: '2px 8px', border: '1px solid rgba(200,168,75,.3)', color: '#c8a84b' }}>{pt}</span>)}
-                      {fallback && <span style={{ fontFamily: "'Rajdhani', sans-serif", fontSize: 10, letterSpacing: 1, fontWeight: 700, padding: '2px 8px', border: '1px solid rgba(200,168,75,.2)', color: '#e2c06a' }}>Other Port</span>}
-                    </div>
-                  </div>
-                  <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                    <div style={{ fontFamily: "'Rajdhani', sans-serif", fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', color: '#7a8a72', marginBottom: 7, fontWeight: 600 }}>{typeLabel(p.type)}</div>
-                    <button onClick={e => { e.stopPropagation(); setDetailProvider(p); }} style={{ background: 'transparent', border: '1px solid rgba(200,168,75,.3)', color: '#c8a84b', padding: '7px 16px', fontFamily: "'Rajdhani', sans-serif", fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer' }}>View Contact</button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
+          {svcType==='service'&&(<div style={{marginTop:18,padding:'18px 20px',background:'rgba(200,168,75,.05)',border:'1px solid rgba(200,168,75,.2)'}}><div style={{fontFamily:rj,fontSize:11,letterSpacing:'2px',textTransform:'uppercase',color:'#c8a84b',marginBottom:12,fontWeight:700}}>Choose specific marine services (optional)</div><div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill, minmax(220px, 1fr))',gap:6}}>{MARINE_SERVICES.map(s=>(<div key={s.key} onClick={()=>toggleMs(s.key)} style={{padding:'8px 12px',border:`1px solid ${ms.has(s.key)?'#c8a84b':'rgba(200,168,75,.2)'}`,background:ms.has(s.key)?'#c8a84b':'rgba(8,16,10,.4)',color:ms.has(s.key)?'#08100a':'#b0c0a4',fontFamily:rj,fontSize:12,fontWeight:600,cursor:'pointer',userSelect:'none'}}>{s.label}</div>))}</div></div>)}
+          {done&&(<div style={{borderTop:'1px solid rgba(200,168,75,.2)',paddingTop:20,marginTop:20}}>
+            <div style={{fontFamily:rj,fontSize:11,letterSpacing:'2px',textTransform:'uppercase',color:'#c8a84b',marginBottom:14,fontWeight:700}}>{fb?`Other providers in ${country}`:`${results.length} provider${results.length!==1?'s':''} found at ${port}`}</div>
+            {fb&&results.length>0&&(<div style={{padding:'12px 16px',background:'rgba(200,168,75,.07)',border:'1px solid rgba(200,168,75,.2)',fontSize:13,color:'#e2c06a',marginBottom:12,fontFamily:rj,fontWeight:500,lineHeight:1.5}}>📡 No providers at <strong>{port}</strong> yet. Showing others in <strong>{country}</strong>.</div>)}
+            {results.length===0&&(<div style={{padding:28,textAlign:'center',fontFamily:rj,fontSize:13,color:'#7a8a72',lineHeight:1.7}}><strong style={{color:'#c8a84b',display:'block',marginBottom:6}}>No providers found.</strong><span style={{color:'#c8a84b',cursor:'pointer'}} onClick={()=>{setTab('register');setModal(true);}}>Register your business →</span></div>)}
+            {results.map(p=>(<div key={p.id} className="rrow" onClick={()=>setDetail(p)} style={{background:'#111c13',border:'1px solid rgba(200,168,75,.2)',padding:'18px 22px',marginBottom:8,display:'grid',gridTemplateColumns:'48px 1fr auto',gap:14,alignItems:'center',transition:'border-color .3s'}}>
+              <div style={{width:48,height:48,background:'rgba(200,168,75,.1)',border:'1px solid rgba(200,168,75,.2)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:20}}>{p.ico}</div>
+              <div><div style={{fontSize:15,fontWeight:600,marginBottom:3}}>{p.name}</div><div style={{fontSize:13,color:'#b0c0a4',marginBottom:7,lineHeight:1.4}}>{p.bio.length>150?p.bio.slice(0,150)+'…':p.bio}</div><div style={{display:'flex',gap:5,flexWrap:'wrap'}}>{p.ports.map(pt=><span key={pt} style={{fontFamily:rj,fontSize:10,letterSpacing:1,fontWeight:700,padding:'2px 8px',border:'1px solid rgba(200,168,75,.3)',color:'#c8a84b'}}>{pt}</span>)}</div></div>
+              <div style={{textAlign:'right',flexShrink:0}}><div style={{fontFamily:rj,fontSize:11,letterSpacing:'1.5px',textTransform:'uppercase',color:'#7a8a72',marginBottom:7,fontWeight:600}}>{nav(p.type)}</div><button onClick={e=>{e.stopPropagation();setDetail(p);}} style={{background:'transparent',border:'1px solid rgba(200,168,75,.3)',color:'#c8a84b',padding:'7px 16px',fontFamily:rj,fontSize:11,letterSpacing:'1.5px',textTransform:'uppercase',fontWeight:700,cursor:'pointer'}}>View Contact</button></div>
+            </div>))}
+          </div>)}
         </section>
 
-        {/* ── VISUALS ── */}
-        <section style={{ background: '#08100a', padding: '60px 56px', textAlign: 'center' }}>
-          {/* Globe */}
-          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 40 }}>
-            <div style={{ position: 'relative', width: 140, height: 140 }}>
-              <div style={{ position: 'absolute', inset: 0, borderRadius: '50%', border: '1px solid rgba(200,168,75,.3)', animation: 'spinSlow 18s linear infinite' }} />
-              <div style={{ position: 'absolute', inset: 14, borderRadius: '50%', border: '1px solid rgba(200,168,75,.2)', animation: 'spinSlow 12s linear infinite reverse' }} />
-              <div style={{ position: 'absolute', inset: 28, borderRadius: '50%', border: '1px solid rgba(200,168,75,.15)', animation: 'spinSlow 8s linear infinite' }} />
-              <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <div style={{ width: 50, height: 50, borderRadius: '50%', background: 'radial-gradient(circle at 35% 35%, rgba(200,168,75,.4), rgba(200,168,75,.05))', border: '1px solid rgba(200,168,75,.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20 }}>⚓</div>
-              </div>
-              <div style={{ position: 'absolute', inset: 0, animation: 'spinSlow 6s linear infinite' }}>
-                <div style={{ position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', width: 7, height: 7, borderRadius: '50%', background: '#c8a84b' }} />
-              </div>
+        {/* VISUALS */}
+        <section style={{background:'#08100a',padding:'60px 56px',textAlign:'center'}}>
+          <div style={{display:'flex',justifyContent:'center',marginBottom:40}}>
+            <div style={{position:'relative',width:140,height:140}}>
+              <div style={{position:'absolute',inset:0,borderRadius:'50%',border:'1px solid rgba(200,168,75,.3)',animation:'spinSlow 18s linear infinite'}}/>
+              <div style={{position:'absolute',inset:14,borderRadius:'50%',border:'1px solid rgba(200,168,75,.2)',animation:'spinSlow 12s linear infinite reverse'}}/>
+              <div style={{position:'absolute',inset:28,borderRadius:'50%',border:'1px solid rgba(200,168,75,.15)',animation:'spinSlow 8s linear infinite'}}/>
+              <div style={{position:'absolute',inset:0,display:'flex',alignItems:'center',justifyContent:'center'}}><div style={{width:50,height:50,borderRadius:'50%',background:'radial-gradient(circle at 35% 35%, rgba(200,168,75,.4), rgba(200,168,75,.05))',border:'1px solid rgba(200,168,75,.5)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:20}}>⚓</div></div>
             </div>
           </div>
-          {/* Scrolling banner */}
-          <div style={{ overflow: 'hidden', borderTop: '1px solid rgba(200,168,75,.12)', borderBottom: '1px solid rgba(200,168,75,.12)', padding: '10px 0', marginBottom: 40 }}>
-            <div style={{ display: 'flex', gap: 40, animation: 'scrollBanner 28s linear infinite', whiteSpace: 'nowrap' }}>
-              {['Rotterdam · NL', 'Singapore · SG', 'Dubai · UAE', 'Shanghai · CN', 'Mersin · TR', 'Houston · US', 'Piraeus · GR', 'Santos · BR', 'Hamburg · DE', 'Mumbai · IN', 'Busan · KR', 'Yokohama · JP', 'Durban · ZA', 'Sydney · AU', 'Panama · PA', 'Antwerp · BE', 'Valencia · ES', 'Port Said · EG', 'Karachi · PK', 'Colombo · LK',
-                'Rotterdam · NL', 'Singapore · SG', 'Dubai · UAE', 'Shanghai · CN', 'Mersin · TR', 'Houston · US', 'Piraeus · GR', 'Santos · BR', 'Hamburg · DE', 'Mumbai · IN', 'Busan · KR', 'Yokohama · JP'].map((item, i) => (
-                <span key={i} style={{ fontFamily: "'Rajdhani', sans-serif", fontSize: 11, fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', color: i % 4 === 0 ? '#c8a84b' : '#2a3a22', flexShrink: 0 }}>{item}</span>
+          <div style={{overflow:'hidden',borderTop:'1px solid rgba(200,168,75,.12)',borderBottom:'1px solid rgba(200,168,75,.12)',padding:'10px 0',marginBottom:40}}>
+            <div style={{display:'flex',gap:40,animation:'scrollBanner 28s linear infinite',whiteSpace:'nowrap'}}>
+              {['Rotterdam·NL','Singapore·SG','Dubai·UAE','Shanghai·CN','Mersin·TR','Houston·US','Piraeus·GR','Santos·BR','Hamburg·DE','Mumbai·IN','Busan·KR','Yokohama·JP','Durban·ZA','Sydney·AU','Panama·PA','Antwerp·BE',
+                'Rotterdam·NL','Singapore·SG','Dubai·UAE','Shanghai·CN','Mersin·TR','Houston·US','Piraeus·GR','Santos·BR','Hamburg·DE','Mumbai·IN','Busan·KR','Yokohama·JP'].map((item,i)=>(
+                <span key={i} style={{fontFamily:rj,fontSize:11,fontWeight:700,letterSpacing:'2px',textTransform:'uppercase',color:i%4===0?'#c8a84b':'#2a3a22',flexShrink:0}}>{item}</span>
               ))}
             </div>
           </div>
-          {/* Stat counters */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 1, background: 'rgba(200,168,75,.12)', maxWidth: 900, margin: '0 auto' }}>
-            {[
-              { value: '80+', label: 'Countries', sub: 'with active providers' },
-              { value: '1,000+', label: 'Ports', sub: 'in our database' },
-              { value: '37+', label: 'Providers', sub: 'verified & growing' },
-              { value: '$0', label: 'Search Fee', sub: 'forever free' },
-            ].map(s => (
-              <div key={s.label} style={{ background: '#0c1610', padding: '22px 16px', textAlign: 'center' }}>
-                <div style={{ fontFamily: "'Libre Baskerville', serif", fontSize: 32, fontWeight: 700, color: '#c8a84b', lineHeight: 1, marginBottom: 5 }}>{s.value}</div>
-                <div style={{ fontFamily: "'Rajdhani', sans-serif", fontSize: 11, fontWeight: 700, letterSpacing: 1, textTransform: 'uppercase', color: '#f5f0e8', marginBottom: 3 }}>{s.label}</div>
-                <div style={{ fontFamily: "'Rajdhani', sans-serif", fontSize: 9, color: '#7a8a72' }}>{s.sub}</div>
+          <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:1,background:'rgba(200,168,75,.12)',maxWidth:900,margin:'0 auto'}}>
+            {[['80+','Countries','with active providers'],['1,000+','Ports','in our database'],['37+','Providers','verified & growing'],['$0','Search Fee','forever free']].map(([v,l,s])=>(
+              <div key={l} style={{background:'#0c1610',padding:'22px 16px',textAlign:'center'}}><div style={{fontFamily:lb,fontSize:32,fontWeight:700,color:'#c8a84b',lineHeight:1,marginBottom:5}}>{v}</div><div style={{fontFamily:rj,fontSize:11,fontWeight:700,letterSpacing:1,textTransform:'uppercase',color:'#f5f0e8',marginBottom:3}}>{l}</div><div style={{fontFamily:rj,fontSize:9,color:'#7a8a72'}}>{s}</div></div>
+            ))}
+          </div>
+        </section>
+
+        {/* HOW IT WORKS */}
+        <section id="how" style={{padding:'100px 56px',background:'#0c1610',borderTop:'1px solid rgba(200,168,75,.15)'}}>
+          <div style={{fontFamily:rj,fontSize:11,letterSpacing:'3px',textTransform:'uppercase',color:'#c8a84b',marginBottom:14,fontWeight:700}}>Platform</div>
+          <h2 style={{fontFamily:lb,fontSize:'clamp(28px,3.5vw,46px)',fontWeight:700,lineHeight:1.05,marginBottom:48}}>How <em style={g}>PortServiceFinder</em> Works</h2>
+          <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:1,background:'rgba(200,168,75,.15)'}}>
+            {[{n:'01',ico:'🌍',t:'Select Country & Port',d:'Choose your destination from our global list. The system loads every registered port instantly. Search is completely free.'},
+              {n:'02',ico:'🔍',t:'Filter by Service Type',d:'Select Ship Agent, Shipchandler or Marine Services. Further narrow to specific specializations.'},
+              {n:'03',ico:'📡',t:'Smart Country Fallback',d:'No provider at your port? We automatically show other providers in the same country — clearly flagged.'}].map(s=>(
+              <div key={s.n} className="step" style={{background:'#111c13',padding:'42px 34px',position:'relative',overflow:'hidden',transition:'background .4s'}}>
+                <div style={{fontFamily:lb,fontSize:76,fontWeight:700,color:'rgba(200,168,75,.06)',position:'absolute',top:8,right:14,lineHeight:1}}>{s.n}</div>
+                <div style={{fontSize:28,marginBottom:16}}>{s.ico}</div>
+                <h3 style={{fontFamily:lb,fontSize:21,fontWeight:700,marginBottom:12}}>{s.t}</h3>
+                <p style={{fontSize:14,lineHeight:1.8,color:'#b0c0a4'}}>{s.d}</p>
               </div>
             ))}
           </div>
         </section>
 
-        {/* ── HOW IT WORKS ── */}
-        <section style={S.sec} id="how">
-          <div style={S.secEye}><span style={{ width: 30, height: 1, background: 'rgba(200,168,75,.4)', display: 'inline-block' }} />Platform</div>
-          <h2 style={S.secTitle}>How <em style={S.gold}>PortServiceFinder</em> Works</h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 1, background: 'rgba(200,168,75,.15)' }}>
-            {[
-              { n: '01', ico: '🌍', title: 'Select Country & Port', text: 'Choose your destination country from our global list of all coastal nations. The system instantly loads every registered port in that country. No account needed — search is completely free and open to all maritime operators worldwide.' },
-              { n: '02', ico: '🔍', title: 'Filter by Service Type', text: 'Select Ship Agent, Shipchandler or Marine Services. When you choose Marine Services, you can further narrow down to specific specializations — engine repair, refrigeration, diving, electrical and more.' },
-              { n: '03', ico: '📡', title: 'Smart Country Fallback', text: 'No provider at your exact port? PortServiceFinder automatically shows other available service companies in the same country — clearly flagged — so you always find what you need.' },
-            ].map(s => (
-              <div key={s.n} className="step" style={{ background: '#111c13', padding: '42px 34px', position: 'relative', overflow: 'hidden', transition: 'background .4s' }}>
-                <div style={{ fontFamily: "'Libre Baskerville', serif", fontSize: 76, fontWeight: 700, color: 'rgba(200,168,75,.06)', position: 'absolute', top: 8, right: 14, lineHeight: 1 }}>{s.n}</div>
-                <div style={{ fontSize: 28, marginBottom: 16 }}>{s.ico}</div>
-                <h3 style={{ fontFamily: "'Libre Baskerville', serif", fontSize: 21, fontWeight: 700, marginBottom: 12 }}>{s.title}</h3>
-                <p style={{ fontSize: 14, lineHeight: 1.8, color: '#b0c0a4' }}>{s.text}</p>
+        {/* PRICING */}
+        <section id="pricing" style={{padding:'100px 56px'}}>
+          <div style={{fontFamily:rj,fontSize:11,letterSpacing:'3px',textTransform:'uppercase',color:'#c8a84b',marginBottom:14,fontWeight:700}}>Pricing</div>
+          <h2 style={{fontFamily:lb,fontSize:'clamp(28px,3.5vw,46px)',fontWeight:700,lineHeight:1.05,marginBottom:48}}>Simple, <em style={g}>Transparent</em> Pricing</h2>
+          <div style={{display:'grid',gridTemplateColumns:'repeat(2,1fr)',gap:18,maxWidth:760,margin:'0 auto'}}>
+            {[{name:'Monthly',amt:'$149',per:'/ month',yr:'Billed monthly · Cancel anytime',badge:null,items:['Listed at all your ports','Full company profile','Direct phone, email & WhatsApp','Verified provider badge','Performance dashboard','Email support']},
+              {name:'Annual',amt:'$1,200',per:'/ year',yr:'Equivalent to $100/month',badge:'Save $588',items:['Everything in Monthly plan','$588 saved vs monthly billing','Priority placement in results','Direct contact details','Verified provider badge','Priority email support']}].map(tier=>(
+              <div key={tier.name} className="tier" style={{background:tier.badge?'linear-gradient(180deg,rgba(200,168,75,.06),transparent)':'#111c13',border:`1px solid ${tier.badge?'#c8a84b':'rgba(200,168,75,.25)'}`,padding:'36px 30px',position:'relative',transition:'all .4s',display:'flex',flexDirection:'column'}}>
+                {tier.badge&&<div style={{position:'absolute',top:-12,left:'50%',transform:'translateX(-50%)',background:'#c8a84b',color:'#08100a',fontFamily:rj,fontSize:11,letterSpacing:'2px',fontWeight:700,padding:'5px 14px'}}>{tier.badge}</div>}
+                <div style={{fontFamily:rj,fontSize:12,letterSpacing:'2px',textTransform:'uppercase',color:'#c8a84b',marginBottom:12,fontWeight:700}}>{tier.name}</div>
+                <div style={{display:'flex',alignItems:'baseline',gap:6,marginBottom:6}}><span style={{fontFamily:lb,fontSize:46,fontWeight:700,lineHeight:1}}>{tier.amt}</span><span style={{fontFamily:rj,fontSize:13,color:'#7a8a72',fontWeight:600}}>{tier.per}</span></div>
+                <div style={{fontSize:12,color:'#b0c0a4',marginBottom:22,fontFamily:rj,fontWeight:500}}>{tier.yr}</div>
+                <ul style={{listStyle:'none',flex:1,marginBottom:22,display:'flex',flexDirection:'column',gap:9}}>{tier.items.map(item=>(<li key={item} style={{fontSize:13,color:'#b0c0a4',display:'flex',alignItems:'flex-start',gap:8,lineHeight:1.5}}><span style={{color:'#c8a84b',fontWeight:700,flexShrink:0}}>✓</span>{item}</li>))}</ul>
+                <button onClick={()=>{setTab('register');setModal(true);}} style={{padding:13,background:tier.badge?'#c8a84b':'transparent',border:'1px solid rgba(200,168,75,.4)',color:tier.badge?'#08100a':'#c8a84b',fontFamily:rj,fontSize:13,letterSpacing:'2px',textTransform:'uppercase',fontWeight:700,cursor:'pointer',width:'100%'}}>Get Started</button>
               </div>
             ))}
           </div>
         </section>
 
-        {/* ── SEGMENTS ── */}
-        <section style={{ ...S.sec, ...S.secAlt }} id="services">
-          <div style={S.secEye}><span style={{ width: 30, height: 1, background: 'rgba(200,168,75,.4)', display: 'inline-block' }} />Directory Segments</div>
-          <h2 style={S.secTitle}>Three Segments.<br />One <em style={S.gold}>Powerful</em> Directory.</h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 1, background: 'rgba(200,168,75,.15)' }}>
-            {[
-              { ico: '🏢', title: 'Ship Agents', items: ['Full port call management', 'Customs clearance & documentation', 'Crew change & visa assistance', 'Cargo supervision & tally', 'Husbandry — medical, stores, spares', 'Port authority & terminal liaison', 'Bunker coordination & fuel', '24/7 emergency vessel assistance'] },
-              { ico: '⚓', title: 'Shipchandlers', items: ['Fresh and dry provisions, frozen foods', 'Deck stores — ropes, paints, safety gear', 'Engine room stores & consumables', 'Bonded and duty-free stores', 'Spare parts sourcing & delivery', 'Lubricating oils and chemicals', 'Safety & firefighting equipment', '24/7 emergency delivery'] },
-              { ico: '🔧', title: 'Marine Services', items: ['Main Engine & Auxiliary Repair', 'Refrigeration & HVAC', 'Electrical & Automation', 'Navigation & Communication', 'Underwater Diving', 'Hull, Propeller & Rudder', 'Welding & Fabrication', 'Classification Survey & NDT'] },
-            ].map(seg => (
-              <div key={seg.title} className="seg-card" style={{ background: '#111c13', padding: '42px 34px', position: 'relative', overflow: 'hidden', transition: 'background .4s', display: 'flex', flexDirection: 'column' }}>
-                <div style={{ width: 50, height: 50, border: '1px solid rgba(200,168,75,.25)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, marginBottom: 18 }}>{seg.ico}</div>
-                <h3 style={{ fontFamily: "'Libre Baskerville', serif", fontSize: 21, fontWeight: 700, marginBottom: 10 }}>{seg.title}</h3>
-                <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 7, flex: 1 }}>
-                  {seg.items.map(item => (
-                    <li key={item} style={{ fontSize: 13, color: '#b0c0a4', display: 'flex', alignItems: 'flex-start', gap: 7, lineHeight: 1.5 }}>
-                      <span style={{ color: '#c8a84b', fontSize: 11, flexShrink: 0, marginTop: 1 }}>→</span>{item}
-                    </li>
-                  ))}
-                </ul>
-                <div style={{ paddingTop: 18, borderTop: '1px solid rgba(200,168,75,.2)', display: 'flex', alignItems: 'baseline', gap: 4, marginTop: 20 }}>
-                  <span style={{ fontFamily: "'Libre Baskerville', serif", fontSize: 28, fontWeight: 700 }}>$149</span>
-                  <span style={{ fontSize: 12, color: '#7a8a72', fontFamily: "'Rajdhani', sans-serif", fontWeight: 600 }}>/ month</span>
-                </div>
-              </div>
-            ))}
+        {/* CTA */}
+        <section style={{padding:'80px 56px',textAlign:'center',background:'#0c1610',borderTop:'1px solid rgba(200,168,75,.15)'}}>
+          <h2 style={{fontFamily:lb,fontSize:'clamp(32px,4vw,56px)',fontWeight:700,lineHeight:1.05,marginBottom:16}}>Be Found by Every Vessel <em style={g}>Worldwide</em></h2>
+          <p style={{fontSize:15,color:'#b0c0a4',maxWidth:460,margin:'0 auto 36px',lineHeight:1.75}}>List on PortServiceFinder for <strong style={g}>$149/month</strong> or <strong style={g}>$1,200/year</strong>. No setup fee.</p>
+          <div style={{display:'flex',gap:12,justifyContent:'center',flexWrap:'wrap'}}>
+            <button onClick={()=>{setTab('register');setModal(true);}} style={{background:'#c8a84b',color:'#08100a',border:'none',padding:'14px 36px',fontFamily:rj,fontSize:15,letterSpacing:'2px',textTransform:'uppercase',fontWeight:700,cursor:'pointer'}}>List Your Business</button>
+            <button onClick={()=>document.getElementById('search')?.scrollIntoView({behavior:'smooth'})} style={{background:'transparent',color:'#f5f0e8',border:'1px solid rgba(200,168,75,.3)',padding:'13px 28px',fontFamily:rj,fontSize:15,letterSpacing:'2px',textTransform:'uppercase',fontWeight:600,cursor:'pointer'}}>Search a Port — Free</button>
           </div>
         </section>
 
-        {/* ── PRICING ── */}
-        <section style={S.sec} id="pricing">
-          <div style={S.secEye}><span style={{ width: 30, height: 1, background: 'rgba(200,168,75,.4)', display: 'inline-block' }} />Pricing</div>
-          <h2 style={S.secTitle}>Simple, <em style={S.gold}>Transparent</em> Pricing</h2>
-          <p style={{ textAlign: 'center', color: '#b0c0a4', maxWidth: 540, margin: '-30px auto 40px', fontSize: 14, lineHeight: 1.7 }}>One subscription. All features. No commission, no hidden fees.</p>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 18, maxWidth: 760, margin: '0 auto' }}>
-            {[
-              { name: 'Monthly', amt: '$149', per: '/ month', yr: 'Billed monthly · Cancel anytime', badge: null, items: ['Listed at all your ports', 'Full company profile', 'Direct phone, email & WhatsApp', 'Verified provider badge', 'Performance dashboard', 'Email support'] },
-              { name: 'Annual', amt: '$1,200', per: '/ year', yr: 'Equivalent to $100/month', badge: 'Save $588', items: ['Everything in Monthly plan', '$588 saved vs monthly billing', 'Priority placement in results', 'Direct phone, email & WhatsApp', 'Verified provider badge', 'Priority email support'] },
-            ].map(tier => (
-              <div key={tier.name} className="tier" style={{ background: tier.badge ? 'linear-gradient(180deg,rgba(200,168,75,.06),transparent)' : '#111c13', border: `1px solid ${tier.badge ? '#c8a84b' : 'rgba(200,168,75,.25)'}`, padding: '36px 30px', position: 'relative', transition: 'all .4s', display: 'flex', flexDirection: 'column' }}>
-                {tier.badge && <div style={{ position: 'absolute', top: -12, left: '50%', transform: 'translateX(-50%)', background: '#c8a84b', color: '#08100a', fontFamily: "'Rajdhani', sans-serif", fontSize: 11, letterSpacing: '2px', fontWeight: 700, padding: '5px 14px' }}>{tier.badge}</div>}
-                <div style={{ fontFamily: "'Rajdhani', sans-serif", fontSize: 12, letterSpacing: '2px', textTransform: 'uppercase', color: '#c8a84b', marginBottom: 12, fontWeight: 700 }}>{tier.name}</div>
-                <div style={{ display: 'flex', alignItems: 'baseline', gap: 6, marginBottom: 6 }}>
-                  <span style={{ fontFamily: "'Libre Baskerville', serif", fontSize: 46, fontWeight: 700, lineHeight: 1 }}>{tier.amt}</span>
-                  <span style={{ fontFamily: "'Rajdhani', sans-serif", fontSize: 13, color: '#7a8a72', fontWeight: 600 }}>{tier.per}</span>
-                </div>
-                <div style={{ fontSize: 12, color: '#b0c0a4', marginBottom: 22, fontFamily: "'Rajdhani', sans-serif", fontWeight: 500 }}>{tier.yr}</div>
-                <ul style={{ listStyle: 'none', flex: 1, marginBottom: 22, display: 'flex', flexDirection: 'column', gap: 9 }}>
-                  {tier.items.map(item => (
-                    <li key={item} style={{ fontSize: 13, color: '#b0c0a4', display: 'flex', alignItems: 'flex-start', gap: 8, lineHeight: 1.5 }}>
-                      <span style={{ color: '#c8a84b', fontWeight: 700, flexShrink: 0 }}>✓</span>{item}
-                    </li>
-                  ))}
-                </ul>
-                <button onClick={() => { setModalTab('register'); setModalOpen(true); }} style={{ padding: 13, background: tier.badge ? '#c8a84b' : 'transparent', border: '1px solid rgba(200,168,75,.4)', color: tier.badge ? '#08100a' : '#c8a84b', fontFamily: "'Rajdhani', sans-serif", fontSize: 13, letterSpacing: '2px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', width: '100%' }}>Get Started</button>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* ── WHY ── */}
-        <section style={{ ...S.sec, ...S.secAlt }} id="why">
-          <div style={S.secEye}><span style={{ width: 30, height: 1, background: 'rgba(200,168,75,.4)', display: 'inline-block' }} />Why PortServiceFinder</div>
-          <h2 style={S.secTitle}>The Platform Every<br />Maritime Operator <em style={S.gold}>Needs</em></h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 1, background: 'rgba(200,168,75,.15)' }}>
-            {[
-              { ico: '⚡', title: 'Instant Access at Any Port', text: 'Your vessel is heading to a port you\'ve never called before. In seconds, PortServiceFinder shows you every verified agent, chandler and service company registered there — with full contact details, bio and specializations.' },
-              { ico: '🔒', title: 'Verified, Professional Listings', text: 'Every provider on PortServiceFinder has submitted their company registration, physical address and service details. No anonymous listings, no fake companies. You know exactly who you\'re contacting.' },
-              { ico: '📡', title: 'Smart Country-Level Fallback', text: 'When no service is available at your exact port, our system automatically shows other available providers in the same country — clearly flagged. You\'ll always find help.' },
-              { ico: '🌐', title: 'Truly Global Coverage', text: 'From Busan to Buenos Aires, from Rotterdam to Richards Bay — PortServiceFinder covers every coastal nation and every significant commercial port worldwide.' },
-              { ico: '💰', title: 'Free to Search, Always', text: 'Shipowners, operators, charterers and managers never pay a cent. Search as many ports, countries and service types as you need — unlimited, forever free.' },
-              { ico: '📈', title: 'Flat-Fee Visibility', text: '$149/month puts your business in front of every vessel operator searching your port. No algorithms, no bidding, no commission cuts. A simple flat fee — same for everyone.' },
-            ].map(w => (
-              <div key={w.title} className="why-card" style={{ background: '#111c13', padding: '34px 30px', transition: 'background .4s' }}>
-                <div style={{ fontSize: 26, marginBottom: 12 }}>{w.ico}</div>
-                <h3 style={{ fontFamily: "'Libre Baskerville', serif", fontSize: 19, fontWeight: 700, marginBottom: 10 }}>{w.title}</h3>
-                <p style={{ fontSize: 14, lineHeight: 1.8, color: '#b0c0a4' }}>{w.text}</p>
-              </div>
-            ))}
-          </div>
-          <div style={{ padding: '34px 30px', textAlign: 'center', background: '#111c13', border: '1px solid rgba(200,168,75,.2)', marginTop: 52 }}>
-            <h3 style={{ fontFamily: "'Libre Baskerville', serif", fontSize: 22, fontWeight: 700, marginBottom: 10 }}>Early Access — <em style={S.gold}>Founding Members Welcome</em></h3>
-            <p style={{ fontSize: 14, color: '#b0c0a4', maxWidth: 540, margin: '0 auto', lineHeight: 1.75 }}>PortServiceFinder is in early access. Founding providers get locked-in pricing for life and direct input on platform features.</p>
-          </div>
-        </section>
-
-        {/* ── CTA ── */}
-        <section style={{ padding: '100px 56px', textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
-          <div style={{ position: 'absolute', width: 500, height: 500, border: '1px solid rgba(200,168,75,.15)', borderRadius: '50%', left: '50%', top: '50%', transform: 'translate(-50%,-50%)', pointerEvents: 'none' }} />
-          <div style={{ position: 'absolute', width: 800, height: 800, border: '1px solid rgba(200,168,75,.05)', borderRadius: '50%', left: '50%', top: '50%', transform: 'translate(-50%,-50%)', pointerEvents: 'none' }} />
-          <div style={{ position: 'relative', zIndex: 2 }}>
-            <div style={{ ...S.secEye, justifyContent: 'center', marginBottom: 22 }}><span style={{ width: 30, height: 1, background: 'rgba(200,168,75,.4)', display: 'inline-block' }} />Get Started Today</div>
-            <h2 style={{ fontFamily: "'Libre Baskerville', serif", fontSize: 'clamp(32px,4vw,56px)', fontWeight: 700, lineHeight: 1.05, marginBottom: 16 }}>Be Found by<br />Every Vessel <em style={S.gold}>Worldwide</em></h2>
-            <p style={{ fontSize: 15, color: '#b0c0a4', maxWidth: 460, margin: '0 auto 36px', lineHeight: 1.75 }}>List your maritime business on PortServiceFinder for <strong style={S.gold}>$149/month</strong> or <strong style={S.gold}>$1,200/year</strong>. No setup fee. Cancel anytime.</p>
-            <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
-              <button onClick={() => { setModalTab('register'); setModalOpen(true); }} style={{ background: '#c8a84b', color: '#08100a', border: 'none', padding: '14px 36px', fontFamily: "'Rajdhani', sans-serif", fontSize: 15, letterSpacing: '2px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer' }}>List Your Business</button>
-              <button onClick={() => document.getElementById('search')?.scrollIntoView({ behavior: 'smooth' })} style={{ background: 'transparent', color: '#f5f0e8', border: '1px solid rgba(200,168,75,.3)', padding: '13px 28px', fontFamily: "'Rajdhani', sans-serif", fontSize: 15, letterSpacing: '2px', textTransform: 'uppercase', fontWeight: 600, cursor: 'pointer' }}>Search a Port — Free</button>
+        {/* FOOTER */}
+        <footer style={{borderTop:'1px solid rgba(200,168,75,.2)',padding:'56px'}}>
+          <div style={{display:'grid',gridTemplateColumns:'2.2fr 1fr 1fr 1fr',gap:56,marginBottom:40}}>
+            <div>
+              <div style={{fontFamily:lb,fontSize:18,fontWeight:700,letterSpacing:1,marginBottom:12}}>PortService<span style={g}>Finder</span></div>
+              <p style={{fontSize:13,color:'#7a8a72',lineHeight:1.75,maxWidth:240,marginBottom:18}}>The global maritime services directory.</p>
+              <a href="mailto:info@portservicefinder.com" style={{fontSize:13,color:'rgba(200,168,75,.6)',textDecoration:'none'}}>📧 info@portservicefinder.com</a>
             </div>
+            {[{t:'Directory',l:['Ship Agents','Shipchandlers','Marine Services','Search by Port']},{t:'Company',l:['About Us','Contact','Blog','Partners']},{t:'Legal',l:['Terms of Service','Privacy Policy','Listing Rules','Disclaimer']}].map(col=>(
+              <div key={col.t}><h4 style={{fontFamily:rj,fontSize:11,letterSpacing:'2px',textTransform:'uppercase',color:'#c8a84b',marginBottom:16,fontWeight:700}}>{col.t}</h4><ul style={{listStyle:'none',display:'flex',flexDirection:'column',gap:9}}>{col.l.map(l=><li key={l}><a href="#" style={{color:'#7a8a72',textDecoration:'none',fontSize:13}}>{l}</a></li>)}</ul></div>
+            ))}
           </div>
-        </section>
-
-        {/* ── FOOTER ── */}
-        <footer style={{ borderTop: '1px solid rgba(200,168,75,.2)', padding: '56px 56px 0', display: 'grid', gridTemplateColumns: '2.2fr 1fr 1fr 1fr', gap: 56 }}>
-          <div>
-            <div style={{ fontFamily: "'Libre Baskerville', serif", fontSize: 18, fontWeight: 700, letterSpacing: 1, marginBottom: 12 }}>PortService<span style={S.gold}>Finder</span></div>
-            <p style={{ fontSize: 13, color: '#7a8a72', lineHeight: 1.75, maxWidth: 240, marginBottom: 18 }}>The global maritime services directory. Connecting vessels with verified agents, chandlers and service providers at every port worldwide.</p>
-            <div style={{ fontSize: 13, color: '#7a8a72' }}>📧 <a href="mailto:info@portservicefinder.com" style={{ color: 'rgba(200,168,75,.6)', textDecoration: 'none' }}>info@portservicefinder.com</a></div>
+          <div style={{borderTop:'1px solid rgba(200,168,75,.15)',paddingTop:18,display:'flex',justifyContent:'space-between',fontFamily:rj,fontSize:11,color:'#4a4a3a',letterSpacing:1,fontWeight:600}}>
+            <span>© 2026 PortServiceFinder. All rights reserved.</span>
+            <span>MARITIME DIRECTORY · GLOBAL · FREE TO SEARCH</span>
           </div>
-          {[
-            { title: 'Directory', links: ['Ship Agents', 'Shipchandlers', 'Marine Services', 'Search by Port'] },
-            { title: 'Company', links: ['About Us', 'Contact', 'Blog', 'Partners'] },
-            { title: 'Legal', links: ['Terms of Service', 'Privacy Policy', 'Listing Rules', 'Disclaimer'] },
-          ].map(col => (
-            <div key={col.title}>
-              <h4 style={{ fontFamily: "'Rajdhani', sans-serif", fontSize: 11, letterSpacing: '2px', textTransform: 'uppercase', color: '#c8a84b', marginBottom: 16, fontWeight: 700 }}>{col.title}</h4>
-              <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 9 }}>
-                {col.links.map(l => <li key={l}><a href="#" style={{ color: '#7a8a72', textDecoration: 'none', fontSize: 13 }}>{l}</a></li>)}
-              </ul>
-            </div>
-          ))}
         </footer>
-        <div style={{ borderTop: '1px solid rgba(200,168,75,.15)', padding: '18px 56px', display: 'flex', justifyContent: 'space-between', fontFamily: "'Rajdhani', sans-serif", fontSize: 11, color: '#4a4a3a', letterSpacing: 1, fontWeight: 600, flexWrap: 'wrap', gap: 10 }}>
-          <span>© 2026 PortServiceFinder. All rights reserved.</span>
-          <span>MARITIME DIRECTORY · GLOBAL · FREE TO SEARCH</span>
-        </div>
 
-        {/* ── PROVIDER DETAIL MODAL ── */}
-        {detailProvider && (
-          <div style={{ ...S.modalBg, zIndex: 550 }} onClick={e => { if (e.target === e.currentTarget) setDetailProvider(null); }}>
-            <div style={{ background: '#0c1610', border: '1px solid rgba(200,168,75,.3)', width: '100%', maxWidth: 720, margin: 'auto' }}>
-              <div style={{ padding: '30px 36px 22px', borderBottom: '1px solid rgba(200,168,75,.2)', display: 'flex', gap: 18, alignItems: 'flex-start' }}>
-                <div style={{ width: 60, height: 60, background: 'rgba(200,168,75,.1)', border: '1px solid rgba(200,168,75,.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 26, flexShrink: 0 }}>{detailProvider.ico}</div>
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontFamily: "'Libre Baskerville', serif", fontSize: 24, fontWeight: 700, marginBottom: 4 }}>{detailProvider.name}</div>
-                  <div style={{ fontFamily: "'Rajdhani', sans-serif", fontSize: 11, letterSpacing: '2px', textTransform: 'uppercase', color: '#c8a84b', fontWeight: 700, marginBottom: 8 }}>{typeLabel(detailProvider.type)}</div>
-                  <span style={{ fontFamily: "'Rajdhani', sans-serif", fontSize: 11, color: '#4caf76', border: '1px solid rgba(76,175,118,.3)', padding: '3px 9px', letterSpacing: 1, fontWeight: 700 }}>✓ VERIFIED PROVIDER</span>
-                </div>
-                <button onClick={() => setDetailProvider(null)} style={{ background: 'none', border: 'none', color: '#7a8a72', fontSize: 20, cursor: 'pointer', flexShrink: 0 }}>✕</button>
+        {/* DETAIL MODAL */}
+        {detail&&(<div style={{position:'fixed',inset:0,background:'rgba(8,16,10,.95)',backdropFilter:'blur(16px)',zIndex:550,display:'flex',alignItems:'flex-start',justifyContent:'center',padding:'40px 20px',overflowY:'auto'}} onClick={e=>{if(e.target===e.currentTarget)setDetail(null);}}>
+          <div style={{background:'#0c1610',border:'1px solid rgba(200,168,75,.3)',width:'100%',maxWidth:720,margin:'auto'}}>
+            <div style={{padding:'30px 36px 22px',borderBottom:'1px solid rgba(200,168,75,.2)',display:'flex',gap:18,alignItems:'flex-start'}}>
+              <div style={{width:60,height:60,background:'rgba(200,168,75,.1)',border:'1px solid rgba(200,168,75,.2)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:26,flexShrink:0}}>{detail.ico}</div>
+              <div style={{flex:1}}>
+                <div style={{fontFamily:lb,fontSize:24,fontWeight:700,marginBottom:4}}>{detail.name}</div>
+                <div style={{fontFamily:rj,fontSize:11,letterSpacing:'2px',textTransform:'uppercase',color:'#c8a84b',fontWeight:700,marginBottom:8}}>{nav(detail.type)}</div>
+                <span style={{fontFamily:rj,fontSize:11,color:'#4caf76',border:'1px solid rgba(76,175,118,.3)',padding:'3px 9px',letterSpacing:1,fontWeight:700}}>✓ VERIFIED PROVIDER</span>
               </div>
-              <div style={{ padding: '26px 36px 32px' }}>
-                <div style={{ marginBottom: 24 }}>
-                  <div style={{ fontFamily: "'Rajdhani', sans-serif", fontSize: 11, letterSpacing: '2px', textTransform: 'uppercase', color: '#c8a84b', marginBottom: 10, paddingBottom: 6, borderBottom: '1px solid rgba(200,168,75,.2)', fontWeight: 700 }}>About</div>
-                  <p style={{ fontSize: 14, color: '#f5f0e8', lineHeight: 1.7 }}>{detailProvider.bio}</p>
-                </div>
-                <div style={{ marginBottom: 24 }}>
-                  <div style={{ fontFamily: "'Rajdhani', sans-serif", fontSize: 11, letterSpacing: '2px', textTransform: 'uppercase', color: '#c8a84b', marginBottom: 10, paddingBottom: 6, borderBottom: '1px solid rgba(200,168,75,.2)', fontWeight: 700 }}>Contact Information</div>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
-                    {[
-                      { label: 'Phone', value: detailProvider.phone, href: `tel:${detailProvider.phone.replace(/\s/g, '')}` },
-                      { label: 'Email', value: detailProvider.email, href: `mailto:${detailProvider.email}` },
-                      { label: 'WhatsApp / 24h', value: detailProvider.wa, href: `https://wa.me/${detailProvider.wa.replace(/\D/g, '')}` },
-                      { label: 'Website', value: detailProvider.web.replace(/^https?:\/\//, ''), href: detailProvider.web },
-                    ].map(c => (
-                      <div key={c.label} style={{ background: '#111c13', border: '1px solid rgba(200,168,75,.2)', padding: '14px 16px' }}>
-                        <div style={{ fontFamily: "'Rajdhani', sans-serif", fontSize: 10, letterSpacing: '1.5px', textTransform: 'uppercase', color: '#7a8a72', marginBottom: 5, fontWeight: 600 }}>{c.label}</div>
-                        <a href={c.href} target="_blank" rel="noreferrer" style={{ fontSize: 14, color: '#c8a84b', textDecoration: 'none' }}>{c.value}</a>
-                      </div>
-                    ))}
-                    <div style={{ background: '#111c13', border: '1px solid rgba(200,168,75,.2)', padding: '14px 16px', gridColumn: '1/-1' }}>
-                      <div style={{ fontFamily: "'Rajdhani', sans-serif", fontSize: 10, letterSpacing: '1.5px', textTransform: 'uppercase', color: '#7a8a72', marginBottom: 5, fontWeight: 600 }}>Address</div>
-                      <div style={{ fontSize: 14 }}>{detailProvider.addr}</div>
-                    </div>
-                    <div style={{ background: '#111c13', border: '1px solid rgba(200,168,75,.2)', padding: '14px 16px', gridColumn: '1/-1' }}>
-                      <div style={{ fontFamily: "'Rajdhani', sans-serif", fontSize: 10, letterSpacing: '1.5px', textTransform: 'uppercase', color: '#7a8a72', marginBottom: 5, fontWeight: 600 }}>Contact Person</div>
-                      <div style={{ fontSize: 14 }}>{detailProvider.person}</div>
-                    </div>
-                  </div>
-                </div>
-                <div style={{ marginBottom: 24 }}>
-                  <div style={{ fontFamily: "'Rajdhani', sans-serif", fontSize: 11, letterSpacing: '2px', textTransform: 'uppercase', color: '#c8a84b', marginBottom: 10, paddingBottom: 6, borderBottom: '1px solid rgba(200,168,75,.2)', fontWeight: 700 }}>Ports Served</div>
-                  <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-                    {detailProvider.ports.map(p => <span key={p} style={{ fontFamily: "'Rajdhani', sans-serif", fontSize: 10, letterSpacing: 1, fontWeight: 700, padding: '2px 8px', border: '1px solid rgba(200,168,75,.3)', color: '#c8a84b' }}>{p}</span>)}
-                  </div>
-                </div>
-                <div style={{ display: 'flex', gap: 10, marginTop: 20, flexWrap: 'wrap' }}>
-                  <a href={`tel:${detailProvider.phone.replace(/\s/g, '')}`} style={{ flex: 1, minWidth: 140, padding: 13, background: '#c8a84b', color: '#08100a', textDecoration: 'none', fontFamily: "'Rajdhani', sans-serif", fontSize: 13, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>📞 Call Now</a>
-                  <a href={`mailto:${detailProvider.email}`} style={{ flex: 1, minWidth: 140, padding: 13, background: '#c8a84b', color: '#08100a', textDecoration: 'none', fontFamily: "'Rajdhani', sans-serif", fontSize: 13, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>✉ Send Email</a>
-                  <a href={`https://wa.me/${detailProvider.wa.replace(/\D/g, '')}`} target="_blank" rel="noreferrer" style={{ flex: 1, minWidth: 140, padding: 13, background: 'transparent', border: '1px solid rgba(200,168,75,.4)', color: '#c8a84b', textDecoration: 'none', fontFamily: "'Rajdhani', sans-serif", fontSize: 13, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>💬 WhatsApp</a>
-                </div>
-              </div>
+              <button onClick={()=>setDetail(null)} style={{background:'none',border:'none',color:'#7a8a72',fontSize:20,cursor:'pointer',flexShrink:0}}>✕</button>
             </div>
-          </div>
-        )}
-
-        {/* ── REGISTER / LOGIN MODAL ── */}
-        {modalOpen && (
-          <div style={S.modalBg} onClick={e => { if (e.target === e.currentTarget) setModalOpen(false); }}>
-            <div style={{ background: '#0c1610', border: '1px solid rgba(200,168,75,.3)', width: '100%', maxWidth: 740, margin: 'auto' }}>
-              <div style={{ padding: '26px 34px 18px', borderBottom: '1px solid rgba(200,168,75,.2)', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                <div>
-                  <h2 style={{ fontFamily: "'Libre Baskerville', serif", fontSize: 24, fontWeight: 700, marginBottom: 4 }}>{modalTab === 'login' ? 'Provider Sign In' : 'List Your Business'}</h2>
-                  <p style={{ fontSize: 13, color: '#b0c0a4', lineHeight: 1.6, maxWidth: 440 }}>{modalTab === 'login' ? 'Access your listing dashboard.' : 'Join PortServiceFinder and get found by vessels at every port you serve.'}</p>
-                </div>
-                <button onClick={() => setModalOpen(false)} style={{ background: 'none', border: 'none', color: '#7a8a72', fontSize: 20, cursor: 'pointer', flexShrink: 0 }}>✕</button>
-              </div>
-              <div style={{ padding: '26px 34px' }}>
-                {/* Tabs */}
-                <div style={{ display: 'flex', borderBottom: '1px solid rgba(200,168,75,.2)', marginBottom: 22 }}>
-                  {(['register', 'login'] as const).map(tab => (
-                    <button key={tab} onClick={() => setModalTab(tab)} style={{ padding: '10px 20px', fontFamily: "'Rajdhani', sans-serif", fontSize: 12, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', color: modalTab === tab ? '#c8a84b' : '#7a8a72', marginBottom: -1, background: 'none', border: 'none', borderBottom: modalTab === tab ? '2px solid #c8a84b' : '2px solid transparent' }}>
-                      {tab === 'register' ? 'Register Business' : 'Sign In'}
-                    </button>
-                  ))}
-                </div>
-
-                {modalTab === 'register' ? (
-                  <div>
-                    {/* Segment select */}
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 8, marginBottom: 20 }}>
-                      {[{ type: 'agent', ico: '🏢', name: 'Ship Agent' }, { type: 'chandler', ico: '⚓', name: 'Shipchandler' }, { type: 'service', ico: '🔧', name: 'Marine Service' }].map(s => (
-                        <div key={s.type} onClick={() => setSelectedSegment(s.type)} style={{ border: `1px solid ${selectedSegment === s.type ? '#c8a84b' : 'rgba(200,168,75,.2)'}`, padding: '14px 10px', textAlign: 'center', cursor: 'pointer', background: selectedSegment === s.type ? 'rgba(200,168,75,.1)' : 'transparent' }}>
-                          <div style={{ fontSize: 20, marginBottom: 5 }}>{s.ico}</div>
-                          <div style={{ fontFamily: "'Rajdhani', sans-serif", fontSize: 12, letterSpacing: 1, textTransform: 'uppercase', fontWeight: 700 }}>{s.name}</div>
-                          <div style={{ fontSize: 11, color: '#c8a84b', marginTop: 2, fontFamily: "'Rajdhani', sans-serif", fontWeight: 600 }}>$149/mo</div>
-                        </div>
-                      ))}
-                    </div>
-                    <FInput label="Company Name *" placeholder="Your company name" />
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 10 }}>
-                      <FInput label="City / Head Office *" placeholder="e.g. Mersin" />
-                      <FInput label="Country *" placeholder="e.g. Turkey" />
-                    </div>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 10 }}>
-                      <FInput label="Port 1 *" placeholder="e.g. Mersin" />
-                      <FInput label="Port 2" placeholder="Optional" />
-                    </div>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 10 }}>
-                      <FInput label="Email *" type="email" placeholder="info@yourcompany.com" />
-                      <FInput label="Phone *" placeholder="+1 ..." />
-                    </div>
-                    <FInput label="Contact Person *" placeholder="Primary contact name" />
-                    <div style={{ marginBottom: 16 }}>
-                      <label style={{ display: 'block', fontFamily: "'Rajdhani', sans-serif", fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', color: '#7a8a72', marginBottom: 4, fontWeight: 600 }}>Company Bio (max 500 characters) *</label>
-                      <textarea maxLength={500} placeholder="Brief company description, experience, certifications, key services." style={{ background: 'rgba(8,16,10,.7)', border: '1px solid rgba(200,168,75,.25)', color: '#f5f0e8', padding: '10px 13px', fontFamily: "'Outfit', sans-serif", fontSize: 14, width: '100%', resize: 'vertical', minHeight: 80 }} />
-                    </div>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 10 }}>
-                      <FInput label="Login Email *" type="email" placeholder="your@company.com" />
-                      <FInput label="Password *" type="password" placeholder="Min 8 characters" />
-                    </div>
-                    <button onClick={() => { setModalOpen(false); setPayModalOpen(true); }} style={{ width: '100%', padding: 14, background: '#c8a84b', border: 'none', color: '#08100a', fontFamily: "'Rajdhani', sans-serif", fontSize: 14, letterSpacing: '2px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', marginTop: 8 }}>Continue to Payment</button>
-                    <p style={{ fontSize: 11, color: '#7a8a72', textAlign: 'center', marginTop: 10 }}>$149/month or $1,200/year. Cancel anytime.</p>
-                  </div>
-                ) : (
-                  <div>
-                    <FInput label="Email" type="email" placeholder="your@company.com" />
-                    <FInput label="Password" type="password" placeholder="••••••••" />
-                    <button style={{ width: '100%', padding: 14, background: '#c8a84b', border: 'none', color: '#08100a', fontFamily: "'Rajdhani', sans-serif", fontSize: 14, letterSpacing: '2px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', marginTop: 8 }}>Sign In to PortServiceFinder</button>
-                    <p style={{ textAlign: 'center', fontSize: 13, color: '#7a8a72', marginTop: 14 }}>Not registered? <span style={{ color: '#c8a84b', cursor: 'pointer' }} onClick={() => setModalTab('register')}>List your business →</span></p>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* ── PAYMENT MODAL ── */}
-        {payModalOpen && (
-          <div style={{ ...S.modalBg, zIndex: 600, alignItems: 'center' }} onClick={e => { if (e.target === e.currentTarget) setPayModalOpen(false); }}>
-            <div style={{ background: '#0c1610', border: '1px solid rgba(200,168,75,.3)', width: '100%', maxWidth: 620, padding: 40, margin: 'auto', position: 'relative' }}>
-              <button onClick={() => setPayModalOpen(false)} style={{ position: 'absolute', top: 18, right: 18, background: 'none', border: 'none', color: '#7a8a72', fontSize: 20, cursor: 'pointer' }}>✕</button>
-              <h2 style={{ fontFamily: "'Libre Baskerville', serif", fontSize: 26, fontWeight: 700, marginBottom: 6 }}>Choose Your <em style={S.gold}>Plan</em></h2>
-              <p style={{ fontSize: 13, color: '#b0c0a4', marginBottom: 24, lineHeight: 1.6 }}>Select monthly or annual billing. Cancel anytime.</p>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 26 }}>
-                {[{ id: 'monthly', label: 'Monthly', price: '$149', period: 'per month', note: 'Billed monthly. Cancel anytime.', badge: null },
-                { id: 'yearly', label: 'Annual', price: '$1,200', period: 'per year', note: 'Equivalent to $100/month.', badge: 'Save $588' }].map(p => (
-                  <div key={p.id} onClick={() => setSelectedPlan(p.id as 'monthly' | 'yearly')} style={{ border: `2px solid ${selectedPlan === p.id ? '#c8a84b' : 'rgba(200,168,75,.25)'}`, padding: '26px 22px', cursor: 'pointer', position: 'relative', background: selectedPlan === p.id ? 'rgba(200,168,75,.07)' : 'transparent' }}>
-                    {p.badge && <div style={{ position: 'absolute', top: 14, right: 14, background: '#c8a84b', color: '#08100a', fontFamily: "'Rajdhani', sans-serif", fontSize: 10, letterSpacing: '1.5px', fontWeight: 700, padding: '3px 8px' }}>{p.badge}</div>}
-                    <div style={{ fontFamily: "'Rajdhani', sans-serif", fontSize: 11, letterSpacing: '2px', textTransform: 'uppercase', color: '#c8a84b', fontWeight: 700, marginBottom: 10 }}>{p.label}</div>
-                    <div style={{ fontFamily: "'Libre Baskerville', serif", fontSize: 36, fontWeight: 700, lineHeight: 1 }}>{p.price}</div>
-                    <div style={{ fontFamily: "'Rajdhani', sans-serif", fontSize: 12, color: '#7a8a72', fontWeight: 600, marginTop: 4 }}>{p.period}</div>
-                    <div style={{ fontSize: 12, color: '#b0c0a4', marginTop: 10, lineHeight: 1.5 }}>{p.note}</div>
+            <div style={{padding:'26px 36px 32px'}}>
+              <p style={{fontSize:14,color:'#f5f0e8',lineHeight:1.7,marginBottom:20}}>{detail.bio}</p>
+              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:14,marginBottom:20}}>
+                {[{label:'Phone',value:detail.phone,href:`tel:${detail.phone.replace(/\s/g,'')}`},{label:'Email',value:detail.email,href:`mailto:${detail.email}`},{label:'WhatsApp',value:detail.wa,href:`https://wa.me/${detail.wa.replace(/\D/g,'')}`},{label:'Website',value:detail.web.replace(/^https?:\/\//,''),href:detail.web}].map(c=>(
+                  <div key={c.label} style={{background:'#111c13',border:'1px solid rgba(200,168,75,.2)',padding:'14px 16px'}}>
+                    <div style={{fontFamily:rj,fontSize:10,letterSpacing:'1.5px',textTransform:'uppercase',color:'#7a8a72',marginBottom:5,fontWeight:600}}>{c.label}</div>
+                    <a href={c.href} target="_blank" rel="noreferrer" style={{fontSize:14,color:'#c8a84b',textDecoration:'none'}}>{c.value}</a>
                   </div>
                 ))}
               </div>
-              <div style={{ marginBottom: 16 }}>
-                <FInput label="Cardholder Name" placeholder="Name on card" />
-                <FInput label="Card Number" placeholder="1234 5678 9012 3456" />
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-                  <FInput label="Expiry (MM/YY)" placeholder="MM/YY" />
-                  <FInput label="CVC" placeholder="123" />
-                </div>
+              <div style={{display:'flex',gap:6,flexWrap:'wrap',marginBottom:20}}>{detail.ports.map(p=><span key={p} style={{fontFamily:rj,fontSize:10,letterSpacing:1,fontWeight:700,padding:'2px 8px',border:'1px solid rgba(200,168,75,.3)',color:'#c8a84b'}}>{p}</span>)}</div>
+              <div style={{display:'flex',gap:10,flexWrap:'wrap'}}>
+                <a href={`tel:${detail.phone.replace(/\s/g,'')}`} style={{flex:1,minWidth:140,padding:13,background:'#c8a84b',color:'#08100a',textDecoration:'none',fontFamily:rj,fontSize:13,letterSpacing:'1.5px',textTransform:'uppercase',fontWeight:700,textAlign:'center',display:'flex',alignItems:'center',justifyContent:'center',gap:6}}>📞 Call Now</a>
+                <a href={`mailto:${detail.email}`} style={{flex:1,minWidth:140,padding:13,background:'#c8a84b',color:'#08100a',textDecoration:'none',fontFamily:rj,fontSize:13,letterSpacing:'1.5px',textTransform:'uppercase',fontWeight:700,textAlign:'center',display:'flex',alignItems:'center',justifyContent:'center',gap:6}}>✉ Email</a>
+                <a href={`https://wa.me/${detail.wa.replace(/\D/g,'')}`} target="_blank" rel="noreferrer" style={{flex:1,minWidth:140,padding:13,background:'transparent',border:'1px solid rgba(200,168,75,.4)',color:'#c8a84b',textDecoration:'none',fontFamily:rj,fontSize:13,letterSpacing:'1.5px',textTransform:'uppercase',fontWeight:700,textAlign:'center',display:'flex',alignItems:'center',justifyContent:'center',gap:6}}>💬 WhatsApp</a>
               </div>
-              <button onClick={() => { setPayModalOpen(false); alert('Welcome to PortServiceFinder! Your listing is now active.'); }} style={{ width: '100%', padding: 14, background: '#c8a84b', border: 'none', color: '#08100a', fontFamily: "'Rajdhani', sans-serif", fontSize: 14, letterSpacing: '2px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer' }}>
-                Pay {selectedPlan === 'yearly' ? '$1,200' : '$149'} & Activate Listing
-              </button>
-              <div style={{ fontFamily: "'Rajdhani', sans-serif", fontSize: 11, color: '#7a8a72', textAlign: 'center', marginTop: 12, fontWeight: 600 }}>🔒 Secure payment · Cancel anytime</div>
             </div>
           </div>
-        )}
+        </div>)}
+
+        {/* REGISTER/LOGIN MODAL */}
+        {modal&&(<div style={{position:'fixed',inset:0,background:'rgba(8,16,10,.95)',backdropFilter:'blur(16px)',zIndex:500,display:'flex',alignItems:'flex-start',justifyContent:'center',padding:'40px 20px',overflowY:'auto'}} onClick={e=>{if(e.target===e.currentTarget)setModal(false);}}>
+          <div style={{background:'#0c1610',border:'1px solid rgba(200,168,75,.3)',width:'100%',maxWidth:740,margin:'auto'}}>
+            <div style={{padding:'26px 34px 18px',borderBottom:'1px solid rgba(200,168,75,.2)',display:'flex',justifyContent:'space-between',alignItems:'flex-start'}}>
+              <div><h2 style={{fontFamily:lb,fontSize:24,fontWeight:700,marginBottom:4}}>{tab==='login'?'Provider Sign In':'List Your Business'}</h2><p style={{fontSize:13,color:'#b0c0a4',lineHeight:1.6}}>{tab==='login'?'Access your listing dashboard.':'Join PortServiceFinder — get found by vessels worldwide.'}</p></div>
+              <button onClick={()=>setModal(false)} style={{background:'none',border:'none',color:'#7a8a72',fontSize:20,cursor:'pointer'}}>✕</button>
+            </div>
+            <div style={{padding:'26px 34px'}}>
+              <div style={{display:'flex',borderBottom:'1px solid rgba(200,168,75,.2)',marginBottom:22}}>
+                {(['register','login'] as const).map(t=>(<button key={t} onClick={()=>setTab(t)} style={{padding:'10px 20px',fontFamily:rj,fontSize:12,letterSpacing:'1.5px',textTransform:'uppercase',fontWeight:700,cursor:'pointer',color:tab===t?'#c8a84b':'#7a8a72',background:'none',border:'none',borderBottom:tab===t?'2px solid #c8a84b':'2px solid transparent',marginBottom:-1}}>{t==='register'?'Register Business':'Sign In'}</button>))}
+              </div>
+              {tab==='register'?(
+                <div>
+                  <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:8,marginBottom:20}}>
+                    {[{type:'agent',ico:'🏢',name:'Ship Agent'},{type:'chandler',ico:'⚓',name:'Shipchandler'},{type:'service',ico:'🔧',name:'Marine Service'}].map(s=>(<div key={s.type} onClick={()=>setSeg(s.type)} style={{border:`1px solid ${seg===s.type?'#c8a84b':'rgba(200,168,75,.2)'}`,padding:'14px 10px',textAlign:'center',cursor:'pointer',background:seg===s.type?'rgba(200,168,75,.1)':'transparent'}}><div style={{fontSize:20,marginBottom:5}}>{s.ico}</div><div style={{fontFamily:rj,fontSize:12,letterSpacing:1,textTransform:'uppercase',fontWeight:700}}>{s.name}</div><div style={{fontSize:11,color:'#c8a84b',marginTop:2,fontFamily:rj,fontWeight:600}}>$149/mo</div></div>))}
+                  </div>
+                  <FI l="Company Name *" p="Your company name"/>
+                  <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10,marginBottom:10}}><FI l="City *" p="e.g. Mersin"/><FI l="Country *" p="e.g. Turkey"/></div>
+                  <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10,marginBottom:10}}><FI l="Port 1 *" p="e.g. Mersin"/><FI l="Port 2" p="Optional"/></div>
+                  <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10,marginBottom:10}}><FI l="Email *" p="info@yourcompany.com" t="email"/><FI l="Phone *" p="+1 ..."/></div>
+                  <FI l="Contact Person *" p="Primary contact name"/>
+                  <div style={{marginBottom:16}}><label style={{display:'block',fontFamily:rj,fontSize:11,letterSpacing:'1.5px',textTransform:'uppercase',color:'#7a8a72',marginBottom:4,fontWeight:600}}>Company Bio *</label><textarea maxLength={500} placeholder="Brief company description..." style={{background:'rgba(8,16,10,.7)',border:'1px solid rgba(200,168,75,.25)',color:'#f5f0e8',padding:'10px 13px',fontFamily:"'Outfit',sans-serif",fontSize:14,width:'100%',resize:'vertical',minHeight:80}}/></div>
+                  <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10,marginBottom:10}}><FI l="Login Email *" p="your@company.com" t="email"/><FI l="Password *" p="Min 8 characters" t="password"/></div>
+                  <button onClick={()=>{setModal(false);setPayModal(true);}} style={{width:'100%',padding:14,background:'#c8a84b',border:'none',color:'#08100a',fontFamily:rj,fontSize:14,letterSpacing:'2px',textTransform:'uppercase',fontWeight:700,cursor:'pointer',marginTop:8}}>Continue to Payment</button>
+                  <p style={{fontSize:11,color:'#7a8a72',textAlign:'center',marginTop:10}}>$149/month or $1,200/year. Cancel anytime.</p>
+                </div>
+              ):(
+                <div>
+                  <FI l="Email" p="your@company.com" t="email"/>
+                  <FI l="Password" p="••••••••" t="password"/>
+                  <button style={{width:'100%',padding:14,background:'#c8a84b',border:'none',color:'#08100a',fontFamily:rj,fontSize:14,letterSpacing:'2px',textTransform:'uppercase',fontWeight:700,cursor:'pointer',marginTop:8}}>Sign In</button>
+                  <p style={{textAlign:'center',fontSize:13,color:'#7a8a72',marginTop:14}}>Not registered? <span style={{color:'#c8a84b',cursor:'pointer'}} onClick={()=>setTab('register')}>List your business →</span></p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>)}
+
+        {/* PAYMENT MODAL */}
+        {payModal&&(<div style={{position:'fixed',inset:0,background:'rgba(8,16,10,.96)',backdropFilter:'blur(20px)',zIndex:600,display:'flex',alignItems:'center',justifyContent:'center',padding:'20px',overflowY:'auto'}} onClick={e=>{if(e.target===e.currentTarget)setPayModal(false);}}>
+          <div style={{background:'#0c1610',border:'1px solid rgba(200,168,75,.3)',width:'100%',maxWidth:620,padding:40,margin:'auto',position:'relative'}}>
+            <button onClick={()=>setPayModal(false)} style={{position:'absolute',top:18,right:18,background:'none',border:'none',color:'#7a8a72',fontSize:20,cursor:'pointer'}}>✕</button>
+            <h2 style={{fontFamily:lb,fontSize:26,fontWeight:700,marginBottom:6}}>Choose Your <em style={g}>Plan</em></h2>
+            <p style={{fontSize:13,color:'#b0c0a4',marginBottom:24,lineHeight:1.6}}>Select monthly or annual billing. Cancel anytime.</p>
+            <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:14,marginBottom:26}}>
+              {[{id:'monthly',label:'Monthly',price:'$149',period:'per month',note:'Billed monthly.',badge:null},{id:'yearly',label:'Annual',price:'$1,200',period:'per year',note:'Equivalent to $100/month.',badge:'Save $588'}].map(p=>(
+                <div key={p.id} onClick={()=>setPlan(p.id as 'monthly'|'yearly')} style={{border:`2px solid ${plan===p.id?'#c8a84b':'rgba(200,168,75,.25)'}`,padding:'26px 22px',cursor:'pointer',position:'relative',background:plan===p.id?'rgba(200,168,75,.07)':'transparent'}}>
+                  {p.badge&&<div style={{position:'absolute',top:14,right:14,background:'#c8a84b',color:'#08100a',fontFamily:rj,fontSize:10,letterSpacing:'1.5px',fontWeight:700,padding:'3px 8px'}}>{p.badge}</div>}
+                  <div style={{fontFamily:rj,fontSize:11,letterSpacing:'2px',textTransform:'uppercase',color:'#c8a84b',fontWeight:700,marginBottom:10}}>{p.label}</div>
+                  <div style={{fontFamily:lb,fontSize:36,fontWeight:700,lineHeight:1}}>{p.price}</div>
+                  <div style={{fontFamily:rj,fontSize:12,color:'#7a8a72',fontWeight:600,marginTop:4}}>{p.period}</div>
+                  <div style={{fontSize:12,color:'#b0c0a4',marginTop:10,lineHeight:1.5}}>{p.note}</div>
+                </div>
+              ))}
+            </div>
+            <FI l="Cardholder Name" p="Name on card"/>
+            <FI l="Card Number" p="1234 5678 9012 3456"/>
+            <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10}}><FI l="Expiry (MM/YY)" p="MM/YY"/><FI l="CVC" p="123"/></div>
+            <button onClick={()=>{setPayModal(false);alert('Welcome to PortServiceFinder! Your listing is now active.');}} style={{width:'100%',padding:14,background:'#c8a84b',border:'none',color:'#08100a',fontFamily:rj,fontSize:14,letterSpacing:'2px',textTransform:'uppercase',fontWeight:700,cursor:'pointer',marginTop:18}}>
+              Pay {plan==='yearly'?'$1,200':'$149'} & Activate Listing
+            </button>
+            <div style={{fontFamily:rj,fontSize:11,color:'#7a8a72',textAlign:'center',marginTop:12,fontWeight:600}}>🔒 Secure payment · Cancel anytime</div>
+          </div>
+        </div>)}
 
       </div>
+    </div>
+  </div>
+  </div>
     </>
   );
 }
 
-// ── FORM INPUT HELPER ──
-function FInput({ label, placeholder, type = 'text' }: { label: string; placeholder: string; type?: string }) {
+function FI({l,p,t='text'}:{l:string;p:string;t?:string}) {
   return (
-    <div style={{ marginBottom: 10 }}>
-      <label style={{ display: 'block', fontFamily: "'Rajdhani', sans-serif", fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', color: '#7a8a72', marginBottom: 4, fontWeight: 600 }}>{label}</label>
-      <input type={type} placeholder={placeholder} style={{ background: 'rgba(8,16,10,.7)', border: '1px solid rgba(200,168,75,.25)', color: '#f5f0e8', padding: '10px 13px', fontFamily: "'Outfit', sans-serif", fontSize: 14, width: '100%' }} />
+    <div style={{marginBottom:10}}>
+      <label style={{display:'block',fontFamily:"'Rajdhani',sans-serif",fontSize:11,letterSpacing:'1.5px',textTransform:'uppercase',color:'#7a8a72',marginBottom:4,fontWeight:600}}>{l}</label>
+      <input type={t} placeholder={p} style={{background:'rgba(8,16,10,.7)',border:'1px solid rgba(200,168,75,.25)',color:'#f5f0e8',padding:'10px 13px',fontFamily:"'Outfit',sans-serif",fontSize:14,width:'100%'}}/>
     </div>
   );
 }
