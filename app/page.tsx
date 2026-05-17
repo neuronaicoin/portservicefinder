@@ -693,7 +693,7 @@ export default function Home() {
                 {/* Tabs */}
                 <div style={{ display: 'flex', borderBottom: '1px solid rgba(200,168,75,.2)', marginBottom: 22 }}>
                   {(['register', 'login'] as const).map(tab => (
-                    <button key={tab} onClick={() => setModalTab(tab)} style={{ padding: '10px 20px', fontFamily: "'Rajdhani', sans-serif", fontSize: 12, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', color: modalTab === tab ? '#c8a84b' : '#7a8a72', borderBottom: modalTab === tab ? '2px solid #c8a84b' : '2px solid transparent', marginBottom: -1, background: 'none', border: 'none', borderBottom: modalTab === tab ? '2px solid #c8a84b' : 'none' }}>
+                    <button key={tab} onClick={() => setModalTab(tab)} style={{ padding: '10px 20px', fontFamily: "'Rajdhani', sans-serif", fontSize: 12, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', color: modalTab === tab ? '#c8a84b' : '#7a8a72', borderBottom: modalTab === tab ? '2px solid #c8a84b' : '2px solid transparent', marginBottom: -1, background: 'none', borderBottom: modalTab === tab ? '2px solid #c8a84b' : 'none' }}>
                       {tab === 'register' ? 'Register Business' : 'Sign In'}
                     </button>
                   ))}
@@ -798,3 +798,4 @@ function FInput({ label, placeholder, type = 'text' }: { label: string; placehol
     </div>
   );
 }
+
