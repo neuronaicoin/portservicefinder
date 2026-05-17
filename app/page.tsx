@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect, useRef } from 'react';
+import { useState } from 'react';
 
 // ============================================================
 // DATA
@@ -163,7 +163,6 @@ const PROVIDERS: Provider[] = [
 
 // ============================================================
 // SEARCH LOGIC
-
 function runSearch(country: string, port: string, cat: string, ms: Set<string>) {
   const ok = (p: Provider) => {
     if (cat === 'all') return true;
@@ -531,6 +530,8 @@ export default function Home() {
                   </div>
                 )}
               </div>
+            </div>
+          </div>
         )}
 
         {/* PAYMENT MODAL */}
@@ -563,7 +564,6 @@ export default function Home() {
         )}
 
       </div>
-      </div>
     </>
   );
 }
@@ -576,4 +576,3 @@ function FI({l,p,t='text'}:{l:string;p:string;t?:string}) {
     </div>
   );
 }
-
