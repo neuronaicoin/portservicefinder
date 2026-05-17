@@ -562,10 +562,9 @@ export default function Home() {
               <div style={{fontFamily:rj,fontSize:10,color:'#7a8a72',textAlign:'center',marginTop:9}}>🔒 Secure payment · Cancel anytime</div>
             </div>
           </div>
-        )}
+       )}
 
-
-    </div>
+      </div>
   );
 }
 
