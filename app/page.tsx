@@ -266,7 +266,7 @@ export default function Home() {
           position:absolute;inset:0;z-index:0;
           background:
             linear-gradient(180deg, rgba(8,16,10,.78) 0%, rgba(8,16,10,.82) 50%, rgba(8,16,10,.96) 100%),
-            url('https://images.unsplash.com/photo-1605108042-1f2d4f0fdac1?auto=format&fit=crop&w=1920&q=75');
+            url('/hero-bg.jpg');
           background-size:cover;
           background-position:center;
           background-repeat:no-repeat;
