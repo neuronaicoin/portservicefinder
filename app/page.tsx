@@ -1,16 +1,10 @@
 'use client';
 import { useState } from 'react';
 
-// ============================================================
-// COUNTRY → FLAG MAP
-// ============================================================
 const FLAG: Record<string, string> = {
   'Albania':'🇦🇱','Algeria':'🇩🇿','Angola':'🇦🇴','Antigua and Barbuda':'🇦🇬','Argentina':'🇦🇷','Aruba':'🇦🇼','Australia':'🇦🇺','Bahamas':'🇧🇸','Bahrain':'🇧🇭','Bangladesh':'🇧🇩','Barbados':'🇧🇧','Belgium':'🇧🇪','Belize':'🇧🇿','Benin':'🇧🇯','Bermuda':'🇧🇲','Brazil':'🇧🇷','Brunei':'🇧🇳','Bulgaria':'🇧🇬','Cambodia':'🇰🇭','Cameroon':'🇨🇲','Canada':'🇨🇦','Cape Verde':'🇨🇻','Cayman Islands':'🇰🇾','Chile':'🇨🇱','China':'🇨🇳','Colombia':'🇨🇴','Comoros':'🇰🇲','Congo (DRC)':'🇨🇩','Congo (Republic)':'🇨🇬','Cook Islands':'🇨🇰','Costa Rica':'🇨🇷','Croatia':'🇭🇷','Cuba':'🇨🇺','Curacao':'🇨🇼','Cyprus':'🇨🇾','Denmark':'🇩🇰','Djibouti':'🇩🇯','Dominica':'🇩🇲','Dominican Republic':'🇩🇴','Ecuador':'🇪🇨','Egypt':'🇪🇬','El Salvador':'🇸🇻','Equatorial Guinea':'🇬🇶','Eritrea':'🇪🇷','Estonia':'🇪🇪','Faroe Islands':'🇫🇴','Fiji':'🇫🇯','Finland':'🇫🇮','France':'🇫🇷','French Polynesia':'🇵🇫','Gabon':'🇬🇦','Gambia':'🇬🇲','Georgia':'🇬🇪','Germany':'🇩🇪','Ghana':'🇬🇭','Gibraltar':'🇬🇮','Greece':'🇬🇷','Greenland':'🇬🇱','Grenada':'🇬🇩','Guam':'🇬🇺','Guatemala':'🇬🇹','Guinea':'🇬🇳','Guinea-Bissau':'🇬🇼','Guyana':'🇬🇾','Haiti':'🇭🇹','Honduras':'🇭🇳','Hong Kong':'🇭🇰','Iceland':'🇮🇸','India':'🇮🇳','Indonesia':'🇮🇩','Iran':'🇮🇷','Iraq':'🇮🇶','Ireland':'🇮🇪','Israel':'🇮🇱','Italy':'🇮🇹','Ivory Coast':'🇨🇮','Jamaica':'🇯🇲','Japan':'🇯🇵','Jordan':'🇯🇴','Kenya':'🇰🇪','Kiribati':'🇰🇮','Kuwait':'🇰🇼','Latvia':'🇱🇻','Lebanon':'🇱🇧','Liberia':'🇱🇷','Libya':'🇱🇾','Lithuania':'🇱🇹','Madagascar':'🇲🇬','Malaysia':'🇲🇾','Maldives':'🇲🇻','Malta':'🇲🇹','Marshall Islands':'🇲🇭','Mauritania':'🇲🇷','Mauritius':'🇲🇺','Mexico':'🇲🇽','Micronesia':'🇫🇲','Monaco':'🇲🇨','Montenegro':'🇲🇪','Morocco':'🇲🇦','Mozambique':'🇲🇿','Myanmar':'🇲🇲','Namibia':'🇳🇦','Nauru':'🇳🇷','Netherlands':'🇳🇱','New Caledonia':'🇳🇨','New Zealand':'🇳🇿','Nicaragua':'🇳🇮','Nigeria':'🇳🇬','North Korea':'🇰🇵','Norway':'🇳🇴','Oman':'🇴🇲','Pakistan':'🇵🇰','Palau':'🇵🇼','Panama':'🇵🇦','Papua New Guinea':'🇵🇬','Paraguay':'🇵🇾','Peru':'🇵🇪','Philippines':'🇵🇭','Poland':'🇵🇱','Portugal':'🇵🇹','Puerto Rico':'🇵🇷','Qatar':'🇶🇦','Romania':'🇷🇴','Russia':'🇷🇺','Saint Kitts and Nevis':'🇰🇳','Saint Lucia':'🇱🇨','Saint Vincent':'🇻🇨','Samoa':'🇼🇸','Sao Tome and Principe':'🇸🇹','Saudi Arabia':'🇸🇦','Senegal':'🇸🇳','Seychelles':'🇸🇨','Sierra Leone':'🇸🇱','Singapore':'🇸🇬','Slovenia':'🇸🇮','Solomon Islands':'🇸🇧','Somalia':'🇸🇴','South Africa':'🇿🇦','South Korea':'🇰🇷','Spain':'🇪🇸','Sri Lanka':'🇱🇰','Sudan':'🇸🇩','Suriname':'🇸🇷','Sweden':'🇸🇪','Syria':'🇸🇾','Taiwan':'🇹🇼','Tanzania':'🇹🇿','Thailand':'🇹🇭','Timor-Leste':'🇹🇱','Togo':'🇹🇬','Tonga':'🇹🇴','Trinidad and Tobago':'🇹🇹','Tunisia':'🇹🇳','Turkey':'🇹🇷','UAE':'🇦🇪','Ukraine':'🇺🇦','United Kingdom':'🇬🇧','United States':'🇺🇸','Uruguay':'🇺🇾','Vanuatu':'🇻🇺','Venezuela':'🇻🇪','Vietnam':'🇻🇳','Virgin Islands (US)':'🇻🇮','Yemen':'🇾🇪',
 };
 
-// ============================================================
-// DATA — Full port list per maritime country (~1,200 ports)
-// ============================================================
 const PORT_DATA: Record<string, string[]> = {
   'Albania': ['Durrës', 'Vlorë', 'Shëngjin', 'Sarandë'],
   'Algeria': ['Algiers', 'Oran', 'Annaba', 'Skikda', 'Béjaïa', 'Arzew', 'Mostaganem', 'Ghazaouet', 'Djendjene', 'Tenes'],
@@ -177,9 +171,6 @@ const PORT_DATA: Record<string, string[]> = {
   'Yemen': ['Aden', 'Hodeidah', 'Mukalla', 'Mocha'],
 };
 
-// ============================================================
-// MARINE SERVICES — 34 categories
-// ============================================================
 const MARINE_SERVICES = [
   { key: 'engine', label: 'Main & Auxiliary Engine' },
   { key: 'refrigeration', label: 'Refrigeration & HVAC' },
@@ -217,7 +208,6 @@ const MARINE_SERVICES = [
   { key: 'pestcontrol', label: 'Pest Control & Fumigation' },
 ];
 
-// Shipchandler sub-categories
 const CHANDLER_CATEGORIES = [
   { key: 'fresh', label: 'Fresh & Frozen Provisions' },
   { key: 'bonded', label: 'Bonded Stores' },
@@ -271,8 +261,6 @@ const PROVIDERS: Provider[] = [
   { id: 'p037', type: 'agent', ico: '🏢', name: 'Yokohama Port Agency', bio: 'Yokohama, Tokyo, Kobe, Osaka port agency. JIFFA member. English-speaking 24/7 operations team.', ports: ['Yokohama', 'Tokyo', 'Kobe', 'Osaka'], country: 'Japan', svc: ['agent'], phone: '+81 45 663 0000', email: 'ops@yokohamaagency.jp', wa: '+819011110000', web: 'https://yokohamaagency.jp', addr: 'Naka-ku, Yokohama 231-0023', person: 'Cpt. Hiroshi Tanaka' },
 ];
 
-// ============================================================
-// SEARCH LOGIC
 function runSearch(country: string, port: string, cat: string, ms: Set<string>) {
   const ok = (p: Provider) => {
     if (cat === 'all') return true;
@@ -378,9 +366,20 @@ export default function Home() {
         body{background:#08100a;overflow-x:hidden;}
         select option{background:#111c13;color:#f5f0e8;}
         @keyframes fu{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-        @keyframes spinSlow{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
         @keyframes scrollBanner{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
         @keyframes waveMove{0%{background-position:0 0}100%{background-position:1200px 0}}
+        @keyframes radarSpin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+        @keyframes centerPulse{0%,100%{box-shadow:0 0 0 0 rgba(200,168,75,.5),0 0 20px rgba(200,168,75,.4);transform:scale(1)}50%{box-shadow:0 0 0 15px rgba(200,168,75,0),0 0 30px rgba(200,168,75,.7);transform:scale(1.08)}}
+        @keyframes dotBlink{
+          0%,93%{background:rgba(200,168,75,.4);box-shadow:none;transform:translate(-50%,-50%) scale(1);}
+          94%,98%{background:#ffd76a;box-shadow:0 0 14px #c8a84b,0 0 24px rgba(200,168,75,.6);transform:translate(-50%,-50%) scale(1.7);}
+          100%{background:rgba(200,168,75,.4);transform:translate(-50%,-50%) scale(1);}
+        }
+        @keyframes labelShow{
+          0%,93%{opacity:0;transform:translateY(0);}
+          94%,98%{opacity:1;transform:translateY(-4px);}
+          100%{opacity:0;transform:translateY(0);}
+        }
         .a1{opacity:0;animation:fu .7s .1s forwards;}
         .a2{opacity:0;animation:fu .7s .25s forwards;}
         .a3{opacity:0;animation:fu .7s .4s forwards;}
@@ -402,6 +401,26 @@ export default function Home() {
         .hero-content{position:relative;z-index:2;}
         .pay-card{transition:all .25s ease;cursor:pointer;}
         .pay-card:hover{border-color:#c8a84b!important;transform:translateY(-3px);}
+        .radar-wrap{filter:drop-shadow(0 4px 18px rgba(200,168,75,.15));}
+        .radar-center{width:54px;height:54px;border-radius:50%;background:radial-gradient(circle at 35% 35%,rgba(200,168,75,.5),rgba(200,168,75,.08));border:1px solid rgba(200,168,75,.55);display:flex;align-items:center;justify-content:center;font-size:22px;animation:centerPulse 2.4s ease-in-out infinite;}
+        .radar-dot{position:absolute;width:9px;height:9px;border-radius:50%;background:rgba(200,168,75,.4);transform:translate(-50%,-50%);animation:dotBlink 6s linear infinite;z-index:3;}
+        .radar-label{position:absolute;left:14px;top:-2px;font-family:'Rajdhani',sans-serif;font-size:10px;font-weight:700;letter-spacing:1.2px;color:#ffd76a;white-space:nowrap;opacity:0;animation:labelShow 6s linear infinite;text-shadow:0 0 8px rgba(200,168,75,.5);pointer-events:none;}
+        .dot-r1-tl{top:38%;left:38%;animation-delay:-0.75s;}
+        .dot-r1-tl .radar-label{animation-delay:-0.75s;}
+        .dot-r1-br{top:62%;left:62%;animation-delay:-3.75s;}
+        .dot-r1-br .radar-label{animation-delay:-3.75s;}
+        .dot-r2-tr{top:32%;left:68%;animation-delay:-1.75s;}
+        .dot-r2-tr .radar-label{animation-delay:-1.75s;}
+        .dot-r2-bl{top:68%;left:32%;animation-delay:-4.75s;}
+        .dot-r2-bl .radar-label{animation-delay:-4.75s;}
+        .dot-r3-right{top:50%;left:88%;animation-delay:-1.25s;}
+        .dot-r3-right .radar-label{animation-delay:-1.25s;}
+        .dot-r3-left{top:50%;left:12%;animation-delay:-4.25s;}
+        .dot-r3-left .radar-label{animation-delay:-4.25s;}
+        .dot-r4-top{top:6%;left:50%;animation-delay:0s;}
+        .dot-r4-top .radar-label{animation-delay:0s;}
+        .dot-r4-bottom{top:94%;left:50%;animation-delay:-3s;}
+        .dot-r4-bottom .radar-label{animation-delay:-3s;}
         @media(max-width:768px){
           .nav-links,.nav-signin{display:none!important;}
           .nav-list{font-size:11px!important;padding:7px 14px!important;margin-left:auto!important;}
@@ -423,6 +442,8 @@ export default function Home() {
           .dc2{grid-template-columns:1fr!important;}
           .pay3{grid-template-columns:1fr!important;}
           .port3{grid-template-columns:1fr!important;}
+          .radar-wrap{width:220px!important;height:220px!important;}
+          .radar-label{font-size:9px!important;}
         }
       `}</style>
 
@@ -524,13 +545,25 @@ export default function Home() {
         </section>
 
         <section className="vis-sec" style={{background:'#08100a',padding:'52px 48px',textAlign:'center',borderTop:'1px solid rgba(200,168,75,.1)'}}>
-          <div style={{display:'flex',justifyContent:'center',marginBottom:32}}>
-            <div style={{position:'relative',width:110,height:110}}>
-              <div style={{position:'absolute',inset:0,borderRadius:'50%',border:'1px solid rgba(200,168,75,.3)',animation:'spinSlow 18s linear infinite'}}/>
-              <div style={{position:'absolute',inset:11,borderRadius:'50%',border:'1px solid rgba(200,168,75,.2)',animation:'spinSlow 12s linear infinite reverse'}}/>
-              <div style={{position:'absolute',inset:22,borderRadius:'50%',border:'1px solid rgba(200,168,75,.15)',animation:'spinSlow 8s linear infinite'}}/>
-              <div style={{position:'absolute',inset:0,display:'flex',alignItems:'center',justifyContent:'center'}}>
-                <div style={{width:40,height:40,borderRadius:'50%',background:'radial-gradient(circle at 35% 35%,rgba(200,168,75,.4),rgba(200,168,75,.05))',border:'1px solid rgba(200,168,75,.5)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:17}}>⚓</div>
+          <div style={{display:'flex',justifyContent:'center',marginBottom:40}}>
+            <div className="radar-wrap" style={{position:'relative',width:300,height:300}}>
+              <div style={{position:'absolute',inset:0,borderRadius:'50%',border:'1px solid rgba(200,168,75,.25)'}}/>
+              <div style={{position:'absolute',inset:'12.5%',borderRadius:'50%',border:'1px solid rgba(200,168,75,.2)'}}/>
+              <div style={{position:'absolute',inset:'25%',borderRadius:'50%',border:'1px solid rgba(200,168,75,.18)'}}/>
+              <div style={{position:'absolute',inset:'37.5%',borderRadius:'50%',border:'1px solid rgba(200,168,75,.15)'}}/>
+              <div style={{position:'absolute',top:'50%',left:0,right:0,height:1,background:'rgba(200,168,75,.1)'}}/>
+              <div style={{position:'absolute',left:'50%',top:0,bottom:0,width:1,background:'rgba(200,168,75,.1)'}}/>
+              <div className="radar-sweep" style={{position:'absolute',inset:0,borderRadius:'50%',background:'conic-gradient(from 0deg, rgba(200,168,75,.45) 0deg, rgba(200,168,75,.15) 30deg, transparent 60deg, transparent 360deg)',animation:'radarSpin 6s linear infinite'}}/>
+              <div className="radar-dot dot-r4-top"><span className="radar-label">Rotterdam</span></div>
+              <div className="radar-dot dot-r4-bottom"><span className="radar-label">Santos</span></div>
+              <div className="radar-dot dot-r3-right"><span className="radar-label">Hong Kong</span></div>
+              <div className="radar-dot dot-r3-left"><span className="radar-label">Houston</span></div>
+              <div className="radar-dot dot-r2-tr"><span className="radar-label">Shanghai</span></div>
+              <div className="radar-dot dot-r2-bl"><span className="radar-label">Hamburg</span></div>
+              <div className="radar-dot dot-r1-tl"><span className="radar-label">Singapore</span></div>
+              <div className="radar-dot dot-r1-br"><span className="radar-label">Dubai</span></div>
+              <div style={{position:'absolute',inset:0,display:'flex',alignItems:'center',justifyContent:'center',zIndex:5}}>
+                <div className="radar-center">⚓</div>
               </div>
             </div>
           </div>
