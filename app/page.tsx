@@ -452,11 +452,6 @@ export default function Home() {
         </div>)}
 
       </div>
-    </div>
-    </div>
-    </div>
-    </div>
-    </div>
     </>
   );
 }
@@ -469,3 +464,4 @@ function FI({l,p,t='text'}:{l:string;p:string;t?:string}) {
     </div>
   );
 }
+
