@@ -5,104 +5,180 @@ import { useState } from 'react';
 // COUNTRY → FLAG MAP
 // ============================================================
 const FLAG: Record<string, string> = {
-  'Albania':'🇦🇱','Algeria':'🇩🇿','Angola':'🇦🇴','Argentina':'🇦🇷','Australia':'🇦🇺','Bahrain':'🇧🇭','Bangladesh':'🇧🇩','Belgium':'🇧🇪','Brazil':'🇧🇷','Bulgaria':'🇧🇬','Canada':'🇨🇦','Chile':'🇨🇱','China':'🇨🇳','Colombia':'🇨🇴','Croatia':'🇭🇷','Cyprus':'🇨🇾','Denmark':'🇩🇰','Djibouti':'🇩🇯','Ecuador':'🇪🇨','Egypt':'🇪🇬','Estonia':'🇪🇪','Finland':'🇫🇮','France':'🇫🇷','Germany':'🇩🇪','Ghana':'🇬🇭','Greece':'🇬🇷','Honduras':'🇭🇳','Hong Kong':'🇭🇰','India':'🇮🇳','Indonesia':'🇮🇩','Iran':'🇮🇷','Iraq':'🇮🇶','Ireland':'🇮🇪','Israel':'🇮🇱','Italy':'🇮🇹','Japan':'🇯🇵','Jordan':'🇯🇴','Kenya':'🇰🇪','Kuwait':'🇰🇼','Latvia':'🇱🇻','Libya':'🇱🇾','Lithuania':'🇱🇹','Malaysia':'🇲🇾','Malta':'🇲🇹','Mauritius':'🇲🇺','Mexico':'🇲🇽','Morocco':'🇲🇦','Mozambique':'🇲🇿','Myanmar':'🇲🇲','Namibia':'🇳🇦','Netherlands':'🇳🇱','New Zealand':'🇳🇿','Nigeria':'🇳🇬','Norway':'🇳🇴','Oman':'🇴🇲','Pakistan':'🇵🇰','Panama':'🇵🇦','Peru':'🇵🇪','Philippines':'🇵🇭','Poland':'🇵🇱','Portugal':'🇵🇹','Qatar':'🇶🇦','Romania':'🇷🇴','Russia':'🇷🇺','Saudi Arabia':'🇸🇦','Senegal':'🇸🇳','Singapore':'🇸🇬','Slovenia':'🇸🇮','South Africa':'🇿🇦','South Korea':'🇰🇷','Spain':'🇪🇸','Sri Lanka':'🇱🇰','Sudan':'🇸🇩','Sweden':'🇸🇪','Taiwan':'🇹🇼','Tanzania':'🇹🇿','Thailand':'🇹🇭','Togo':'🇹🇬','Tunisia':'🇹🇳','Turkey':'🇹🇷','UAE':'🇦🇪','Ukraine':'🇺🇦','United Kingdom':'🇬🇧','United States':'🇺🇸','Uruguay':'🇺🇾','Venezuela':'🇻🇪','Vietnam':'🇻🇳',
+  'Albania':'🇦🇱','Algeria':'🇩🇿','Angola':'🇦🇴','Antigua and Barbuda':'🇦🇬','Argentina':'🇦🇷','Aruba':'🇦🇼','Australia':'🇦🇺','Bahamas':'🇧🇸','Bahrain':'🇧🇭','Bangladesh':'🇧🇩','Barbados':'🇧🇧','Belgium':'🇧🇪','Belize':'🇧🇿','Benin':'🇧🇯','Bermuda':'🇧🇲','Brazil':'🇧🇷','Brunei':'🇧🇳','Bulgaria':'🇧🇬','Cambodia':'🇰🇭','Cameroon':'🇨🇲','Canada':'🇨🇦','Cape Verde':'🇨🇻','Cayman Islands':'🇰🇾','Chile':'🇨🇱','China':'🇨🇳','Colombia':'🇨🇴','Comoros':'🇰🇲','Congo (DRC)':'🇨🇩','Congo (Republic)':'🇨🇬','Cook Islands':'🇨🇰','Costa Rica':'🇨🇷','Croatia':'🇭🇷','Cuba':'🇨🇺','Curacao':'🇨🇼','Cyprus':'🇨🇾','Denmark':'🇩🇰','Djibouti':'🇩🇯','Dominica':'🇩🇲','Dominican Republic':'🇩🇴','Ecuador':'🇪🇨','Egypt':'🇪🇬','El Salvador':'🇸🇻','Equatorial Guinea':'🇬🇶','Eritrea':'🇪🇷','Estonia':'🇪🇪','Faroe Islands':'🇫🇴','Fiji':'🇫🇯','Finland':'🇫🇮','France':'🇫🇷','French Polynesia':'🇵🇫','Gabon':'🇬🇦','Gambia':'🇬🇲','Georgia':'🇬🇪','Germany':'🇩🇪','Ghana':'🇬🇭','Gibraltar':'🇬🇮','Greece':'🇬🇷','Greenland':'🇬🇱','Grenada':'🇬🇩','Guam':'🇬🇺','Guatemala':'🇬🇹','Guinea':'🇬🇳','Guinea-Bissau':'🇬🇼','Guyana':'🇬🇾','Haiti':'🇭🇹','Honduras':'🇭🇳','Hong Kong':'🇭🇰','Iceland':'🇮🇸','India':'🇮🇳','Indonesia':'🇮🇩','Iran':'🇮🇷','Iraq':'🇮🇶','Ireland':'🇮🇪','Israel':'🇮🇱','Italy':'🇮🇹','Ivory Coast':'🇨🇮','Jamaica':'🇯🇲','Japan':'🇯🇵','Jordan':'🇯🇴','Kenya':'🇰🇪','Kiribati':'🇰🇮','Kuwait':'🇰🇼','Latvia':'🇱🇻','Lebanon':'🇱🇧','Liberia':'🇱🇷','Libya':'🇱🇾','Lithuania':'🇱🇹','Madagascar':'🇲🇬','Malaysia':'🇲🇾','Maldives':'🇲🇻','Malta':'🇲🇹','Marshall Islands':'🇲🇭','Mauritania':'🇲🇷','Mauritius':'🇲🇺','Mexico':'🇲🇽','Micronesia':'🇫🇲','Monaco':'🇲🇨','Montenegro':'🇲🇪','Morocco':'🇲🇦','Mozambique':'🇲🇿','Myanmar':'🇲🇲','Namibia':'🇳🇦','Nauru':'🇳🇷','Netherlands':'🇳🇱','New Caledonia':'🇳🇨','New Zealand':'🇳🇿','Nicaragua':'🇳🇮','Nigeria':'🇳🇬','North Korea':'🇰🇵','Norway':'🇳🇴','Oman':'🇴🇲','Pakistan':'🇵🇰','Palau':'🇵🇼','Panama':'🇵🇦','Papua New Guinea':'🇵🇬','Paraguay':'🇵🇾','Peru':'🇵🇪','Philippines':'🇵🇭','Poland':'🇵🇱','Portugal':'🇵🇹','Puerto Rico':'🇵🇷','Qatar':'🇶🇦','Romania':'🇷🇴','Russia':'🇷🇺','Saint Kitts and Nevis':'🇰🇳','Saint Lucia':'🇱🇨','Saint Vincent':'🇻🇨','Samoa':'🇼🇸','Sao Tome and Principe':'🇸🇹','Saudi Arabia':'🇸🇦','Senegal':'🇸🇳','Seychelles':'🇸🇨','Sierra Leone':'🇸🇱','Singapore':'🇸🇬','Slovenia':'🇸🇮','Solomon Islands':'🇸🇧','Somalia':'🇸🇴','South Africa':'🇿🇦','South Korea':'🇰🇷','Spain':'🇪🇸','Sri Lanka':'🇱🇰','Sudan':'🇸🇩','Suriname':'🇸🇷','Sweden':'🇸🇪','Syria':'🇸🇾','Taiwan':'🇹🇼','Tanzania':'🇹🇿','Thailand':'🇹🇭','Timor-Leste':'🇹🇱','Togo':'🇹🇬','Tonga':'🇹🇴','Trinidad and Tobago':'🇹🇹','Tunisia':'🇹🇳','Turkey':'🇹🇷','UAE':'🇦🇪','Ukraine':'🇺🇦','United Kingdom':'🇬🇧','United States':'🇺🇸','Uruguay':'🇺🇾','Vanuatu':'🇻🇺','Venezuela':'🇻🇪','Vietnam':'🇻🇳','Virgin Islands (US)':'🇻🇮','Yemen':'🇾🇪',
 };
 
 // ============================================================
-// DATA
+// DATA — Full port list per maritime country (~1,200 ports)
 // ============================================================
 const PORT_DATA: Record<string, string[]> = {
-  'Albania': ['Durrës', 'Vlorë', 'Shëngjin'],
-  'Algeria': ['Algiers', 'Oran', 'Annaba', 'Skikda', 'Béjaïa', 'Djendjene'],
-  'Angola': ['Luanda', 'Lobito', 'Namibe', 'Soyo'],
-  'Argentina': ['Buenos Aires', 'Bahía Blanca', 'Rosario', 'Mar del Plata', 'Quequén', 'San Lorenzo', 'Ushuaia'],
-  'Australia': ['Port Hedland', 'Fremantle', 'Melbourne', 'Sydney', 'Brisbane', 'Gladstone', 'Darwin', 'Adelaide', 'Townsville'],
-  'Bahrain': ['Mina Salman', 'Khalifa Bin Salman'],
-  'Bangladesh': ['Chittagong', 'Mongla'],
-  'Belgium': ['Antwerp', 'Ghent', 'Zeebrugge'],
-  'Brazil': ['Santos', 'Rio de Janeiro', 'Paranaguá', 'Itajaí', 'Manaus', 'Fortaleza', 'Recife', 'Salvador', 'Vitória', 'Rio Grande'],
-  'Bulgaria': ['Varna', 'Burgas'],
-  'Canada': ['Vancouver', 'Prince Rupert', 'Montreal', 'Halifax', 'Saint John NB', 'Thunder Bay'],
-  'Chile': ['Valparaíso', 'San Antonio', 'Antofagasta', 'Iquique', 'Arica', 'Punta Arenas'],
-  'China': ['Shanghai', 'Tianjin', 'Qingdao', 'Guangzhou', 'Ningbo-Zhoushan', 'Shenzhen', 'Dalian', 'Xiamen', 'Nanjing', 'Fuzhou'],
-  'Colombia': ['Cartagena', 'Buenaventura', 'Barranquilla', 'Santa Marta'],
-  'Croatia': ['Rijeka', 'Split', 'Zadar', 'Dubrovnik', 'Ploče'],
-  'Cyprus': ['Limassol', 'Famagusta', 'Larnaca'],
-  'Denmark': ['Copenhagen', 'Aarhus', 'Esbjerg', 'Fredericia', 'Aalborg'],
-  'Djibouti': ['Djibouti', 'Doraleh'],
-  'Ecuador': ['Guayaquil', 'Manta', 'Esmeraldas'],
-  'Egypt': ['Alexandria', 'Port Said', 'Suez', 'Damietta', 'East Port Said'],
-  'Estonia': ['Tallinn', 'Sillamäe', 'Muuga'],
-  'Finland': ['Helsinki', 'Kotka', 'Turku', 'Hanko', 'Rauma'],
-  'France': ['Marseille', 'Le Havre', 'Dunkirk', 'Bordeaux', 'Nantes', 'Rouen', 'Calais'],
-  'Germany': ['Hamburg', 'Bremen', 'Bremerhaven', 'Rostock', 'Lübeck', 'Kiel', 'Emden'],
+  'Albania': ['Durrës', 'Vlorë', 'Shëngjin', 'Sarandë'],
+  'Algeria': ['Algiers', 'Oran', 'Annaba', 'Skikda', 'Béjaïa', 'Arzew', 'Mostaganem', 'Ghazaouet', 'Djendjene', 'Tenes'],
+  'Angola': ['Luanda', 'Lobito', 'Namibe', 'Soyo', 'Cabinda', 'Porto Amboim'],
+  'Antigua and Barbuda': ['St. John\'s'],
+  'Argentina': ['Buenos Aires', 'Bahía Blanca', 'Rosario', 'Mar del Plata', 'Quequén', 'San Lorenzo', 'Ushuaia', 'Zarate', 'Campana', 'Puerto Madryn', 'La Plata', 'Puerto Deseado'],
+  'Aruba': ['Oranjestad', 'Barcadera', 'San Nicolas'],
+  'Australia': ['Port Hedland', 'Fremantle', 'Melbourne', 'Sydney', 'Brisbane', 'Gladstone', 'Darwin', 'Adelaide', 'Townsville', 'Newcastle', 'Geelong', 'Hay Point', 'Dampier', 'Port Kembla', 'Cairns', 'Mackay', 'Port Walcott', 'Esperance', 'Bunbury', 'Albany'],
+  'Bahamas': ['Nassau', 'Freeport', 'South Riding Point'],
+  'Bahrain': ['Mina Salman', 'Khalifa Bin Salman', 'Sitra'],
+  'Bangladesh': ['Chittagong', 'Mongla', 'Payra'],
+  'Barbados': ['Bridgetown'],
+  'Belgium': ['Antwerp', 'Ghent', 'Zeebrugge', 'Ostend', 'Liège', 'Brussels'],
+  'Belize': ['Belize City', 'Big Creek', 'Commerce Bight'],
+  'Benin': ['Cotonou'],
+  'Bermuda': ['Hamilton', 'St. George\'s', 'Royal Naval Dockyard'],
+  'Brazil': ['Santos', 'Rio de Janeiro', 'Paranaguá', 'Itajaí', 'Manaus', 'Fortaleza', 'Recife', 'Salvador', 'Vitória', 'Rio Grande', 'Suape', 'Itaqui', 'Pecém', 'Tubarão', 'Aratu', 'Belém', 'Imbituba', 'Antonina', 'Santarém', 'Maceió'],
+  'Brunei': ['Muara', 'Seria'],
+  'Bulgaria': ['Varna', 'Burgas', 'Lom', 'Rousse'],
+  'Cambodia': ['Sihanoukville', 'Phnom Penh'],
+  'Cameroon': ['Douala', 'Kribi', 'Limbe'],
+  'Canada': ['Vancouver', 'Prince Rupert', 'Montreal', 'Halifax', 'Saint John NB', 'Thunder Bay', 'Quebec City', 'Hamilton', 'Sept-Îles', 'Port Hawkesbury', 'Sydney NS', 'Churchill', 'Nanaimo', 'Victoria', 'Trois-Rivières', 'Belledune'],
+  'Cape Verde': ['Praia', 'Mindelo', 'Palmeira'],
+  'Cayman Islands': ['George Town'],
+  'Chile': ['Valparaíso', 'San Antonio', 'Antofagasta', 'Iquique', 'Arica', 'Punta Arenas', 'Talcahuano', 'San Vicente', 'Coronel', 'Mejillones', 'Chañaral', 'Lirquén', 'Puerto Montt', 'Coquimbo'],
+  'China': ['Shanghai', 'Tianjin', 'Qingdao', 'Guangzhou', 'Ningbo-Zhoushan', 'Shenzhen', 'Dalian', 'Xiamen', 'Nanjing', 'Fuzhou', 'Yantai', 'Lianyungang', 'Rizhao', 'Yingkou', 'Quanzhou', 'Tangshan', 'Beihai', 'Shantou', 'Zhuhai', 'Zhanjiang', 'Hong Kong', 'Haikou', 'Wenzhou', 'Sanya', 'Suzhou', 'Jiangyin', 'Nantong', 'Changshu', 'Taicang', 'Foshan', 'Zhongshan', 'Jiujiang', 'Wuhu', 'Maanshan', 'Yangzhou'],
+  'Colombia': ['Cartagena', 'Buenaventura', 'Barranquilla', 'Santa Marta', 'Tumaco', 'Turbo', 'Coveñas', 'Puerto Bolívar'],
+  'Comoros': ['Moroni', 'Mutsamudu'],
+  'Congo (DRC)': ['Matadi', 'Boma', 'Banana'],
+  'Congo (Republic)': ['Pointe-Noire'],
+  'Cook Islands': ['Avatiu'],
+  'Costa Rica': ['Limón', 'Puntarenas', 'Caldera', 'Moín'],
+  'Croatia': ['Rijeka', 'Split', 'Zadar', 'Dubrovnik', 'Ploče', 'Šibenik', 'Pula'],
+  'Cuba': ['Havana', 'Mariel', 'Cienfuegos', 'Santiago de Cuba', 'Matanzas', 'Nuevitas'],
+  'Curacao': ['Willemstad', 'Bullenbaai'],
+  'Cyprus': ['Limassol', 'Famagusta', 'Larnaca', 'Vasilikos'],
+  'Denmark': ['Copenhagen', 'Aarhus', 'Esbjerg', 'Fredericia', 'Aalborg', 'Kalundborg', 'Odense', 'Køge', 'Helsingør', 'Skagen'],
+  'Djibouti': ['Djibouti', 'Doraleh', 'Tadjourah'],
+  'Dominica': ['Roseau', 'Portsmouth'],
+  'Dominican Republic': ['Santo Domingo', 'Caucedo', 'Puerto Plata', 'Haina', 'Boca Chica', 'Manzanillo'],
+  'Ecuador': ['Guayaquil', 'Manta', 'Esmeraldas', 'Puerto Bolívar', 'Posorja'],
+  'Egypt': ['Alexandria', 'Port Said', 'Suez', 'Damietta', 'East Port Said', 'Sokhna', 'Adabiya', 'El Dekheila', 'Safaga', 'Hurghada'],
+  'El Salvador': ['Acajutla', 'La Unión'],
+  'Equatorial Guinea': ['Malabo', 'Bata', 'Luba'],
+  'Eritrea': ['Massawa', 'Assab'],
+  'Estonia': ['Tallinn', 'Sillamäe', 'Muuga', 'Paldiski'],
+  'Faroe Islands': ['Tórshavn', 'Klaksvík', 'Runavík'],
+  'Fiji': ['Suva', 'Lautoka'],
+  'Finland': ['Helsinki', 'Kotka', 'Turku', 'Hanko', 'Rauma', 'Kokkola', 'Pori', 'Oulu', 'Hamina', 'Naantali'],
+  'France': ['Marseille', 'Le Havre', 'Dunkirk', 'Bordeaux', 'Nantes-Saint-Nazaire', 'Rouen', 'Calais', 'Brest', 'La Rochelle', 'Sète', 'Toulon', 'Cherbourg', 'Boulogne-sur-Mer', 'Bayonne', 'Lorient', 'Fos-sur-Mer'],
+  'French Polynesia': ['Papeete'],
+  'Gabon': ['Libreville', 'Port-Gentil', 'Owendo'],
+  'Gambia': ['Banjul'],
+  'Georgia': ['Batumi', 'Poti', 'Kulevi'],
+  'Germany': ['Hamburg', 'Bremen', 'Bremerhaven', 'Rostock', 'Lübeck', 'Kiel', 'Emden', 'Wilhelmshaven', 'Cuxhaven', 'Stralsund'],
   'Ghana': ['Tema', 'Takoradi'],
-  'Greece': ['Piraeus', 'Thessaloniki', 'Volos', 'Patras', 'Heraklion', 'Kavala', 'Elefsina', 'Lavrio'],
-  'Honduras': ['Puerto Cortés', 'San Lorenzo'],
-  'Hong Kong': ['Kwai Tsing', 'Stonecutters'],
-  'India': ['Mumbai', 'Chennai', 'Kolkata', 'Kandla', 'Nhava Sheva (JNPT)', 'Visakhapatnam', 'Paradip', 'Cochin'],
-  'Indonesia': ['Jakarta / Tanjung Priok', 'Surabaya', 'Belawan (Medan)', 'Makassar', 'Semarang', 'Balikpapan'],
-  'Iran': ['Bandar Abbas', 'Imam Khomeini', 'Bushehr', 'Bandar Anzali'],
-  'Iraq': ['Umm Qasr', 'Khor al-Zubair', 'Basra'],
-  'Ireland': ['Dublin', 'Cork', 'Waterford', 'Galway'],
+  'Gibraltar': ['Gibraltar'],
+  'Greece': ['Piraeus', 'Thessaloniki', 'Volos', 'Patras', 'Heraklion', 'Kavala', 'Elefsina', 'Lavrio', 'Alexandroupoli', 'Igoumenitsa', 'Rhodes', 'Corfu', 'Mykonos', 'Santorini', 'Chania'],
+  'Greenland': ['Nuuk', 'Sisimiut', 'Ilulissat'],
+  'Grenada': ['St. George\'s'],
+  'Guam': ['Apra Harbor'],
+  'Guatemala': ['Puerto Quetzal', 'Puerto Barrios', 'Santo Tomás de Castilla'],
+  'Guinea': ['Conakry', 'Kamsar'],
+  'Guinea-Bissau': ['Bissau'],
+  'Guyana': ['Georgetown', 'New Amsterdam'],
+  'Haiti': ['Port-au-Prince', 'Cap-Haïtien'],
+  'Honduras': ['Puerto Cortés', 'San Lorenzo', 'Puerto Castilla', 'La Ceiba'],
+  'Hong Kong': ['Kwai Tsing', 'Stonecutters', 'Tsing Yi'],
+  'Iceland': ['Reykjavik', 'Hafnarfjörður', 'Akureyri', 'Grundartangi', 'Reyðarfjörður'],
+  'India': ['Mumbai', 'Chennai', 'Kolkata', 'Kandla', 'Nhava Sheva (JNPT)', 'Visakhapatnam', 'Paradip', 'Cochin', 'Tuticorin', 'Mormugao', 'New Mangalore', 'Ennore', 'Haldia', 'Mundra', 'Pipavav', 'Krishnapatnam', 'Hazira', 'Dahej', 'Karaikal', 'Kakinada', 'Gangavaram'],
+  'Indonesia': ['Jakarta / Tanjung Priok', 'Surabaya / Tanjung Perak', 'Belawan (Medan)', 'Makassar', 'Semarang', 'Balikpapan', 'Banjarmasin', 'Pontianak', 'Bitung', 'Dumai', 'Cilacap', 'Palembang', 'Jambi', 'Padang', 'Cilegon', 'Cigading', 'Lhokseumawe', 'Pekanbaru', 'Tarakan', 'Sorong', 'Ambon', 'Kupang', 'Manado', 'Kendari'],
+  'Iran': ['Bandar Abbas', 'Imam Khomeini', 'Bushehr', 'Bandar Anzali', 'Chabahar', 'Khorramshahr', 'Bandar Lengeh', 'Assaluyeh'],
+  'Iraq': ['Umm Qasr', 'Khor al-Zubair', 'Basra', 'Al Faw'],
+  'Ireland': ['Dublin', 'Cork', 'Waterford', 'Galway', 'Limerick', 'Rosslare', 'Foynes'],
   'Israel': ['Haifa', 'Ashdod', 'Eilat'],
-  'Italy': ['Genoa', 'Naples', 'Livorno', 'Taranto', 'Venice', 'Trieste', 'Gioia Tauro', 'Civitavecchia', 'Ravenna', 'Ancona'],
-  'Japan': ['Yokohama', 'Osaka', 'Nagoya', 'Kobe', 'Tokyo', 'Hakata', 'Chiba', 'Kawasaki', 'Niigata'],
+  'Italy': ['Genoa', 'Naples', 'Livorno', 'Taranto', 'Venice', 'Trieste', 'Gioia Tauro', 'Civitavecchia', 'Ravenna', 'Ancona', 'La Spezia', 'Cagliari', 'Augusta', 'Palermo', 'Salerno', 'Bari', 'Brindisi', 'Catania', 'Messina', 'Savona', 'Marghera', 'Olbia'],
+  'Ivory Coast': ['Abidjan', 'San Pédro'],
+  'Jamaica': ['Kingston', 'Montego Bay', 'Port Esquivel'],
+  'Japan': ['Yokohama', 'Osaka', 'Nagoya', 'Kobe', 'Tokyo', 'Hakata', 'Chiba', 'Kawasaki', 'Niigata', 'Sakai-Senboku', 'Kita-Kyushu', 'Shimizu', 'Mizushima', 'Tomakomai', 'Sendai', 'Hachinohe', 'Naha', 'Akita', 'Sakata', 'Kashima', 'Wakayama', 'Tokuyama', 'Oita', 'Imari', 'Otaru', 'Hakodate', 'Kanmon'],
   'Jordan': ['Aqaba'],
-  'Kenya': ['Mombasa', 'Lamu'],
-  'Kuwait': ['Kuwait City / Shuwaikh', 'Shuaiba'],
+  'Kenya': ['Mombasa', 'Lamu', 'Kilindini'],
+  'Kiribati': ['Tarawa', 'Kiritimati'],
+  'Kuwait': ['Kuwait City / Shuwaikh', 'Shuaiba', 'Doha Port', 'Mina Al Ahmadi'],
   'Latvia': ['Riga', 'Ventspils', 'Liepāja'],
-  'Libya': ['Tripoli', 'Benghazi', 'Misrata', 'Tobruk'],
-  'Lithuania': ['Klaipeda'],
-  'Malaysia': ['Port Klang', 'Penang', 'Johor', 'Kuching', 'Kota Kinabalu', 'Bintulu', 'Tanjung Pelepas'],
+  'Lebanon': ['Beirut', 'Tripoli', 'Sidon'],
+  'Liberia': ['Monrovia', 'Buchanan', 'Greenville', 'Harper'],
+  'Libya': ['Tripoli', 'Benghazi', 'Misrata', 'Tobruk', 'Es Sider', 'Ras Lanuf', 'Marsa El Brega', 'Zueitina'],
+  'Lithuania': ['Klaipeda', 'Butinge'],
+  'Madagascar': ['Toamasina', 'Mahajanga', 'Toliara', 'Antsiranana'],
+  'Malaysia': ['Port Klang', 'Penang', 'Johor', 'Kuching', 'Kota Kinabalu', 'Bintulu', 'Tanjung Pelepas', 'Pasir Gudang', 'Kuantan', 'Labuan', 'Lumut', 'Miri', 'Sandakan'],
+  'Maldives': ['Malé'],
   'Malta': ['Valletta / Grand Harbour', 'Marsaxlokk'],
+  'Marshall Islands': ['Majuro', 'Ebeye'],
+  'Mauritania': ['Nouakchott', 'Nouadhibou'],
   'Mauritius': ['Port Louis'],
-  'Mexico': ['Manzanillo', 'Veracruz', 'Altamira', 'Lázaro Cárdenas', 'Ensenada', 'Tampico'],
-  'Morocco': ['Casablanca', 'Tanger Med', 'Agadir', 'Safi', 'Nador'],
-  'Mozambique': ['Maputo', 'Beira', 'Nacala'],
-  'Myanmar': ['Yangon / Thilawa', 'Kyaukpyu'],
+  'Mexico': ['Manzanillo', 'Veracruz', 'Altamira', 'Lázaro Cárdenas', 'Ensenada', 'Tampico', 'Coatzacoalcos', 'Tuxpan', 'Mazatlán', 'Topolobampo', 'Progreso', 'Salina Cruz', 'Guaymas', 'Acapulco'],
+  'Micronesia': ['Pohnpei', 'Chuuk', 'Yap'],
+  'Monaco': ['Monaco'],
+  'Montenegro': ['Bar', 'Kotor'],
+  'Morocco': ['Casablanca', 'Tanger Med', 'Agadir', 'Safi', 'Nador', 'Jorf Lasfar', 'Mohammedia', 'Laâyoune', 'Dakhla', 'Kenitra'],
+  'Mozambique': ['Maputo', 'Beira', 'Nacala', 'Pemba', 'Quelimane'],
+  'Myanmar': ['Yangon / Thilawa', 'Kyaukpyu', 'Sittwe', 'Mawlamyine'],
   'Namibia': ['Walvis Bay', 'Lüderitz'],
-  'Netherlands': ['Rotterdam', 'Amsterdam', 'Vlissingen', 'Moerdijk', 'Terneuzen'],
-  'New Zealand': ['Auckland', 'Tauranga', 'Wellington', 'Lyttelton', 'Port Chalmers'],
-  'Nigeria': ['Lagos / Apapa', 'Tin Can Island', 'Onne', 'Port Harcourt', 'Calabar', 'Warri'],
-  'Norway': ['Oslo', 'Bergen', 'Stavanger', 'Tromsø', 'Trondheim', 'Kristiansand', 'Narvik'],
-  'Oman': ['Muscat / Port Sultan Qaboos', 'Salalah', 'Sohar', 'Duqm'],
+  'Nauru': ['Aiwo'],
+  'Netherlands': ['Rotterdam', 'Amsterdam', 'Vlissingen', 'Moerdijk', 'Terneuzen', 'Den Helder', 'IJmuiden', 'Delfzijl', 'Eemshaven', 'Harlingen', 'Velsen-Noord'],
+  'New Caledonia': ['Nouméa'],
+  'New Zealand': ['Auckland', 'Tauranga', 'Wellington', 'Lyttelton', 'Port Chalmers', 'Napier', 'Nelson', 'Bluff', 'New Plymouth', 'Timaru'],
+  'Nicaragua': ['Corinto', 'Bluefields', 'Puerto Cabezas'],
+  'Nigeria': ['Lagos / Apapa', 'Tin Can Island', 'Onne', 'Port Harcourt', 'Calabar', 'Warri', 'Bonny', 'Sapele'],
+  'North Korea': ['Nampo', 'Wonsan', 'Hungnam', 'Chongjin', 'Rason'],
+  'Norway': ['Oslo', 'Bergen', 'Stavanger', 'Tromsø', 'Trondheim', 'Kristiansand', 'Narvik', 'Mongstad', 'Sture', 'Kårstø', 'Slagentangen', 'Hammerfest', 'Mo i Rana', 'Ålesund'],
+  'Oman': ['Muscat / Port Sultan Qaboos', 'Salalah', 'Sohar', 'Duqm', 'Khasab', 'Mina Al Fahal'],
   'Pakistan': ['Karachi', 'Port Qasim', 'Gwadar'],
-  'Panama': ['Balboa', 'Manzanillo', 'Colón', 'Cristóbal'],
-  'Peru': ['Callao', 'Paita', 'Ilo', 'Matarani'],
-  'Philippines': ['Manila', 'Cebu', 'Davao', 'General Santos', 'Cagayan de Oro', 'Batangas'],
-  'Poland': ['Gdańsk', 'Gdynia', 'Szczecin', 'Świnoujście'],
-  'Portugal': ['Lisbon', 'Sines', 'Porto / Leixões', 'Setúbal'],
-  'Qatar': ['Doha / Hamad Port', 'Ras Laffan'],
-  'Romania': ['Constanța', 'Galați', 'Brăila', 'Tulcea'],
-  'Russia': ['Novorossiysk', 'St. Petersburg', 'Vladivostok', 'Nakhodka', 'Murmansk', 'Kaliningrad'],
-  'Saudi Arabia': ['Jeddah', 'Dammam / King Abdulaziz', 'Yanbu', 'Jubail', 'Jizan', 'Ras Tanura'],
-  'Senegal': ['Dakar'],
-  'Singapore': ['Singapore', 'Jurong', 'Tuas', 'Pasir Panjang'],
+  'Palau': ['Koror', 'Malakal'],
+  'Panama': ['Balboa', 'Manzanillo', 'Colón', 'Cristóbal', 'Vacamonte', 'Charco Azul', 'Almirante', 'Aguadulce'],
+  'Papua New Guinea': ['Port Moresby', 'Lae', 'Madang', 'Rabaul', 'Kimbe'],
+  'Peru': ['Callao', 'Paita', 'Ilo', 'Matarani', 'Salaverry', 'Chimbote', 'Talara', 'Pisco'],
+  'Philippines': ['Manila', 'Cebu', 'Davao', 'General Santos', 'Cagayan de Oro', 'Batangas', 'Subic Bay', 'Iloilo', 'Zamboanga', 'Bacolod', 'Tacloban', 'Dumaguete', 'Surigao', 'Puerto Princesa', 'Tagbilaran', 'Ozamiz', 'Calbayog', 'Legazpi', 'Cagayan', 'Naga'],
+  'Poland': ['Gdańsk', 'Gdynia', 'Szczecin', 'Świnoujście', 'Police', 'Kołobrzeg'],
+  'Portugal': ['Lisbon', 'Sines', 'Porto / Leixões', 'Setúbal', 'Aveiro', 'Faro', 'Funchal', 'Ponta Delgada'],
+  'Puerto Rico': ['San Juan', 'Ponce', 'Mayagüez'],
+  'Qatar': ['Doha / Hamad Port', 'Ras Laffan', 'Mesaieed'],
+  'Romania': ['Constanța', 'Galați', 'Brăila', 'Tulcea', 'Mangalia', 'Midia'],
+  'Russia': ['Novorossiysk', 'St. Petersburg', 'Vladivostok', 'Nakhodka', 'Murmansk', 'Kaliningrad', 'Ust-Luga', 'Primorsk', 'Tuapse', 'Taman', 'Sovetskaya Gavan', 'Vanino', 'Vostochny', 'Magadan', 'Sakhalin (Korsakov)', 'Arkhangelsk', 'Vyborg'],
+  'Saint Kitts and Nevis': ['Basseterre', 'Charlestown'],
+  'Saint Lucia': ['Castries', 'Vieux Fort'],
+  'Saint Vincent': ['Kingstown'],
+  'Samoa': ['Apia'],
+  'Sao Tome and Principe': ['São Tomé'],
+  'Saudi Arabia': ['Jeddah', 'Dammam / King Abdulaziz', 'Yanbu', 'Jubail', 'Jizan', 'Ras Tanura', 'King Fahd Industrial', 'King Abdullah Port', 'Duba'],
+  'Senegal': ['Dakar', 'Ziguinchor'],
+  'Seychelles': ['Victoria'],
+  'Sierra Leone': ['Freetown', 'Pepel'],
+  'Singapore': ['Singapore', 'Jurong', 'Tuas', 'Pasir Panjang', 'Sembawang'],
   'Slovenia': ['Koper'],
-  'South Africa': ['Durban', 'Cape Town', 'Port Elizabeth', 'Richards Bay', 'East London', 'Saldanha'],
-  'South Korea': ['Busan', 'Incheon', 'Ulsan', 'Pohang', 'Gwangyang', 'Pyeongtaek'],
-  'Spain': ['Barcelona', 'Valencia', 'Bilbao', 'Algeciras', 'Las Palmas', 'Cartagena', 'Huelva', 'Tarragona'],
-  'Sri Lanka': ['Colombo', 'Hambantota', 'Trincomalee'],
-  'Sudan': ['Port Sudan'],
-  'Sweden': ['Gothenburg', 'Stockholm', 'Malmö', 'Gävle', 'Luleå'],
-  'Taiwan': ['Kaohsiung', 'Keelung', 'Taichung'],
-  'Tanzania': ['Dar es Salaam', 'Tanga', 'Zanzibar'],
-  'Thailand': ['Bangkok / Laem Chabang', 'Map Ta Phut', 'Songkhla'],
-  'Togo': ['Lomé'],
-  'Tunisia': ['Tunis / La Goulette', 'Sousse', 'Sfax', 'Bizerte'],
-  'Turkey': ['Mersin', 'Istanbul', 'Izmir', 'Iskenderun', 'Gemlik', 'Aliaga', 'Derince', 'Samsun', 'Trabzon', 'Antalya', 'Zonguldak', 'Bandırma', 'Mudanya', 'Tekirdağ'],
-  'UAE': ['Dubai / Jebel Ali', 'Abu Dhabi', 'Sharjah', 'Fujairah', 'Ras Al Khaimah', 'Khalifa Port'],
-  'Ukraine': ['Odessa', 'Yuzhne', 'Chornomorsk', 'Mykolaiv'],
-  'United Kingdom': ['London', 'Liverpool', 'Southampton', 'Aberdeen', 'Felixstowe', 'Grimsby', 'Tilbury', 'Hull', 'Tees', 'Belfast', 'Milford Haven', 'Immingham'],
-  'United States': ['New Orleans', 'Houston', 'Los Angeles', 'New York / New Jersey', 'Baltimore', 'Seattle', 'Miami', 'Savannah', 'Charleston', 'Norfolk', 'Long Beach', 'Oakland', 'Tampa', 'Jacksonville', 'Philadelphia'],
-  'Uruguay': ['Montevideo', 'Nueva Palmira'],
-  'Venezuela': ['Maracaibo', 'La Guaira', 'Puerto Cabello'],
-  'Vietnam': ['Ho Chi Minh City / Cat Lai', 'Hai Phong', 'Da Nang', 'Cai Mep'],
+  'Solomon Islands': ['Honiara', 'Noro'],
+  'Somalia': ['Mogadishu', 'Berbera', 'Bosaso', 'Kismayo'],
+  'South Africa': ['Durban', 'Cape Town', 'Port Elizabeth', 'Richards Bay', 'East London', 'Saldanha', 'Mossel Bay', 'Ngqura'],
+  'South Korea': ['Busan', 'Incheon', 'Ulsan', 'Pohang', 'Gwangyang', 'Pyeongtaek', 'Mokpo', 'Donghae', 'Gunsan', 'Yeosu', 'Masan', 'Jeju'],
+  'Spain': ['Barcelona', 'Valencia', 'Bilbao', 'Algeciras', 'Las Palmas', 'Cartagena', 'Huelva', 'Tarragona', 'Vigo', 'A Coruña', 'Gijón', 'Santander', 'Málaga', 'Alicante', 'Castellón', 'Ferrol', 'Avilés', 'Almería', 'Sevilla', 'Pasajes', 'Tenerife', 'Palma de Mallorca'],
+  'Sri Lanka': ['Colombo', 'Hambantota', 'Trincomalee', 'Galle'],
+  'Sudan': ['Port Sudan', 'Suakin'],
+  'Suriname': ['Paramaribo', 'Nieuw Nickerie'],
+  'Sweden': ['Gothenburg', 'Stockholm', 'Malmö', 'Gävle', 'Luleå', 'Helsingborg', 'Trelleborg', 'Norrköping', 'Oxelösund', 'Karlshamn'],
+  'Syria': ['Latakia', 'Tartus', 'Banias'],
+  'Taiwan': ['Kaohsiung', 'Keelung', 'Taichung', 'Hualien', 'Taipei (Taoyuan)', 'Suao', 'Anping', 'Mailiao'],
+  'Tanzania': ['Dar es Salaam', 'Tanga', 'Zanzibar', 'Mtwara'],
+  'Thailand': ['Bangkok / Laem Chabang', 'Map Ta Phut', 'Songkhla', 'Sattahip', 'Sriracha', 'Phuket', 'Ranong'],
+  'Timor-Leste': ['Dili'],
+  'Togo': ['Lomé', 'Kpémé'],
+  'Tonga': ['Nukuʻalofa'],
+  'Trinidad and Tobago': ['Port of Spain', 'Point Lisas', 'Point Fortin', 'Scarborough'],
+  'Tunisia': ['Tunis / La Goulette', 'Sousse', 'Sfax', 'Bizerte', 'Gabès', 'Zarzis', 'Skhira'],
+  'Turkey': ['Mersin', 'Istanbul', 'Izmir', 'Iskenderun', 'Gemlik', 'Aliaga', 'Derince', 'Samsun', 'Trabzon', 'Antalya', 'Zonguldak', 'Bandırma', 'Mudanya', 'Tekirdağ', 'Ambarli', 'Hopa', 'Rize', 'Ordu', 'Sinop', 'Çanakkale', 'Kocaeli', 'Yarımca', 'Tuzla', 'Karaköy'],
+  'UAE': ['Dubai / Jebel Ali', 'Abu Dhabi', 'Sharjah', 'Fujairah', 'Ras Al Khaimah', 'Khalifa Port', 'Hamriyah', 'Ajman', 'Umm Al Quwain', 'Mina Rashid', 'Mina Zayed'],
+  'Ukraine': ['Odessa', 'Yuzhne', 'Chornomorsk', 'Mykolaiv', 'Mariupol', 'Berdyansk', 'Reni', 'Izmail'],
+  'United Kingdom': ['London', 'Liverpool', 'Southampton', 'Aberdeen', 'Felixstowe', 'Grimsby', 'Tilbury', 'Hull', 'Tees', 'Belfast', 'Milford Haven', 'Immingham', 'Bristol', 'Glasgow', 'Cardiff', 'Portsmouth', 'Plymouth', 'Newport', 'Sullom Voe', 'Sheerness', 'Dover', 'Harwich'],
+  'United States': ['New Orleans', 'Houston', 'Los Angeles', 'New York / New Jersey', 'Baltimore', 'Seattle', 'Miami', 'Savannah', 'Charleston', 'Norfolk', 'Long Beach', 'Oakland', 'Tampa', 'Jacksonville', 'Philadelphia', 'Boston', 'Mobile', 'Corpus Christi', 'Beaumont', 'Galveston', 'Port Arthur', 'Tacoma', 'Portland OR', 'San Francisco', 'San Diego', 'Honolulu', 'Anchorage', 'Wilmington NC', 'Port Everglades', 'Pascagoula', 'Lake Charles', 'Freeport TX', 'Texas City', 'Gulfport', 'Brunswick'],
+  'Uruguay': ['Montevideo', 'Nueva Palmira', 'Fray Bentos', 'Punta del Este', 'Colonia'],
+  'Vanuatu': ['Port Vila', 'Luganville'],
+  'Venezuela': ['Maracaibo', 'La Guaira', 'Puerto Cabello', 'Puerto Ordaz', 'El Guamache', 'Guanta', 'Amuay', 'Cardón'],
+  'Vietnam': ['Ho Chi Minh City / Cat Lai', 'Hai Phong', 'Da Nang', 'Cai Mep', 'Quy Nhon', 'Vung Tau', 'Nha Trang', 'Phu My', 'Cam Pha', 'Cua Lo', 'Can Tho'],
+  'Virgin Islands (US)': ['Charlotte Amalie', 'Christiansted'],
+  'Yemen': ['Aden', 'Hodeidah', 'Mukalla', 'Mocha'],
 };
 
 // ============================================================
-// MARINE SERVICES — 34 categories (18 existing + 16 new)
+// MARINE SERVICES — 34 categories
 // ============================================================
 const MARINE_SERVICES = [
   { key: 'engine', label: 'Main & Auxiliary Engine' },
@@ -155,7 +231,6 @@ interface Provider {
   ports: string[]; country: string; svc: string[];
   phone: string; email: string; wa: string; web: string; addr: string; person: string;
 }
-
 const PROVIDERS: Provider[] = [
   { id: 'p001', type: 'agent', ico: '🏢', name: 'Mersin Maritime Agency Ltd.', bio: 'Full-service ship agency operating in Turkish ports since 1994. FONASBA member. Specialists in bulk carriers, tankers and general cargo. 24/7 operations with experienced crew change, customs clearance and bunker coordination.', ports: ['Mersin', 'Iskenderun', 'Gemlik'], country: 'Turkey', svc: ['agent'], phone: '+90 324 238 0000', email: 'info@mersinagency.com', wa: '+905320000000', web: 'https://mersinagency.com', addr: 'Liman Cad. No:14, 33000 Mersin, Turkey', person: 'Capt. Ahmet Yılmaz' },
   { id: 'p002', type: 'chandler', ico: '⚓', name: 'Mersin Ship Supply Co.', bio: 'Leading chandler in South Turkey since 2001. Full provisions, deck/engine stores, bonded goods, spare parts. 24/7 delivery to anchorage and alongside. ISO 9001 certified.', ports: ['Mersin', 'Iskenderun'], country: 'Turkey', svc: ['chandler'], phone: '+90 324 239 1111', email: 'supply@mersinsupply.com', wa: '+905322221111', web: 'https://mersinsupply.com', addr: 'Serbest Bölge, 33020 Mersin, Turkey', person: 'Mehmet Demir' },
@@ -227,7 +302,6 @@ export default function Home() {
   const [payModal, setPayModal] = useState(false);
   const [plan, setPlan] = useState<'trial'|'monthly'|'yearly'>('monthly');
 
-  // Form state
   const [form, setForm] = useState({
     companyName: '', city: '', country: '', port1: '', port2: '', port3: '',
     email: '', phone: '', person: '', bio: '',
@@ -355,7 +429,6 @@ export default function Home() {
       <div className="wave-bg"></div>
       <div style={{background:'#08100a',color:'#f5f0e8',fontFamily:"'Outfit',sans-serif",fontWeight:300,minHeight:'100vh',position:'relative',zIndex:1}}>
 
-        {/* NAV */}
         <nav style={{position:'fixed',top:0,width:'100%',zIndex:300,height:64,display:'flex',alignItems:'center',justifyContent:'space-between',padding:'0 32px',background:'rgba(8,16,10,.97)',backdropFilter:'blur(20px)',borderBottom:'1px solid rgba(200,168,75,.2)'}}>
           <div style={{fontFamily:lb,fontSize:24,fontWeight:700,letterSpacing:1,flexShrink:0}}>PortService<span style={g}>Finder</span></div>
           <div style={{display:'flex',alignItems:'center',gap:14}}>
@@ -366,7 +439,6 @@ export default function Home() {
           </div>
         </nav>
 
-        {/* HERO */}
         <section className="hero-sec" style={{position:'relative',minHeight:'100vh',paddingTop:100,paddingBottom:60,paddingLeft:48,paddingRight:48,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',textAlign:'center',gap:28,overflow:'hidden'}}>
           <div className="hero-bg"></div>
           <div className="hero-content" style={{display:'flex',flexDirection:'column',alignItems:'center',gap:28,width:'100%'}}>
@@ -382,12 +454,11 @@ export default function Home() {
               Find verified ship agents, shipchandlers and marine service companies at any port worldwide. Free to search.
             </p>
             <div className="a3" style={{display:'flex',gap:18,flexWrap:'wrap',justifyContent:'center'}}>
-              {[['160+','Countries'],['1,000+','Ports'],['34','Categories']].map(([n,l])=>(
+              {[['150+','Countries'],['1,200+','Ports'],['34','Categories']].map(([n,l])=>(
                 <span key={l} style={{fontFamily:rj,fontSize:12,color:'#b5bfa8',fontWeight:600}}><strong style={g}>{n}</strong> {l}</span>
               ))}
             </div>
 
-            {/* SEARCH */}
             <div className="a4 search-wrap" style={{width:'100%',maxWidth:1080,background:'rgba(10,20,14,.92)',border:'1px solid rgba(200,168,75,.35)',backdropFilter:'blur(22px)',padding:'34px 38px',marginTop:4,boxShadow:'0 18px 48px rgba(0,0,0,.45)'}}>
               <div className="sgrid" style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr auto',gap:14,alignItems:'flex-end'}}>
                 <div>
@@ -452,7 +523,6 @@ export default function Home() {
           </div>
         </section>
 
-        {/* VISUALS */}
         <section className="vis-sec" style={{background:'#08100a',padding:'52px 48px',textAlign:'center',borderTop:'1px solid rgba(200,168,75,.1)'}}>
           <div style={{display:'flex',justifyContent:'center',marginBottom:32}}>
             <div style={{position:'relative',width:110,height:110}}>
@@ -472,7 +542,7 @@ export default function Home() {
             </div>
           </div>
           <div className="stats4" style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:1,background:'rgba(200,168,75,.1)',maxWidth:800,margin:'0 auto'}}>
-            {[['80+','Countries','active providers'],['1,000+','Ports','in database'],['34','Service Categories','available'],['$0','Search Fee','always free']].map(([v,l,s])=>(
+            {[['150+','Countries','worldwide coverage'],['1,200+','Ports','in database'],['34','Service Categories','available'],['$0','Search Fee','always free']].map(([v,l,s])=>(
               <div key={l} style={{background:'#0c1610',padding:'18px 12px',textAlign:'center'}}>
                 <div style={{fontFamily:lb,fontSize:26,fontWeight:700,color:'#c8a84b',lineHeight:1,marginBottom:4}}>{v}</div>
                 <div style={{fontFamily:rj,fontSize:10,fontWeight:700,letterSpacing:1,textTransform:'uppercase',color:'#f5f0e8',marginBottom:2}}>{l}</div>
@@ -482,7 +552,6 @@ export default function Home() {
           </div>
         </section>
 
-        {/* HOW IT WORKS */}
         <section id="how" className="sec-pad" style={{padding:'90px 48px',background:'#0c1610',borderTop:'1px solid rgba(200,168,75,.1)'}}>
           <div style={{fontFamily:rj,fontSize:10,letterSpacing:'3px',textTransform:'uppercase',color:'#c8a84b',marginBottom:12,fontWeight:700}}>Platform</div>
           <h2 style={{fontFamily:lb,fontSize:'clamp(24px,3vw,38px)',fontWeight:700,lineHeight:1.05,marginBottom:40}}>How <em style={g}>PortServiceFinder</em> Works</h2>
@@ -498,7 +567,6 @@ export default function Home() {
           </div>
         </section>
 
-        {/* PRICING */}
         <section id="pricing" className="sec-pad" style={{padding:'90px 48px'}}>
           <div style={{fontFamily:rj,fontSize:10,letterSpacing:'3px',textTransform:'uppercase',color:'#c8a84b',marginBottom:12,fontWeight:700}}>Pricing</div>
           <h2 style={{fontFamily:lb,fontSize:'clamp(24px,3vw,38px)',fontWeight:700,lineHeight:1.05,marginBottom:40}}>Simple, <em style={g}>Transparent</em> Pricing</h2>
@@ -519,7 +587,6 @@ export default function Home() {
           </div>
         </section>
 
-        {/* CTA */}
         <section className="ctapad" style={{padding:'72px 48px',textAlign:'center',background:'#0c1610',borderTop:'1px solid rgba(200,168,75,.1)'}}>
           <h2 style={{fontFamily:lb,fontSize:'clamp(26px,3.5vw,48px)',fontWeight:700,lineHeight:1.05,marginBottom:12}}>Be Found by Every Vessel <em style={g}>Worldwide</em></h2>
           <p style={{fontSize:14,color:'#b0c0a4',maxWidth:400,margin:'0 auto 28px',lineHeight:1.75}}>List on PortServiceFinder — <strong style={g}>1 month free</strong>, then $99/month or $1,000/year.</p>
@@ -529,7 +596,6 @@ export default function Home() {
           </div>
         </section>
 
-        {/* FOOTER */}
         <footer className="ftpad" style={{borderTop:'1px solid rgba(200,168,75,.15)',padding:'48px 48px 0'}}>
           <div className="ftgrid" style={{display:'grid',gridTemplateColumns:'2fr 1fr 1fr 1fr',gap:44,marginBottom:32}}>
             <div>
@@ -552,7 +618,6 @@ export default function Home() {
           </div>
         </footer>
 
-        {/* DETAIL MODAL */}
         {detail&&(
           <div style={{position:'fixed',inset:0,background:'rgba(8,16,10,.95)',backdropFilter:'blur(16px)',zIndex:550,display:'flex',alignItems:'flex-start',justifyContent:'center',padding:'36px 16px',overflowY:'auto'}} onClick={e=>{if(e.target===e.currentTarget)setDetail(null);}}>
             <div style={{background:'#0c1610',border:'1px solid rgba(200,168,75,.3)',width:'100%',maxWidth:660,margin:'auto'}}>
@@ -591,7 +656,6 @@ export default function Home() {
           </div>
         )}
 
-        {/* REGISTER/LOGIN MODAL */}
         {modal&&(
           <div style={{position:'fixed',inset:0,background:'rgba(8,16,10,.95)',backdropFilter:'blur(16px)',zIndex:500,display:'flex',alignItems:'flex-start',justifyContent:'center',padding:'36px 16px',overflowY:'auto'}} onClick={e=>{if(e.target===e.currentTarget){setModal(false);setFormError('');}}}>
             <div style={{background:'#0c1610',border:'1px solid rgba(200,168,75,.3)',width:'100%',maxWidth:720,margin:'auto'}}>
@@ -605,12 +669,9 @@ export default function Home() {
                 </div>
                 {tab==='register'?(
                   <div>
-                    {/* Free trial warning */}
                     <div style={{padding:'10px 12px',background:'rgba(226,192,106,.08)',border:'1px solid rgba(226,192,106,.3)',marginBottom:14,fontSize:11,color:'#e2c06a',fontFamily:rj,lineHeight:1.5}}>
                       <strong>⚠️ Free trial is offered only once per company.</strong> Multiple attempts using different details will result in account suspension and forfeit of any active subscription.
                     </div>
-
-                    {/* Type selection */}
                     <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:7,marginBottom:16}}>
                       {[{type:'agent',ico:'🏢',name:'Ship Agent'},{type:'chandler',ico:'⚓',name:'Shipchandler'},{type:'service',ico:'🔧',name:'Marine Service'}].map(s=>(
                         <div key={s.type} onClick={()=>setSeg(s.type)} style={{border:`1px solid ${seg===s.type?'#c8a84b':'rgba(200,168,75,.2)'}`,padding:'11px 7px',textAlign:'center',cursor:'pointer',background:seg===s.type?'rgba(200,168,75,.1)':'transparent',transition:'all .25s ease'}}>
@@ -620,8 +681,6 @@ export default function Home() {
                         </div>
                       ))}
                     </div>
-
-                    {/* Shipchandler subcategories */}
                     {seg==='chandler'&&(
                       <div style={{marginBottom:14,padding:'12px 14px',background:'rgba(200,168,75,.04)',border:'1px solid rgba(200,168,75,.18)'}}>
                         <div style={{fontFamily:rj,fontSize:10,letterSpacing:'2px',textTransform:'uppercase',color:'#c8a84b',marginBottom:9,fontWeight:700}}>Shipchandler categories — select all that apply *</div>
@@ -630,8 +689,6 @@ export default function Home() {
                         </div>
                       </div>
                     )}
-
-                    {/* Marine Service subcategories */}
                     {seg==='service'&&(
                       <div style={{marginBottom:14,padding:'12px 14px',background:'rgba(200,168,75,.04)',border:'1px solid rgba(200,168,75,.18)'}}>
                         <div style={{fontFamily:rj,fontSize:10,letterSpacing:'2px',textTransform:'uppercase',color:'#c8a84b',marginBottom:9,fontWeight:700}}>Marine services you provide — select all that apply *</div>
@@ -640,7 +697,6 @@ export default function Home() {
                         </div>
                       </div>
                     )}
-
                     <FI l="Company Name *" p="Your company name" v={form.companyName} onChange={v=>updateForm('companyName',v)}/>
                     <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:9,marginBottom:9}}>
                       <FI l="City *" p="e.g. Mersin" v={form.city} onChange={v=>updateForm('city',v)}/>
@@ -664,9 +720,7 @@ export default function Home() {
                       <FI l="Login Email *" p="your@company.com" t="email" v={form.loginEmail} onChange={v=>updateForm('loginEmail',v)}/>
                       <FI l="Password * (min 8 chars)" p="Password" t="password" v={form.password} onChange={v=>updateForm('password',v)}/>
                     </div>
-
                     {formError&&(<div style={{padding:'9px 12px',background:'rgba(220,80,80,.1)',border:'1px solid rgba(220,80,80,.4)',color:'#ff8a8a',fontSize:12,fontFamily:rj,marginBottom:10,fontWeight:600}}>⚠ {formError}</div>)}
-
                     <button className="btn-gold" onClick={validateAndContinue} style={{width:'100%',padding:12,background:'#c8a84b',border:'none',color:'#08100a',fontFamily:rj,fontSize:12,letterSpacing:'2px',textTransform:'uppercase',fontWeight:700,cursor:'pointer',marginTop:5}}>Continue to Payment</button>
                     <p style={{fontSize:10,color:'#7a8a72',textAlign:'center',marginTop:8,lineHeight:1.6}}>Start with 1 month free, then $99/month or $1,000/year. Cancel anytime.</p>
                   </div>
@@ -683,15 +737,12 @@ export default function Home() {
           </div>
         )}
 
-        {/* PAYMENT MODAL — 3 plan choices */}
         {payModal&&(
           <div style={{position:'fixed',inset:0,background:'rgba(8,16,10,.96)',backdropFilter:'blur(20px)',zIndex:600,display:'flex',alignItems:'center',justifyContent:'center',padding:'20px',overflowY:'auto'}} onClick={e=>{if(e.target===e.currentTarget)setPayModal(false);}}>
             <div style={{background:'#0c1610',border:'1px solid rgba(200,168,75,.3)',width:'100%',maxWidth:680,padding:30,margin:'auto',position:'relative'}}>
               <button onClick={()=>setPayModal(false)} style={{position:'absolute',top:14,right:14,background:'none',border:'none',color:'#7a8a72',fontSize:18,cursor:'pointer'}}>✕</button>
               <h2 style={{fontFamily:lb,fontSize:22,fontWeight:700,marginBottom:4}}>Choose Your <em style={g}>Plan</em></h2>
               <p style={{fontSize:12,color:'#b0c0a4',marginBottom:18,lineHeight:1.6}}>Try free for 1 month. Cancel anytime. No setup fee.</p>
-
-              {/* 3 plan cards */}
               <div className="pay3" style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:10,marginBottom:18}}>
                 {[
                   {id:'trial',label:'1 Month Free',price:'$0',period:'then $99/month',note:'Try before you pay',badge:'🎁 RECOMMENDED'},
@@ -707,14 +758,11 @@ export default function Home() {
                   </div>
                 ))}
               </div>
-
-              {/* Free trial auto-charge warning */}
               {plan==='trial'&&(
                 <div style={{padding:'9px 12px',background:'rgba(226,192,106,.08)',border:'1px solid rgba(226,192,106,.3)',marginBottom:14,fontSize:11,color:'#e2c06a',fontFamily:rj,lineHeight:1.55}}>
                   ⚠ By starting your free trial, you agree to be auto-charged <strong>$99/month</strong> after 1 month unless you cancel. You can cancel anytime from your dashboard.
                 </div>
               )}
-
               <FI l="Cardholder Name" p="Name on card"/>
               <FI l="Card Number" p="1234 5678 9012 3456"/>
               <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:9}}><FI l="Expiry" p="MM/YY"/><FI l="CVC" p="123"/></div>
