@@ -268,16 +268,19 @@ export default function Home() {
             linear-gradient(180deg, rgba(8,16,10,.78) 0%, rgba(8,16,10,.82) 50%, rgba(8,16,10,.96) 100%),
             url('/hero-bg.jpg');
           background-size:cover;
-          background-position:center;
+          background-position:center 35%;
           background-repeat:no-repeat;
         }
         .hero-content{position:relative;z-index:2;}
 
-        @media(max-width:768px){
+       @media(max-width:768px){
           .nav-links,.nav-signin{display:none!important;}
-          .nav-list{font-size:11px!important;padding:7px 14px!important;}
+          .nav-list{font-size:11px!important;padding:7px 14px!important;margin-left:auto!important;}
+          nav>div:first-child{font-size:18px!important;}
           .hero-sec{padding:80px 20px 50px!important;gap:24px!important;}
           .hero-h1{font-size:clamp(30px,7vw,46px)!important;letter-spacing:-1px!important;}
+          .hero-bg{background-position:center 30%!important;background-size:cover!important;}
+          .hero-sec{min-height:auto!important;}
           .search-wrap{padding:22px 18px!important;max-width:100%!important;}
           .sgrid{grid-template-columns:1fr!important;}
           .vis-sec{padding:36px 20px!important;}
