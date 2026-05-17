@@ -1,65 +1,209 @@
-import Image from "next/image";
-
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <main style={{
+      minHeight: '100vh',
+      backgroundColor: '#0a1628',
+      color: '#f0e6c8',
+      fontFamily: 'Georgia, serif',
+    }}>
+      {/* NAVBAR */}
+      <nav style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: '20px 40px',
+        borderBottom: '1px solid #c9a84c33',
+      }}>
+        <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#c9a84c', letterSpacing: '2px' }}>
+          PortServiceFinder
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+        <div style={{ display: 'flex', gap: '30px', fontSize: '14px' }}>
+          <a href="#" style={{ color: '#f0e6c8', textDecoration: 'none' }}>Search</a>
+          <a href="#" style={{ color: '#f0e6c8', textDecoration: 'none' }}>For Providers</a>
+          <a href="#" style={{ color: '#f0e6c8', textDecoration: 'none' }}>Pricing</a>
+          <a href="#" style={{
+            backgroundColor: '#c9a84c',
+            color: '#0a1628',
+            padding: '8px 20px',
+            borderRadius: '4px',
+            textDecoration: 'none',
+            fontWeight: 'bold',
+          }}>List Your Business</a>
         </div>
-      </main>
-    </div>
+      </nav>
+
+      {/* HERO */}
+      <section style={{
+        textAlign: 'center',
+        padding: '100px 40px 80px',
+        maxWidth: '800px',
+        margin: '0 auto',
+      }}>
+        <p style={{ color: '#c9a84c', letterSpacing: '4px', fontSize: '12px', marginBottom: '20px' }}>
+          GLOBAL MARITIME DIRECTORY
+        </p>
+        <h1 style={{
+          fontSize: '52px',
+          fontWeight: 'bold',
+          lineHeight: '1.2',
+          marginBottom: '24px',
+        }}>
+          Find Ship Agents & Port Services at Every Port Worldwide
+        </h1>
+        <p style={{ fontSize: '18px', color: '#b0a080', marginBottom: '50px', lineHeight: '1.6' }}>
+          Free for vessel operators. Search ship agents, shipchandlers and marine services at 1,000+ ports globally.
+        </p>
+
+        {/* SEARCH BOX */}
+        <div style={{
+          display: 'flex',
+          gap: '0',
+          maxWidth: '600px',
+          margin: '0 auto',
+          boxShadow: '0 0 40px #c9a84c22',
+        }}>
+          <input
+            type="text"
+            placeholder="Search by port name (e.g. Mersin, Singapore, Rotterdam...)"
+            style={{
+              flex: 1,
+              padding: '18px 24px',
+              fontSize: '16px',
+              border: '2px solid #c9a84c',
+              borderRight: 'none',
+              borderRadius: '4px 0 0 4px',
+              backgroundColor: '#0f1f3d',
+              color: '#f0e6c8',
+              outline: 'none',
+            }}
+          />
+          <button style={{
+            padding: '18px 32px',
+            backgroundColor: '#c9a84c',
+            color: '#0a1628',
+            border: 'none',
+            borderRadius: '0 4px 4px 0',
+            fontSize: '16px',
+            fontWeight: 'bold',
+            cursor: 'pointer',
+          }}>
+            Search
+          </button>
+        </div>
+      </section>
+
+      {/* STATS */}
+      <section style={{
+        display: 'flex',
+        justifyContent: 'center',
+        gap: '80px',
+        padding: '60px 40px',
+        borderTop: '1px solid #c9a84c22',
+        borderBottom: '1px solid #c9a84c22',
+      }}>
+        {[
+          { number: '1,000+', label: 'Ports in Database' },
+          { number: '160+', label: 'Countries Covered' },
+          { number: '22', label: 'Service Categories' },
+          { number: '$0', label: 'Search Fee' },
+        ].map((stat) => (
+          <div key={stat.label} style={{ textAlign: 'center' }}>
+            <div style={{ fontSize: '42px', fontWeight: 'bold', color: '#c9a84c' }}>{stat.number}</div>
+            <div style={{ fontSize: '14px', color: '#8a7a60', marginTop: '8px', letterSpacing: '1px' }}>{stat.label}</div>
+          </div>
+        ))}
+      </section>
+
+      {/* SERVICES */}
+      <section style={{ padding: '80px 40px', maxWidth: '1100px', margin: '0 auto' }}>
+        <h2 style={{ textAlign: 'center', fontSize: '32px', marginBottom: '50px', color: '#c9a84c' }}>
+          What Can You Find?
+        </h2>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '24px' }}>
+          {[
+            { title: 'Ship Agents', desc: 'Port agents, husbandry agents, liner agents across all major ports worldwide.' },
+            { title: 'Shipchandlers', desc: 'Ship supplies, provisions, deck and engine stores delivered to your vessel.' },
+            { title: 'Marine Services', desc: 'Crew changes, bunkering, repairs, surveys, waste disposal and more.' },
+          ].map((service) => (
+            <div key={service.title} style={{
+              padding: '36px',
+              border: '1px solid #c9a84c44',
+              borderRadius: '8px',
+              backgroundColor: '#0f1f3d',
+              transition: 'border-color 0.2s',
+            }}>
+              <h3 style={{ fontSize: '20px', color: '#c9a84c', marginBottom: '16px' }}>{service.title}</h3>
+              <p style={{ fontSize: '15px', color: '#8a7a60', lineHeight: '1.7' }}>{service.desc}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* PRICING */}
+      <section style={{
+        padding: '80px 40px',
+        backgroundColor: '#0f1f3d',
+        textAlign: 'center',
+      }}>
+        <h2 style={{ fontSize: '32px', marginBottom: '16px', color: '#c9a84c' }}>Simple Pricing for Providers</h2>
+        <p style={{ color: '#8a7a60', marginBottom: '50px' }}>Free to search for vessel operators. No commissions.</p>
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '32px', flexWrap: 'wrap' }}>
+          {[
+            { plan: 'Monthly', price: '$149', period: '/month', badge: null },
+            { plan: 'Annual', price: '$1,200', period: '/year', badge: 'Save $588' },
+          ].map((p) => (
+            <div key={p.plan} style={{
+              padding: '40px',
+              border: '2px solid #c9a84c',
+              borderRadius: '8px',
+              minWidth: '260px',
+              position: 'relative',
+            }}>
+              {p.badge && (
+                <div style={{
+                  position: 'absolute',
+                  top: '-14px',
+                  left: '50%',
+                  transform: 'translateX(-50%)',
+                  backgroundColor: '#c9a84c',
+                  color: '#0a1628',
+                  padding: '4px 16px',
+                  borderRadius: '20px',
+                  fontSize: '12px',
+                  fontWeight: 'bold',
+                }}>{p.badge}</div>
+              )}
+              <div style={{ fontSize: '16px', marginBottom: '16px', letterSpacing: '2px' }}>{p.plan.toUpperCase()}</div>
+              <div style={{ fontSize: '48px', fontWeight: 'bold', color: '#c9a84c' }}>{p.price}</div>
+              <div style={{ color: '#8a7a60', marginBottom: '24px' }}>{p.period}</div>
+              <button style={{
+                width: '100%',
+                padding: '14px',
+                backgroundColor: '#c9a84c',
+                color: '#0a1628',
+                border: 'none',
+                borderRadius: '4px',
+                fontSize: '16px',
+                fontWeight: 'bold',
+                cursor: 'pointer',
+              }}>Get Listed</button>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* FOOTER */}
+      <footer style={{
+        textAlign: 'center',
+        padding: '40px',
+        borderTop: '1px solid #c9a84c22',
+        color: '#4a3a20',
+        fontSize: '14px',
+      }}>
+        © 2026 PortServiceFinder — Global directory for ship agents, chandlers and marine services.
+        <br />
+        <span style={{ color: '#c9a84c33' }}>info@portservicefinder.com</span>
+      </footer>
+    </main>
   );
 }
