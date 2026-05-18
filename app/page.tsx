@@ -290,6 +290,10 @@ export default function Home() {
   const [payModal, setPayModal] = useState(false);
   const [plan, setPlan] = useState<'trial'|'monthly'|'yearly'>('monthly');
 
+  const [card, setCard] = useState({ name: '', number: '', expiry: '', cvc: '' });
+  const [successModal, setSuccessModal] = useState(false);
+  const [trialEndDate, setTrialEndDate] = useState('');
+
   const [form, setForm] = useState({
     companyName: '', city: '', country: '', port1: '', port2: '', port3: '',
     email: '', phone: '', person: '', bio: '',
@@ -352,6 +356,33 @@ export default function Home() {
     setPayModal(true);
   }
 
+  function processPayment() {
+    if (!card.name.trim() || !card.number.trim() || !card.expiry.trim() || !card.cvc.trim()) {
+      alert('Please fill in all card details to continue.');
+      return;
+    }
+    const endDate = new Date();
+    endDate.setDate(endDate.getDate() + 30);
+    const formatted = endDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    setTrialEndDate(formatted);
+    setPayModal(false);
+    setSuccessModal(true);
+  }
+
+  function closeSuccessAndReset() {
+    setSuccessModal(false);
+    setCard({ name: '', number: '', expiry: '', cvc: '' });
+    setForm({
+      companyName: '', city: '', country: '', port1: '', port2: '', port3: '',
+      email: '', phone: '', person: '', bio: '',
+      loginEmail: '', password: '',
+    });
+    setRegServices(new Set());
+    setRegChandlerCats(new Set());
+    setFormError('');
+    setPlan('monthly');
+  }
+
   const S = {
     sel: {background:'rgba(8,16,10,.9)',border:'1px solid rgba(200,168,75,.3)',color:'#f5f0e8',padding:'15px 16px',fontSize:16,width:'100%',outline:'none',transition:'border-color .25s'} as React.CSSProperties,
     lbl: {display:'block',fontFamily:rj,fontSize:13,fontWeight:700,letterSpacing:'1.8px',textTransform:'uppercase' as const,color:'#c8a84b',marginBottom:7},
@@ -380,6 +411,7 @@ export default function Home() {
           94%,98%{opacity:1;transform:translateY(-4px);}
           100%{opacity:0;transform:translateY(0);}
         }
+        @keyframes successPulse{0%,100%{transform:scale(1);box-shadow:0 0 0 0 rgba(76,175,118,.5);}50%{transform:scale(1.05);box-shadow:0 0 0 20px rgba(76,175,118,0);}}
         .a1{opacity:0;animation:fu .7s .1s forwards;}
         .a2{opacity:0;animation:fu .7s .25s forwards;}
         .a3{opacity:0;animation:fu .7s .4s forwards;}
@@ -396,6 +428,8 @@ export default function Home() {
         .step{transition:transform .35s ease, background .35s ease;}
         .step:hover{transform:translateY(-4px);background:#162019!important;}
         .sel-focus:focus{border-color:#c8a84b!important;}
+        .card-input:focus{border-color:#c8a84b!important;outline:none;}
+        .success-check{animation:successPulse 2s ease-in-out infinite;}
         .wave-bg{position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.06;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='1200' height='120' viewBox='0 0 1200 120'><path d='M0 60 Q 150 20 300 60 T 600 60 T 900 60 T 1200 60' stroke='%23c8a84b' stroke-width='1.2' fill='none'/><path d='M0 90 Q 150 50 300 90 T 600 90 T 900 90 T 1200 90' stroke='%23c8a84b' stroke-width='0.8' fill='none' opacity='0.6'/></svg>");background-repeat:repeat;animation:waveMove 40s linear infinite;}
         .hero-bg{position:absolute;inset:0;z-index:0;background:linear-gradient(180deg, rgba(8,16,10,.78) 0%, rgba(8,16,10,.82) 50%, rgba(8,16,10,.96) 100%),url('/hero-bg.jpg');background-size:cover;background-position:center 35%;background-repeat:no-repeat;}
         .hero-content{position:relative;z-index:2;}
@@ -775,12 +809,12 @@ export default function Home() {
             <div style={{background:'#0c1610',border:'1px solid rgba(200,168,75,.3)',width:'100%',maxWidth:680,padding:30,margin:'auto',position:'relative'}}>
               <button onClick={()=>setPayModal(false)} style={{position:'absolute',top:14,right:14,background:'none',border:'none',color:'#7a8a72',fontSize:18,cursor:'pointer'}}>✕</button>
               <h2 style={{fontFamily:lb,fontSize:22,fontWeight:700,marginBottom:4}}>Choose Your <em style={g}>Plan</em></h2>
-              <p style={{fontSize:12,color:'#b0c0a4',marginBottom:18,lineHeight:1.6}}>Try free for 1 month. Cancel anytime. No setup fee.</p>
+              <p style={{fontSize:12,color:'#b0c0a4',marginBottom:18,lineHeight:1.6}}>All plans include 1 month FREE. Then auto-billed unless cancelled.</p>
               <div className="pay3" style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:10,marginBottom:18}}>
                 {[
-                  {id:'trial',label:'1 Month Free',price:'$0',period:'then $99/month',note:'Try before you pay',badge:'🎁 RECOMMENDED'},
-                  {id:'monthly',label:'Monthly',price:'$99',period:'per month',note:'Billed monthly · Cancel anytime',badge:null},
-                  {id:'yearly',label:'Annual',price:'$1,000',period:'per year',note:'$83/mo — Save $188 (~16%)',badge:'Save $188'},
+                  {id:'trial',label:'1 Month Free',price:'$0',period:'today',note:'Then $99/month auto-bill',badge:'🎁 RECOMMENDED'},
+                  {id:'monthly',label:'Monthly',price:'$99',period:'after trial',note:'1 month FREE included',badge:null},
+                  {id:'yearly',label:'Annual',price:'$1,000',period:'after trial',note:'1 month FREE · Save $188',badge:'💰 BEST VALUE'},
                 ].map(p=>(
                   <div key={p.id} className="pay-card" onClick={()=>setPlan(p.id as 'trial'|'monthly'|'yearly')} style={{border:`2px solid ${plan===p.id?'#c8a84b':'rgba(200,168,75,.2)'}`,padding:'18px 14px',position:'relative',background:plan===p.id?'rgba(200,168,75,.07)':'transparent'}}>
                     {p.badge&&<div style={{position:'absolute',top:-9,left:'50%',transform:'translateX(-50%)',background:'#c8a84b',color:'#08100a',fontFamily:rj,fontSize:8,letterSpacing:'1.2px',fontWeight:700,padding:'3px 7px',whiteSpace:'nowrap'}}>{p.badge}</div>}
@@ -791,18 +825,113 @@ export default function Home() {
                   </div>
                 ))}
               </div>
+
               {plan==='trial'&&(
-                <div style={{padding:'9px 12px',background:'rgba(226,192,106,.08)',border:'1px solid rgba(226,192,106,.3)',marginBottom:14,fontSize:11,color:'#e2c06a',fontFamily:rj,lineHeight:1.55}}>
-                  ⚠ By starting your free trial, you agree to be auto-charged <strong>$99/month</strong> after 1 month unless you cancel. You can cancel anytime from your dashboard.
+                <div style={{padding:'12px 14px',background:'rgba(226,192,106,.08)',border:'1px solid rgba(226,192,106,.35)',marginBottom:16,fontSize:12,fontFamily:rj,lineHeight:1.6}}>
+                  <div style={{fontWeight:700,marginBottom:5,fontSize:13,color:'#e2c06a'}}>💳 You will NOT be charged today</div>
+                  <div style={{color:'#d4dcc8',fontSize:11}}>
+                    ⏰ We will automatically charge <strong style={{color:'#e2c06a'}}>$99/month</strong> after your 1-month free trial ends.<br/>
+                    ❌ Cancel anytime from your dashboard before the trial ends — no fees.
+                  </div>
                 </div>
               )}
-              <FI l="Cardholder Name" p="Name on card"/>
-              <FI l="Card Number" p="1234 5678 9012 3456"/>
-              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:9}}><FI l="Expiry" p="MM/YY"/><FI l="CVC" p="123"/></div>
-              <button className="btn-gold" onClick={()=>{setPayModal(false);alert(plan==='trial'?'Welcome! Your 1-month free trial has started. You will be charged $99/month after the trial ends unless you cancel.':plan==='yearly'?'Welcome! Your annual subscription is now active.':'Welcome! Your monthly subscription is now active.');}} style={{width:'100%',padding:12,background:'#c8a84b',border:'none',color:'#08100a',fontFamily:rj,fontSize:12,letterSpacing:'2px',textTransform:'uppercase',fontWeight:700,cursor:'pointer',marginTop:14}}>
-                {plan==='trial'?'Start 1-Month Free Trial':plan==='yearly'?'Pay $1,000 & Activate':'Pay $99 & Activate'}
+              {plan==='monthly'&&(
+                <div style={{padding:'12px 14px',background:'rgba(76,175,118,.08)',border:'1px solid rgba(76,175,118,.35)',marginBottom:16,fontSize:12,fontFamily:rj,lineHeight:1.6}}>
+                  <div style={{fontWeight:700,marginBottom:5,fontSize:13,color:'#4caf76'}}>🎁 1 Month FREE — Then $99/month</div>
+                  <div style={{color:'#d4dcc8',fontSize:11}}>
+                    ✓ You will NOT be charged today.<br/>
+                    🔄 Auto-renewing monthly subscription starts after 30 days.<br/>
+                    ❌ Cancel anytime.
+                  </div>
+                </div>
+              )}
+              {plan==='yearly'&&(
+                <div style={{padding:'12px 14px',background:'rgba(200,168,75,.08)',border:'1px solid rgba(200,168,75,.35)',marginBottom:16,fontSize:12,fontFamily:rj,lineHeight:1.6}}>
+                  <div style={{fontWeight:700,marginBottom:5,fontSize:13,color:'#c8a84b'}}>💰 1 Month FREE — Then $1,000/year (Save $188)</div>
+                  <div style={{color:'#d4dcc8',fontSize:11}}>
+                    ✓ You will NOT be charged today.<br/>
+                    🔄 Auto-renewing annual subscription starts after 30 days.<br/>
+                    ❌ Cancel anytime before trial ends.
+                  </div>
+                </div>
+              )}
+
+              <div style={{fontFamily:rj,fontSize:11,letterSpacing:'2px',textTransform:'uppercase',color:'#c8a84b',marginBottom:10,fontWeight:700,marginTop:6}}>💳 Payment Method</div>
+              <div style={{marginBottom:9}}>
+                <label style={{display:'block',fontFamily:rj,fontSize:10,letterSpacing:'1.5px',textTransform:'uppercase',color:'#7a8a72',marginBottom:3,fontWeight:600}}>Cardholder Name</label>
+                <input className="card-input" type="text" placeholder="Name on card" value={card.name} onChange={e=>setCard({...card,name:e.target.value})} style={{background:'rgba(8,16,10,.7)',border:'1px solid rgba(200,168,75,.22)',color:'#f5f0e8',padding:'9px 11px',fontSize:13,width:'100%',fontFamily:"'Outfit',sans-serif"}}/>
+              </div>
+              <div style={{marginBottom:9}}>
+                <label style={{display:'block',fontFamily:rj,fontSize:10,letterSpacing:'1.5px',textTransform:'uppercase',color:'#7a8a72',marginBottom:3,fontWeight:600}}>Card Number</label>
+                <input className="card-input" type="text" placeholder="1234 5678 9012 3456" value={card.number} onChange={e=>setCard({...card,number:e.target.value})} maxLength={19} style={{background:'rgba(8,16,10,.7)',border:'1px solid rgba(200,168,75,.22)',color:'#f5f0e8',padding:'9px 11px',fontSize:13,width:'100%',fontFamily:"'Outfit',sans-serif"}}/>
+              </div>
+              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:9}}>
+                <div style={{marginBottom:9}}>
+                  <label style={{display:'block',fontFamily:rj,fontSize:10,letterSpacing:'1.5px',textTransform:'uppercase',color:'#7a8a72',marginBottom:3,fontWeight:600}}>Expiry</label>
+                  <input className="card-input" type="text" placeholder="MM/YY" value={card.expiry} onChange={e=>setCard({...card,expiry:e.target.value})} maxLength={5} style={{background:'rgba(8,16,10,.7)',border:'1px solid rgba(200,168,75,.22)',color:'#f5f0e8',padding:'9px 11px',fontSize:13,width:'100%',fontFamily:"'Outfit',sans-serif"}}/>
+                </div>
+                <div style={{marginBottom:9}}>
+                  <label style={{display:'block',fontFamily:rj,fontSize:10,letterSpacing:'1.5px',textTransform:'uppercase',color:'#7a8a72',marginBottom:3,fontWeight:600}}>CVC</label>
+                  <input className="card-input" type="text" placeholder="123" value={card.cvc} onChange={e=>setCard({...card,cvc:e.target.value})} maxLength={4} style={{background:'rgba(8,16,10,.7)',border:'1px solid rgba(200,168,75,.22)',color:'#f5f0e8',padding:'9px 11px',fontSize:13,width:'100%',fontFamily:"'Outfit',sans-serif"}}/>
+                </div>
+              </div>
+
+              <button className="btn-gold" onClick={processPayment} style={{width:'100%',padding:14,background:'#c8a84b',border:'none',color:'#08100a',fontFamily:rj,fontSize:13,letterSpacing:'2px',textTransform:'uppercase',fontWeight:700,cursor:'pointer',marginTop:14}}>
+                {plan==='trial'?'Start Free Trial (No Charge Today)':plan==='yearly'?'Start Free Trial → $1,000/year After':'Start Free Trial → $99/month After'}
               </button>
-              <div style={{fontFamily:rj,fontSize:10,color:'#7a8a72',textAlign:'center',marginTop:9}}>🔒 Secure payment · Cancel anytime</div>
+              <div style={{fontFamily:rj,fontSize:10,color:'#7a8a72',textAlign:'center',marginTop:9,lineHeight:1.5}}>
+                🔒 Secure payment · No charge today · Cancel anytime
+              </div>
+            </div>
+          </div>
+        )}
+
+        {successModal&&(
+          <div style={{position:'fixed',inset:0,background:'rgba(8,16,10,.97)',backdropFilter:'blur(24px)',zIndex:700,display:'flex',alignItems:'center',justifyContent:'center',padding:'20px',overflowY:'auto'}}>
+            <div style={{background:'linear-gradient(180deg,#0c1610,#0a140d)',border:'1px solid rgba(76,175,118,.4)',width:'100%',maxWidth:540,padding:'40px 36px',margin:'auto',textAlign:'center',position:'relative',boxShadow:'0 20px 60px rgba(76,175,118,.15)'}}>
+
+              <div className="success-check" style={{width:80,height:80,borderRadius:'50%',background:'rgba(76,175,118,.15)',border:'2px solid #4caf76',display:'flex',alignItems:'center',justifyContent:'center',margin:'0 auto 22px',fontSize:42,color:'#4caf76',fontWeight:700}}>
+                ✓
+              </div>
+
+              <h2 style={{fontFamily:lb,fontSize:28,fontWeight:700,marginBottom:8,color:'#f5f0e8'}}>
+                Welcome to <em style={g}>PortServiceFinder!</em>
+              </h2>
+              <p style={{fontSize:14,color:'#b5bfa8',marginBottom:22,lineHeight:1.7}}>
+                Your account has been created successfully. Your 1-month free trial is now active.
+              </p>
+
+              <div style={{padding:'16px 20px',background:'rgba(76,175,118,.08)',border:'1px solid rgba(76,175,118,.3)',marginBottom:18,textAlign:'left'}}>
+                <div style={{fontFamily:rj,fontSize:11,letterSpacing:'2px',textTransform:'uppercase',color:'#4caf76',fontWeight:700,marginBottom:8}}>
+                  ✓ Trial Active
+                </div>
+                <div style={{fontSize:13,color:'#d4dcc8',lineHeight:1.7}}>
+                  Your free trial ends on <strong style={{color:'#c8a84b'}}>{trialEndDate}</strong>.<br/>
+                  On that date, you will be auto-charged <strong style={{color:'#c8a84b'}}>
+                    {plan==='yearly'?'$1,000/year':'$99/month'}
+                  </strong> unless you cancel before.
+                </div>
+              </div>
+
+              <div style={{padding:'14px 18px',background:'rgba(200,168,75,.04)',border:'1px solid rgba(200,168,75,.15)',marginBottom:22,textAlign:'left'}}>
+                <div style={{fontFamily:rj,fontSize:10,letterSpacing:'2px',textTransform:'uppercase',color:'#c8a84b',fontWeight:700,marginBottom:9}}>
+                  📋 What happens next
+                </div>
+                <div style={{fontSize:12,color:'#b5bfa8',lineHeight:1.8}}>
+                  ✉️ Confirmation email sent to <strong style={{color:'#f5f0e8'}}>{form.loginEmail||'your email'}</strong><br/>
+                  ⏰ Your listing will go live within 24 hours<br/>
+                  📞 Our team may contact you to verify details<br/>
+                  ❌ Cancel anytime from your dashboard
+                </div>
+              </div>
+
+              <button className="btn-gold" onClick={closeSuccessAndReset} style={{width:'100%',padding:14,background:'#c8a84b',border:'none',color:'#08100a',fontFamily:rj,fontSize:13,letterSpacing:'2px',textTransform:'uppercase',fontWeight:700,cursor:'pointer'}}>
+                Got it, Back to Home →
+              </button>
+
+              <div style={{fontFamily:rj,fontSize:10,color:'#7a8a72',marginTop:14,letterSpacing:'.5px'}}>
+                Questions? Email us at <a href="mailto:portservicefinder@gmail.com" style={{color:'#c8a84b',textDecoration:'none'}}>portservicefinder@gmail.com</a>
+              </div>
             </div>
           </div>
         )}
