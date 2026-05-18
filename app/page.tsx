@@ -634,7 +634,7 @@ export default function Home() {
             <div>
               <div style={{fontFamily:lb,fontSize:18,fontWeight:700,letterSpacing:1,marginBottom:10}}>PortService<span style={g}>Finder</span></div>
               <p style={{fontSize:12,color:'#7a8a72',lineHeight:1.75,maxWidth:200,marginBottom:14}}>The global maritime services directory.</p>
-              <a href="mailto:info@portservicefinder.com" style={{fontSize:12,color:'rgba(200,168,75,.6)',textDecoration:'none'}}>info@portservicefinder.com</a>
+              <a href="mailto:portservicefinder@gmail.com" style={{fontSize:12,color:'rgba(200,168,75,.6)',textDecoration:'none'}}>portservicefinder@gmail.com</a>
             </div>
             {[{t:'Directory',l:['Ship Agents','Shipchandlers','Marine Services','Search by Port']},{t:'Company',l:['About Us','Contact','Blog','Partners']},{t:'Legal',l:['Terms of Service','Privacy Policy','Listing Rules','Disclaimer']}].map(col=>(
               <div key={col.t}>
