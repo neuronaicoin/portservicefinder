@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import Link from 'next/link';
 
 const FLAG: Record<string, string> = {
   'Albania':'🇦🇱','Algeria':'🇩🇿','Angola':'🇦🇴','Antigua and Barbuda':'🇦🇬','Argentina':'🇦🇷','Aruba':'🇦🇼','Australia':'🇦🇺','Bahamas':'🇧🇸','Bahrain':'🇧🇭','Bangladesh':'🇧🇩','Barbados':'🇧🇧','Belgium':'🇧🇪','Belize':'🇧🇿','Benin':'🇧🇯','Bermuda':'🇧🇲','Brazil':'🇧🇷','Brunei':'🇧🇳','Bulgaria':'🇧🇬','Cambodia':'🇰🇭','Cameroon':'🇨🇲','Canada':'🇨🇦','Cape Verde':'🇨🇻','Cayman Islands':'🇰🇾','Chile':'🇨🇱','China':'🇨🇳','Colombia':'🇨🇴','Comoros':'🇰🇲','Congo (DRC)':'🇨🇩','Congo (Republic)':'🇨🇬','Cook Islands':'🇨🇰','Costa Rica':'🇨🇷','Croatia':'🇭🇷','Cuba':'🇨🇺','Curacao':'🇨🇼','Cyprus':'🇨🇾','Denmark':'🇩🇰','Djibouti':'🇩🇯','Dominica':'🇩🇲','Dominican Republic':'🇩🇴','Ecuador':'🇪🇨','Egypt':'🇪🇬','El Salvador':'🇸🇻','Equatorial Guinea':'🇬🇶','Eritrea':'🇪🇷','Estonia':'🇪🇪','Faroe Islands':'🇫🇴','Fiji':'🇫🇯','Finland':'🇫🇮','France':'🇫🇷','French Polynesia':'🇵🇫','Gabon':'🇬🇦','Gambia':'🇬🇲','Georgia':'🇬🇪','Germany':'🇩🇪','Ghana':'🇬🇭','Gibraltar':'🇬🇮','Greece':'🇬🇷','Greenland':'🇬🇱','Grenada':'🇬🇩','Guam':'🇬🇺','Guatemala':'🇬🇹','Guinea':'🇬🇳','Guinea-Bissau':'🇬🇼','Guyana':'🇬🇾','Haiti':'🇭🇹','Honduras':'🇭🇳','Hong Kong':'🇭🇰','Iceland':'🇮🇸','India':'🇮🇳','Indonesia':'🇮🇩','Iran':'🇮🇷','Iraq':'🇮🇶','Ireland':'🇮🇪','Israel':'🇮🇱','Italy':'🇮🇹','Ivory Coast':'🇨🇮','Jamaica':'🇯🇲','Japan':'🇯🇵','Jordan':'🇯🇴','Kenya':'🇰🇪','Kiribati':'🇰🇮','Kuwait':'🇰🇼','Latvia':'🇱🇻','Lebanon':'🇱🇧','Liberia':'🇱🇷','Libya':'🇱🇾','Lithuania':'🇱🇹','Madagascar':'🇲🇬','Malaysia':'🇲🇾','Maldives':'🇲🇻','Malta':'🇲🇹','Marshall Islands':'🇲🇭','Mauritania':'🇲🇷','Mauritius':'🇲🇺','Mexico':'🇲🇽','Micronesia':'🇫🇲','Monaco':'🇲🇨','Montenegro':'🇲🇪','Morocco':'🇲🇦','Mozambique':'🇲🇿','Myanmar':'🇲🇲','Namibia':'🇳🇦','Nauru':'🇳🇷','Netherlands':'🇳🇱','New Caledonia':'🇳🇨','New Zealand':'🇳🇿','Nicaragua':'🇳🇮','Nigeria':'🇳🇬','North Korea':'🇰🇵','Norway':'🇳🇴','Oman':'🇴🇲','Pakistan':'🇵🇰','Palau':'🇵🇼','Panama':'🇵🇦','Papua New Guinea':'🇵🇬','Paraguay':'🇵🇾','Peru':'🇵🇪','Philippines':'🇵🇭','Poland':'🇵🇱','Portugal':'🇵🇹','Puerto Rico':'🇵🇷','Qatar':'🇶🇦','Romania':'🇷🇴','Russia':'🇷🇺','Saint Kitts and Nevis':'🇰🇳','Saint Lucia':'🇱🇨','Saint Vincent':'🇻🇨','Samoa':'🇼🇸','Sao Tome and Principe':'🇸🇹','Saudi Arabia':'🇸🇦','Senegal':'🇸🇳','Seychelles':'🇸🇨','Sierra Leone':'🇸🇱','Singapore':'🇸🇬','Slovenia':'🇸🇮','Solomon Islands':'🇸🇧','Somalia':'🇸🇴','South Africa':'🇿🇦','South Korea':'🇰🇷','Spain':'🇪🇸','Sri Lanka':'🇱🇰','Sudan':'🇸🇩','Suriname':'🇸🇷','Sweden':'🇸🇪','Syria':'🇸🇾','Taiwan':'🇹🇼','Tanzania':'🇹🇿','Thailand':'🇹🇭','Timor-Leste':'🇹🇱','Togo':'🇹🇬','Tonga':'🇹🇴','Trinidad and Tobago':'🇹🇹','Tunisia':'🇹🇳','Turkey':'🇹🇷','UAE':'🇦🇪','Ukraine':'🇺🇦','United Kingdom':'🇬🇧','United States':'🇺🇸','Uruguay':'🇺🇾','Vanuatu':'🇻🇺','Venezuela':'🇻🇪','Vietnam':'🇻🇳','Virgin Islands (US)':'🇻🇮','Yemen':'🇾🇪',
@@ -216,6 +217,15 @@ const CHANDLER_CATEGORIES = [
   { key: 'engine', label: 'Engine Stores' },
 ];
 
+const FEATURED_BLOGS = [
+  {slug:'singapore-port-complete-guide-2026',flag:'🇸🇬',title:'Singapore Port Complete Guide',excerpt:'130,000+ annual vessel calls. The world\u2019s busiest port — terminals, anchorages, bunkering, agency.',time:'14 min'},
+  {slug:'suez-canal-transit-complete-guide-2026',flag:'🇪🇬',title:'Suez Canal Transit Guide',excerpt:'Everything about Suez Canal transit — booking, tolls, convoy system, agents at Port Said and Suez.',time:'13 min'},
+  {slug:'rotterdam-port-complete-guide-2026',flag:'🇳🇱',title:'Rotterdam Port Guide',excerpt:'Europe\u2019s largest port — terminals, pilotage, bunkering, and operational efficiency benchmark.',time:'13 min'},
+  {slug:'panama-canal-transit-complete-guide-2026',flag:'🇵🇦',title:'Panama Canal Transit Guide',excerpt:'Booking, locks, tolls, agency at Balboa and Crist\u00f3bal. Navigate the world\u2019s most complex canal.',time:'13 min'},
+  {slug:'dubai-jebel-ali-port-complete-guide-2026',flag:'🇦🇪',title:'Dubai & Jebel Ali Port Guide',excerpt:'Middle East\u2019s largest port + Fujairah bunkering hub. UAE port system explained.',time:'12 min'},
+  {slug:'istanbul-turkish-straits-complete-guide-2026',flag:'🇹🇷',title:'Istanbul & Turkish Straits',excerpt:'Bosphorus and Dardanelles transit — procedures, TSVTS, Istanbul agency, Ambarli port.',time:'12 min'},
+];
+
 interface Provider {
   id: string; type: string; ico: string; name: string; bio: string;
   ports: string[]; country: string; svc: string[];
@@ -289,6 +299,7 @@ export default function Home() {
   const [seg, setSeg] = useState('agent');
   const [payModal, setPayModal] = useState(false);
   const [plan, setPlan] = useState<'trial'|'monthly'|'yearly'>('monthly');
+  const [mobileMenu, setMobileMenu] = useState(false);
 
   const [card, setCard] = useState({ name: '', number: '', expiry: '', cvc: '' });
   const [successModal, setSuccessModal] = useState(false);
@@ -386,7 +397,6 @@ export default function Home() {
   const S = {
     sel: {background:'rgba(8,16,10,.9)',border:'1px solid rgba(200,168,75,.3)',color:'#f5f0e8',padding:'15px 16px',fontSize:16,width:'100%',outline:'none',transition:'border-color .25s'} as React.CSSProperties,
     lbl: {display:'block',fontFamily:rj,fontSize:13,fontWeight:700,letterSpacing:'1.8px',textTransform:'uppercase' as const,color:'#c8a84b',marginBottom:7},
-    sec: {padding:'90px 56px'} as React.CSSProperties,
   };
 
   return (
@@ -427,9 +437,13 @@ export default function Home() {
         .tier:hover{transform:translateY(-6px);box-shadow:0 14px 38px rgba(0,0,0,.45);background:#162019!important;}
         .step{transition:transform .35s ease, background .35s ease;}
         .step:hover{transform:translateY(-4px);background:#162019!important;}
+        .blog-card{transition:transform .3s ease, border-color .3s ease, box-shadow .3s ease;}
+        .blog-card:hover{transform:translateY(-4px);border-color:#c8a84b!important;box-shadow:0 12px 32px rgba(0,0,0,.4);cursor:pointer;}
         .sel-focus:focus{border-color:#c8a84b!important;}
         .card-input:focus{border-color:#c8a84b!important;outline:none;}
         .success-check{animation:successPulse 2s ease-in-out infinite;}
+        .logo-mark{filter:drop-shadow(0 1px 2px rgba(0,0,0,.4));}
+        .mobile-menu-btn{display:none;}
         .wave-bg{position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.06;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='1200' height='120' viewBox='0 0 1200 120'><path d='M0 60 Q 150 20 300 60 T 600 60 T 900 60 T 1200 60' stroke='%23c8a84b' stroke-width='1.2' fill='none'/><path d='M0 90 Q 150 50 300 90 T 600 90 T 900 90 T 1200 90' stroke='%23c8a84b' stroke-width='0.8' fill='none' opacity='0.6'/></svg>");background-repeat:repeat;animation:waveMove 40s linear infinite;}
         .hero-bg{position:absolute;inset:0;z-index:0;background:linear-gradient(180deg, rgba(8,16,10,.78) 0%, rgba(8,16,10,.82) 50%, rgba(8,16,10,.96) 100%),url('/hero-bg.jpg');background-size:cover;background-position:center 35%;background-repeat:no-repeat;}
         .hero-content{position:relative;z-index:2;}
@@ -455,49 +469,93 @@ export default function Home() {
         .dot-r4-top .radar-label{animation-delay:0s;}
         .dot-r4-bottom{top:94%;left:50%;animation-delay:-3s;}
         .dot-r4-bottom .radar-label{animation-delay:-3s;}
+        @media(max-width:900px){
+          .nav-links-desktop{display:none!important;}
+          .mobile-menu-btn{display:flex!important;}
+          .nav-cta-desktop{display:none!important;}
+        }
         @media(max-width:768px){
-          .nav-links,.nav-signin{display:none!important;}
-          .nav-list{font-size:11px!important;padding:7px 14px!important;margin-left:auto!important;}
-          nav>div:first-child{font-size:18px!important;}
-          .hero-sec{padding:80px 20px 50px!important;gap:24px!important;}
-          .hero-h1{font-size:clamp(30px,7vw,46px)!important;letter-spacing:-1px!important;}
+          nav{padding:0 16px!important;}
+          .logo-text{font-size:16px!important;}
+          .logo-mark{width:26px!important;height:26px!important;}
+          .hero-sec{padding:80px 16px 40px!important;gap:20px!important;}
+          .hero-h1{font-size:clamp(26px,7vw,42px)!important;letter-spacing:-1px!important;}
           .hero-bg{background-position:center 30%!important;background-size:cover!important;}
           .hero-sec{min-height:auto!important;}
-          .search-wrap{padding:22px 18px!important;max-width:100%!important;}
+          .search-wrap{padding:18px 14px!important;max-width:100%!important;}
           .sgrid{grid-template-columns:1fr!important;}
-          .vis-sec{padding:36px 20px!important;}
+          .vis-sec{padding:36px 16px!important;}
           .stats4{grid-template-columns:repeat(2,1fr)!important;}
-          .sec-pad{padding:60px 20px!important;}
+          .sec-pad{padding:50px 16px!important;}
           .steps3{grid-template-columns:1fr!important;}
+          .blogs-grid{grid-template-columns:1fr!important;}
           .tiers2{grid-template-columns:1fr!important;}
           .ftgrid{grid-template-columns:1fr!important;}
-          .ftpad{padding:36px 20px 0!important;}
-          .ctapad{padding:60px 20px!important;}
+          .ftpad{padding:36px 16px 0!important;}
+          .ctapad{padding:50px 16px!important;}
           .dc2{grid-template-columns:1fr!important;}
           .pay3{grid-template-columns:1fr!important;}
           .port3{grid-template-columns:1fr!important;}
           .radar-wrap{width:220px!important;height:220px!important;}
           .radar-label{font-size:9px!important;}
+          .hero-stats{gap:10px!important;}
+          .blog-hero-title{font-size:22px!important;}
+        }
+        @media(min-width:769px) and (max-width:1024px){
+          .blogs-grid{grid-template-columns:repeat(2,1fr)!important;}
         }
       `}</style>
 
       <div className="wave-bg"></div>
       <div style={{background:'#08100a',color:'#f5f0e8',fontFamily:"'Outfit',sans-serif",fontWeight:300,minHeight:'100vh',position:'relative',zIndex:1}}>
 
-        <nav style={{position:'fixed',top:0,width:'100%',zIndex:300,height:64,display:'flex',alignItems:'center',justifyContent:'space-between',padding:'0 32px',background:'rgba(8,16,10,.97)',backdropFilter:'blur(20px)',borderBottom:'1px solid rgba(200,168,75,.2)'}}>
-          <div style={{fontFamily:lb,fontSize:24,fontWeight:700,letterSpacing:1,flexShrink:0}}>PortService<span style={g}>Finder</span></div>
-          <div style={{display:'flex',alignItems:'center',gap:14}}>
-            <span className="nlnk nav-links" style={{color:'#7a8a72',fontSize:12,letterSpacing:'1.5px',textTransform:'uppercase',cursor:'pointer',fontFamily:rj,fontWeight:600}} onClick={()=>document.getElementById('how')?.scrollIntoView({behavior:'smooth'})}>How It Works</span>
-            <span className="nlnk nav-links" style={{color:'#7a8a72',fontSize:12,letterSpacing:'1.5px',textTransform:'uppercase',cursor:'pointer',fontFamily:rj,fontWeight:600}} onClick={()=>document.getElementById('pricing')?.scrollIntoView({behavior:'smooth'})}>Pricing</span>
-            <button className="btn-ghost nav-signin" style={{background:'transparent',border:'1px solid rgba(200,168,75,.4)',color:'#c8a84b',padding:'7px 16px',fontFamily:rj,fontSize:12,letterSpacing:'1.5px',textTransform:'uppercase',fontWeight:700,cursor:'pointer'}} onClick={()=>{setTab('login');setModal(true);}}>Sign In</button>
-            <button className="btn-gold nav-list" style={{background:'#c8a84b',color:'#08100a',border:'none',padding:'7px 16px',fontFamily:rj,fontSize:12,letterSpacing:'1.5px',textTransform:'uppercase',fontWeight:700,cursor:'pointer',whiteSpace:'nowrap'}} onClick={()=>{setTab('register');setModal(true);}}>List Your Business</button>
+        {/* NAV WITH LOGO */}
+        <nav style={{position:'fixed',top:0,width:'100%',zIndex:300,height:62,display:'flex',alignItems:'center',justifyContent:'space-between',padding:'0 24px',background:'rgba(8,16,10,.97)',backdropFilter:'blur(20px)',borderBottom:'1px solid rgba(200,168,75,.2)'}}>
+          <Link href="/" style={{display:'flex',alignItems:'center',gap:10,textDecoration:'none',color:'#f5f0e8',flexShrink:0}}>
+            <svg className="logo-mark" width="32" height="32" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="50" cy="50" r="44" fill="none" stroke="#c8a84b" strokeWidth="2.5"/>
+              <circle cx="50" cy="50" r="36" fill="none" stroke="#c8a84b" strokeWidth="0.6" opacity="0.5"/>
+              <polygon points="50,15 56,50 50,50" fill="#f5f0e8"/>
+              <polygon points="50,15 44,50 50,50" fill="#c8a84b"/>
+              <polygon points="50,85 56,50 50,50" fill="#c8a84b"/>
+              <polygon points="50,85 44,50 50,50" fill="#f5f0e8"/>
+              <polygon points="85,50 50,44 50,50" fill="#c8a84b"/>
+              <polygon points="85,50 50,56 50,50" fill="#f5f0e8"/>
+              <polygon points="15,50 50,44 50,50" fill="#f5f0e8"/>
+              <polygon points="15,50 50,56 50,50" fill="#c8a84b"/>
+              <circle cx="50" cy="50" r="3.5" fill="#c8a84b"/>
+            </svg>
+            <span className="logo-text" style={{fontFamily:lb,fontSize:20,fontWeight:700,letterSpacing:1}}>PortService<span style={g}>Finder</span></span>
+          </Link>
+          <div className="nav-links-desktop" style={{display:'flex',alignItems:'center',gap:18}}>
+            <span className="nlnk" style={{color:'#7a8a72',fontSize:12,letterSpacing:'1.5px',textTransform:'uppercase',cursor:'pointer',fontFamily:rj,fontWeight:600}} onClick={()=>document.getElementById('how')?.scrollIntoView({behavior:'smooth'})}>How It Works</span>
+            <Link href="/blog" className="nlnk" style={{color:'#7a8a72',fontSize:12,letterSpacing:'1.5px',textTransform:'uppercase',cursor:'pointer',fontFamily:rj,fontWeight:600,textDecoration:'none'}}>Guides</Link>
+            <span className="nlnk" style={{color:'#7a8a72',fontSize:12,letterSpacing:'1.5px',textTransform:'uppercase',cursor:'pointer',fontFamily:rj,fontWeight:600}} onClick={()=>document.getElementById('pricing')?.scrollIntoView({behavior:'smooth'})}>Pricing</span>
+            <button className="btn-ghost nav-cta-desktop" style={{background:'transparent',border:'1px solid rgba(200,168,75,.4)',color:'#c8a84b',padding:'7px 14px',fontFamily:rj,fontSize:11,letterSpacing:'1.5px',textTransform:'uppercase',fontWeight:700,cursor:'pointer'}} onClick={()=>{setTab('login');setModal(true);}}>Sign In</button>
+            <button className="btn-gold" style={{background:'#c8a84b',color:'#08100a',border:'none',padding:'7px 14px',fontFamily:rj,fontSize:11,letterSpacing:'1.5px',textTransform:'uppercase',fontWeight:700,cursor:'pointer',whiteSpace:'nowrap'}} onClick={()=>{setTab('register');setModal(true);}}>List Business</button>
           </div>
+          <button className="mobile-menu-btn btn-gold" style={{display:'none',background:'#c8a84b',color:'#08100a',border:'none',padding:'7px 12px',fontFamily:rj,fontSize:10,letterSpacing:'1.5px',textTransform:'uppercase',fontWeight:700,cursor:'pointer',alignItems:'center',gap:6}} onClick={()=>setMobileMenu(!mobileMenu)}>
+            ☰ Menu
+          </button>
         </nav>
 
+        {/* MOBILE MENU OVERLAY */}
+        {mobileMenu&&(
+          <div style={{position:'fixed',top:62,left:0,right:0,background:'rgba(8,16,10,.98)',backdropFilter:'blur(20px)',borderBottom:'1px solid rgba(200,168,75,.2)',zIndex:299,padding:'20px 16px',display:'flex',flexDirection:'column',gap:12}}>
+            <span style={{color:'#f5f0e8',fontSize:14,letterSpacing:'1.5px',textTransform:'uppercase',cursor:'pointer',fontFamily:rj,fontWeight:600,padding:'10px 0',borderBottom:'1px solid rgba(200,168,75,.1)'}} onClick={()=>{document.getElementById('how')?.scrollIntoView({behavior:'smooth'});setMobileMenu(false);}}>How It Works</span>
+            <Link href="/blog" style={{color:'#f5f0e8',fontSize:14,letterSpacing:'1.5px',textTransform:'uppercase',fontFamily:rj,fontWeight:600,padding:'10px 0',borderBottom:'1px solid rgba(200,168,75,.1)',textDecoration:'none'}}>Guides & Blog</Link>
+            <span style={{color:'#f5f0e8',fontSize:14,letterSpacing:'1.5px',textTransform:'uppercase',cursor:'pointer',fontFamily:rj,fontWeight:600,padding:'10px 0',borderBottom:'1px solid rgba(200,168,75,.1)'}} onClick={()=>{document.getElementById('pricing')?.scrollIntoView({behavior:'smooth'});setMobileMenu(false);}}>Pricing</span>
+            <Link href="/for-providers" style={{color:'#f5f0e8',fontSize:14,letterSpacing:'1.5px',textTransform:'uppercase',fontFamily:rj,fontWeight:600,padding:'10px 0',borderBottom:'1px solid rgba(200,168,75,.1)',textDecoration:'none'}}>For Providers</Link>
+            <button className="btn-ghost" style={{background:'transparent',border:'1px solid rgba(200,168,75,.4)',color:'#c8a84b',padding:'12px',fontFamily:rj,fontSize:13,letterSpacing:'1.5px',textTransform:'uppercase',fontWeight:700,cursor:'pointer',marginTop:6}} onClick={()=>{setTab('login');setModal(true);setMobileMenu(false);}}>Sign In</button>
+            <button className="btn-gold" style={{background:'#c8a84b',color:'#08100a',border:'none',padding:'12px',fontFamily:rj,fontSize:13,letterSpacing:'1.5px',textTransform:'uppercase',fontWeight:700,cursor:'pointer'}} onClick={()=>{setTab('register');setModal(true);setMobileMenu(false);}}>List Your Business</button>
+          </div>
+        )}
+
+        {/* HERO */}
         <section className="hero-sec" style={{position:'relative',minHeight:'100vh',paddingTop:100,paddingBottom:60,paddingLeft:48,paddingRight:48,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',textAlign:'center',gap:28,overflow:'hidden'}}>
           <div className="hero-bg"></div>
           <div className="hero-content" style={{display:'flex',flexDirection:'column',alignItems:'center',gap:28,width:'100%'}}>
-            <div className="a1" style={{fontFamily:rj,fontSize:11,letterSpacing:'4px',textTransform:'uppercase',color:'#c8a84b',display:'flex',alignItems:'center',gap:12}}>
+            <div className="a1" style={{fontFamily:rj,fontSize:11,letterSpacing:'4px',textTransform:'uppercase',color:'#c8a84b',display:'flex',alignItems:'center',gap:12,flexWrap:'wrap',justifyContent:'center'}}>
               <span style={{width:32,height:1,background:'#c8a84b',display:'inline-block',opacity:.5}}/>
               Global Maritime Services Directory
               <span style={{width:32,height:1,background:'#c8a84b',display:'inline-block',opacity:.5}}/>
@@ -508,7 +566,7 @@ export default function Home() {
             <p className="a3" style={{fontSize:15,lineHeight:1.8,color:'#d4dcc8',maxWidth:460,textShadow:'0 1px 6px rgba(0,0,0,.6)'}}>
               Find verified ship agents, shipchandlers and marine service companies at any port worldwide. Free to search.
             </p>
-            <div className="a3" style={{display:'flex',gap:18,flexWrap:'wrap',justifyContent:'center'}}>
+            <div className="a3 hero-stats" style={{display:'flex',gap:18,flexWrap:'wrap',justifyContent:'center'}}>
               {[['150+','Countries'],['1,200+','Ports'],['34','Categories']].map(([n,l])=>(
                 <span key={l} style={{fontFamily:rj,fontSize:12,color:'#b5bfa8',fontWeight:600}}><strong style={g}>{n}</strong> {l}</span>
               ))}
@@ -578,6 +636,34 @@ export default function Home() {
           </div>
         </section>
 
+        {/* NEW: BLOG SECTION - Featured Port Guides */}
+        <section className="sec-pad" style={{padding:'80px 48px',background:'#08100a',borderTop:'1px solid rgba(200,168,75,.1)'}}>
+          <div style={{textAlign:'center',marginBottom:42,maxWidth:680,margin:'0 auto 42px'}}>
+            <div style={{fontFamily:rj,fontSize:10,letterSpacing:'3px',textTransform:'uppercase',color:'#c8a84b',marginBottom:12,fontWeight:700}}>📚 Knowledge Hub</div>
+            <h2 className="blog-hero-title" style={{fontFamily:lb,fontSize:'clamp(24px,3vw,38px)',fontWeight:700,lineHeight:1.05,marginBottom:14}}>Complete <em style={g}>Port Guides</em> for Major Hubs</h2>
+            <p style={{fontSize:13,color:'#b0c0a4',lineHeight:1.7}}>Comprehensive operational guides for vessel operators, ship agents and maritime professionals. Written by industry experts.</p>
+          </div>
+
+          <div className="blogs-grid" style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:14,maxWidth:1180,margin:'0 auto'}}>
+            {FEATURED_BLOGS.map(post=>(
+              <Link key={post.slug} href={`/blog/${post.slug}`} className="blog-card" style={{background:'#111c13',padding:'22px 22px',border:'1px solid rgba(200,168,75,.18)',textDecoration:'none',color:'inherit',display:'flex',flexDirection:'column'}}>
+                <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:14}}>
+                  <span style={{fontSize:30,lineHeight:1}}>{post.flag}</span>
+                  <span style={{fontFamily:rj,fontSize:10,letterSpacing:'1.5px',color:'#7a8a72',fontWeight:600,background:'rgba(200,168,75,.06)',padding:'3px 9px',border:'1px solid rgba(200,168,75,.15)'}}>⏱️ {post.time}</span>
+                </div>
+                <h3 style={{fontFamily:lb,fontSize:17,fontWeight:700,lineHeight:1.3,marginBottom:10}}>{post.title}</h3>
+                <p style={{fontSize:12.5,lineHeight:1.65,color:'#b0c0a4',marginBottom:14,flex:1}}>{post.excerpt}</p>
+                <div style={{fontFamily:rj,fontSize:11,letterSpacing:'1.5px',textTransform:'uppercase',color:'#c8a84b',fontWeight:700,paddingTop:10,borderTop:'1px solid rgba(200,168,75,.1)'}}>Read Guide →</div>
+              </Link>
+            ))}
+          </div>
+
+          <div style={{textAlign:'center',marginTop:30}}>
+            <Link href="/blog" className="btn-ghost" style={{display:'inline-block',background:'transparent',color:'#c8a84b',border:'1px solid rgba(200,168,75,.4)',padding:'13px 32px',fontFamily:rj,fontSize:12,letterSpacing:'2px',textTransform:'uppercase',fontWeight:700,textDecoration:'none'}}>View All Guides →</Link>
+          </div>
+        </section>
+
+        {/* RADAR VISUALIZATION */}
         <section className="vis-sec" style={{background:'#08100a',padding:'52px 48px',textAlign:'center',borderTop:'1px solid rgba(200,168,75,.1)'}}>
           <div style={{display:'flex',justifyContent:'center',marginBottom:40}}>
             <div className="radar-wrap" style={{position:'relative',width:300,height:300}}>
@@ -603,7 +689,7 @@ export default function Home() {
           </div>
           <div style={{overflow:'hidden',borderTop:'1px solid rgba(200,168,75,.1)',borderBottom:'1px solid rgba(200,168,75,.1)',padding:'8px 0',marginBottom:32}}>
             <div style={{display:'flex',gap:32,animation:'scrollBanner 28s linear infinite',whiteSpace:'nowrap'}}>
-              {['Rotterdam','Singapore','Dubai','Shanghai','Mersin','Houston','Piraeus','Santos','Hamburg','Mumbai','Busan','Yokohama','Durban','Sydney','Panama','Antwerp','Rotterdam','Singapore','Dubai','Shanghai','Mersin','Houston','Piraeus','Santos','Hamburg','Mumbai','Busan','Yokohama'].map((item,i)=>(
+              {['Rotterdam','Singapore','Dubai','Shanghai','Suez','Houston','Piraeus','Santos','Hamburg','Mumbai','Busan','Yokohama','Durban','Sydney','Panama','Antwerp','Rotterdam','Singapore','Dubai','Shanghai','Suez','Houston','Piraeus','Santos','Hamburg','Mumbai','Busan','Yokohama'].map((item,i)=>(
                 <span key={i} style={{fontFamily:rj,fontSize:10,fontWeight:700,letterSpacing:'2px',textTransform:'uppercase',color:i%4===0?'#c8a84b':'#2a3a22',flexShrink:0}}>{item}</span>
               ))}
             </div>
@@ -619,7 +705,8 @@ export default function Home() {
           </div>
         </section>
 
-        <section id="how" className="sec-pad" style={{padding:'90px 48px',background:'#0c1610',borderTop:'1px solid rgba(200,168,75,.1)'}}>
+        {/* HOW IT WORKS */}
+        <section id="how" className="sec-pad" style={{padding:'80px 48px',background:'#0c1610',borderTop:'1px solid rgba(200,168,75,.1)'}}>
           <div style={{fontFamily:rj,fontSize:10,letterSpacing:'3px',textTransform:'uppercase',color:'#c8a84b',marginBottom:12,fontWeight:700}}>Platform</div>
           <h2 style={{fontFamily:lb,fontSize:'clamp(24px,3vw,38px)',fontWeight:700,lineHeight:1.05,marginBottom:40}}>How <em style={g}>PortServiceFinder</em> Works</h2>
           <div className="steps3" style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:1,background:'rgba(200,168,75,.1)'}}>
@@ -634,7 +721,8 @@ export default function Home() {
           </div>
         </section>
 
-        <section id="pricing" className="sec-pad" style={{padding:'90px 48px'}}>
+        {/* PRICING */}
+        <section id="pricing" className="sec-pad" style={{padding:'80px 48px'}}>
           <div style={{fontFamily:rj,fontSize:10,letterSpacing:'3px',textTransform:'uppercase',color:'#c8a84b',marginBottom:12,fontWeight:700}}>Pricing</div>
           <h2 style={{fontFamily:lb,fontSize:'clamp(24px,3vw,38px)',fontWeight:700,lineHeight:1.05,marginBottom:40}}>Simple, <em style={g}>Transparent</em> Pricing</h2>
           <p style={{color:'#b0c0a4',maxWidth:440,margin:'-26px auto 32px',fontSize:13,lineHeight:1.7,textAlign:'center'}}>Try free for 1 month. No commission. No hidden fees.</p>
@@ -654,6 +742,7 @@ export default function Home() {
           </div>
         </section>
 
+        {/* CTA */}
         <section className="ctapad" style={{padding:'72px 48px',textAlign:'center',background:'#0c1610',borderTop:'1px solid rgba(200,168,75,.1)'}}>
           <h2 style={{fontFamily:lb,fontSize:'clamp(26px,3.5vw,48px)',fontWeight:700,lineHeight:1.05,marginBottom:12}}>Be Found by Every Vessel <em style={g}>Worldwide</em></h2>
           <p style={{fontSize:14,color:'#b0c0a4',maxWidth:400,margin:'0 auto 28px',lineHeight:1.75}}>List on PortServiceFinder — <strong style={g}>1 month free</strong>, then $99/month or $1,000/year.</p>
@@ -663,21 +752,53 @@ export default function Home() {
           </div>
         </section>
 
+        {/* FOOTER */}
         <footer className="ftpad" style={{borderTop:'1px solid rgba(200,168,75,.15)',padding:'48px 48px 0'}}>
           <div className="ftgrid" style={{display:'grid',gridTemplateColumns:'2fr 1fr 1fr 1fr',gap:44,marginBottom:32}}>
             <div>
-              <div style={{fontFamily:lb,fontSize:18,fontWeight:700,letterSpacing:1,marginBottom:10}}>PortService<span style={g}>Finder</span></div>
-              <p style={{fontSize:12,color:'#7a8a72',lineHeight:1.75,maxWidth:200,marginBottom:14}}>The global maritime services directory.</p>
+              <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:12}}>
+                <svg width="28" height="28" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="50" cy="50" r="44" fill="none" stroke="#c8a84b" strokeWidth="2.5"/>
+                  <polygon points="50,15 56,50 50,50" fill="#f5f0e8"/>
+                  <polygon points="50,15 44,50 50,50" fill="#c8a84b"/>
+                  <polygon points="50,85 56,50 50,50" fill="#c8a84b"/>
+                  <polygon points="50,85 44,50 50,50" fill="#f5f0e8"/>
+                  <polygon points="85,50 50,44 50,50" fill="#c8a84b"/>
+                  <polygon points="85,50 50,56 50,50" fill="#f5f0e8"/>
+                  <polygon points="15,50 50,44 50,50" fill="#f5f0e8"/>
+                  <polygon points="15,50 50,56 50,50" fill="#c8a84b"/>
+                  <circle cx="50" cy="50" r="3.5" fill="#c8a84b"/>
+                </svg>
+                <div style={{fontFamily:lb,fontSize:18,fontWeight:700,letterSpacing:1}}>PortService<span style={g}>Finder</span></div>
+              </div>
+              <p style={{fontSize:12,color:'#7a8a72',lineHeight:1.75,maxWidth:240,marginBottom:14}}>The global maritime services directory. Free for vessel operators. No commission, ever.</p>
               <a href="mailto:portservicefinder@gmail.com" style={{fontSize:12,color:'rgba(200,168,75,.6)',textDecoration:'none'}}>portservicefinder@gmail.com</a>
             </div>
-            {[{t:'Directory',l:['Ship Agents','Shipchandlers','Marine Services','Search by Port']},{t:'Company',l:['About Us','Contact','Blog','Partners']},{t:'Legal',l:['Terms of Service','Privacy Policy','Listing Rules','Disclaimer']}].map(col=>(
-              <div key={col.t}>
-                <h4 style={{fontFamily:rj,fontSize:10,letterSpacing:'2px',textTransform:'uppercase',color:'#c8a84b',marginBottom:12,fontWeight:700}}>{col.t}</h4>
-                <ul style={{listStyle:'none',display:'flex',flexDirection:'column',gap:7}}>
-                  {col.l.map(l=><li key={l}><a href="#" style={{color:'#7a8a72',textDecoration:'none',fontSize:12}}>{l}</a></li>)}
-                </ul>
-              </div>
-            ))}
+            <div>
+              <h4 style={{fontFamily:rj,fontSize:10,letterSpacing:'2px',textTransform:'uppercase',color:'#c8a84b',marginBottom:12,fontWeight:700}}>Directory</h4>
+              <ul style={{listStyle:'none',display:'flex',flexDirection:'column',gap:7}}>
+                <li><Link href="/" style={{color:'#7a8a72',textDecoration:'none',fontSize:12}}>Search Ports</Link></li>
+                <li><Link href="/ports/singapore" style={{color:'#7a8a72',textDecoration:'none',fontSize:12}}>Singapore</Link></li>
+                <li><Link href="/ports/rotterdam" style={{color:'#7a8a72',textDecoration:'none',fontSize:12}}>Rotterdam</Link></li>
+                <li><Link href="/ports/suez" style={{color:'#7a8a72',textDecoration:'none',fontSize:12}}>Suez</Link></li>
+              </ul>
+            </div>
+            <div>
+              <h4 style={{fontFamily:rj,fontSize:10,letterSpacing:'2px',textTransform:'uppercase',color:'#c8a84b',marginBottom:12,fontWeight:700}}>Resources</h4>
+              <ul style={{listStyle:'none',display:'flex',flexDirection:'column',gap:7}}>
+                <li><Link href="/blog" style={{color:'#7a8a72',textDecoration:'none',fontSize:12}}>Blog & Guides</Link></li>
+                <li><Link href="/for-providers" style={{color:'#7a8a72',textDecoration:'none',fontSize:12}}>For Providers</Link></li>
+                <li><a href="mailto:portservicefinder@gmail.com" style={{color:'#7a8a72',textDecoration:'none',fontSize:12}}>Contact Us</a></li>
+              </ul>
+            </div>
+            <div>
+              <h4 style={{fontFamily:rj,fontSize:10,letterSpacing:'2px',textTransform:'uppercase',color:'#c8a84b',marginBottom:12,fontWeight:700}}>Legal</h4>
+              <ul style={{listStyle:'none',display:'flex',flexDirection:'column',gap:7}}>
+                <li><a href="#" style={{color:'#7a8a72',textDecoration:'none',fontSize:12}}>Terms of Service</a></li>
+                <li><a href="#" style={{color:'#7a8a72',textDecoration:'none',fontSize:12}}>Privacy Policy</a></li>
+                <li><a href="#" style={{color:'#7a8a72',textDecoration:'none',fontSize:12}}>Listing Rules</a></li>
+              </ul>
+            </div>
           </div>
           <div style={{borderTop:'1px solid rgba(200,168,75,.1)',padding:'14px 0 20px',display:'flex',justifyContent:'space-between',fontFamily:rj,fontSize:10,color:'#3a3a2a',letterSpacing:1,fontWeight:600,flexWrap:'wrap',gap:8}}>
             <span>© 2026 PortServiceFinder. All rights reserved.</span>
@@ -685,6 +806,7 @@ export default function Home() {
           </div>
         </footer>
 
+        {/* DETAIL MODAL */}
         {detail&&(
           <div style={{position:'fixed',inset:0,background:'rgba(8,16,10,.95)',backdropFilter:'blur(16px)',zIndex:550,display:'flex',alignItems:'flex-start',justifyContent:'center',padding:'36px 16px',overflowY:'auto'}} onClick={e=>{if(e.target===e.currentTarget)setDetail(null);}}>
             <div style={{background:'#0c1610',border:'1px solid rgba(200,168,75,.3)',width:'100%',maxWidth:660,margin:'auto'}}>
@@ -723,6 +845,7 @@ export default function Home() {
           </div>
         )}
 
+        {/* REGISTER/LOGIN MODAL */}
         {modal&&(
           <div style={{position:'fixed',inset:0,background:'rgba(8,16,10,.95)',backdropFilter:'blur(16px)',zIndex:500,display:'flex',alignItems:'flex-start',justifyContent:'center',padding:'36px 16px',overflowY:'auto'}} onClick={e=>{if(e.target===e.currentTarget){setModal(false);setFormError('');}}}>
             <div style={{background:'#0c1610',border:'1px solid rgba(200,168,75,.3)',width:'100%',maxWidth:720,margin:'auto'}}>
@@ -766,13 +889,13 @@ export default function Home() {
                     )}
                     <FI l="Company Name *" p="Your company name" v={form.companyName} onChange={v=>updateForm('companyName',v)}/>
                     <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:9,marginBottom:9}}>
-                      <FI l="City *" p="e.g. Mersin" v={form.city} onChange={v=>updateForm('city',v)}/>
-                      <FI l="Country *" p="e.g. Turkey" v={form.country} onChange={v=>updateForm('country',v)}/>
+                      <FI l="City *" p="e.g. Singapore" v={form.city} onChange={v=>updateForm('city',v)}/>
+                      <FI l="Country *" p="e.g. Singapore" v={form.country} onChange={v=>updateForm('country',v)}/>
                     </div>
                     <div className="port3" style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:9,marginBottom:9}}>
-                      <FI l="Port 1 *" p="e.g. Mersin" v={form.port1} onChange={v=>updateForm('port1',v)}/>
-                      <FI l="Port 2 (optional)" p="e.g. Iskenderun" v={form.port2} onChange={v=>updateForm('port2',v)}/>
-                      <FI l="Port 3 (optional)" p="e.g. Gemlik" v={form.port3} onChange={v=>updateForm('port3',v)}/>
+                      <FI l="Port 1 *" p="e.g. Singapore" v={form.port1} onChange={v=>updateForm('port1',v)}/>
+                      <FI l="Port 2 (optional)" p="e.g. Jurong" v={form.port2} onChange={v=>updateForm('port2',v)}/>
+                      <FI l="Port 3 (optional)" p="e.g. Tuas" v={form.port3} onChange={v=>updateForm('port3',v)}/>
                     </div>
                     <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:9,marginBottom:9}}>
                       <FI l="Email *" p="info@company.com" t="email" v={form.email} onChange={v=>updateForm('email',v)}/>
@@ -804,6 +927,7 @@ export default function Home() {
           </div>
         )}
 
+        {/* PAYMENT MODAL */}
         {payModal&&(
           <div style={{position:'fixed',inset:0,background:'rgba(8,16,10,.96)',backdropFilter:'blur(20px)',zIndex:600,display:'flex',alignItems:'center',justifyContent:'center',padding:'20px',overflowY:'auto'}} onClick={e=>{if(e.target===e.currentTarget)setPayModal(false);}}>
             <div style={{background:'#0c1610',border:'1px solid rgba(200,168,75,.3)',width:'100%',maxWidth:680,padding:30,margin:'auto',position:'relative'}}>
@@ -871,8 +995,7 @@ export default function Home() {
                   <input className="card-input" type="text" placeholder="MM/YY" value={card.expiry} onChange={e=>setCard({...card,expiry:e.target.value})} maxLength={5} style={{background:'rgba(8,16,10,.7)',border:'1px solid rgba(200,168,75,.22)',color:'#f5f0e8',padding:'9px 11px',fontSize:13,width:'100%',fontFamily:"'Outfit',sans-serif"}}/>
                 </div>
                 <div style={{marginBottom:9}}>
-                  <label style={{display:'block',fontFamily:rj,fontSize:10,letterSpacing:'1.5px',textTransform:'uppercase',color:'#7a8a72',marginBottom:3,fontWeight:600}}>CVC</label>
-                  <input className="card-input" type="text" placeholder="123" value={card.cvc} onChange={e=>setCard({...card,cvc:e.target.value})} maxLength={4} style={{background:'rgba(8,16,10,.7)',border:'1px solid rgba(200,168,75,.22)',color:'#f5f0e8',padding:'9px 11px',fontSize:13,width:'100%',fontFamily:"'Outfit',sans-serif"}}/>
+                  <label style={{display:'block',fontFamily:rj,fontSize:10,letterSpacing:'1.5px',textTransform:'uppercase',color:'#7a8a72',marginBottom:3,fontWeight:600}}>CVC</label><input className="card-input" type="text" placeholder="123" value={card.cvc} onChange={e=>setCard({...card,cvc:e.target.value})} maxLength={4} style={{background:'rgba(8,16,10,.7)',border:'1px solid rgba(200,168,75,.22)',color:'#f5f0e8',padding:'9px 11px',fontSize:13,width:'100%',fontFamily:"'Outfit',sans-serif"}}/>
                 </div>
               </div>
 
@@ -886,6 +1009,7 @@ export default function Home() {
           </div>
         )}
 
+        {/* SUCCESS MODAL */}
         {successModal&&(
           <div style={{position:'fixed',inset:0,background:'rgba(8,16,10,.97)',backdropFilter:'blur(24px)',zIndex:700,display:'flex',alignItems:'center',justifyContent:'center',padding:'20px',overflowY:'auto'}}>
             <div style={{background:'linear-gradient(180deg,#0c1610,#0a140d)',border:'1px solid rgba(76,175,118,.4)',width:'100%',maxWidth:540,padding:'40px 36px',margin:'auto',textAlign:'center',position:'relative',boxShadow:'0 20px 60px rgba(76,175,118,.15)'}}>
