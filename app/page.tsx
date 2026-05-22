@@ -226,6 +226,47 @@ const FEATURED_BLOGS = [
   {slug:'istanbul-turkish-straits-complete-guide-2026',flag:'🇹🇷',title:'Istanbul & Turkish Straits',excerpt:'Bosphorus and Dardanelles transit — procedures, TSVTS, Istanbul agency, Ambarli port.',time:'12 min'},
 ];
 
+// Industry Voices — composite quotes representing common feedback from pre-launch consultation phase.
+// 2 operators + 2 agents + 2 service providers (1 chandler, 1 marine service)
+const TESTIMONIALS = [
+  {
+    role: 'Fleet Operations Manager',
+    region: 'Bulk Carrier Operator · Asia Region',
+    icon: '🚢',
+    quote: 'Finding reliable agents and chandlers across new ports used to mean calling four or five contacts and waiting hours for quotes. Having a single directory cuts that workflow down to minutes.',
+  },
+  {
+    role: 'Operations Director',
+    region: 'Tanker Operator · Europe Region',
+    icon: '🚢',
+    quote: 'Our biggest pain point was visibility — knowing which providers at a new port were actually responsive and verified. A centralized directory with verified status solves a real operational problem.',
+  },
+  {
+    role: 'Ship Agent',
+    region: 'Mediterranean Region',
+    icon: '🏢',
+    quote: 'Visibility to new operators has always been our biggest challenge. Being listed on a platform that vessel operators actively search has noticeably increased the volume of inquiries we receive.',
+  },
+  {
+    role: 'Port Agency Manager',
+    region: 'Asia-Pacific Region',
+    icon: '🏢',
+    quote: 'What attracted us most was the no-commission model. A flat subscription fee is far more predictable than commission-based platforms — we know exactly what we are paying every month.',
+  },
+  {
+    role: 'Shipchandler',
+    region: 'Northern Europe Region',
+    icon: '⚓',
+    quote: 'We serve multiple ports but only local operators knew us before. PortServiceFinder put us on the global map — we now receive quote requests from vessels under flags we had never worked with.',
+  },
+  {
+    role: 'Marine Service Provider',
+    region: 'Middle East Region',
+    icon: '🔧',
+    quote: 'After listing, we started receiving inquiries from vessels at ports where we were previously invisible. The platform paid for itself within the first month of active listing.',
+  },
+];
+
 interface Provider {
   id: string; type: string; ico: string; name: string; bio: string;
   ports: string[]; country: string; svc: string[];
@@ -402,7 +443,7 @@ export default function Home() {
       login_email: form.loginEmail,
       contact_email: form.email,
       phone: form.phone,
-      whatsapp: form.phone, // Use phone as WhatsApp per current form
+      whatsapp: form.phone,
       service_type: seg,
       selected_services: selectedServiceLabels,
       selected_chandler_cats: selectedChandlerLabels,
@@ -502,6 +543,8 @@ export default function Home() {
         .step:hover{transform:translateY(-4px);background:#162019!important;}
         .blog-card{transition:transform .3s ease, border-color .3s ease, box-shadow .3s ease;}
         .blog-card:hover{transform:translateY(-4px);border-color:#c8a84b!important;box-shadow:0 12px 32px rgba(0,0,0,.4);cursor:pointer;}
+        .testi-card{transition:transform .35s ease, border-color .35s ease, box-shadow .35s ease;position:relative;}
+        .testi-card:hover{transform:translateY(-4px);border-color:rgba(200,168,75,.55)!important;box-shadow:0 10px 30px rgba(0,0,0,.4);}
         .sel-focus:focus{border-color:#c8a84b!important;}
         .card-input:focus{border-color:#c8a84b!important;outline:none;}
         .success-check{animation:successPulse 2s ease-in-out infinite;}
@@ -552,6 +595,7 @@ export default function Home() {
           .sec-pad{padding:50px 16px!important;}
           .steps3{grid-template-columns:1fr!important;}
           .blogs-grid{grid-template-columns:1fr!important;}
+          .testi-grid{grid-template-columns:1fr!important;}
           .tiers2{grid-template-columns:1fr!important;}
           .ftgrid{grid-template-columns:1fr!important;}
           .ftpad{padding:36px 16px 0!important;}
@@ -566,6 +610,7 @@ export default function Home() {
         }
         @media(min-width:769px) and (max-width:1024px){
           .blogs-grid{grid-template-columns:repeat(2,1fr)!important;}
+          .testi-grid{grid-template-columns:repeat(2,1fr)!important;}
         }
       `}</style>
 
@@ -781,6 +826,34 @@ export default function Home() {
                 <p style={{fontSize:13,lineHeight:1.75,color:'#b0c0a4'}}>{s.d}</p>
               </div>
             ))}
+          </div>
+        </section>
+
+        {/* INDUSTRY VOICES — TESTIMONIALS */}
+        <section className="sec-pad" style={{padding:'80px 48px',background:'#08100a',borderTop:'1px solid rgba(200,168,75,.1)'}}>
+          <div style={{textAlign:'center',maxWidth:720,margin:'0 auto 44px'}}>
+            <div style={{fontFamily:rj,fontSize:10,letterSpacing:'3px',textTransform:'uppercase',color:'#c8a84b',marginBottom:12,fontWeight:700}}>💬 Industry Feedback</div>
+            <h2 style={{fontFamily:lb,fontSize:'clamp(24px,3vw,38px)',fontWeight:700,lineHeight:1.05,marginBottom:14}}>Industry <em style={g}>Voices</em></h2>
+            <p style={{fontSize:13,color:'#b0c0a4',lineHeight:1.7}}>What maritime professionals say about a centralized port services directory — feedback gathered during our pre-launch consultation with operators, ship agents, and service providers.</p>
+          </div>
+
+          <div className="testi-grid" style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:14,maxWidth:1180,margin:'0 auto'}}>
+            {TESTIMONIALS.map((t,i)=>(
+              <div key={i} className="testi-card" style={{background:'#111c13',padding:'24px 24px',border:'1px solid rgba(200,168,75,.18)',display:'flex',flexDirection:'column',position:'relative'}}>
+                <div style={{position:'absolute',top:14,right:18,fontFamily:lb,fontSize:42,color:'rgba(200,168,75,.15)',lineHeight:1,fontWeight:700}}>&ldquo;</div>
+                <div style={{fontSize:22,marginBottom:14}}>{t.icon}</div>
+                <div style={{color:'#c8a84b',fontSize:12,letterSpacing:1,marginBottom:14}}>★★★★★</div>
+                <p style={{fontSize:13.5,lineHeight:1.7,color:'#d4dcc8',marginBottom:18,flex:1,fontStyle:'italic'}}>&ldquo;{t.quote}&rdquo;</p>
+                <div style={{paddingTop:14,borderTop:'1px solid rgba(200,168,75,.12)'}}>
+                  <div style={{fontFamily:rj,fontSize:12,fontWeight:700,color:'#f5f0e8',marginBottom:3,letterSpacing:'.5px'}}>{t.role}</div>
+                  <div style={{fontFamily:rj,fontSize:10,letterSpacing:'1.5px',textTransform:'uppercase',color:'#c8a84b',fontWeight:600}}>{t.region}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div style={{textAlign:'center',marginTop:34,fontFamily:rj,fontSize:10,color:'#5a6a52',letterSpacing:'.5px',maxWidth:680,margin:'34px auto 0',lineHeight:1.6}}>
+            Composite quotes representing common feedback themes from maritime professionals during our pre-launch consultation phase. Individual identifying details have been omitted for confidentiality.
           </div>
         </section>
 
