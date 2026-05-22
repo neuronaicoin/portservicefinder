@@ -303,7 +303,10 @@ export default function Home() {
 
   const [card, setCard] = useState({ name: '', number: '', expiry: '', cvc: '' });
   const [successModal, setSuccessModal] = useState(false);
-  const [trialEndDate, setTrialEndDate] = useState('');
+
+  // Submission state (Formspree integration)
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState('');
 
   const [form, setForm] = useState({
     companyName: '', city: '', country: '', port1: '', port2: '', port3: '',
@@ -367,17 +370,75 @@ export default function Home() {
     setPayModal(true);
   }
 
-  function processPayment() {
+  async function processPayment() {
+    setSubmitError('');
+
+    // Card validation
     if (!card.name.trim() || !card.number.trim() || !card.expiry.trim() || !card.cvc.trim()) {
-      alert('Please fill in all card details to continue.');
+      setSubmitError('Please fill in all card details to continue.');
       return;
     }
-    const endDate = new Date();
-    endDate.setDate(endDate.getDate() + 30);
-    const formatted = endDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-    setTrialEndDate(formatted);
-    setPayModal(false);
-    setSuccessModal(true);
+
+    // Get last 4 digits only (never send full card number to email)
+    const cardDigitsOnly = card.number.replace(/\D/g, '');
+    const cardLast4 = cardDigitsOnly.length >= 4 ? cardDigitsOnly.slice(-4) : cardDigitsOnly;
+
+    // Build selected services / chandler categories as labels
+    const selectedServiceLabels = Array.from(regServices)
+      .map(k => MARINE_SERVICES.find(s => s.key === k)?.label || k)
+      .join(', ');
+    const selectedChandlerLabels = Array.from(regChandlerCats)
+      .map(k => CHANDLER_CATEGORIES.find(c => c.key === k)?.label || k)
+      .join(', ');
+
+    const payload = {
+      company_name: form.companyName,
+      city: form.city,
+      country: form.country,
+      port_1: form.port1,
+      port_2: form.port2 || '',
+      port_3: form.port3 || '',
+      contact_name: form.person,
+      login_email: form.loginEmail,
+      contact_email: form.email,
+      phone: form.phone,
+      whatsapp: form.phone, // Use phone as WhatsApp per current form
+      service_type: seg,
+      selected_services: selectedServiceLabels,
+      selected_chandler_cats: selectedChandlerLabels,
+      bio: form.bio,
+      selected_plan: plan,
+      card_name: card.name,
+      card_last_4: cardLast4,
+      _subject: `New Provider Application: ${form.companyName} (${seg})`,
+    };
+
+    setSubmitting(true);
+    try {
+      const response = await fetch('https://formspree.io/f/xqejbadb', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        const errData = await response.json().catch(() => ({}));
+        const msg = errData?.errors?.[0]?.message || `Submission failed (status ${response.status}). Please try again.`;
+        setSubmitError(msg);
+        setSubmitting(false);
+        return;
+      }
+
+      setPayModal(false);
+      setSuccessModal(true);
+    } catch (err) {
+      setSubmitError('Network error. Please check your connection and try again.');
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   function closeSuccessAndReset() {
@@ -391,6 +452,7 @@ export default function Home() {
     setRegServices(new Set());
     setRegChandlerCats(new Set());
     setFormError('');
+    setSubmitError('');
     setPlan('monthly');
   }
 
@@ -429,6 +491,7 @@ export default function Home() {
         .nlnk:hover{color:#c8a84b!important;}
         .btn-gold{transition:transform .25s ease, box-shadow .25s ease, filter .25s ease;}
         .btn-gold:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(200,168,75,.35);filter:brightness(1.08);}
+        .btn-gold:disabled{cursor:wait;transform:none;box-shadow:none;filter:none;}
         .btn-ghost{transition:background .25s ease, color .25s ease, border-color .25s ease;}
         .btn-ghost:hover{background:rgba(200,168,75,.12);border-color:#c8a84b!important;}
         .rrow{transition:border-color .3s ease, transform .25s ease, box-shadow .25s ease;}
@@ -636,7 +699,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* NEW: BLOG SECTION - Featured Port Guides */}
+        {/* BLOG SECTION */}
         <section className="sec-pad" style={{padding:'80px 48px',background:'#08100a',borderTop:'1px solid rgba(200,168,75,.1)'}}>
           <div style={{textAlign:'center',marginBottom:42,maxWidth:680,margin:'0 auto 42px'}}>
             <div style={{fontFamily:rj,fontSize:10,letterSpacing:'3px',textTransform:'uppercase',color:'#c8a84b',marginBottom:12,fontWeight:700}}>📚 Knowledge Hub</div>
@@ -727,7 +790,7 @@ export default function Home() {
           <h2 style={{fontFamily:lb,fontSize:'clamp(24px,3vw,38px)',fontWeight:700,lineHeight:1.05,marginBottom:40}}>Simple, <em style={g}>Transparent</em> Pricing</h2>
           <p style={{color:'#b0c0a4',maxWidth:440,margin:'-26px auto 32px',fontSize:13,lineHeight:1.7,textAlign:'center'}}>Try free for 1 month. No commission. No hidden fees.</p>
           <div className="tiers2" style={{display:'grid',gridTemplateColumns:'repeat(2,1fr)',gap:14,maxWidth:680,margin:'0 auto'}}>
-            {[{name:'Monthly',amt:'$99',per:'/ month',yr:'Billed monthly · 1-month free trial',badge:null,items:['1 month FREE trial included','Listed at all your ports','Full company profile','Phone, email & WhatsApp','Verified provider badge','Cancel anytime']},{name:'Annual',amt:'$1,000',per:'/ year',yr:'$83/month equivalent — save $188 (~16%)',badge:'Save $188',items:['1 month FREE trial included','Everything in Monthly','Priority placement in results','$188 saved vs monthly','Priority support','Best value']}].map(tier=>(
+            {[{name:'Monthly',amt:'$99',per:'/ month',yr:'Billed monthly · 1-month free period',badge:null,items:['1 month FREE after verification','Listed at all your ports','Full company profile','Phone, email & WhatsApp','Verified provider badge','Cancel anytime']},{name:'Annual',amt:'$1,000',per:'/ year',yr:'$83/month equivalent — save $188 (~16%)',badge:'Save $188',items:['1 month FREE after verification','Everything in Monthly','Priority placement in results','$188 saved vs monthly','Priority support','Best value']}].map(tier=>(
               <div key={tier.name} className="tier" style={{background:tier.badge?'linear-gradient(180deg,rgba(200,168,75,.06),transparent)':'#111c13',border:`1px solid ${tier.badge?'#c8a84b':'rgba(200,168,75,.2)'}`,padding:'28px 24px',position:'relative',display:'flex',flexDirection:'column'}}>
                 {tier.badge&&<div style={{position:'absolute',top:-10,left:'50%',transform:'translateX(-50%)',background:'#c8a84b',color:'#08100a',fontFamily:rj,fontSize:10,letterSpacing:'2px',fontWeight:700,padding:'4px 12px'}}>{tier.badge}</div>}
                 <div style={{fontFamily:rj,fontSize:10,letterSpacing:'2px',textTransform:'uppercase',color:'#c8a84b',marginBottom:10,fontWeight:700}}>{tier.name}</div>
@@ -736,7 +799,7 @@ export default function Home() {
                 <ul style={{listStyle:'none',flex:1,marginBottom:18,display:'flex',flexDirection:'column',gap:7}}>
                   {tier.items.map(item=>(<li key={item} style={{fontSize:12,color:'#b0c0a4',display:'flex',alignItems:'flex-start',gap:7,lineHeight:1.5}}><span style={{color:'#c8a84b',fontWeight:700,flexShrink:0}}>✓</span>{item}</li>))}
                 </ul>
-                <button className={tier.badge?'btn-gold':'btn-ghost'} onClick={()=>{setTab('register');setModal(true);}} style={{padding:11,background:tier.badge?'#c8a84b':'transparent',border:'1px solid rgba(200,168,75,.35)',color:tier.badge?'#08100a':'#c8a84b',fontFamily:rj,fontSize:11,letterSpacing:'2px',textTransform:'uppercase',fontWeight:700,cursor:'pointer',width:'100%'}}>Start Free Trial</button>
+                <button className={tier.badge?'btn-gold':'btn-ghost'} onClick={()=>{setTab('register');setModal(true);}} style={{padding:11,background:tier.badge?'#c8a84b':'transparent',border:'1px solid rgba(200,168,75,.35)',color:tier.badge?'#08100a':'#c8a84b',fontFamily:rj,fontSize:11,letterSpacing:'2px',textTransform:'uppercase',fontWeight:700,cursor:'pointer',width:'100%'}}>Apply Now</button>
               </div>
             ))}
           </div>
@@ -745,9 +808,9 @@ export default function Home() {
         {/* CTA */}
         <section className="ctapad" style={{padding:'72px 48px',textAlign:'center',background:'#0c1610',borderTop:'1px solid rgba(200,168,75,.1)'}}>
           <h2 style={{fontFamily:lb,fontSize:'clamp(26px,3.5vw,48px)',fontWeight:700,lineHeight:1.05,marginBottom:12}}>Be Found by Every Vessel <em style={g}>Worldwide</em></h2>
-          <p style={{fontSize:14,color:'#b0c0a4',maxWidth:400,margin:'0 auto 28px',lineHeight:1.75}}>List on PortServiceFinder — <strong style={g}>1 month free</strong>, then $99/month or $1,000/year.</p>
+          <p style={{fontSize:14,color:'#b0c0a4',maxWidth:400,margin:'0 auto 28px',lineHeight:1.75}}>List on PortServiceFinder — <strong style={g}>1 month free</strong> after verification, then $99/month or $1,000/year.</p>
           <div style={{display:'flex',gap:10,justifyContent:'center',flexWrap:'wrap'}}>
-            <button className="btn-gold" onClick={()=>{setTab('register');setModal(true);}} style={{background:'#c8a84b',color:'#08100a',border:'none',padding:'12px 28px',fontFamily:rj,fontSize:13,letterSpacing:'2px',textTransform:'uppercase',fontWeight:700,cursor:'pointer'}}>Start Free Trial</button>
+            <button className="btn-gold" onClick={()=>{setTab('register');setModal(true);}} style={{background:'#c8a84b',color:'#08100a',border:'none',padding:'12px 28px',fontFamily:rj,fontSize:13,letterSpacing:'2px',textTransform:'uppercase',fontWeight:700,cursor:'pointer'}}>Apply Now</button>
             <button className="btn-ghost" onClick={()=>window.scrollTo({top:0,behavior:'smooth'})} style={{background:'transparent',color:'#f5f0e8',border:'1px solid rgba(200,168,75,.3)',padding:'11px 22px',fontFamily:rj,fontSize:13,letterSpacing:'2px',textTransform:'uppercase',fontWeight:600,cursor:'pointer'}}>Search Free</button>
           </div>
         </section>
@@ -860,7 +923,7 @@ export default function Home() {
                 {tab==='register'?(
                   <div>
                     <div style={{padding:'10px 12px',background:'rgba(226,192,106,.08)',border:'1px solid rgba(226,192,106,.3)',marginBottom:14,fontSize:11,color:'#e2c06a',fontFamily:rj,lineHeight:1.5}}>
-                      <strong>⚠️ Free trial is offered only once per company.</strong> Multiple attempts using different details will result in account suspension and forfeit of any active subscription.
+                      <strong>⚠️ Free period is offered only once per company.</strong> Multiple attempts using different details will result in account suspension and forfeit of any active subscription.
                     </div>
                     <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:7,marginBottom:16}}>
                       {[{type:'agent',ico:'🏢',name:'Ship Agent'},{type:'chandler',ico:'⚓',name:'Shipchandler'},{type:'service',ico:'🔧',name:'Marine Service'}].map(s=>(
@@ -911,8 +974,8 @@ export default function Home() {
                       <FI l="Password * (min 8 chars)" p="Password" t="password" v={form.password} onChange={v=>updateForm('password',v)}/>
                     </div>
                     {formError&&(<div style={{padding:'9px 12px',background:'rgba(220,80,80,.1)',border:'1px solid rgba(220,80,80,.4)',color:'#ff8a8a',fontSize:12,fontFamily:rj,marginBottom:10,fontWeight:600}}>⚠ {formError}</div>)}
-                    <button className="btn-gold" onClick={validateAndContinue} style={{width:'100%',padding:12,background:'#c8a84b',border:'none',color:'#08100a',fontFamily:rj,fontSize:12,letterSpacing:'2px',textTransform:'uppercase',fontWeight:700,cursor:'pointer',marginTop:5}}>Continue to Payment</button>
-                    <p style={{fontSize:10,color:'#7a8a72',textAlign:'center',marginTop:8,lineHeight:1.6}}>Start with 1 month free, then $99/month or $1,000/year. Cancel anytime.</p>
+                    <button className="btn-gold" onClick={validateAndContinue} style={{width:'100%',padding:12,background:'#c8a84b',border:'none',color:'#08100a',fontFamily:rj,fontSize:12,letterSpacing:'2px',textTransform:'uppercase',fontWeight:700,cursor:'pointer',marginTop:5}}>Continue</button>
+                    <p style={{fontSize:10,color:'#7a8a72',textAlign:'center',marginTop:8,lineHeight:1.6}}>Start with 1 month free after verification, then $99/month or $1,000/year. Cancel anytime.</p>
                   </div>
                 ):(
                   <div>
@@ -929,16 +992,16 @@ export default function Home() {
 
         {/* PAYMENT MODAL */}
         {payModal&&(
-          <div style={{position:'fixed',inset:0,background:'rgba(8,16,10,.96)',backdropFilter:'blur(20px)',zIndex:600,display:'flex',alignItems:'center',justifyContent:'center',padding:'20px',overflowY:'auto'}} onClick={e=>{if(e.target===e.currentTarget)setPayModal(false);}}>
+          <div style={{position:'fixed',inset:0,background:'rgba(8,16,10,.96)',backdropFilter:'blur(20px)',zIndex:600,display:'flex',alignItems:'center',justifyContent:'center',padding:'20px',overflowY:'auto'}} onClick={e=>{if(e.target===e.currentTarget && !submitting)setPayModal(false);}}>
             <div style={{background:'#0c1610',border:'1px solid rgba(200,168,75,.3)',width:'100%',maxWidth:680,padding:30,margin:'auto',position:'relative'}}>
-              <button onClick={()=>setPayModal(false)} style={{position:'absolute',top:14,right:14,background:'none',border:'none',color:'#7a8a72',fontSize:18,cursor:'pointer'}}>✕</button>
+              <button onClick={()=>{if(!submitting)setPayModal(false);}} style={{position:'absolute',top:14,right:14,background:'none',border:'none',color:'#7a8a72',fontSize:18,cursor:submitting?'not-allowed':'pointer'}}>✕</button>
               <h2 style={{fontFamily:lb,fontSize:22,fontWeight:700,marginBottom:4}}>Choose Your <em style={g}>Plan</em></h2>
-              <p style={{fontSize:12,color:'#b0c0a4',marginBottom:18,lineHeight:1.6}}>All plans include 1 month FREE. Then auto-billed unless cancelled.</p>
+              <p style={{fontSize:12,color:'#b0c0a4',marginBottom:18,lineHeight:1.6}}>Free period begins after our team verifies your details. You will not be charged until that period ends.</p>
               <div className="pay3" style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:10,marginBottom:18}}>
                 {[
-                  {id:'trial',label:'1 Month Free',price:'$0',period:'today',note:'Then $99/month auto-bill',badge:'🎁 RECOMMENDED'},
-                  {id:'monthly',label:'Monthly',price:'$99',period:'after trial',note:'1 month FREE included',badge:null},
-                  {id:'yearly',label:'Annual',price:'$1,000',period:'after trial',note:'1 month FREE · Save $188',badge:'💰 BEST VALUE'},
+                  {id:'trial',label:'Founding Member',price:'$0',period:'today',note:'Founding member application',badge:'🎁 RECOMMENDED'},
+                  {id:'monthly',label:'Monthly',price:'$99',period:'after free month',note:'1 month FREE after verification',badge:null},
+                  {id:'yearly',label:'Annual',price:'$1,000',period:'after free month',note:'1 month FREE · Save $188',badge:'💰 BEST VALUE'},
                 ].map(p=>(
                   <div key={p.id} className="pay-card" onClick={()=>setPlan(p.id as 'trial'|'monthly'|'yearly')} style={{border:`2px solid ${plan===p.id?'#c8a84b':'rgba(200,168,75,.2)'}`,padding:'18px 14px',position:'relative',background:plan===p.id?'rgba(200,168,75,.07)':'transparent'}}>
                     {p.badge&&<div style={{position:'absolute',top:-9,left:'50%',transform:'translateX(-50%)',background:'#c8a84b',color:'#08100a',fontFamily:rj,fontSize:8,letterSpacing:'1.2px',fontWeight:700,padding:'3px 7px',whiteSpace:'nowrap'}}>{p.badge}</div>}
@@ -954,8 +1017,9 @@ export default function Home() {
                 <div style={{padding:'12px 14px',background:'rgba(226,192,106,.08)',border:'1px solid rgba(226,192,106,.35)',marginBottom:16,fontSize:12,fontFamily:rj,lineHeight:1.6}}>
                   <div style={{fontWeight:700,marginBottom:5,fontSize:13,color:'#e2c06a'}}>💳 You will NOT be charged today</div>
                   <div style={{color:'#d4dcc8',fontSize:11}}>
-                    ⏰ We will automatically charge <strong style={{color:'#e2c06a'}}>$99/month</strong> after your 1-month free trial ends.<br/>
-                    ❌ Cancel anytime from your dashboard before the trial ends — no fees.
+                    📋 Our team will personally review your application and contact you within 24 hours.<br/>
+                    ⏰ Once verified, your 1-month free period begins.<br/>
+                    ❌ Cancel anytime before billing starts — no fees.
                   </div>
                 </div>
               )}
@@ -964,8 +1028,8 @@ export default function Home() {
                   <div style={{fontWeight:700,marginBottom:5,fontSize:13,color:'#4caf76'}}>🎁 1 Month FREE — Then $99/month</div>
                   <div style={{color:'#d4dcc8',fontSize:11}}>
                     ✓ You will NOT be charged today.<br/>
-                    🔄 Auto-renewing monthly subscription starts after 30 days.<br/>
-                    ❌ Cancel anytime.
+                    📋 Free period begins after our team verifies your details.<br/>
+                    ❌ Cancel anytime before billing starts.
                   </div>
                 </div>
               )}
@@ -974,8 +1038,8 @@ export default function Home() {
                   <div style={{fontWeight:700,marginBottom:5,fontSize:13,color:'#c8a84b'}}>💰 1 Month FREE — Then $1,000/year (Save $188)</div>
                   <div style={{color:'#d4dcc8',fontSize:11}}>
                     ✓ You will NOT be charged today.<br/>
-                    🔄 Auto-renewing annual subscription starts after 30 days.<br/>
-                    ❌ Cancel anytime before trial ends.
+                    📋 Free period begins after our team verifies your details.<br/>
+                    ❌ Cancel anytime before billing starts.
                   </div>
                 </div>
               )}
@@ -983,27 +1047,72 @@ export default function Home() {
               <div style={{fontFamily:rj,fontSize:11,letterSpacing:'2px',textTransform:'uppercase',color:'#c8a84b',marginBottom:10,fontWeight:700,marginTop:6}}>💳 Payment Method</div>
               <div style={{marginBottom:9}}>
                 <label style={{display:'block',fontFamily:rj,fontSize:10,letterSpacing:'1.5px',textTransform:'uppercase',color:'#7a8a72',marginBottom:3,fontWeight:600}}>Cardholder Name</label>
-                <input className="card-input" type="text" placeholder="Name on card" value={card.name} onChange={e=>setCard({...card,name:e.target.value})} style={{background:'rgba(8,16,10,.7)',border:'1px solid rgba(200,168,75,.22)',color:'#f5f0e8',padding:'9px 11px',fontSize:13,width:'100%',fontFamily:"'Outfit',sans-serif"}}/>
+                <input className="card-input" type="text" placeholder="Name on card" value={card.name} onChange={e=>setCard({...card,name:e.target.value})} disabled={submitting} style={{background:'rgba(8,16,10,.7)',border:'1px solid rgba(200,168,75,.22)',color:'#f5f0e8',padding:'9px 11px',fontSize:13,width:'100%',fontFamily:"'Outfit',sans-serif"}}/>
               </div>
               <div style={{marginBottom:9}}>
                 <label style={{display:'block',fontFamily:rj,fontSize:10,letterSpacing:'1.5px',textTransform:'uppercase',color:'#7a8a72',marginBottom:3,fontWeight:600}}>Card Number</label>
-                <input className="card-input" type="text" placeholder="1234 5678 9012 3456" value={card.number} onChange={e=>setCard({...card,number:e.target.value})} maxLength={19} style={{background:'rgba(8,16,10,.7)',border:'1px solid rgba(200,168,75,.22)',color:'#f5f0e8',padding:'9px 11px',fontSize:13,width:'100%',fontFamily:"'Outfit',sans-serif"}}/>
+                <input className="card-input" type="text" placeholder="1234 5678 9012 3456" value={card.number} onChange={e=>setCard({...card,number:e.target.value})} maxLength={19} disabled={submitting} style={{background:'rgba(8,16,10,.7)',border:'1px solid rgba(200,168,75,.22)',color:'#f5f0e8',padding:'9px 11px',fontSize:13,width:'100%',fontFamily:"'Outfit',sans-serif"}}/>
               </div>
               <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:9}}>
                 <div style={{marginBottom:9}}>
                   <label style={{display:'block',fontFamily:rj,fontSize:10,letterSpacing:'1.5px',textTransform:'uppercase',color:'#7a8a72',marginBottom:3,fontWeight:600}}>Expiry</label>
-                  <input className="card-input" type="text" placeholder="MM/YY" value={card.expiry} onChange={e=>setCard({...card,expiry:e.target.value})} maxLength={5} style={{background:'rgba(8,16,10,.7)',border:'1px solid rgba(200,168,75,.22)',color:'#f5f0e8',padding:'9px 11px',fontSize:13,width:'100%',fontFamily:"'Outfit',sans-serif"}}/>
+                  <input className="card-input" type="text" placeholder="MM/YY" value={card.expiry} onChange={e=>setCard({...card,expiry:e.target.value})} maxLength={5} disabled={submitting} style={{background:'rgba(8,16,10,.7)',border:'1px solid rgba(200,168,75,.22)',color:'#f5f0e8',padding:'9px 11px',fontSize:13,width:'100%',fontFamily:"'Outfit',sans-serif"}}/>
                 </div>
                 <div style={{marginBottom:9}}>
-                  <label style={{display:'block',fontFamily:rj,fontSize:10,letterSpacing:'1.5px',textTransform:'uppercase',color:'#7a8a72',marginBottom:3,fontWeight:600}}>CVC</label><input className="card-input" type="text" placeholder="123" value={card.cvc} onChange={e=>setCard({...card,cvc:e.target.value})} maxLength={4} style={{background:'rgba(8,16,10,.7)',border:'1px solid rgba(200,168,75,.22)',color:'#f5f0e8',padding:'9px 11px',fontSize:13,width:'100%',fontFamily:"'Outfit',sans-serif"}}/>
+                  <label style={{display:'block',fontFamily:rj,fontSize:10,letterSpacing:'1.5px',textTransform:'uppercase',color:'#7a8a72',marginBottom:3,fontWeight:600}}>CVC</label>
+                  <input className="card-input" type="text" placeholder="123" value={card.cvc} onChange={e=>setCard({...card,cvc:e.target.value})} maxLength={4} disabled={submitting} style={{background:'rgba(8,16,10,.7)',border:'1px solid rgba(200,168,75,.22)',color:'#f5f0e8',padding:'9px 11px',fontSize:13,width:'100%',fontFamily:"'Outfit',sans-serif"}}/>
                 </div>
               </div>
 
-              <button className="btn-gold" onClick={processPayment} style={{width:'100%',padding:14,background:'#c8a84b',border:'none',color:'#08100a',fontFamily:rj,fontSize:13,letterSpacing:'2px',textTransform:'uppercase',fontWeight:700,cursor:'pointer',marginTop:14}}>
-                {plan==='trial'?'Start Free Trial (No Charge Today)':plan==='yearly'?'Start Free Trial → $1,000/year After':'Start Free Trial → $99/month After'}
+              <button
+                className="btn-gold"
+                onClick={processPayment}
+                disabled={submitting}
+                style={{
+                  width:'100%',
+                  padding:14,
+                  background: submitting ? '#7a6730' : '#c8a84b',
+                  border:'none',
+                  color:'#08100a',
+                  fontFamily:rj,
+                  fontSize:13,
+                  letterSpacing:'2px',
+                  textTransform:'uppercase',
+                  fontWeight:700,
+                  cursor: submitting ? 'wait' : 'pointer',
+                  marginTop:14,
+                  opacity: submitting ? 0.7 : 1
+                }}
+              >
+                {submitting
+                  ? '⏳ Sending Your Application...'
+                  : (plan==='trial'
+                      ? 'Submit Founding Member Application'
+                      : plan==='yearly'
+                        ? 'Submit Application → $1,000/year After Free Month'
+                        : 'Submit Application → $99/month After Free Month'
+                    )
+                }
               </button>
+
+              {submitError && (
+                <div style={{
+                  background: 'rgba(220, 53, 69, 0.1)',
+                  border: '1px solid rgba(220, 53, 69, 0.4)',
+                  color: '#ff8a8a',
+                  padding: '10px 14px',
+                  marginTop: 12,
+                  fontSize: 12,
+                  fontFamily: rj,
+                  fontWeight: 600,
+                  lineHeight: 1.5,
+                }}>
+                  ⚠️ {submitError}
+                </div>
+              )}
+
               <div style={{fontFamily:rj,fontSize:10,color:'#7a8a72',textAlign:'center',marginTop:9,lineHeight:1.5}}>
-                🔒 Secure payment · No charge today · Cancel anytime
+                🔒 No charge today · Verification within 24 hours · Cancel anytime
               </div>
             </div>
           </div>
@@ -1019,33 +1128,22 @@ export default function Home() {
               </div>
 
               <h2 style={{fontFamily:lb,fontSize:28,fontWeight:700,marginBottom:8,color:'#f5f0e8'}}>
-                Welcome to <em style={g}>PortServiceFinder!</em>
+                Application <em style={g}>Received</em>
               </h2>
               <p style={{fontSize:14,color:'#b5bfa8',marginBottom:22,lineHeight:1.7}}>
-                Your account has been created successfully. Your 1-month free trial is now active.
+                Thank you for applying to PortServiceFinder. We have received your application and will personally contact you within 24 hours to verify your details and activate your listing.
               </p>
 
-              <div style={{padding:'16px 20px',background:'rgba(76,175,118,.08)',border:'1px solid rgba(76,175,118,.3)',marginBottom:18,textAlign:'left'}}>
-                <div style={{fontFamily:rj,fontSize:11,letterSpacing:'2px',textTransform:'uppercase',color:'#4caf76',fontWeight:700,marginBottom:8}}>
-                  ✓ Trial Active
-                </div>
-                <div style={{fontSize:13,color:'#d4dcc8',lineHeight:1.7}}>
-                  Your free trial ends on <strong style={{color:'#c8a84b'}}>{trialEndDate}</strong>.<br/>
-                  On that date, you will be auto-charged <strong style={{color:'#c8a84b'}}>
-                    {plan==='yearly'?'$1,000/year':'$99/month'}
-                  </strong> unless you cancel before.
-                </div>
-              </div>
-
-              <div style={{padding:'14px 18px',background:'rgba(200,168,75,.04)',border:'1px solid rgba(200,168,75,.15)',marginBottom:22,textAlign:'left'}}>
-                <div style={{fontFamily:rj,fontSize:10,letterSpacing:'2px',textTransform:'uppercase',color:'#c8a84b',fontWeight:700,marginBottom:9}}>
+              <div style={{padding:'16px 20px',background:'rgba(200,168,75,.04)',border:'1px solid rgba(200,168,75,.2)',marginBottom:22,textAlign:'left'}}>
+                <div style={{fontFamily:rj,fontSize:10,letterSpacing:'2px',textTransform:'uppercase',color:'#c8a84b',fontWeight:700,marginBottom:10}}>
                   📋 What happens next
                 </div>
-                <div style={{fontSize:12,color:'#b5bfa8',lineHeight:1.8}}>
+                <div style={{fontSize:12,color:'#b5bfa8',lineHeight:1.9}}>
                   ✉️ Confirmation email sent to <strong style={{color:'#f5f0e8'}}>{form.loginEmail||'your email'}</strong><br/>
-                  ⏰ Your listing will go live within 24 hours<br/>
-                  📞 Our team may contact you to verify details<br/>
-                  ❌ Cancel anytime from your dashboard
+                  📞 Our team will personally contact you within 24 hours to verify details<br/>
+                  ⏰ Once verified, your listing goes live and your 1-month free period begins<br/>
+                  💳 You will <strong style={{color:'#f5f0e8'}}>not be charged</strong> until the free month ends<br/>
+                  ❌ Cancel anytime before billing starts — no fees
                 </div>
               </div>
 
