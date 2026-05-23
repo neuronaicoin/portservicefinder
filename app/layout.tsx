@@ -30,8 +30,6 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
-  // Icons (favicon, apple-icon, opengraph-image) are auto-detected by Next.js
-  // from app/icon.tsx, app/apple-icon.tsx, app/opengraph-image.tsx
   openGraph: {
     type: "website",
     locale: "en_US",
@@ -66,6 +64,60 @@ export const metadata: Metadata = {
   category: "maritime",
 };
 
+// Schema.org structured data — Organization + WebSite
+const organizationSchema = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "PortServiceFinder",
+  url: "https://www.portservicefinder.com",
+  logo: "https://www.portservicefinder.com/icon",
+  description:
+    "Global maritime services directory connecting vessel operators with verified ship agents, shipchandlers and marine service companies at ports worldwide.",
+  foundingDate: "2025",
+  areaServed: {
+    "@type": "Place",
+    name: "Worldwide",
+  },
+  knowsAbout: [
+    "Maritime industry",
+    "Ship agency services",
+    "Ship chandlery",
+    "Marine services",
+    "Port operations",
+    "Vessel supply",
+  ],
+  contactPoint: {
+    "@type": "ContactPoint",
+    contactType: "Customer Service",
+    email: "contact@portservicefinder.com",
+    availableLanguage: "English",
+  },
+};
+
+const websiteSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "PortServiceFinder",
+  alternateName: "PSF",
+  url: "https://www.portservicefinder.com",
+  description:
+    "Find verified ship agents, shipchandlers and marine service companies at any port worldwide.",
+  publisher: {
+    "@type": "Organization",
+    name: "PortServiceFinder",
+  },
+  potentialAction: {
+    "@type": "SearchAction",
+    target: {
+      "@type": "EntryPoint",
+      urlTemplate:
+        "https://www.portservicefinder.com/?country={search_term_string}",
+    },
+    "query-input": "required name=search_term_string",
+  },
+  inLanguage: "en-US",
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -86,6 +138,18 @@ export default function RootLayout({
             gtag('config', 'G-CFQV3SY7LX');
           `}
         </Script>
+        <Script
+          id="schema-organization"
+          type="application/ld+json"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+        />
+        <Script
+          id="schema-website"
+          type="application/ld+json"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
+        />
       </head>
       <body>{children}</body>
     </html>
