@@ -342,6 +342,12 @@ export default function Home() {
   const [plan, setPlan] = useState<'trial'|'monthly'|'yearly'>('monthly');
   const [mobileMenu, setMobileMenu] = useState(false);
 
+  // Newsletter signup state
+  const [newsletterEmail, setNewsletterEmail] = useState('');
+  const [newsletterSubmitting, setNewsletterSubmitting] = useState(false);
+  const [newsletterSubmitted, setNewsletterSubmitted] = useState(false);
+  const [newsletterError, setNewsletterError] = useState('');
+
   const [card, setCard] = useState({ name: '', number: '', expiry: '', cvc: '' });
   const [successModal, setSuccessModal] = useState(false);
 
@@ -482,6 +488,39 @@ export default function Home() {
     }
   }
 
+  async function submitNewsletter() {
+    setNewsletterError('');
+    const email = newsletterEmail.trim();
+    if (!email) return setNewsletterError('Please enter your email.');
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return setNewsletterError('Please enter a valid email address.');
+
+    setNewsletterSubmitting(true);
+    try {
+      const response = await fetch('https://formspree.io/f/xqejbadb', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({
+          email,
+          source: 'Newsletter Signup (Footer)',
+          _subject: `Newsletter Signup: ${email}`,
+        }),
+      });
+      if (!response.ok) {
+        const errData = await response.json().catch(() => ({}));
+        const msg = errData?.errors?.[0]?.message || `Subscription failed (status ${response.status}). Please try again.`;
+        setNewsletterError(msg);
+        setNewsletterSubmitting(false);
+        return;
+      }
+      setNewsletterSubmitted(true);
+      setNewsletterEmail('');
+    } catch {
+      setNewsletterError('Network error. Please check your connection and try again.');
+    } finally {
+      setNewsletterSubmitting(false);
+    }
+  }
+
   function closeSuccessAndReset() {
     setSuccessModal(false);
     setCard({ name: '', number: '', expiry: '', cvc: '' });
@@ -600,6 +639,8 @@ export default function Home() {
           .tiers2{grid-template-columns:1fr!important;}
           .ftgrid{grid-template-columns:1fr!important;}
           .ftpad{padding:36px 16px 0!important;}
+          .newsletter-wrap{grid-template-columns:1fr!important;padding:20px 18px!important;gap:18px!important;}
+          .news-input-row{flex-direction:column!important;}
           .ctapad{padding:50px 16px!important;}
           .dc2{grid-template-columns:1fr!important;}
           .pay3{grid-template-columns:1fr!important;}
@@ -639,6 +680,8 @@ export default function Home() {
           <div className="nav-links-desktop" style={{display:'flex',alignItems:'center',gap:18}}>
             <span className="nlnk" style={{color:'#7a8a72',fontSize:12,letterSpacing:'1.5px',textTransform:'uppercase',cursor:'pointer',fontFamily:rj,fontWeight:600}} onClick={()=>document.getElementById('how')?.scrollIntoView({behavior:'smooth'})}>How It Works</span>
             <Link href="/blog" className="nlnk" style={{color:'#7a8a72',fontSize:12,letterSpacing:'1.5px',textTransform:'uppercase',cursor:'pointer',fontFamily:rj,fontWeight:600,textDecoration:'none'}}>Guides</Link>
+            <Link href="/faq" className="nlnk" style={{color:'#7a8a72',fontSize:12,letterSpacing:'1.5px',textTransform:'uppercase',cursor:'pointer',fontFamily:rj,fontWeight:600,textDecoration:'none'}}>FAQ</Link>
+            <Link href="/about" className="nlnk" style={{color:'#7a8a72',fontSize:12,letterSpacing:'1.5px',textTransform:'uppercase',cursor:'pointer',fontFamily:rj,fontWeight:600,textDecoration:'none'}}>About</Link>
             <span className="nlnk" style={{color:'#7a8a72',fontSize:12,letterSpacing:'1.5px',textTransform:'uppercase',cursor:'pointer',fontFamily:rj,fontWeight:600}} onClick={()=>document.getElementById('pricing')?.scrollIntoView({behavior:'smooth'})}>Pricing</span>
             <button className="btn-ghost nav-cta-desktop" style={{background:'transparent',border:'1px solid rgba(200,168,75,.4)',color:'#c8a84b',padding:'7px 14px',fontFamily:rj,fontSize:11,letterSpacing:'1.5px',textTransform:'uppercase',fontWeight:700,cursor:'pointer'}} onClick={()=>{setTab('login');setModal(true);}}>Sign In</button>
             <button className="btn-gold" style={{background:'#c8a84b',color:'#08100a',border:'none',padding:'7px 14px',fontFamily:rj,fontSize:11,letterSpacing:'1.5px',textTransform:'uppercase',fontWeight:700,cursor:'pointer',whiteSpace:'nowrap'}} onClick={()=>{setTab('register');setModal(true);}}>List Business</button>
@@ -653,8 +696,11 @@ export default function Home() {
           <div style={{position:'fixed',top:62,left:0,right:0,background:'rgba(8,16,10,.98)',backdropFilter:'blur(20px)',borderBottom:'1px solid rgba(200,168,75,.2)',zIndex:299,padding:'20px 16px',display:'flex',flexDirection:'column',gap:12}}>
             <span style={{color:'#f5f0e8',fontSize:14,letterSpacing:'1.5px',textTransform:'uppercase',cursor:'pointer',fontFamily:rj,fontWeight:600,padding:'10px 0',borderBottom:'1px solid rgba(200,168,75,.1)'}} onClick={()=>{document.getElementById('how')?.scrollIntoView({behavior:'smooth'});setMobileMenu(false);}}>How It Works</span>
             <Link href="/blog" style={{color:'#f5f0e8',fontSize:14,letterSpacing:'1.5px',textTransform:'uppercase',fontFamily:rj,fontWeight:600,padding:'10px 0',borderBottom:'1px solid rgba(200,168,75,.1)',textDecoration:'none'}}>Guides & Blog</Link>
+            <Link href="/faq" style={{color:'#f5f0e8',fontSize:14,letterSpacing:'1.5px',textTransform:'uppercase',fontFamily:rj,fontWeight:600,padding:'10px 0',borderBottom:'1px solid rgba(200,168,75,.1)',textDecoration:'none'}}>FAQ</Link>
+            <Link href="/about" style={{color:'#f5f0e8',fontSize:14,letterSpacing:'1.5px',textTransform:'uppercase',fontFamily:rj,fontWeight:600,padding:'10px 0',borderBottom:'1px solid rgba(200,168,75,.1)',textDecoration:'none'}}>About</Link>
             <span style={{color:'#f5f0e8',fontSize:14,letterSpacing:'1.5px',textTransform:'uppercase',cursor:'pointer',fontFamily:rj,fontWeight:600,padding:'10px 0',borderBottom:'1px solid rgba(200,168,75,.1)'}} onClick={()=>{document.getElementById('pricing')?.scrollIntoView({behavior:'smooth'});setMobileMenu(false);}}>Pricing</span>
             <Link href="/for-providers" style={{color:'#f5f0e8',fontSize:14,letterSpacing:'1.5px',textTransform:'uppercase',fontFamily:rj,fontWeight:600,padding:'10px 0',borderBottom:'1px solid rgba(200,168,75,.1)',textDecoration:'none'}}>For Providers</Link>
+            <Link href="/contact" style={{color:'#f5f0e8',fontSize:14,letterSpacing:'1.5px',textTransform:'uppercase',fontFamily:rj,fontWeight:600,padding:'10px 0',borderBottom:'1px solid rgba(200,168,75,.1)',textDecoration:'none'}}>Contact</Link>
             <button className="btn-ghost" style={{background:'transparent',border:'1px solid rgba(200,168,75,.4)',color:'#c8a84b',padding:'12px',fontFamily:rj,fontSize:13,letterSpacing:'1.5px',textTransform:'uppercase',fontWeight:700,cursor:'pointer',marginTop:6}} onClick={()=>{setTab('login');setModal(true);setMobileMenu(false);}}>Sign In</button>
             <button className="btn-gold" style={{background:'#c8a84b',color:'#08100a',border:'none',padding:'12px',fontFamily:rj,fontSize:13,letterSpacing:'1.5px',textTransform:'uppercase',fontWeight:700,cursor:'pointer'}} onClick={()=>{setTab('register');setModal(true);setMobileMenu(false);}}>List Your Business</button>
           </div>
@@ -891,7 +937,53 @@ export default function Home() {
 
         {/* FOOTER */}
         <footer className="ftpad" style={{borderTop:'1px solid rgba(200,168,75,.15)',padding:'48px 48px 0'}}>
-          <div className="ftgrid" style={{display:'grid',gridTemplateColumns:'2fr 1fr 1fr 1fr',gap:44,marginBottom:32}}>
+
+          {/* NEWSLETTER SIGNUP */}
+          <div className="newsletter-wrap" style={{maxWidth:1180,margin:'0 auto 38px',padding:'26px 30px',background:'linear-gradient(180deg,rgba(200,168,75,.06),rgba(200,168,75,.02))',border:'1px solid rgba(200,168,75,.22)',display:'grid',gridTemplateColumns:'1fr 1.2fr',gap:30,alignItems:'center'}}>
+            <div>
+              <div style={{fontFamily:rj,fontSize:10,letterSpacing:'2px',textTransform:'uppercase',color:'#c8a84b',marginBottom:8,fontWeight:700}}>📬 Newsletter</div>
+              <h3 style={{fontFamily:lb,fontSize:20,fontWeight:700,marginBottom:6,lineHeight:1.3}}>Stay Updated on Maritime <em style={g}>Insights</em></h3>
+              <p style={{fontSize:12.5,color:'#b0c0a4',lineHeight:1.65}}>New port guides, industry updates, and platform news. No spam, ever.</p>
+            </div>
+            <div>
+              {newsletterSubmitted ? (
+                <div style={{padding:'18px 20px',background:'rgba(76,175,118,.1)',border:'1px solid rgba(76,175,118,.4)',display:'flex',alignItems:'center',gap:12}}>
+                  <span style={{fontSize:24,color:'#4caf76',fontWeight:700,flexShrink:0}}>✓</span>
+                  <div>
+                    <div style={{fontFamily:rj,fontSize:13,fontWeight:700,color:'#f5f0e8',marginBottom:3}}>You&apos;re subscribed!</div>
+                    <div style={{fontSize:11.5,color:'#b5bfa8',lineHeight:1.5}}>We&apos;ll send you maritime industry insights & port guides — no spam, ever.</div>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <div className="news-input-row" style={{display:'flex',gap:8}}>
+                    <input
+                      type="email"
+                      placeholder="your@email.com"
+                      value={newsletterEmail}
+                      onChange={e=>setNewsletterEmail(e.target.value)}
+                      disabled={newsletterSubmitting}
+                      onKeyDown={e=>{if(e.key==='Enter')submitNewsletter();}}
+                      style={{flex:1,background:'rgba(8,16,10,.7)',border:'1px solid rgba(200,168,75,.3)',color:'#f5f0e8',padding:'10px 14px',fontSize:13,fontFamily:"'Outfit',sans-serif",outline:'none'}}
+                    />
+                    <button
+                      className="btn-gold"
+                      onClick={submitNewsletter}
+                      disabled={newsletterSubmitting}
+                      style={{background:newsletterSubmitting?'#7a6730':'#c8a84b',color:'#08100a',border:'none',padding:'10px 22px',fontFamily:rj,fontSize:11,letterSpacing:'1.5px',textTransform:'uppercase',fontWeight:700,cursor:newsletterSubmitting?'wait':'pointer',whiteSpace:'nowrap',opacity:newsletterSubmitting?0.7:1}}
+                    >
+                      {newsletterSubmitting?'...':'Subscribe'}
+                    </button>
+                  </div>
+                  {newsletterError && (
+                    <div style={{fontFamily:rj,fontSize:11,color:'#ff8a8a',marginTop:6,fontWeight:600}}>⚠ {newsletterError}</div>
+                  )}
+                </>
+              )}
+            </div>
+          </div>
+
+          <div className="ftgrid" style={{display:'grid',gridTemplateColumns:'2fr 1fr 1fr 1fr 1fr',gap:34,marginBottom:32}}>
             <div>
               <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:12}}>
                 <svg width="28" height="28" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
@@ -925,7 +1017,14 @@ export default function Home() {
               <ul style={{listStyle:'none',display:'flex',flexDirection:'column',gap:7}}>
                 <li><Link href="/blog" className="footer-link" style={{color:'#7a8a72',textDecoration:'none',fontSize:12}}>Blog & Guides</Link></li>
                 <li><Link href="/for-providers" className="footer-link" style={{color:'#7a8a72',textDecoration:'none',fontSize:12}}>For Providers</Link></li>
-                <li><a href="mailto:contact@portservicefinder.com" className="footer-link" style={{color:'#7a8a72',textDecoration:'none',fontSize:12}}>Contact Us</a></li>
+                <li><Link href="/faq" className="footer-link" style={{color:'#7a8a72',textDecoration:'none',fontSize:12}}>FAQ</Link></li>
+              </ul>
+            </div>
+            <div>
+              <h4 style={{fontFamily:rj,fontSize:10,letterSpacing:'2px',textTransform:'uppercase',color:'#c8a84b',marginBottom:12,fontWeight:700}}>Company</h4>
+              <ul style={{listStyle:'none',display:'flex',flexDirection:'column',gap:7}}>
+                <li><Link href="/about" className="footer-link" style={{color:'#7a8a72',textDecoration:'none',fontSize:12}}>About</Link></li>
+                <li><Link href="/contact" className="footer-link" style={{color:'#7a8a72',textDecoration:'none',fontSize:12}}>Contact</Link></li>
               </ul>
             </div>
             <div>
