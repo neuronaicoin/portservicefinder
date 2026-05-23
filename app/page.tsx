@@ -530,6 +530,7 @@ export default function Home() {
         .a3{opacity:0;animation:fu .7s .4s forwards;}
         .a4{opacity:0;animation:fu .7s .55s forwards;}
         .nlnk:hover{color:#c8a84b!important;}
+        .footer-link:hover{color:#c8a84b!important;}
         .btn-gold{transition:transform .25s ease, box-shadow .25s ease, filter .25s ease;}
         .btn-gold:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(200,168,75,.35);filter:brightness(1.08);}
         .btn-gold:disabled{cursor:wait;transform:none;box-shadow:none;filter:none;}
@@ -908,31 +909,31 @@ export default function Home() {
                 <div style={{fontFamily:lb,fontSize:18,fontWeight:700,letterSpacing:1}}>PortService<span style={g}>Finder</span></div>
               </div>
               <p style={{fontSize:12,color:'#7a8a72',lineHeight:1.75,maxWidth:240,marginBottom:14}}>The global maritime services directory. Free for vessel operators. No commission, ever.</p>
-              <a href="mailto:portservicefinder@gmail.com" style={{fontSize:12,color:'rgba(200,168,75,.6)',textDecoration:'none'}}>portservicefinder@gmail.com</a>
+              <a href="mailto:contact@portservicefinder.com" className="footer-link" style={{fontSize:12,color:'rgba(200,168,75,.6)',textDecoration:'none'}}>contact@portservicefinder.com</a>
             </div>
             <div>
               <h4 style={{fontFamily:rj,fontSize:10,letterSpacing:'2px',textTransform:'uppercase',color:'#c8a84b',marginBottom:12,fontWeight:700}}>Directory</h4>
               <ul style={{listStyle:'none',display:'flex',flexDirection:'column',gap:7}}>
-                <li><Link href="/" style={{color:'#7a8a72',textDecoration:'none',fontSize:12}}>Search Ports</Link></li>
-                <li><Link href="/ports/singapore" style={{color:'#7a8a72',textDecoration:'none',fontSize:12}}>Singapore</Link></li>
-                <li><Link href="/ports/rotterdam" style={{color:'#7a8a72',textDecoration:'none',fontSize:12}}>Rotterdam</Link></li>
-                <li><Link href="/ports/suez" style={{color:'#7a8a72',textDecoration:'none',fontSize:12}}>Suez</Link></li>
+                <li><Link href="/" className="footer-link" style={{color:'#7a8a72',textDecoration:'none',fontSize:12}}>Search Ports</Link></li>
+                <li><Link href="/ports/singapore" className="footer-link" style={{color:'#7a8a72',textDecoration:'none',fontSize:12}}>Singapore</Link></li>
+                <li><Link href="/ports/rotterdam" className="footer-link" style={{color:'#7a8a72',textDecoration:'none',fontSize:12}}>Rotterdam</Link></li>
+                <li><Link href="/ports/suez" className="footer-link" style={{color:'#7a8a72',textDecoration:'none',fontSize:12}}>Suez</Link></li>
               </ul>
             </div>
             <div>
               <h4 style={{fontFamily:rj,fontSize:10,letterSpacing:'2px',textTransform:'uppercase',color:'#c8a84b',marginBottom:12,fontWeight:700}}>Resources</h4>
               <ul style={{listStyle:'none',display:'flex',flexDirection:'column',gap:7}}>
-                <li><Link href="/blog" style={{color:'#7a8a72',textDecoration:'none',fontSize:12}}>Blog & Guides</Link></li>
-                <li><Link href="/for-providers" style={{color:'#7a8a72',textDecoration:'none',fontSize:12}}>For Providers</Link></li>
-                <li><a href="mailto:portservicefinder@gmail.com" style={{color:'#7a8a72',textDecoration:'none',fontSize:12}}>Contact Us</a></li>
+                <li><Link href="/blog" className="footer-link" style={{color:'#7a8a72',textDecoration:'none',fontSize:12}}>Blog & Guides</Link></li>
+                <li><Link href="/for-providers" className="footer-link" style={{color:'#7a8a72',textDecoration:'none',fontSize:12}}>For Providers</Link></li>
+                <li><a href="mailto:contact@portservicefinder.com" className="footer-link" style={{color:'#7a8a72',textDecoration:'none',fontSize:12}}>Contact Us</a></li>
               </ul>
             </div>
             <div>
               <h4 style={{fontFamily:rj,fontSize:10,letterSpacing:'2px',textTransform:'uppercase',color:'#c8a84b',marginBottom:12,fontWeight:700}}>Legal</h4>
               <ul style={{listStyle:'none',display:'flex',flexDirection:'column',gap:7}}>
-                <li><a href="#" style={{color:'#7a8a72',textDecoration:'none',fontSize:12}}>Terms of Service</a></li>
-                <li><a href="#" style={{color:'#7a8a72',textDecoration:'none',fontSize:12}}>Privacy Policy</a></li>
-                <li><a href="#" style={{color:'#7a8a72',textDecoration:'none',fontSize:12}}>Listing Rules</a></li>
+                <li><Link href="/terms" className="footer-link" style={{color:'#7a8a72',textDecoration:'none',fontSize:12}}>Terms of Service</Link></li>
+                <li><Link href="/privacy" className="footer-link" style={{color:'#7a8a72',textDecoration:'none',fontSize:12}}>Privacy Policy</Link></li>
+                <li><Link href="/listing-rules" className="footer-link" style={{color:'#7a8a72',textDecoration:'none',fontSize:12}}>Listing Rules</Link></li>
               </ul>
             </div>
           </div>
@@ -1225,7 +1226,7 @@ export default function Home() {
               </button>
 
               <div style={{fontFamily:rj,fontSize:10,color:'#7a8a72',marginTop:14,letterSpacing:'.5px'}}>
-                Questions? Email us at <a href="mailto:portservicefinder@gmail.com" style={{color:'#c8a84b',textDecoration:'none'}}>portservicefinder@gmail.com</a>
+                Questions? Email us at <a href="mailto:contact@portservicefinder.com" style={{color:'#c8a84b',textDecoration:'none'}}>contact@portservicefinder.com</a>
               </div>
             </div>
           </div>
