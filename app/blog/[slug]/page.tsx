@@ -57,6 +57,14 @@ const CATEGORY_LABELS: Record<string, { label: string; color: string }> = {
   'regulations': { label: 'Regulations', color: '#e2c06a' },
 };
 
+// Map category to Schema.org articleSection
+const CATEGORY_SECTIONS: Record<string, string> = {
+  'port-guide': 'Port Guides',
+  'industry-insights': 'Industry Insights',
+  'tips': 'Tips & Tricks',
+  'regulations': 'Regulations',
+};
+
 // Simple markdown-to-React renderer (handles our basic content format)
 function renderContent(content: string): React.ReactNode[] {
   const lines = content.trim().split('\n');
@@ -291,8 +299,10 @@ export default async function BlogPostPage({
   const rj = "'Rajdhani',sans-serif";
   const g = { color: '#c8a84b' } as React.CSSProperties;
 
-  // JSON-LD structured data for Google
-  const jsonLd = {
+  const postUrl = `https://www.portservicefinder.com/blog/${post.slug}`;
+
+  // JSON-LD: Article schema (enhanced)
+  const articleJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Article',
     headline: post.title,
@@ -308,6 +318,7 @@ export default async function BlogPostPage({
     publisher: {
       '@type': 'Organization',
       name: 'PortServiceFinder',
+      url: 'https://www.portservicefinder.com',
       logo: {
         '@type': 'ImageObject',
         url: 'https://www.portservicefinder.com/favicon.ico',
@@ -315,15 +326,48 @@ export default async function BlogPostPage({
     },
     mainEntityOfPage: {
       '@type': 'WebPage',
-      '@id': `https://www.portservicefinder.com/blog/${post.slug}`,
+      '@id': postUrl,
     },
+    keywords: Array.isArray(post.keywords) ? post.keywords.join(', ') : post.keywords,
+    articleSection: CATEGORY_SECTIONS[post.category] || 'Maritime Industry',
+    inLanguage: 'en',
+  };
+
+  // JSON-LD: BreadcrumbList schema
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Home',
+        item: 'https://www.portservicefinder.com',
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'Blog',
+        item: 'https://www.portservicefinder.com/blog',
+      },
+      {
+        '@type': 'ListItem',
+        position: 3,
+        name: post.title,
+        item: postUrl,
+      },
+    ],
   };
 
   return (
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
 
       <style>{`
