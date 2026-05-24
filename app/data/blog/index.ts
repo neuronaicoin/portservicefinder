@@ -17,12 +17,14 @@ export type { BlogPost } from '../blog-posts';
 // New individual blog posts
 import { shanghai } from './shanghai';
 import { hongKong } from './hong-kong';
+import { hamburg } from './hamburg';
 
 // Aggregated blog posts (legacy + new)
 export const BLOG_POSTS = [
   ...LEGACY_BLOG_POSTS,
   shanghai,
   hongKong,
+  hamburg,
 ];
 
 // Helper: get all post slugs (for static generation)
