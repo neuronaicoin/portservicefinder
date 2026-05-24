@@ -7,7 +7,7 @@ import {
   getRelatedPosts,
   formatBlogDate,
   getAllBlogSlugs,
-} from '../../data/blog-posts';
+} from '../../data/blog';
 
 export async function generateStaticParams() {
   return getAllBlogSlugs().map((slug) => ({ slug }));
