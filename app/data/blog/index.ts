@@ -33,6 +33,8 @@ import { guangzhou } from './guangzhou';
 import { qingdao } from './qingdao';
 import { tianjin } from './tianjin';
 import { genoa } from './genoa';
+import { melbourne } from './melbourne';
+import { casablanca } from './casablanca';
 
 // Aggregated blog posts (legacy + new)
 export const BLOG_POSTS = [
@@ -55,6 +57,8 @@ export const BLOG_POSTS = [
   qingdao,
   tianjin,
   genoa,
+  melbourne,
+  casablanca,
 ];
 
 // Helper: get all post slugs (for static generation)
