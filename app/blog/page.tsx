@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { BLOG_POSTS, formatBlogDate } from '../data/blog-posts';
+import { BLOG_POSTS, formatBlogDate } from '../data/blog';
 
 export const metadata: Metadata = {
   title: 'Maritime Industry Blog & Port Guides | PortServiceFinder',
