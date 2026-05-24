@@ -27,6 +27,7 @@ import { piraeus } from './piraeus';
 import { newYorkNewJersey } from './new-york-new-jersey';
 import { losAngelesLongBeach } from './los-angeles-long-beach';
 import { tanjungPelepas } from './tanjung-pelepas';
+import { shenzhen } from './shenzhen';
 
 // Aggregated blog posts (legacy + new)
 export const BLOG_POSTS = [
@@ -43,6 +44,7 @@ export const BLOG_POSTS = [
   newYorkNewJersey,
   losAngelesLongBeach,
   tanjungPelepas,
+  shenzhen,
 ];
 
 // Helper: get all post slugs (for static generation)
