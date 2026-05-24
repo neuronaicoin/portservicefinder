@@ -1,25 +1,27 @@
 // ============================================================
 // BLOG POSTS — Modular structure
 // ============================================================
-// This is the new aggregator file for blog posts.
-// Currently it re-exports everything from ../blog-posts.ts (the legacy file).
-// New blog posts will be added as individual files in this directory
-// and merged into the BLOG_POSTS array below.
+// This is the aggregator file for blog posts.
+// It combines legacy posts (from ../blog-posts.ts) with new
+// individual post files in this directory.
 // ============================================================
 
 import {
   BLOG_POSTS as LEGACY_BLOG_POSTS,
-  getAllBlogSlugs as legacyGetAllBlogSlugs,
-  getBlogPost as legacyGetBlogPost,
-  getRelatedPosts as legacyGetRelatedPosts,
   formatBlogDate as legacyFormatBlogDate,
 } from '../blog-posts';
 
 // Re-export the BlogPost type for use in individual post files
 export type { BlogPost } from '../blog-posts';
 
-// Aggregated blog posts (currently only legacy, new posts will be merged here)
-export const BLOG_POSTS = [...LEGACY_BLOG_POSTS];
+// New individual blog posts
+import { shanghai } from './shanghai';
+
+// Aggregated blog posts (legacy + new)
+export const BLOG_POSTS = [
+  ...LEGACY_BLOG_POSTS,
+  shanghai,
+];
 
 // Helper: get all post slugs (for static generation)
 export function getAllBlogSlugs(): string[] {
