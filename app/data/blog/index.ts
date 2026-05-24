@@ -24,6 +24,7 @@ import { busan } from './busan';
 import { santos } from './santos';
 import { yokohama } from './yokohama';
 import { piraeus } from './piraeus';
+import { newYorkNewJersey } from './new-york-new-jersey';
 
 // Aggregated blog posts (legacy + new)
 export const BLOG_POSTS = [
@@ -37,6 +38,7 @@ export const BLOG_POSTS = [
   santos,
   yokohama,
   piraeus,
+  newYorkNewJersey,
 ];
 
 // Helper: get all post slugs (for static generation)
