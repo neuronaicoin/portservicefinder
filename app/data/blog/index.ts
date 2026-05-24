@@ -28,6 +28,7 @@ import { newYorkNewJersey } from './new-york-new-jersey';
 import { losAngelesLongBeach } from './los-angeles-long-beach';
 import { tanjungPelepas } from './tanjung-pelepas';
 import { shenzhen } from './shenzhen';
+import { ningboZhoushan } from './ningbo-zhoushan';
 
 // Aggregated blog posts (legacy + new)
 export const BLOG_POSTS = [
@@ -45,6 +46,7 @@ export const BLOG_POSTS = [
   losAngelesLongBeach,
   tanjungPelepas,
   shenzhen,
+  ningboZhoushan,
 ];
 
 // Helper: get all post slugs (for static generation)
