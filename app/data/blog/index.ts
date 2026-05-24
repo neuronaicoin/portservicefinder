@@ -18,6 +18,7 @@ export type { BlogPost } from '../blog-posts';
 import { shanghai } from './shanghai';
 import { hongKong } from './hong-kong';
 import { hamburg } from './hamburg';
+import { antwerp } from './antwerp';
 
 // Aggregated blog posts (legacy + new)
 export const BLOG_POSTS = [
@@ -25,6 +26,7 @@ export const BLOG_POSTS = [
   shanghai,
   hongKong,
   hamburg,
+  antwerp,
 ];
 
 // Helper: get all post slugs (for static generation)
