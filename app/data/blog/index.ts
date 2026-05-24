@@ -38,6 +38,7 @@ import { casablanca } from './casablanca';
 import { durban } from './durban';
 import { rosario } from './rosario';
 import { vancouver } from './vancouver';
+import { stPetersburg } from './st-petersburg';
 
 // Aggregated blog posts (legacy + new)
 export const BLOG_POSTS = [
@@ -65,6 +66,7 @@ export const BLOG_POSTS = [
   durban,
   rosario,
   vancouver,
+  stPetersburg,
 ];
 
 // Helper: get all post slugs (for static generation)
