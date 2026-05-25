@@ -1129,7 +1129,7 @@ export default function Home() {
                       <FI l="City *" p="e.g. Singapore" v={form.city} onChange={v=>updateForm('city',v)}/>
                       <FI l="Country *" p="e.g. Singapore" v={form.country} onChange={v=>updateForm('country',v)}/>
                     </div>
-                    <div className="port3" style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:9,marginBottom:9}}>
+                    <div className="port3" style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:9,marginBottom:9}}>
                       <FI l="Port 1 *" p="e.g. Singapore" v={form.port1} onChange={v=>updateForm('port1',v)}/>
                       <FI l="Port 2 (optional)" p="e.g. Jurong" v={form.port2} onChange={v=>updateForm('port2',v)}/>
                       <FI l="Port 3 (optional)" p="e.g. Tuas" v={form.port3} onChange={v=>updateForm('port3',v)}/>
@@ -1171,11 +1171,11 @@ export default function Home() {
               <button onClick={()=>{if(!submitting)setPayModal(false);}} style={{position:'absolute',top:14,right:14,background:'none',border:'none',color:'#7a8a72',fontSize:18,cursor:submitting?'not-allowed':'pointer'}}>✕</button>
               <h2 style={{fontFamily:lb,fontSize:22,fontWeight:700,marginBottom:4}}>Choose Your <em style={g}>Plan</em></h2>
               <p style={{fontSize:12,color:'#b0c0a4',marginBottom:18,lineHeight:1.6}}>Free period begins after our team verifies your details. You will not be charged until that period ends.</p>
-              <div className="pay3" style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:10,marginBottom:18}}>
+              <div className="pay3" style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10,marginBottom:18}}>
                 {[
-                  {id:'trial',label:'Founding Member',price:'$0',period:'today',note:'Founding member application',badge:'🎁 RECOMMENDED'},
-                  {id:'monthly',label:'Monthly',price:'$99',period:'after free month',note:'1 month FREE after verification',badge:null},
-                  {id:'yearly',label:'Annual',price:'$1,000',period:'after free month',note:'1 month FREE · Save $188',badge:'💰 BEST VALUE'},
+                  
+                  {id:'monthly',label:'Monthly',price:'$49.90',period:'/ month',note:'Billed monthly · Cancel anytime',badge:null},
+                  {id:'yearly',label:'Annual',price:'$500',period:'/ year',note:'$41.67/mo equivalent · Save $98.80',badge:'💰 BEST VALUE'},
                 ].map(p=>(
                   <div key={p.id} className="pay-card" onClick={()=>setPlan(p.id as 'trial'|'monthly'|'yearly')} style={{border:`2px solid ${plan===p.id?'#c8a84b':'rgba(200,168,75,.2)'}`,padding:'18px 14px',position:'relative',background:plan===p.id?'rgba(200,168,75,.07)':'transparent'}}>
                     {p.badge&&<div style={{position:'absolute',top:-9,left:'50%',transform:'translateX(-50%)',background:'#c8a84b',color:'#08100a',fontFamily:rj,fontSize:8,letterSpacing:'1.2px',fontWeight:700,padding:'3px 7px',whiteSpace:'nowrap'}}>{p.badge}</div>}
