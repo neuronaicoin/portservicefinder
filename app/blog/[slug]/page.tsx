@@ -118,6 +118,21 @@ const REGION_KEYWORDS: Record<string, { label: string; emoji: string; keywords: 
       'lagos', 'mombasa', 'aqaba', 'salalah', 'doha',
     ],
   },
+  industryResources: {
+    label: 'Industry Resources',
+    emoji: '🏗️',
+    keywords: [
+      'shipyard',
+      'shipyards',
+      'drydock',
+      'shipbuilding',
+      'comparison',
+      'compare',
+      'vs-',
+      'howto',
+      'worlds-top',
+    ],
+  },
   otherRegions: {
     label: 'Other Regions',
     emoji: '❄️',
