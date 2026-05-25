@@ -36,6 +36,7 @@ import { singaporeVsHongKongVsShanghai } from './singapore-vs-hong-kong-vs-shang
 import { rotterdamVsHamburgVsAntwerp } from './rotterdam-vs-hamburg-vs-antwerp';
 import { suezVsPanama } from './suez-vs-panama';
 import { howToBecomeShipAgent } from './how-to-become-ship-agent';
+import { howToStartShipChandler } from './how-to-start-ship-chandler';
 export const BLOG_POSTS = [
   ...LEGACY_BLOG_POSTS,
   shanghai,
@@ -68,6 +69,7 @@ export const BLOG_POSTS = [
   rotterdamVsHamburgVsAntwerp,
   suezVsPanama,
   howToBecomeShipAgent,
+  howToStartShipChandler,
 ];
 export function getAllBlogSlugs(): string[] {
   return BLOG_POSTS.map((p) => p.slug);
