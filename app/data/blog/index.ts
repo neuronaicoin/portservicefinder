@@ -43,6 +43,7 @@ import { howToStartBunkerSupply } from './how-to-start-bunker-supply';
 import { howToStartHullCleaning } from './how-to-start-hull-cleaning';
 import { howToStartCrewChange } from './how-to-start-crew-change';
 import { howToStartShipRepair } from './how-to-start-ship-repair';
+import { howToStartMarineSurveying } from './how-to-start-marine-surveying';
 export const BLOG_POSTS = [
   ...LEGACY_BLOG_POSTS,
   shanghai,
@@ -82,6 +83,7 @@ export const BLOG_POSTS = [
   howToStartHullCleaning,
   howToStartCrewChange,
   howToStartShipRepair,
+  howToStartMarineSurveying,
 ];
 export function getAllBlogSlugs(): string[] {
   return BLOG_POSTS.map((p) => p.slug);
