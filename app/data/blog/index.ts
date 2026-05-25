@@ -37,6 +37,7 @@ import { rotterdamVsHamburgVsAntwerp } from './rotterdam-vs-hamburg-vs-antwerp';
 import { suezVsPanama } from './suez-vs-panama';
 import { howToBecomeShipAgent } from './how-to-become-ship-agent';
 import { howToStartShipChandler } from './how-to-start-ship-chandler';
+import { marketingForShipAgents } from './marketing-for-ship-agents';
 export const BLOG_POSTS = [
   ...LEGACY_BLOG_POSTS,
   shanghai,
@@ -70,6 +71,7 @@ export const BLOG_POSTS = [
   suezVsPanama,
   howToBecomeShipAgent,
   howToStartShipChandler,
+  marketingForShipAgents,
 ];
 export function getAllBlogSlugs(): string[] {
   return BLOG_POSTS.map((p) => p.slug);
