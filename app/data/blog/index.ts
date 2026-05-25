@@ -39,6 +39,7 @@ import { howToBecomeShipAgent } from './how-to-become-ship-agent';
 import { howToStartShipChandler } from './how-to-start-ship-chandler';
 import { marketingForShipAgents } from './marketing-for-ship-agents';
 import { bestShipAgencySoftware } from './best-ship-agency-software';
+import { howToStartBunkerSupply } from './how-to-start-bunker-supply';
 export const BLOG_POSTS = [
   ...LEGACY_BLOG_POSTS,
   shanghai,
@@ -74,6 +75,7 @@ export const BLOG_POSTS = [
   howToStartShipChandler,
   marketingForShipAgents,
   bestShipAgencySoftware,
+  howToStartBunkerSupply,
 ];
 export function getAllBlogSlugs(): string[] {
   return BLOG_POSTS.map((p) => p.slug);
