@@ -38,6 +38,7 @@ import { vancouver } from './vancouver';
 import { stPetersburg } from './st-petersburg';
 import { mormugao } from './mormugao';
 import { shipyardsTop15 } from './shipyards-top-15';
+import { singaporeVsHongKongVsShanghai } from './singapore-vs-hong-kong-vs-shanghai';
 // Aggregated blog posts (legacy + new)
 export const BLOG_POSTS = [
   ...LEGACY_BLOG_POSTS,
@@ -67,6 +68,7 @@ export const BLOG_POSTS = [
   stPetersburg,
   mormugao,
   shipyardsTop15,
+  singaporeVsHongKongVsShanghai,
 ];
 // Helper: get all post slugs (for static generation)
 export function getAllBlogSlugs(): string[] {
