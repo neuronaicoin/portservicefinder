@@ -126,6 +126,24 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        {/* Preconnect to Google Fonts — saves 200-300ms */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+
+        {/* Load Google Fonts directly as stylesheet with display=swap — no render block */}
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;500;600;700&family=Rajdhani:wght@500;600;700&display=swap"
+        />
+
+        {/* Preload hero image for faster LCP on homepage */}
+        <link
+          rel="preload"
+          as="image"
+          href="/hero-bg.jpg"
+          fetchPriority="high"
+        />
+
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-CFQV3SY7LX"
           strategy="afterInteractive"
