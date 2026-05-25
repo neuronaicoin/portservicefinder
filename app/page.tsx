@@ -1104,7 +1104,7 @@ export default function Home() {
                         <div key={s.type} onClick={()=>setSeg(s.type)} style={{border:`1px solid ${seg===s.type?'#c8a84b':'rgba(200,168,75,.2)'}`,padding:'11px 7px',textAlign:'center',cursor:'pointer',background:seg===s.type?'rgba(200,168,75,.1)':'transparent',transition:'all .25s ease'}}>
                           <div style={{fontSize:17,marginBottom:3}}>{s.ico}</div>
                           <div style={{fontFamily:rj,fontSize:10,letterSpacing:1,textTransform:'uppercase',fontWeight:700}}>{s.name}</div>
-                          <div style={{fontSize:9,color:'#c8a84b',marginTop:2,fontFamily:rj}}>Free 1 month</div>
+                          <div style={{fontSize:9,color:'#c8a84b',marginTop:2,fontFamily:rj}}>$49.90/month</div>
                         </div>
                       ))}
                     </div>
@@ -1149,7 +1149,7 @@ export default function Home() {
                     </div>
                     {formError&&(<div style={{padding:'9px 12px',background:'rgba(220,80,80,.1)',border:'1px solid rgba(220,80,80,.4)',color:'#ff8a8a',fontSize:12,fontFamily:rj,marginBottom:10,fontWeight:600}}>⚠ {formError}</div>)}
                     <button className="btn-gold" onClick={validateAndContinue} style={{width:'100%',padding:12,background:'#c8a84b',border:'none',color:'#08100a',fontFamily:rj,fontSize:12,letterSpacing:'2px',textTransform:'uppercase',fontWeight:700,cursor:'pointer',marginTop:5}}>Continue</button>
-                    <p style={{fontSize:10,color:'#7a8a72',textAlign:'center',marginTop:8,lineHeight:1.6}}>Start with 1 month free after verification, then $99/month or $1,000/year. Cancel anytime.</p>
+                    <p style={{fontSize:10,color:'#7a8a72',textAlign:'center',marginTop:8,lineHeight:1.6}}>Direct subscription: $49.90/month or $500/year. Active immediately after verification. Cancel anytime.</p>
                   </div>
                 ):(
                   <div>
