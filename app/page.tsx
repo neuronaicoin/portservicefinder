@@ -1170,7 +1170,7 @@ export default function Home() {
             <div style={{background:'#0c1610',border:'1px solid rgba(200,168,75,.3)',width:'100%',maxWidth:680,padding:30,margin:'auto',position:'relative'}}>
               <button onClick={()=>{if(!submitting)setPayModal(false);}} style={{position:'absolute',top:14,right:14,background:'none',border:'none',color:'#7a8a72',fontSize:18,cursor:submitting?'not-allowed':'pointer'}}>✕</button>
               <h2 style={{fontFamily:lb,fontSize:22,fontWeight:700,marginBottom:4}}>Choose Your <em style={g}>Plan</em></h2>
-              <p style={{fontSize:12,color:'#b0c0a4',marginBottom:18,lineHeight:1.6}}>Free period begins after our team verifies your details. You will not be charged until that period ends.</p>
+              <p style={{fontSize:12,color:'#b0c0a4',marginBottom:18,lineHeight:1.6}}>Direct paid subscription. Active immediately after team verification. Cancel anytime.</p>
               <div className="pay3" style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10,marginBottom:18}}>
                 {[
                   
