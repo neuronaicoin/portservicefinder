@@ -65,6 +65,139 @@ const CATEGORY_SECTIONS: Record<string, string> = {
   'regulations': 'Regulations',
 };
 
+// ============================================================
+// REGIONAL GROUPING — For internal linking
+// ============================================================
+// Each region maps slug-keywords to regional groups.
+// When a new blog post is added, its slug is checked against
+// these keywords; if matched, it's added to the corresponding region.
+// Unmatched posts fall into "Other Regions".
+// ============================================================
+const REGION_KEYWORDS: Record<string, { label: string; emoji: string; keywords: string[] }> = {
+  asiaPacific: {
+    label: 'Asia-Pacific Ports',
+    emoji: '🌏',
+    keywords: [
+      'shanghai', 'hong-kong', 'singapore', 'busan', 'yokohama',
+      'shenzhen', 'ningbo', 'guangzhou', 'qingdao', 'tianjin',
+      'tanjung-pelepas', 'mormugao', 'goa', 'tokyo', 'kobe',
+      'osaka', 'incheon', 'gwangyang', 'ulsan', 'mumbai',
+      'chennai', 'kolkata', 'kandla', 'nhava-sheva', 'jakarta',
+      'colombo', 'port-klang', 'laem-chabang', 'kaohsiung',
+    ],
+  },
+  europe: {
+    label: 'European Ports',
+    emoji: '🌍',
+    keywords: [
+      'rotterdam', 'hamburg', 'antwerp', 'amsterdam', 'gibraltar',
+      'piraeus', 'istanbul', 'genoa', 'felixstowe', 'le-havre',
+      'algeciras', 'valencia', 'barcelona', 'bremerhaven',
+      'london', 'liverpool', 'southampton', 'marseille', 'naples',
+      'la-spezia', 'koper', 'gdansk', 'klaipeda', 'tallinn',
+    ],
+  },
+  americas: {
+    label: 'Americas',
+    emoji: '🌎',
+    keywords: [
+      'houston', 'new-york', 'los-angeles', 'long-beach', 'santos',
+      'rosario', 'vancouver', 'panama', 'baltimore', 'savannah',
+      'charleston', 'oakland', 'seattle', 'tacoma', 'miami',
+      'new-orleans', 'manzanillo', 'cartagena', 'callao',
+      'valparaiso', 'buenaventura', 'puerto-rico',
+    ],
+  },
+  middleEastAfrica: {
+    label: 'Middle East & Africa',
+    emoji: '🌍',
+    keywords: [
+      'dubai', 'jebel-ali', 'suez', 'casablanca', 'durban',
+      'fujairah', 'abu-dhabi', 'jeddah', 'tangier', 'tanger-med',
+      'sokhna', 'port-said', 'alexandria', 'cape-town',
+      'lagos', 'mombasa', 'aqaba', 'salalah', 'doha',
+    ],
+  },
+  otherRegions: {
+    label: 'Other Regions',
+    emoji: '❄️',
+    keywords: [
+      'melbourne', 'st-petersburg', 'sydney', 'auckland',
+      'brisbane', 'vladivostok', 'novorossiysk', 'reykjavik',
+    ],
+  },
+};
+
+interface GroupedPost {
+  slug: string;
+  title: string;
+  featuredPort?: string;
+}
+
+interface RegionGroup {
+  label: string;
+  emoji: string;
+  posts: GroupedPost[];
+}
+
+// Assign each post to its region based on slug keywords
+function groupPostsByRegion(currentSlug: string): RegionGroup[] {
+  const allPosts = BLOG_POSTS.filter((p) => p.slug !== currentSlug);
+
+  const groups: Record<string, RegionGroup> = {};
+  const assigned = new Set<string>();
+
+  // Initialize region groups
+  for (const [key, region] of Object.entries(REGION_KEYWORDS)) {
+    groups[key] = {
+      label: region.label,
+      emoji: region.emoji,
+      posts: [],
+    };
+  }
+
+  // Categorize each post by matching slug keywords
+  for (const post of allPosts) {
+    for (const [key, region] of Object.entries(REGION_KEYWORDS)) {
+      // Check if any keyword from the region matches the post slug
+      const matches = region.keywords.some((kw) =>
+        post.slug.toLowerCase().includes(kw)
+      );
+      if (matches) {
+        groups[key].posts.push({
+          slug: post.slug,
+          title: post.title,
+          featuredPort: post.featuredPort,
+        });
+        assigned.add(post.slug);
+        break;
+      }
+    }
+  }
+
+  // Add unassigned posts to "Other Regions"
+  for (const post of allPosts) {
+    if (!assigned.has(post.slug)) {
+      groups.otherRegions.posts.push({
+        slug: post.slug,
+        title: post.title,
+        featuredPort: post.featuredPort,
+      });
+    }
+  }
+
+  // Return only groups with posts
+  return Object.values(groups).filter((g) => g.posts.length > 0);
+}
+
+// Extract short port name from title (e.g., "Shanghai Port: The Complete Guide..." → "Shanghai")
+function getShortName(post: GroupedPost): string {
+  if (post.featuredPort) return post.featuredPort;
+  // Fallback: take first 2-3 words of title before ":"
+  const firstPart = post.title.split(':')[0].trim();
+  return firstPart.replace(/\s+Port$/, '').replace(/\s+Canal$/, '').replace(/\s+Transit$/, '');
+}
+
 // Simple markdown-to-React renderer (handles our basic content format)
 function renderContent(content: string): React.ReactNode[] {
   const lines = content.trim().split('\n');
@@ -134,11 +267,9 @@ function renderContent(content: string): React.ReactNode[] {
     const line = lines[i];
     const trimmed = line.trim();
 
-    // Table detection
     if (trimmed.startsWith('|') && trimmed.endsWith('|')) {
       flushParagraph();
       const cells = trimmed.slice(1, -1).split('|').map(c => c.trim());
-      // Skip separator rows like |---|---|
       if (cells.every(c => /^[-:\s]+$/.test(c))) continue;
       inTable = true;
       tableRows.push(cells);
@@ -147,7 +278,6 @@ function renderContent(content: string): React.ReactNode[] {
       flushTable();
     }
 
-    // Horizontal rule
     if (trimmed === '---') {
       flushParagraph();
       elements.push(
@@ -159,7 +289,6 @@ function renderContent(content: string): React.ReactNode[] {
       continue;
     }
 
-    // Headings
     if (trimmed.startsWith('### ')) {
       flushParagraph();
       elements.push(
@@ -182,10 +311,8 @@ function renderContent(content: string): React.ReactNode[] {
       continue;
     }
 
-    // List items
     if (trimmed.startsWith('- ')) {
       flushParagraph();
-      // Collect consecutive list items
       const listItems: string[] = [trimmed.slice(2)];
       while (i + 1 < lines.length && lines[i + 1].trim().startsWith('- ')) {
         i++;
@@ -212,7 +339,6 @@ function renderContent(content: string): React.ReactNode[] {
       continue;
     }
 
-    // Numbered list items
     if (/^\d+\.\s/.test(trimmed)) {
       flushParagraph();
       const listItems: string[] = [trimmed.replace(/^\d+\.\s/, '')];
@@ -234,7 +360,6 @@ function renderContent(content: string): React.ReactNode[] {
       continue;
     }
 
-    // Q: A: FAQ pattern
     if (trimmed.startsWith('**Q:')) {
       flushParagraph();
       elements.push(
@@ -258,13 +383,11 @@ function renderContent(content: string): React.ReactNode[] {
       continue;
     }
 
-    // Empty line — paragraph break
     if (trimmed === '') {
       flushParagraph();
       continue;
     }
 
-    // Regular paragraph
     currentParagraph.push(trimmed);
   }
 
@@ -274,7 +397,6 @@ function renderContent(content: string): React.ReactNode[] {
   return elements;
 }
 
-// Inline formatting: **bold**, *italic*, [link](url)
 function formatInline(text: string): string {
   return text
     .replace(/\*\*(.+?)\*\*/g, '<strong style="color:#f5f0e8;font-weight:700">$1</strong>')
@@ -295,6 +417,7 @@ export default async function BlogPostPage({
   }
 
   const related = getRelatedPosts(post.slug, 3);
+  const regionGroups = groupPostsByRegion(post.slug);
   const lb = "'Libre Baskerville',serif";
   const rj = "'Rajdhani',sans-serif";
   const g = { color: '#c8a84b' } as React.CSSProperties;
@@ -371,7 +494,6 @@ export default async function BlogPostPage({
       />
 
       <style>{`
-        
         *{margin:0;padding:0;box-sizing:border-box;}
         html{scroll-behavior:smooth;}
         body{background:#08100a;overflow-x:hidden;}
@@ -380,6 +502,8 @@ export default async function BlogPostPage({
         .related-card:hover{border-color:#c8a84b!important;transform:translateY(-3px);}
         .btn-gold{transition:transform .25s ease, box-shadow .25s ease, filter .25s ease;}
         .btn-gold:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(200,168,75,.35);filter:brightness(1.08);}
+        .region-link{transition:color .2s ease, background .2s ease, transform .2s ease;}
+        .region-link:hover{color:#08100a!important;background:#c8a84b!important;transform:translateY(-2px);}
         @media(max-width:768px){
           .nav-cta{font-size:11px!important;padding:7px 14px!important;}
           .article-hero{padding:90px 20px 30px!important;}
@@ -389,6 +513,8 @@ export default async function BlogPostPage({
           .article-body h3{font-size:17px!important;}
           .meta-row{flex-direction:column!important;gap:6px!important;align-items:flex-start!important;}
           .related-grid{grid-template-columns:1fr!important;}
+          .region-section{padding:0 20px 50px!important;}
+          .region-grid{grid-template-columns:1fr!important;}
           .ftgrid{grid-template-columns:1fr!important;}
         }
       `}</style>
@@ -520,7 +646,7 @@ export default async function BlogPostPage({
         {/* RELATED POSTS */}
         {related.length > 0 && (
           <section style={{
-            maxWidth:1100,margin:'0 auto',padding:'0 48px 60px',
+            maxWidth:1100,margin:'0 auto',padding:'0 48px 50px',
           }}>
             <div style={{
               fontFamily:rj,fontSize:10,letterSpacing:'2.5px',
@@ -559,6 +685,107 @@ export default async function BlogPostPage({
                   </div>
                 </Link>
               ))}
+            </div>
+          </section>
+        )}
+
+        {/* ============================================== */}
+        {/* EXPLORE MORE PORT GUIDES — Regional Internal Linking */}
+        {/* ============================================== */}
+        {regionGroups.length > 0 && (
+          <section className="region-section" style={{
+            maxWidth:1100,margin:'0 auto',padding:'0 48px 70px',
+            borderTop:'1px solid rgba(200,168,75,.15)',paddingTop:50,
+          }}>
+            <div style={{
+              fontFamily:rj,fontSize:10,letterSpacing:'2.5px',
+              textTransform:'uppercase',color:'#c8a84b',
+              marginBottom:8,fontWeight:700,
+            }}>
+              🌐 Explore More Port Guides
+            </div>
+            <h2 style={{
+              fontFamily:lb,fontSize:24,fontWeight:700,
+              lineHeight:1.2,marginBottom:24,color:'#f5f0e8',
+            }}>
+              Comprehensive Guides for <em style={g}>Major Ports</em> Worldwide
+            </h2>
+            <p style={{
+              fontSize:13.5,color:'#b5bfa8',lineHeight:1.7,marginBottom:30,
+              maxWidth:680,
+            }}>
+              Detailed operational guides covering terminals, pilotage, bunkering, agency services, and best practices for vessel operators at major ports across the globe.
+            </p>
+
+            <div className="region-grid" style={{
+              display:'grid',
+              gridTemplateColumns:'repeat(auto-fit,minmax(280px,1fr))',
+              gap:20,
+            }}>
+              {regionGroups.map((region) => (
+                <div key={region.label} style={{
+                  background:'#111c13',
+                  border:'1px solid rgba(200,168,75,.15)',
+                  padding:'22px 22px',
+                }}>
+                  <div style={{
+                    fontFamily:rj,fontSize:11,letterSpacing:'1.8px',
+                    textTransform:'uppercase',color:'#c8a84b',
+                    marginBottom:14,fontWeight:700,
+                    display:'flex',alignItems:'center',gap:8,
+                  }}>
+                    <span style={{fontSize:16}}>{region.emoji}</span>
+                    <span>{region.label}</span>
+                    <span style={{
+                      fontSize:9,color:'#7a8a72',fontWeight:600,
+                      marginLeft:'auto',
+                    }}>
+                      {region.posts.length} {region.posts.length === 1 ? 'guide' : 'guides'}
+                    </span>
+                  </div>
+                  <div style={{
+                    display:'flex',flexWrap:'wrap',gap:6,
+                  }}>
+                    {region.posts.map((p) => (
+                      <Link
+                        key={p.slug}
+                        href={`/blog/${p.slug}`}
+                        className="region-link"
+                        style={{
+                          fontFamily:rj,fontSize:11.5,
+                          padding:'5px 11px',
+                          background:'rgba(200,168,75,.08)',
+                          border:'1px solid rgba(200,168,75,.18)',
+                          color:'#d4dcc8',
+                          textDecoration:'none',
+                          fontWeight:600,
+                          letterSpacing:'.3px',
+                          whiteSpace:'nowrap',
+                        }}
+                        title={p.title}
+                      >
+                        {getShortName(p)}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div style={{
+              marginTop:30,textAlign:'center',
+              paddingTop:24,borderTop:'1px solid rgba(200,168,75,.1)',
+            }}>
+              <Link href="/blog" style={{
+                fontFamily:rj,fontSize:12,letterSpacing:'1.8px',
+                textTransform:'uppercase',color:'#c8a84b',
+                fontWeight:700,textDecoration:'none',
+                padding:'12px 28px',
+                border:'1px solid rgba(200,168,75,.4)',
+                display:'inline-block',
+              }} className="btn-gold">
+                View All Port Guides →
+              </Link>
             </div>
           </section>
         )}
