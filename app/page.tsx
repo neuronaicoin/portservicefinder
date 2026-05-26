@@ -1199,17 +1199,17 @@ export default function Home() {
               )}
               {plan==='monthly'&&(
                 <div style={{padding:'12px 14px',background:'rgba(76,175,118,.08)',border:'1px solid rgba(76,175,118,.35)',marginBottom:16,fontSize:12,fontFamily:rj,lineHeight:1.6}}>
-                  <div style={{fontWeight:700,marginBottom:5,fontSize:13,color:'#4caf76'}}>🎁 1 Month FREE — Then Subscribe → $49.90/month</div>
+                  <div style={{fontWeight:700,marginBottom:5,fontSize:13,color:'#4caf76'}}>💎 Monthly Subscription — $49.90/month</div>
                   <div style={{color:'#d4dcc8',fontSize:11}}>
-                    ✓ You will NOT be charged today.<br/>
-                    📋 Free period begins after our team verifies your details.<br/>
-                    ❌ Cancel anytime before billing starts.
+                    ✓ Active immediately after team verification.<br/>
+                    📋 Recurring monthly billing.<br/>
+                    ❌ Cancel anytime — no hidden fees.
                   </div>
                 </div>
               )}
               {plan==='yearly'&&(
                 <div style={{padding:'12px 14px',background:'rgba(200,168,75,.08)',border:'1px solid rgba(200,168,75,.35)',marginBottom:16,fontSize:12,fontFamily:rj,lineHeight:1.6}}>
-                  <div style={{fontWeight:700,marginBottom:5,fontSize:13,color:'#c8a84b'}}>💰 1 Month FREE — Then $1,000/year (Save $188)</div>
+                  <div style={{fontWeight:700,marginBottom:5,fontSize:13,color:'#c8a84b'}}>💰 Annual Subscription — $500/year (Save $98.80)</div>
                   <div style={{color:'#d4dcc8',fontSize:11}}>
                     ✓ You will NOT be charged today.<br/>
                     📋 Free period begins after our team verifies your details.<br/>
