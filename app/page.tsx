@@ -2,6 +2,8 @@
 import { useState } from 'react';
 import Link from 'next/link';
 
+const POLAR_CHECKOUT_URL = 'https://buy.polar.sh/polar_cl_jdyFUdkUjgO7PXBl8ZBlATovNz5Hhu8AvGuX417jYhc';
+
 const FLAG: Record<string, string> = {
   'Albania':'🇦🇱','Algeria':'🇩🇿','Angola':'🇦🇴','Antigua and Barbuda':'🇦🇬','Argentina':'🇦🇷','Aruba':'🇦🇼','Australia':'🇦🇺','Bahamas':'🇧🇸','Bahrain':'🇧🇭','Bangladesh':'🇧🇩','Barbados':'🇧🇧','Belgium':'🇧🇪','Belize':'🇧🇿','Benin':'🇧🇯','Bermuda':'🇧🇲','Brazil':'🇧🇷','Brunei':'🇧🇳','Bulgaria':'🇧🇬','Cambodia':'🇰🇭','Cameroon':'🇨🇲','Canada':'🇨🇦','Cape Verde':'🇨🇻','Cayman Islands':'🇰🇾','Chile':'🇨🇱','China':'🇨🇳','Colombia':'🇨🇴','Comoros':'🇰🇲','Congo (DRC)':'🇨🇩','Congo (Republic)':'🇨🇬','Cook Islands':'🇨🇰','Costa Rica':'🇨🇷','Croatia':'🇭🇷','Cuba':'🇨🇺','Curacao':'🇨🇼','Cyprus':'🇨🇾','Denmark':'🇩🇰','Djibouti':'🇩🇯','Dominica':'🇩🇲','Dominican Republic':'🇩🇴','Ecuador':'🇪🇨','Egypt':'🇪🇬','El Salvador':'🇸🇻','Equatorial Guinea':'🇬🇶','Eritrea':'🇪🇷','Estonia':'🇪🇪','Faroe Islands':'🇫🇴','Fiji':'🇫🇯','Finland':'🇫🇮','France':'🇫🇷','French Polynesia':'🇵🇫','Gabon':'🇬🇦','Gambia':'🇬🇲','Georgia':'🇬🇪','Germany':'🇩🇪','Ghana':'🇬🇭','Gibraltar':'🇬🇮','Greece':'🇬🇷','Greenland':'🇬🇱','Grenada':'🇬🇩','Guam':'🇬🇺','Guatemala':'🇬🇹','Guinea':'🇬🇳','Guinea-Bissau':'🇬🇼','Guyana':'🇬🇾','Haiti':'🇭🇹','Honduras':'🇭🇳','Hong Kong':'🇭🇰','Iceland':'🇮🇸','India':'🇮🇳','Indonesia':'🇮🇩','Iran':'🇮🇷','Iraq':'🇮🇶','Ireland':'🇮🇪','Israel':'🇮🇱','Italy':'🇮🇹','Ivory Coast':'🇨🇮','Jamaica':'🇯🇲','Japan':'🇯🇵','Jordan':'🇯🇴','Kenya':'🇰🇪','Kiribati':'🇰🇮','Kuwait':'🇰🇼','Latvia':'🇱🇻','Lebanon':'🇱🇧','Liberia':'🇱🇷','Libya':'🇱🇾','Lithuania':'🇱🇹','Madagascar':'🇲🇬','Malaysia':'🇲🇾','Maldives':'🇲🇻','Malta':'🇲🇹','Marshall Islands':'🇲🇭','Mauritania':'🇲🇷','Mauritius':'🇲🇺','Mexico':'🇲🇽','Micronesia':'🇫🇲','Monaco':'🇲🇨','Montenegro':'🇲🇪','Morocco':'🇲🇦','Mozambique':'🇲🇿','Myanmar':'🇲🇲','Namibia':'🇳🇦','Nauru':'🇳🇷','Netherlands':'🇳🇱','New Caledonia':'🇳🇨','New Zealand':'🇳🇿','Nicaragua':'🇳🇮','Nigeria':'🇳🇬','North Korea':'🇰🇵','Norway':'🇳🇴','Oman':'🇴🇲','Pakistan':'🇵🇰','Palau':'🇵🇼','Panama':'🇵🇦','Papua New Guinea':'🇵🇬','Paraguay':'🇵🇾','Peru':'🇵🇪','Philippines':'🇵🇭','Poland':'🇵🇱','Portugal':'🇵🇹','Puerto Rico':'🇵🇷','Qatar':'🇶🇦','Romania':'🇷🇴','Russia':'🇷🇺','Saint Kitts and Nevis':'🇰🇳','Saint Lucia':'🇱🇨','Saint Vincent':'🇻🇨','Samoa':'🇼🇸','Sao Tome and Principe':'🇸🇹','Saudi Arabia':'🇸🇦','Senegal':'🇸🇳','Seychelles':'🇸🇨','Sierra Leone':'🇸🇱','Singapore':'🇸🇬','Slovenia':'🇸🇮','Solomon Islands':'🇸🇧','Somalia':'🇸🇴','South Africa':'🇿🇦','South Korea':'🇰🇷','Spain':'🇪🇸','Sri Lanka':'🇱🇰','Sudan':'🇸🇩','Suriname':'🇸🇷','Sweden':'🇸🇪','Syria':'🇸🇾','Taiwan':'🇹🇼','Tanzania':'🇹🇿','Thailand':'🇹🇭','Timor-Leste':'🇹🇱','Togo':'🇹🇬','Tonga':'🇹🇴','Trinidad and Tobago':'🇹🇹','Tunisia':'🇹🇳','Turkey':'🇹🇷','UAE':'🇦🇪','Ukraine':'🇺🇦','United Kingdom':'🇬🇧','United States':'🇺🇸','Uruguay':'🇺🇾','Vanuatu':'🇻🇺','Venezuela':'🇻🇪','Vietnam':'🇻🇳','Virgin Islands (US)':'🇻🇮','Yemen':'🇾🇪',
 };
@@ -10,7 +12,7 @@ const PORT_DATA: Record<string, string[]> = {
   'Albania': ['Durrës', 'Vlorë', 'Shëngjin', 'Sarandë'],
   'Algeria': ['Algiers', 'Oran', 'Annaba', 'Skikda', 'Béjaïa', 'Arzew', 'Mostaganem', 'Ghazaouet', 'Djendjene', 'Tenes'],
   'Angola': ['Luanda', 'Lobito', 'Namibe', 'Soyo', 'Cabinda', 'Porto Amboim'],
-  'Antigua and Barbuda': ['St. John\'s'],
+  'Antigua and Barbuda': ["St. John's"],
   'Argentina': ['Buenos Aires', 'Bahía Blanca', 'Rosario', 'Mar del Plata', 'Quequén', 'San Lorenzo', 'Ushuaia', 'Zarate', 'Campana', 'Puerto Madryn', 'La Plata', 'Puerto Deseado'],
   'Aruba': ['Oranjestad', 'Barcadera', 'San Nicolas'],
   'Australia': ['Port Hedland', 'Fremantle', 'Melbourne', 'Sydney', 'Brisbane', 'Gladstone', 'Darwin', 'Adelaide', 'Townsville', 'Newcastle', 'Geelong', 'Hay Point', 'Dampier', 'Port Kembla', 'Cairns', 'Mackay', 'Port Walcott', 'Esperance', 'Bunbury', 'Albany'],
@@ -21,7 +23,7 @@ const PORT_DATA: Record<string, string[]> = {
   'Belgium': ['Antwerp', 'Ghent', 'Zeebrugge', 'Ostend', 'Liège', 'Brussels'],
   'Belize': ['Belize City', 'Big Creek', 'Commerce Bight'],
   'Benin': ['Cotonou'],
-  'Bermuda': ['Hamilton', 'St. George\'s', 'Royal Naval Dockyard'],
+  'Bermuda': ['Hamilton', "St. George's", 'Royal Naval Dockyard'],
   'Brazil': ['Santos', 'Rio de Janeiro', 'Paranaguá', 'Itajaí', 'Manaus', 'Fortaleza', 'Recife', 'Salvador', 'Vitória', 'Rio Grande', 'Suape', 'Itaqui', 'Pecém', 'Tubarão', 'Aratu', 'Belém', 'Imbituba', 'Antonina', 'Santarém', 'Maceió'],
   'Brunei': ['Muara', 'Seria'],
   'Bulgaria': ['Varna', 'Burgas', 'Lom', 'Rousse'],
@@ -65,7 +67,7 @@ const PORT_DATA: Record<string, string[]> = {
   'Gibraltar': ['Gibraltar'],
   'Greece': ['Piraeus', 'Thessaloniki', 'Volos', 'Patras', 'Heraklion', 'Kavala', 'Elefsina', 'Lavrio', 'Alexandroupoli', 'Igoumenitsa', 'Rhodes', 'Corfu', 'Mykonos', 'Santorini', 'Chania'],
   'Greenland': ['Nuuk', 'Sisimiut', 'Ilulissat'],
-  'Grenada': ['St. George\'s'],
+  'Grenada': ["St. George's"],
   'Guam': ['Apra Harbor'],
   'Guatemala': ['Puerto Quetzal', 'Puerto Barrios', 'Santo Tomás de Castilla'],
   'Guinea': ['Conakry', 'Kamsar'],
@@ -209,14 +211,6 @@ const MARINE_SERVICES = [
   { key: 'pestcontrol', label: 'Pest Control & Fumigation' },
 ];
 
-const CHANDLER_CATEGORIES = [
-  { key: 'fresh', label: 'Fresh & Frozen Provisions' },
-  { key: 'bonded', label: 'Bonded Stores' },
-  { key: 'cabin', label: 'Cabin Stores' },
-  { key: 'deck', label: 'Deck Stores' },
-  { key: 'engine', label: 'Engine Stores' },
-];
-
 const FEATURED_BLOGS = [
   {slug:'singapore-port-complete-guide-2026',flag:'🇸🇬',title:'Singapore Port Complete Guide',excerpt:'130,000+ annual vessel calls. The world\u2019s busiest port — terminals, anchorages, bunkering, agency.',time:'14 min'},
   {slug:'suez-canal-transit-complete-guide-2026',flag:'🇪🇬',title:'Suez Canal Transit Guide',excerpt:'Everything about Suez Canal transit — booking, tolls, convoy system, agents at Port Said and Suez.',time:'13 min'},
@@ -226,8 +220,6 @@ const FEATURED_BLOGS = [
   {slug:'istanbul-turkish-straits-complete-guide-2026',flag:'🇹🇷',title:'Istanbul & Turkish Straits',excerpt:'Bosphorus and Dardanelles transit — procedures, TSVTS, Istanbul agency, Ambarli port.',time:'12 min'},
 ];
 
-// Industry Voices — composite quotes representing common feedback from pre-launch consultation phase.
-// 2 operators + 2 agents + 2 service providers (1 chandler, 1 marine service)
 const TESTIMONIALS = [
   {
     role: 'Fleet Operations Manager',
@@ -335,34 +327,12 @@ export default function Home() {
   const [results, setResults] = useState<Provider[]>([]);
   const [fb, setFb] = useState(false);
   const [detail, setDetail] = useState<Provider | null>(null);
-  const [modal, setModal] = useState(false);
-  const [tab, setTab] = useState<'register'|'login'>('register');
-  const [seg, setSeg] = useState('agent');
-  const [payModal, setPayModal] = useState(false);
-  const [plan, setPlan] = useState<'trial'|'monthly'|'yearly'>('monthly');
   const [mobileMenu, setMobileMenu] = useState(false);
 
-  // Newsletter signup state
   const [newsletterEmail, setNewsletterEmail] = useState('');
   const [newsletterSubmitting, setNewsletterSubmitting] = useState(false);
   const [newsletterSubmitted, setNewsletterSubmitted] = useState(false);
   const [newsletterError, setNewsletterError] = useState('');
-
-  const [card, setCard] = useState({ name: '', number: '', expiry: '', cvc: '' });
-  const [successModal, setSuccessModal] = useState(false);
-
-  // Submission state (Formspree integration)
-  const [submitting, setSubmitting] = useState(false);
-  const [submitError, setSubmitError] = useState('');
-
-  const [form, setForm] = useState({
-    companyName: '', city: '', country: '', port1: '', port2: '', port3: '',
-    email: '', phone: '', person: '', bio: '',
-    loginEmail: '', password: '',
-  });
-  const [regServices, setRegServices] = useState<Set<string>>(new Set());
-  const [regChandlerCats, setRegChandlerCats] = useState<Set<string>>(new Set());
-  const [formError, setFormError] = useState('');
 
   const countries = Object.keys(PORT_DATA).sort();
   const ports = country ? PORT_DATA[country] || [] : [];
@@ -381,111 +351,6 @@ export default function Home() {
     const n = new Set(ms);
     if (n.has(key)) n.delete(key); else n.add(key);
     setMs(n); doSearch(country, port, svcType, n);
-  }
-
-  function toggleRegService(key: string) {
-    const n = new Set(regServices);
-    if (n.has(key)) n.delete(key); else n.add(key);
-    setRegServices(n);
-  }
-
-  function toggleRegChandler(key: string) {
-    const n = new Set(regChandlerCats);
-    if (n.has(key)) n.delete(key); else n.add(key);
-    setRegChandlerCats(n);
-  }
-
-  function updateForm(key: string, val: string) {
-    setForm({...form, [key]: val});
-  }
-
-  function validateAndContinue() {
-    setFormError('');
-    if (!form.companyName.trim()) return setFormError('Company Name is required.');
-    if (!form.city.trim()) return setFormError('City is required.');
-    if (!form.country.trim()) return setFormError('Country is required.');
-    if (!form.port1.trim()) return setFormError('At least Port 1 is required.');
-    if (!form.email.trim()) return setFormError('Email is required.');
-    if (!form.phone.trim()) return setFormError('Phone is required.');
-    if (!form.person.trim()) return setFormError('Contact Person is required.');
-    if (!form.bio.trim()) return setFormError('Company Bio is required.');
-    if (!form.loginEmail.trim()) return setFormError('Login Email is required.');
-    if (!form.password.trim() || form.password.length < 8) return setFormError('Password must be at least 8 characters.');
-    if (seg === 'service' && regServices.size === 0) return setFormError('Please select at least one marine service you provide.');
-    if (seg === 'chandler' && regChandlerCats.size === 0) return setFormError('Please select at least one shipchandler category.');
-    setModal(false);
-    setPayModal(true);
-  }
-
-  async function processPayment() {
-    setSubmitError('');
-
-    // Card validation
-    if (!card.name.trim() || !card.number.trim() || !card.expiry.trim() || !card.cvc.trim()) {
-      setSubmitError('Please fill in all card details to continue.');
-      return;
-    }
-
-    // Get last 4 digits only (never send full card number to email)
-    const cardDigitsOnly = card.number.replace(/\D/g, '');
-    const cardLast4 = cardDigitsOnly.length >= 4 ? cardDigitsOnly.slice(-4) : cardDigitsOnly;
-
-    // Build selected services / chandler categories as labels
-    const selectedServiceLabels = Array.from(regServices)
-      .map(k => MARINE_SERVICES.find(s => s.key === k)?.label || k)
-      .join(', ');
-    const selectedChandlerLabels = Array.from(regChandlerCats)
-      .map(k => CHANDLER_CATEGORIES.find(c => c.key === k)?.label || k)
-      .join(', ');
-
-    const payload = {
-      company_name: form.companyName,
-      city: form.city,
-      country: form.country,
-      port_1: form.port1,
-      port_2: form.port2 || '',
-      port_3: form.port3 || '',
-      contact_name: form.person,
-      login_email: form.loginEmail,
-      contact_email: form.email,
-      phone: form.phone,
-      whatsapp: form.phone,
-      service_type: seg,
-      selected_services: selectedServiceLabels,
-      selected_chandler_cats: selectedChandlerLabels,
-      bio: form.bio,
-      selected_plan: plan,
-      card_name: card.name,
-      card_last_4: cardLast4,
-      _subject: `New Provider Application: ${form.companyName} (${seg})`,
-    };
-
-    setSubmitting(true);
-    try {
-      const response = await fetch('https://formspree.io/f/xqejbadb', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
-        body: JSON.stringify(payload),
-      });
-
-      if (!response.ok) {
-        const errData = await response.json().catch(() => ({}));
-        const msg = errData?.errors?.[0]?.message || `Submission failed (status ${response.status}). Please try again.`;
-        setSubmitError(msg);
-        setSubmitting(false);
-        return;
-      }
-
-      setPayModal(false);
-      setSuccessModal(true);
-    } catch (err) {
-      setSubmitError('Network error. Please check your connection and try again.');
-    } finally {
-      setSubmitting(false);
-    }
   }
 
   async function submitNewsletter() {
@@ -521,21 +386,6 @@ export default function Home() {
     }
   }
 
-  function closeSuccessAndReset() {
-    setSuccessModal(false);
-    setCard({ name: '', number: '', expiry: '', cvc: '' });
-    setForm({
-      companyName: '', city: '', country: '', port1: '', port2: '', port3: '',
-      email: '', phone: '', person: '', bio: '',
-      loginEmail: '', password: '',
-    });
-    setRegServices(new Set());
-    setRegChandlerCats(new Set());
-    setFormError('');
-    setSubmitError('');
-    setPlan('monthly');
-  }
-
   const S = {
     sel: {background:'rgba(8,16,10,.9)',border:'1px solid rgba(200,168,75,.3)',color:'#f5f0e8',padding:'15px 16px',fontSize:16,width:'100%',outline:'none',transition:'border-color .25s'} as React.CSSProperties,
     lbl: {display:'block',fontFamily:rj,fontSize:13,fontWeight:700,letterSpacing:'1.8px',textTransform:'uppercase' as const,color:'#c8a84b',marginBottom:7},
@@ -544,8 +394,6 @@ export default function Home() {
   return (
     <>
       <style>{`
-
-            
         *{margin:0;padding:0;box-sizing:border-box;}html{scroll-behavior:smooth;}
         body{background:#08100a;overflow-x:hidden;}
         select option{background:#111c13;color:#f5f0e8;}
@@ -564,7 +412,6 @@ export default function Home() {
           94%,98%{opacity:1;transform:translateY(-4px);}
           100%{opacity:0;transform:translateY(0);}
         }
-        @keyframes successPulse{0%,100%{transform:scale(1);box-shadow:0 0 0 0 rgba(76,175,118,.5);}50%{transform:scale(1.05);box-shadow:0 0 0 20px rgba(76,175,118,0);}}
         .a1{opacity:0;animation:fu .7s .1s forwards;}
         .a2{opacity:0;animation:fu .7s .25s forwards;}
         .a3{opacity:0;animation:fu .7s .4s forwards;}
@@ -587,15 +434,11 @@ export default function Home() {
         .testi-card{transition:transform .35s ease, border-color .35s ease, box-shadow .35s ease;position:relative;}
         .testi-card:hover{transform:translateY(-4px);border-color:rgba(200,168,75,.55)!important;box-shadow:0 10px 30px rgba(0,0,0,.4);}
         .sel-focus:focus{border-color:#c8a84b!important;}
-        .card-input:focus{border-color:#c8a84b!important;outline:none;}
-        .success-check{animation:successPulse 2s ease-in-out infinite;}
         .logo-mark{filter:drop-shadow(0 1px 2px rgba(0,0,0,.4));}
         .mobile-menu-btn{display:none;}
         .wave-bg{position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.06;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='1200' height='120' viewBox='0 0 1200 120'><path d='M0 60 Q 150 20 300 60 T 600 60 T 900 60 T 1200 60' stroke='%23c8a84b' stroke-width='1.2' fill='none'/><path d='M0 90 Q 150 50 300 90 T 600 90 T 900 90 T 1200 90' stroke='%23c8a84b' stroke-width='0.8' fill='none' opacity='0.6'/></svg>");background-repeat:repeat;animation:waveMove 40s linear infinite;}
         .hero-bg{position:absolute;inset:0;z-index:0;background:linear-gradient(180deg, rgba(8,16,10,.78) 0%, rgba(8,16,10,.82) 50%, rgba(8,16,10,.96) 100%),url('/hero-bg.jpg');background-size:cover;background-position:center 35%;background-repeat:no-repeat;}
         .hero-content{position:relative;z-index:2;}
-        .pay-card{transition:all .25s ease;cursor:pointer;}
-        .pay-card:hover{border-color:#c8a84b!important;transform:translateY(-3px);}
         .radar-wrap{filter:drop-shadow(0 4px 18px rgba(200,168,75,.15));}
         .radar-center{width:54px;height:54px;border-radius:50%;background:radial-gradient(circle at 35% 35%,rgba(200,168,75,.5),rgba(200,168,75,.08));border:1px solid rgba(200,168,75,.55);display:flex;align-items:center;justify-content:center;font-size:22px;animation:centerPulse 2.4s ease-in-out infinite;}
         .radar-dot{position:absolute;width:9px;height:9px;border-radius:50%;background:rgba(200,168,75,.4);transform:translate(-50%,-50%);animation:dotBlink 14s linear infinite;z-index:3;}
@@ -644,8 +487,6 @@ export default function Home() {
           .news-input-row{flex-direction:column!important;}
           .ctapad{padding:50px 16px!important;}
           .dc2{grid-template-columns:1fr!important;}
-          .pay3{grid-template-columns:1fr!important;}
-          .port3{grid-template-columns:1fr!important;}
           .radar-wrap{width:220px!important;height:220px!important;}
           .radar-label{font-size:9px!important;}
           .hero-stats{gap:10px!important;}
@@ -660,7 +501,7 @@ export default function Home() {
       <div className="wave-bg"></div>
       <div style={{background:'#08100a',color:'#f5f0e8',fontFamily:"'Outfit',sans-serif",fontWeight:300,minHeight:'100vh',position:'relative',zIndex:1}}>
 
-        {/* NAV WITH LOGO */}
+        {/* NAV */}
         <nav style={{position:'fixed',top:0,width:'100%',zIndex:300,height:62,display:'flex',alignItems:'center',justifyContent:'space-between',padding:'0 24px',background:'rgba(8,16,10,.97)',backdropFilter:'blur(20px)',borderBottom:'1px solid rgba(200,168,75,.2)'}}>
           <Link href="/" style={{display:'flex',alignItems:'center',gap:10,textDecoration:'none',color:'#f5f0e8',flexShrink:0}}>
             <svg className="logo-mark" width="32" height="32" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
@@ -684,8 +525,7 @@ export default function Home() {
             <Link href="/faq" className="nlnk" style={{color:'#7a8a72',fontSize:12,letterSpacing:'1.5px',textTransform:'uppercase',cursor:'pointer',fontFamily:rj,fontWeight:600,textDecoration:'none'}}>FAQ</Link>
             <Link href="/about" className="nlnk" style={{color:'#7a8a72',fontSize:12,letterSpacing:'1.5px',textTransform:'uppercase',cursor:'pointer',fontFamily:rj,fontWeight:600,textDecoration:'none'}}>About</Link>
             <span className="nlnk" style={{color:'#7a8a72',fontSize:12,letterSpacing:'1.5px',textTransform:'uppercase',cursor:'pointer',fontFamily:rj,fontWeight:600}} onClick={()=>document.getElementById('pricing')?.scrollIntoView({behavior:'smooth'})}>Pricing</span>
-            <button className="btn-ghost nav-cta-desktop" style={{background:'transparent',border:'1px solid rgba(200,168,75,.4)',color:'#c8a84b',padding:'7px 14px',fontFamily:rj,fontSize:11,letterSpacing:'1.5px',textTransform:'uppercase',fontWeight:700,cursor:'pointer'}} onClick={()=>{setTab('login');setModal(true);}}>Sign In</button>
-            <button className="btn-gold" style={{background:'#c8a84b',color:'#08100a',border:'none',padding:'7px 14px',fontFamily:rj,fontSize:11,letterSpacing:'1.5px',textTransform:'uppercase',fontWeight:700,cursor:'pointer',whiteSpace:'nowrap'}} onClick={()=>{setTab('register');setModal(true);}}>List Business</button>
+            <a href={POLAR_CHECKOUT_URL} target="_blank" rel="noreferrer" className="btn-gold nav-cta-desktop" style={{background:'#c8a84b',color:'#08100a',border:'none',padding:'7px 14px',fontFamily:rj,fontSize:11,letterSpacing:'1.5px',textTransform:'uppercase',fontWeight:700,cursor:'pointer',whiteSpace:'nowrap',textDecoration:'none'}}>List Business</a>
           </div>
           <button className="mobile-menu-btn btn-gold" style={{display:'none',background:'#c8a84b',color:'#08100a',border:'none',padding:'7px 12px',fontFamily:rj,fontSize:10,letterSpacing:'1.5px',textTransform:'uppercase',fontWeight:700,cursor:'pointer',alignItems:'center',gap:6}} onClick={()=>setMobileMenu(!mobileMenu)}>
             ☰ Menu
@@ -702,8 +542,7 @@ export default function Home() {
             <span style={{color:'#f5f0e8',fontSize:14,letterSpacing:'1.5px',textTransform:'uppercase',cursor:'pointer',fontFamily:rj,fontWeight:600,padding:'10px 0',borderBottom:'1px solid rgba(200,168,75,.1)'}} onClick={()=>{document.getElementById('pricing')?.scrollIntoView({behavior:'smooth'});setMobileMenu(false);}}>Pricing</span>
             <Link href="/for-providers" style={{color:'#f5f0e8',fontSize:14,letterSpacing:'1.5px',textTransform:'uppercase',fontFamily:rj,fontWeight:600,padding:'10px 0',borderBottom:'1px solid rgba(200,168,75,.1)',textDecoration:'none'}}>For Providers</Link>
             <Link href="/contact" style={{color:'#f5f0e8',fontSize:14,letterSpacing:'1.5px',textTransform:'uppercase',fontFamily:rj,fontWeight:600,padding:'10px 0',borderBottom:'1px solid rgba(200,168,75,.1)',textDecoration:'none'}}>Contact</Link>
-            <button className="btn-ghost" style={{background:'transparent',border:'1px solid rgba(200,168,75,.4)',color:'#c8a84b',padding:'12px',fontFamily:rj,fontSize:13,letterSpacing:'1.5px',textTransform:'uppercase',fontWeight:700,cursor:'pointer',marginTop:6}} onClick={()=>{setTab('login');setModal(true);setMobileMenu(false);}}>Sign In</button>
-            <button className="btn-gold" style={{background:'#c8a84b',color:'#08100a',border:'none',padding:'12px',fontFamily:rj,fontSize:13,letterSpacing:'1.5px',textTransform:'uppercase',fontWeight:700,cursor:'pointer'}} onClick={()=>{setTab('register');setModal(true);setMobileMenu(false);}}>List Your Business</button>
+            <a href={POLAR_CHECKOUT_URL} target="_blank" rel="noreferrer" className="btn-gold" style={{background:'#c8a84b',color:'#08100a',border:'none',padding:'12px',fontFamily:rj,fontSize:13,letterSpacing:'1.5px',textTransform:'uppercase',fontWeight:700,cursor:'pointer',textDecoration:'none',textAlign:'center'}}>List Your Business</a>
           </div>
         )}
 
@@ -769,7 +608,7 @@ export default function Home() {
                     {fb?`Other providers in ${country}`:`${results.length} provider${results.length!==1?'s':''} found at ${port}`}
                   </div>
                   {fb&&results.length>0&&(<div style={{padding:'10px 13px',background:'rgba(200,168,75,.06)',border:'1px solid rgba(200,168,75,.18)',fontSize:12,color:'#e2c06a',marginBottom:9,fontFamily:rj,lineHeight:1.5}}>No providers at <strong>{port}</strong> yet — showing others in <strong>{country}</strong>.</div>)}
-                  {results.length===0&&(<div style={{padding:20,textAlign:'center',fontFamily:rj,fontSize:12,color:'#7a8a72'}}><strong style={{color:'#c8a84b',display:'block',marginBottom:4}}>No providers found.</strong><span style={{color:'#c8a84b',cursor:'pointer'}} onClick={()=>{setTab('register');setModal(true);}}>Register your business →</span></div>)}
+                  {results.length===0&&(<div style={{padding:20,textAlign:'center',fontFamily:rj,fontSize:12,color:'#7a8a72'}}><strong style={{color:'#c8a84b',display:'block',marginBottom:4}}>No providers found.</strong><a href={POLAR_CHECKOUT_URL} target="_blank" rel="noreferrer" style={{color:'#c8a84b',cursor:'pointer',textDecoration:'none'}}>Register your business →</a></div>)}
                   {results.map(p=>(
                     <div key={p.id} className="rrow" onClick={()=>setDetail(p)} style={{background:'rgba(8,16,10,.7)',border:'1px solid rgba(200,168,75,.2)',padding:'14px 18px',marginBottom:6,display:'grid',gridTemplateColumns:'44px 1fr auto',gap:14,alignItems:'center'}}>
                       <div style={{width:44,height:44,background:'rgba(200,168,75,.1)',border:'1px solid rgba(200,168,75,.2)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:18}}>{p.ico}</div>
@@ -920,7 +759,7 @@ export default function Home() {
                 <ul style={{listStyle:'none',flex:1,marginBottom:18,display:'flex',flexDirection:'column',gap:7}}>
                   {tier.items.map(item=>(<li key={item} style={{fontSize:12,color:'#b0c0a4',display:'flex',alignItems:'flex-start',gap:7,lineHeight:1.5}}><span style={{color:'#c8a84b',fontWeight:700,flexShrink:0}}>✓</span>{item}</li>))}
                 </ul>
-                <button className={tier.badge?'btn-gold':'btn-ghost'} onClick={()=>{setTab('register');setModal(true);}} style={{padding:11,background:tier.badge?'#c8a84b':'transparent',border:'1px solid rgba(200,168,75,.35)',color:tier.badge?'#08100a':'#c8a84b',fontFamily:rj,fontSize:11,letterSpacing:'2px',textTransform:'uppercase',fontWeight:700,cursor:'pointer',width:'100%'}}>Apply Now</button>
+                <a href={POLAR_CHECKOUT_URL} target="_blank" rel="noreferrer" className={tier.badge?'btn-gold':'btn-ghost'} style={{padding:11,background:tier.badge?'#c8a84b':'transparent',border:'1px solid rgba(200,168,75,.35)',color:tier.badge?'#08100a':'#c8a84b',fontFamily:rj,fontSize:11,letterSpacing:'2px',textTransform:'uppercase',fontWeight:700,cursor:'pointer',width:'100%',textDecoration:'none',textAlign:'center',display:'block'}}>Subscribe Now</a>
               </div>
             ))}
           </div>
@@ -931,7 +770,7 @@ export default function Home() {
           <h2 style={{fontFamily:lb,fontSize:'clamp(26px,3.5vw,48px)',fontWeight:700,lineHeight:1.05,marginBottom:12}}>Be Found by Every Vessel <em style={g}>Worldwide</em></h2>
           <p style={{fontSize:14,color:'#b0c0a4',maxWidth:400,margin:'0 auto 28px',lineHeight:1.75}}>List on PortServiceFinder — <strong style={g}>$49.90/month or $500/year</strong>. Direct subscription, cancel anytime.</p>
           <div style={{display:'flex',gap:10,justifyContent:'center',flexWrap:'wrap'}}>
-            <button className="btn-gold" onClick={()=>{setTab('register');setModal(true);}} style={{background:'#c8a84b',color:'#08100a',border:'none',padding:'12px 28px',fontFamily:rj,fontSize:13,letterSpacing:'2px',textTransform:'uppercase',fontWeight:700,cursor:'pointer'}}>Apply Now</button>
+            <a href={POLAR_CHECKOUT_URL} target="_blank" rel="noreferrer" className="btn-gold" style={{background:'#c8a84b',color:'#08100a',border:'none',padding:'12px 28px',fontFamily:rj,fontSize:13,letterSpacing:'2px',textTransform:'uppercase',fontWeight:700,cursor:'pointer',textDecoration:'none'}}>Subscribe Now</a>
             <button className="btn-ghost" onClick={()=>window.scrollTo({top:0,behavior:'smooth'})} style={{background:'transparent',color:'#f5f0e8',border:'1px solid rgba(200,168,75,.3)',padding:'11px 22px',fontFamily:rj,fontSize:13,letterSpacing:'2px',textTransform:'uppercase',fontWeight:600,cursor:'pointer'}}>Search Free</button>
           </div>
         </section>
@@ -1033,6 +872,7 @@ export default function Home() {
               <ul style={{listStyle:'none',display:'flex',flexDirection:'column',gap:7}}>
                 <li><Link href="/terms" className="footer-link" style={{color:'#7a8a72',textDecoration:'none',fontSize:12}}>Terms of Service</Link></li>
                 <li><Link href="/privacy" className="footer-link" style={{color:'#7a8a72',textDecoration:'none',fontSize:12}}>Privacy Policy</Link></li>
+                <li><Link href="/refund-policy" className="footer-link" style={{color:'#7a8a72',textDecoration:'none',fontSize:12}}>Refund Policy</Link></li>
                 <li><Link href="/listing-rules" className="footer-link" style={{color:'#7a8a72',textDecoration:'none',fontSize:12}}>Listing Rules</Link></li>
               </ul>
             </div>
@@ -1082,266 +922,7 @@ export default function Home() {
           </div>
         )}
 
-        {/* REGISTER/LOGIN MODAL */}
-        {modal&&(
-          <div style={{position:'fixed',inset:0,background:'rgba(8,16,10,.95)',backdropFilter:'blur(16px)',zIndex:500,display:'flex',alignItems:'flex-start',justifyContent:'center',padding:'36px 16px',overflowY:'auto'}} onClick={e=>{if(e.target===e.currentTarget){setModal(false);setFormError('');}}}>
-            <div style={{background:'#0c1610',border:'1px solid rgba(200,168,75,.3)',width:'100%',maxWidth:720,margin:'auto'}}>
-              <div style={{padding:'20px 28px 14px',borderBottom:'1px solid rgba(200,168,75,.15)',display:'flex',justifyContent:'space-between',alignItems:'center'}}>
-                <h2 style={{fontFamily:lb,fontSize:20,fontWeight:700}}>{tab==='login'?'Provider Sign In':'List Your Business'}</h2>
-                <button onClick={()=>{setModal(false);setFormError('');}} style={{background:'none',border:'none',color:'#7a8a72',fontSize:18,cursor:'pointer'}}>✕</button>
-              </div>
-              <div style={{padding:'20px 28px'}}>
-                <div style={{display:'flex',borderBottom:'1px solid rgba(200,168,75,.15)',marginBottom:18}}>
-                  {(['register','login'] as const).map(t=>(<button key={t} onClick={()=>{setTab(t);setFormError('');}} style={{padding:'8px 16px',fontFamily:rj,fontSize:11,letterSpacing:'1.5px',textTransform:'uppercase',fontWeight:700,cursor:'pointer',color:tab===t?'#c8a84b':'#7a8a72',background:'none',border:'none',borderBottom:tab===t?'2px solid #c8a84b':'2px solid transparent',marginBottom:-1}}>{t==='register'?'Register':'Sign In'}</button>))}
-                </div>
-                {tab==='register'?(
-                  <div>
-                    <div style={{padding:'10px 12px',background:'rgba(226,192,106,.08)',border:'1px solid rgba(226,192,106,.3)',marginBottom:14,fontSize:11,color:'#e2c06a',fontFamily:rj,lineHeight:1.5}}>
-                      <strong>⚠️ Free period is offered only once per company.</strong> Multiple attempts using different details will result in account suspension and forfeit of any active subscription.
-                    </div>
-                    <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:7,marginBottom:16}}>
-                      {[{type:'agent',ico:'🏢',name:'Ship Agent'},{type:'chandler',ico:'⚓',name:'Shipchandler'},{type:'service',ico:'🔧',name:'Marine Service'}].map(s=>(
-                        <div key={s.type} onClick={()=>setSeg(s.type)} style={{border:`1px solid ${seg===s.type?'#c8a84b':'rgba(200,168,75,.2)'}`,padding:'11px 7px',textAlign:'center',cursor:'pointer',background:seg===s.type?'rgba(200,168,75,.1)':'transparent',transition:'all .25s ease'}}>
-                          <div style={{fontSize:17,marginBottom:3}}>{s.ico}</div>
-                          <div style={{fontFamily:rj,fontSize:10,letterSpacing:1,textTransform:'uppercase',fontWeight:700}}>{s.name}</div>
-                          <div style={{fontSize:9,color:'#c8a84b',marginTop:2,fontFamily:rj}}>$49.90/month</div>
-                        </div>
-                      ))}
-                    </div>
-                    {seg==='chandler'&&(
-                      <div style={{marginBottom:14,padding:'12px 14px',background:'rgba(200,168,75,.04)',border:'1px solid rgba(200,168,75,.18)'}}>
-                        <div style={{fontFamily:rj,fontSize:10,letterSpacing:'2px',textTransform:'uppercase',color:'#c8a84b',marginBottom:9,fontWeight:700}}>Shipchandler categories — select all that apply *</div>
-                        <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(160px,1fr))',gap:5}}>
-                          {CHANDLER_CATEGORIES.map(c=>(<div key={c.key} onClick={()=>toggleRegChandler(c.key)} style={{padding:'6px 10px',border:`1px solid ${regChandlerCats.has(c.key)?'#c8a84b':'rgba(200,168,75,.18)'}`,background:regChandlerCats.has(c.key)?'#c8a84b':'transparent',color:regChandlerCats.has(c.key)?'#08100a':'#b0c0a4',fontFamily:rj,fontSize:11,fontWeight:600,cursor:'pointer',userSelect:'none',textAlign:'center'}}>{c.label}</div>))}
-                        </div>
-                      </div>
-                    )}
-                    {seg==='service'&&(
-                      <div style={{marginBottom:14,padding:'12px 14px',background:'rgba(200,168,75,.04)',border:'1px solid rgba(200,168,75,.18)'}}>
-                        <div style={{fontFamily:rj,fontSize:10,letterSpacing:'2px',textTransform:'uppercase',color:'#c8a84b',marginBottom:9,fontWeight:700}}>Marine services you provide — select all that apply *</div>
-                        <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(180px,1fr))',gap:5,maxHeight:280,overflowY:'auto'}}>
-                          {MARINE_SERVICES.map(s=>(<div key={s.key} onClick={()=>toggleRegService(s.key)} style={{padding:'6px 10px',border:`1px solid ${regServices.has(s.key)?'#c8a84b':'rgba(200,168,75,.18)'}`,background:regServices.has(s.key)?'#c8a84b':'transparent',color:regServices.has(s.key)?'#08100a':'#b0c0a4',fontFamily:rj,fontSize:10,fontWeight:600,cursor:'pointer',userSelect:'none'}}>{s.label}</div>))}
-                        </div>
-                      </div>
-                    )}
-                    <FI l="Company Name *" p="Your company name" v={form.companyName} onChange={v=>updateForm('companyName',v)}/>
-                    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:9,marginBottom:9}}>
-                      <FI l="City *" p="e.g. Singapore" v={form.city} onChange={v=>updateForm('city',v)}/>
-                      <FI l="Country *" p="e.g. Singapore" v={form.country} onChange={v=>updateForm('country',v)}/>
-                    </div>
-                    <div className="port3" style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:9,marginBottom:9}}>
-                      <FI l="Port 1 *" p="e.g. Singapore" v={form.port1} onChange={v=>updateForm('port1',v)}/>
-                      <FI l="Port 2 (optional)" p="e.g. Jurong" v={form.port2} onChange={v=>updateForm('port2',v)}/>
-                      <FI l="Port 3 (optional)" p="e.g. Tuas" v={form.port3} onChange={v=>updateForm('port3',v)}/>
-                    </div>
-                    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:9,marginBottom:9}}>
-                      <FI l="Email *" p="info@company.com" t="email" v={form.email} onChange={v=>updateForm('email',v)}/>
-                      <FI l="Phone *" p="+1 ..." v={form.phone} onChange={v=>updateForm('phone',v)}/>
-                    </div>
-                    <FI l="Contact Person *" p="Primary contact name" v={form.person} onChange={v=>updateForm('person',v)}/>
-                    <div style={{marginBottom:13}}>
-                      <label style={{display:'block',fontFamily:rj,fontSize:10,letterSpacing:'1.5px',textTransform:'uppercase',color:'#7a8a72',marginBottom:3,fontWeight:600}}>Company Bio *</label>
-                      <textarea maxLength={500} value={form.bio} onChange={e=>updateForm('bio',e.target.value)} placeholder="Brief description of your business..." style={{background:'rgba(8,16,10,.7)',border:'1px solid rgba(200,168,75,.22)',color:'#f5f0e8',padding:'8px 11px',fontSize:12,width:'100%',resize:'vertical',minHeight:65,fontFamily:"'Outfit',sans-serif"}}/>
-                    </div>
-                    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:9,marginBottom:9}}>
-                      <FI l="Login Email *" p="your@company.com" t="email" v={form.loginEmail} onChange={v=>updateForm('loginEmail',v)}/>
-                      <FI l="Password * (min 8 chars)" p="Password" t="password" v={form.password} onChange={v=>updateForm('password',v)}/>
-                    </div>
-                    {formError&&(<div style={{padding:'9px 12px',background:'rgba(220,80,80,.1)',border:'1px solid rgba(220,80,80,.4)',color:'#ff8a8a',fontSize:12,fontFamily:rj,marginBottom:10,fontWeight:600}}>⚠ {formError}</div>)}
-                    <button className="btn-gold" onClick={validateAndContinue} style={{width:'100%',padding:12,background:'#c8a84b',border:'none',color:'#08100a',fontFamily:rj,fontSize:12,letterSpacing:'2px',textTransform:'uppercase',fontWeight:700,cursor:'pointer',marginTop:5}}>Continue</button>
-                    <p style={{fontSize:10,color:'#7a8a72',textAlign:'center',marginTop:8,lineHeight:1.6}}>Direct subscription: $49.90/month or $500/year. Active immediately after verification. Cancel anytime.</p>
-                  </div>
-                ):(
-                  <div>
-                    <FI l="Email" p="your@company.com" t="email" v={form.loginEmail} onChange={v=>updateForm('loginEmail',v)}/>
-                    <FI l="Password" p="password" t="password" v={form.password} onChange={v=>updateForm('password',v)}/>
-                    <button className="btn-gold" style={{width:'100%',padding:12,background:'#c8a84b',border:'none',color:'#08100a',fontFamily:rj,fontSize:12,letterSpacing:'2px',textTransform:'uppercase',fontWeight:700,cursor:'pointer',marginTop:5}}>Sign In</button>
-                    <p style={{textAlign:'center',fontSize:11,color:'#7a8a72',marginTop:10}}>Not registered? <span style={{color:'#c8a84b',cursor:'pointer'}} onClick={()=>setTab('register')}>List your business →</span></p>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* PAYMENT MODAL */}
-        {payModal&&(
-          <div style={{position:'fixed',inset:0,background:'rgba(8,16,10,.96)',backdropFilter:'blur(20px)',zIndex:600,display:'flex',alignItems:'center',justifyContent:'center',padding:'20px',overflowY:'auto'}} onClick={e=>{if(e.target===e.currentTarget && !submitting)setPayModal(false);}}>
-            <div style={{background:'#0c1610',border:'1px solid rgba(200,168,75,.3)',width:'100%',maxWidth:680,padding:30,margin:'auto',position:'relative'}}>
-              <button onClick={()=>{if(!submitting)setPayModal(false);}} style={{position:'absolute',top:14,right:14,background:'none',border:'none',color:'#7a8a72',fontSize:18,cursor:submitting?'not-allowed':'pointer'}}>✕</button>
-              <h2 style={{fontFamily:lb,fontSize:22,fontWeight:700,marginBottom:4}}>Choose Your <em style={g}>Plan</em></h2>
-              <p style={{fontSize:12,color:'#b0c0a4',marginBottom:18,lineHeight:1.6}}>Direct paid subscription. Active immediately after team verification. Cancel anytime.</p>
-              <div className="pay3" style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10,marginBottom:18}}>
-                {[
-                  
-                  {id:'monthly',label:'Monthly',price:'$49.90',period:'/ month',note:'Billed monthly · Cancel anytime',badge:null},
-                  {id:'yearly',label:'Annual',price:'$500',period:'/ year',note:'$41.67/mo equivalent · Save $98.80',badge:'💰 BEST VALUE'},
-                ].map(p=>(
-                  <div key={p.id} className="pay-card" onClick={()=>setPlan(p.id as 'trial'|'monthly'|'yearly')} style={{border:`2px solid ${plan===p.id?'#c8a84b':'rgba(200,168,75,.2)'}`,padding:'18px 14px',position:'relative',background:plan===p.id?'rgba(200,168,75,.07)':'transparent'}}>
-                    {p.badge&&<div style={{position:'absolute',top:-9,left:'50%',transform:'translateX(-50%)',background:'#c8a84b',color:'#08100a',fontFamily:rj,fontSize:8,letterSpacing:'1.2px',fontWeight:700,padding:'3px 7px',whiteSpace:'nowrap'}}>{p.badge}</div>}
-                    <div style={{fontFamily:rj,fontSize:10,letterSpacing:'2px',textTransform:'uppercase',color:'#c8a84b',fontWeight:700,marginBottom:7,marginTop:p.badge?6:0}}>{p.label}</div>
-                    <div style={{fontFamily:lb,fontSize:26,fontWeight:700,lineHeight:1}}>{p.price}</div>
-                    <div style={{fontFamily:rj,fontSize:10,color:'#7a8a72',fontWeight:600,marginTop:3}}>{p.period}</div>
-                    <div style={{fontSize:10,color:'#b0c0a4',marginTop:7,lineHeight:1.4}}>{p.note}</div>
-                  </div>
-                ))}
-              </div>
-
-              {plan==='trial'&&(
-                <div style={{padding:'12px 14px',background:'rgba(226,192,106,.08)',border:'1px solid rgba(226,192,106,.35)',marginBottom:16,fontSize:12,fontFamily:rj,lineHeight:1.6}}>
-                  <div style={{fontWeight:700,marginBottom:5,fontSize:13,color:'#e2c06a'}}>💳 You will NOT be charged today</div>
-                  <div style={{color:'#d4dcc8',fontSize:11}}>
-                    📋 Our team will personally review your application and contact you within 24 hours.<br/>
-                    ⏰ Once verified, your 1-month free period begins.<br/>
-                    ❌ Cancel anytime before billing starts — no fees.
-                  </div>
-                </div>
-              )}
-              {plan==='monthly'&&(
-                <div style={{padding:'12px 14px',background:'rgba(76,175,118,.08)',border:'1px solid rgba(76,175,118,.35)',marginBottom:16,fontSize:12,fontFamily:rj,lineHeight:1.6}}>
-                  <div style={{fontWeight:700,marginBottom:5,fontSize:13,color:'#4caf76'}}>💎 Monthly Subscription — $49.90/month</div>
-                  <div style={{color:'#d4dcc8',fontSize:11}}>
-                    ✓ Active immediately after team verification.<br/>
-                    📋 Recurring monthly billing.<br/>
-                    ❌ Cancel anytime — no hidden fees.
-                  </div>
-                </div>
-              )}
-              {plan==='yearly'&&(
-                <div style={{padding:'12px 14px',background:'rgba(200,168,75,.08)',border:'1px solid rgba(200,168,75,.35)',marginBottom:16,fontSize:12,fontFamily:rj,lineHeight:1.6}}>
-                  <div style={{fontWeight:700,marginBottom:5,fontSize:13,color:'#c8a84b'}}>💰 Annual Subscription — $500/year (Save $98.80)</div>
-                  <div style={{color:'#d4dcc8',fontSize:11}}>
-                    ✓ You will NOT be charged today.<br/>
-                    📋 Free period begins after our team verifies your details.<br/>
-                    ❌ Cancel anytime before billing starts.
-                  </div>
-                </div>
-              )}
-
-              <div style={{fontFamily:rj,fontSize:11,letterSpacing:'2px',textTransform:'uppercase',color:'#c8a84b',marginBottom:10,fontWeight:700,marginTop:6}}>💳 Payment Method</div>
-              <div style={{marginBottom:9}}>
-                <label style={{display:'block',fontFamily:rj,fontSize:10,letterSpacing:'1.5px',textTransform:'uppercase',color:'#7a8a72',marginBottom:3,fontWeight:600}}>Cardholder Name</label>
-                <input className="card-input" type="text" placeholder="Name on card" value={card.name} onChange={e=>setCard({...card,name:e.target.value})} disabled={submitting} style={{background:'rgba(8,16,10,.7)',border:'1px solid rgba(200,168,75,.22)',color:'#f5f0e8',padding:'9px 11px',fontSize:13,width:'100%',fontFamily:"'Outfit',sans-serif"}}/>
-              </div>
-              <div style={{marginBottom:9}}>
-                <label style={{display:'block',fontFamily:rj,fontSize:10,letterSpacing:'1.5px',textTransform:'uppercase',color:'#7a8a72',marginBottom:3,fontWeight:600}}>Card Number</label>
-                <input className="card-input" type="text" placeholder="1234 5678 9012 3456" value={card.number} onChange={e=>setCard({...card,number:e.target.value})} maxLength={19} disabled={submitting} style={{background:'rgba(8,16,10,.7)',border:'1px solid rgba(200,168,75,.22)',color:'#f5f0e8',padding:'9px 11px',fontSize:13,width:'100%',fontFamily:"'Outfit',sans-serif"}}/>
-              </div>
-              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:9}}>
-                <div style={{marginBottom:9}}>
-                  <label style={{display:'block',fontFamily:rj,fontSize:10,letterSpacing:'1.5px',textTransform:'uppercase',color:'#7a8a72',marginBottom:3,fontWeight:600}}>Expiry</label>
-                  <input className="card-input" type="text" placeholder="MM/YY" value={card.expiry} onChange={e=>setCard({...card,expiry:e.target.value})} maxLength={5} disabled={submitting} style={{background:'rgba(8,16,10,.7)',border:'1px solid rgba(200,168,75,.22)',color:'#f5f0e8',padding:'9px 11px',fontSize:13,width:'100%',fontFamily:"'Outfit',sans-serif"}}/>
-                </div>
-                <div style={{marginBottom:9}}>
-                  <label style={{display:'block',fontFamily:rj,fontSize:10,letterSpacing:'1.5px',textTransform:'uppercase',color:'#7a8a72',marginBottom:3,fontWeight:600}}>CVC</label>
-                  <input className="card-input" type="text" placeholder="123" value={card.cvc} onChange={e=>setCard({...card,cvc:e.target.value})} maxLength={4} disabled={submitting} style={{background:'rgba(8,16,10,.7)',border:'1px solid rgba(200,168,75,.22)',color:'#f5f0e8',padding:'9px 11px',fontSize:13,width:'100%',fontFamily:"'Outfit',sans-serif"}}/>
-                </div>
-              </div>
-
-              <button
-                className="btn-gold"
-                onClick={processPayment}
-                disabled={submitting}
-                style={{
-                  width:'100%',
-                  padding:14,
-                  background: submitting ? '#7a6730' : '#c8a84b',
-                  border:'none',
-                  color:'#08100a',
-                  fontFamily:rj,
-                  fontSize:13,
-                  letterSpacing:'2px',
-                  textTransform:'uppercase',
-                  fontWeight:700,
-                  cursor: submitting ? 'wait' : 'pointer',
-                  marginTop:14,
-                  opacity: submitting ? 0.7 : 1
-                }}
-              >
-                {submitting
-                  ? '⏳ Sending Your Application...'
-                  : (plan==='trial'
-                      ? 'Submit Founding Member Application'
-                      : plan==='yearly'
-                        ? 'Subscribe → $500/year'
-                        : 'Submit Application → Subscribe → $49.90/month After Free Month'
-                    )
-                }
-              </button>
-
-              {submitError && (
-                <div style={{
-                  background: 'rgba(220, 53, 69, 0.1)',
-                  border: '1px solid rgba(220, 53, 69, 0.4)',
-                  color: '#ff8a8a',
-                  padding: '10px 14px',
-                  marginTop: 12,
-                  fontSize: 12,
-                  fontFamily: rj,
-                  fontWeight: 600,
-                  lineHeight: 1.5,
-                }}>
-                  ⚠️ {submitError}
-                </div>
-              )}
-
-              <div style={{fontFamily:rj,fontSize:10,color:'#7a8a72',textAlign:'center',marginTop:9,lineHeight:1.5}}>
-                🔒 No charge today · Verification within 24 hours · Cancel anytime
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* SUCCESS MODAL */}
-        {successModal&&(
-          <div style={{position:'fixed',inset:0,background:'rgba(8,16,10,.97)',backdropFilter:'blur(24px)',zIndex:700,display:'flex',alignItems:'center',justifyContent:'center',padding:'20px',overflowY:'auto'}}>
-            <div style={{background:'linear-gradient(180deg,#0c1610,#0a140d)',border:'1px solid rgba(76,175,118,.4)',width:'100%',maxWidth:540,padding:'40px 36px',margin:'auto',textAlign:'center',position:'relative',boxShadow:'0 20px 60px rgba(76,175,118,.15)'}}>
-
-              <div className="success-check" style={{width:80,height:80,borderRadius:'50%',background:'rgba(76,175,118,.15)',border:'2px solid #4caf76',display:'flex',alignItems:'center',justifyContent:'center',margin:'0 auto 22px',fontSize:42,color:'#4caf76',fontWeight:700}}>
-                ✓
-              </div>
-
-              <h2 style={{fontFamily:lb,fontSize:28,fontWeight:700,marginBottom:8,color:'#f5f0e8'}}>
-                Application <em style={g}>Received</em>
-              </h2>
-              <p style={{fontSize:14,color:'#b5bfa8',marginBottom:22,lineHeight:1.7}}>
-                Thank you for applying to PortServiceFinder. We have received your application and will personally contact you within 24 hours to verify your details and activate your listing.
-              </p>
-
-              <div style={{padding:'16px 20px',background:'rgba(200,168,75,.04)',border:'1px solid rgba(200,168,75,.2)',marginBottom:22,textAlign:'left'}}>
-                <div style={{fontFamily:rj,fontSize:10,letterSpacing:'2px',textTransform:'uppercase',color:'#c8a84b',fontWeight:700,marginBottom:10}}>
-                  📋 What happens next
-                </div>
-                <div style={{fontSize:12,color:'#b5bfa8',lineHeight:1.9}}>
-                  ✉️ Confirmation email sent to <strong style={{color:'#f5f0e8'}}>{form.loginEmail||'your email'}</strong><br/>
-                  📞 Our team will personally contact you within 24 hours to verify details<br/>
-                  ⏰ Once verified, your listing goes live and your 1-month free period begins<br/>
-                  💳 You will <strong style={{color:'#f5f0e8'}}>not be charged</strong> until the free month ends<br/>
-                  ❌ Cancel anytime before billing starts — no fees
-                </div>
-              </div>
-
-              <button className="btn-gold" onClick={closeSuccessAndReset} style={{width:'100%',padding:14,background:'#c8a84b',border:'none',color:'#08100a',fontFamily:rj,fontSize:13,letterSpacing:'2px',textTransform:'uppercase',fontWeight:700,cursor:'pointer'}}>
-                Got it, Back to Home →
-              </button>
-
-              <div style={{fontFamily:rj,fontSize:10,color:'#7a8a72',marginTop:14,letterSpacing:'.5px'}}>
-                Questions? Email us at <a href="mailto:contact@portservicefinder.com" style={{color:'#c8a84b',textDecoration:'none'}}>contact@portservicefinder.com</a>
-              </div>
-            </div>
-          </div>
-        )}
-
       </div>
     </>
-  );
-}
-
-function FI({l,p,t='text',v,onChange}:{l:string;p:string;t?:string;v?:string;onChange?:(v:string)=>void}) {
-  return (
-    <div style={{marginBottom:9}}>
-      <label style={{display:'block',fontFamily:"'Rajdhani',sans-serif",fontSize:10,letterSpacing:'1.5px',textTransform:'uppercase',color:'#7a8a72',marginBottom:3,fontWeight:600}}>{l}</label>
-      <input type={t} placeholder={p} value={v||''} onChange={e=>onChange&&onChange(e.target.value)} style={{background:'rgba(8,16,10,.7)',border:'1px solid rgba(200,168,75,.22)',color:'#f5f0e8',padding:'9px 11px',fontSize:13,width:'100%',fontFamily:"'Outfit',sans-serif"}}/>
-    </div>
   );
 }
