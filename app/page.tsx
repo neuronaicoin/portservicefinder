@@ -1199,7 +1199,7 @@ export default function Home() {
               )}
               {plan==='monthly'&&(
                 <div style={{padding:'12px 14px',background:'rgba(76,175,118,.08)',border:'1px solid rgba(76,175,118,.35)',marginBottom:16,fontSize:12,fontFamily:rj,lineHeight:1.6}}>
-                  <div style={{fontWeight:700,marginBottom:5,fontSize:13,color:'#4caf76'}}>🎁 1 Month FREE — Then $99/month</div>
+                  <div style={{fontWeight:700,marginBottom:5,fontSize:13,color:'#4caf76'}}>🎁 1 Month FREE — Then Subscribe → $49.90/month</div>
                   <div style={{color:'#d4dcc8',fontSize:11}}>
                     ✓ You will NOT be charged today.<br/>
                     📋 Free period begins after our team verifies your details.<br/>
@@ -1263,8 +1263,8 @@ export default function Home() {
                   : (plan==='trial'
                       ? 'Submit Founding Member Application'
                       : plan==='yearly'
-                        ? 'Submit Application → $1,000/year After Free Month'
-                        : 'Submit Application → $99/month After Free Month'
+                        ? 'Subscribe → $500/year'
+                        : 'Submit Application → Subscribe → $49.90/month After Free Month'
                     )
                 }
               </button>
