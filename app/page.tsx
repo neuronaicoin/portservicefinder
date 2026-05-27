@@ -272,6 +272,9 @@ const PROVIDERS: Provider[] = [
   { id: 'p037', type: 'agent', ico: '🏢', name: 'Yokohama Port Agency', bio: 'Yokohama, Tokyo, Kobe, Osaka port agency. JIFFA member. English-speaking 24/7 operations team.', ports: ['Yokohama', 'Tokyo', 'Kobe', 'Osaka'], country: 'Japan', svc: ['agent'], phone: '+81 45 663 0000', email: 'ops@yokohamaagency.jp', wa: '+819011110000', web: 'https://yokohamaagency.jp', addr: 'Naka-ku, Yokohama 231-0023', person: 'Cpt. Hiroshi Tanaka' },
 ];
 
+const MAX_PORTS = 3;
+const MIN_BIO = 600;
+
 function runSearch(country: string, port: string, cat: string, ms: Set<string>) {
   const ok = (p: Provider) => {
     if (cat === 'all') return true;
@@ -302,9 +305,9 @@ export default function Home() {
   const [newsletterSubmitted, setNewsletterSubmitted] = useState(false);
   const [newsletterError, setNewsletterError] = useState('');
 
-  // LIST BUSINESS FLOW STATE
-  const [showFormModal, setShowFormModal] = useState(false);
-  const [showPlanModal, setShowPlanModal] = useState(false);
+  // LIST BUSINESS FLOW - 3 STEPS
+  const [showFlowModal, setShowFlowModal] = useState(false);
+  const [flowStep, setFlowStep] = useState(1); // 1: Type, 2: Form, 3: Plan
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [checkoutError, setCheckoutError] = useState('');
 
@@ -322,6 +325,7 @@ export default function Home() {
   const [fAddress, setFAddress] = useState('');
   const [fContactPerson, setFContactPerson] = useState('');
   const [fFormError, setFFormError] = useState('');
+  const [portLimitWarning, setPortLimitWarning] = useState('');
 
   const countries = Object.keys(PORT_DATA).sort();
   const ports = country ? PORT_DATA[country] || [] : [];
@@ -330,6 +334,9 @@ export default function Home() {
   const rj = "'Rajdhani',sans-serif";
   const lb = "'Libre Baskerville',serif";
   const TL = (k: string) => k === 'agent' ? 'Ship Agent' : k === 'chandler' ? 'Shipchandler' : 'Marine Service';
+
+  const bioOk = fBio.trim().length >= MIN_BIO;
+  const bioRemaining = MIN_BIO - fBio.trim().length;
 
   function doSearch(c: string, p: string, s: string, m: Set<string>) {
     if (!c || !p) { setDone(false); return; }
@@ -344,9 +351,10 @@ export default function Home() {
   }
 
   function openListBusiness() {
-    setShowFormModal(true);
+    resetForm();
+    setShowFlowModal(true);
+    setFlowStep(1);
     setMobileMenu(false);
-    setFFormError('');
   }
 
   function resetForm() {
@@ -363,17 +371,28 @@ export default function Home() {
     setFAddress('');
     setFContactPerson('');
     setFFormError('');
+    setPortLimitWarning('');
     setCheckoutError('');
+    setFlowStep(1);
   }
 
-  function closeAllModals() {
-    setShowFormModal(false);
-    setShowPlanModal(false);
-    setCheckoutLoading(false);
+  function closeFlow() {
+    if (checkoutLoading) return;
+    setShowFlowModal(false);
+    resetForm();
   }
 
   function togglePortInForm(p: string) {
-    setFPorts(prev => prev.includes(p) ? prev.filter(x => x !== p) : [...prev, p]);
+    setPortLimitWarning('');
+    if (fPorts.includes(p)) {
+      setFPorts(fPorts.filter(x => x !== p));
+    } else {
+      if (fPorts.length >= MAX_PORTS) {
+        setPortLimitWarning(`You can select up to ${MAX_PORTS} ports only. Remove a port to add another.`);
+        return;
+      }
+      setFPorts([...fPorts, p]);
+    }
   }
 
   function toggleSvcInForm(key: string) {
@@ -382,33 +401,44 @@ export default function Home() {
     setFSvc(n);
   }
 
+  // STEP 1: Provider Type seçimi
+  function handleStep1Next() {
+    if (!fProviderType) {
+      setFFormError('Please select a provider type.');
+      return;
+    }
+    setFFormError('');
+    setFlowStep(2);
+  }
+
+  // STEP 2: Form doldurma validasyonu
   function validateForm(): string {
-    if (!fProviderType) return 'Please select a provider type.';
     if (!fCompanyName.trim()) return 'Company name is required.';
     if (fCompanyName.trim().length < 3) return 'Company name is too short.';
     if (!fCountry) return 'Please select a country.';
     if (fPorts.length === 0) return 'Please select at least one port.';
+    if (fPorts.length > MAX_PORTS) return `You can select up to ${MAX_PORTS} ports only.`;
     if (!fEmail.trim()) return 'Email is required.';
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(fEmail.trim())) return 'Please enter a valid email address.';
     if (!fPhone.trim()) return 'Phone number is required.';
     if (!fContactPerson.trim()) return 'Contact person name is required.';
     if (!fBio.trim()) return 'Company description is required.';
-    if (fBio.trim().length < 30) return 'Company description should be at least 30 characters.';
+    if (fBio.trim().length < MIN_BIO) return `Company description must be at least ${MIN_BIO} characters (currently ${fBio.trim().length}).`;
     if (fProviderType === 'service' && fSvc.size === 0) return 'Please select at least one service category.';
     return '';
   }
 
-  function handleFormSubmit() {
+  function handleStep2Next() {
     const err = validateForm();
     if (err) {
       setFFormError(err);
       return;
     }
     setFFormError('');
-    setShowFormModal(false);
-    setShowPlanModal(true);
+    setFlowStep(3);
   }
 
+  // STEP 3: Plan & Checkout
   async function handleCheckout(plan: 'monthly' | 'annual') {
     setCheckoutLoading(true);
     setCheckoutError('');
@@ -441,7 +471,6 @@ export default function Home() {
         throw new Error(data.error || 'Failed to create checkout. Please try again.');
       }
 
-      // Redirect to Polar checkout
       window.location.href = data.checkout_url;
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Network error. Please try again.';
@@ -490,6 +519,18 @@ export default function Home() {
     flbl: {display:'block',fontFamily:rj,fontSize:11,fontWeight:700,letterSpacing:'1.5px',textTransform:'uppercase' as const,color:'#c8a84b',marginBottom:6} as React.CSSProperties,
   };
 
+  // PROGRESS BAR component
+  const ProgressBar = () => (
+    <div style={{display:'flex',gap:6,padding:'0 28px',marginTop:14,marginBottom:6}}>
+      <div style={{flex:1,height:3,background:flowStep>=1?'#c8a84b':'rgba(200,168,75,.2)'}}/>
+      <div style={{flex:1,height:3,background:flowStep>=2?'#c8a84b':'rgba(200,168,75,.2)'}}/>
+      <div style={{flex:1,height:3,background:flowStep>=3?'#c8a84b':'rgba(200,168,75,.2)'}}/>
+    </div>
+  );
+
+  const stepTitle = flowStep === 1 ? 'Provider Type' : flowStep === 2 ? 'Business Information' : 'Choose Your Plan';
+  const stepSubtitle = flowStep === 1 ? 'Select the category that best describes your business.' : flowStep === 2 ? 'Fill in your company details. All fields marked with * are required.' : 'Cancel anytime. No commission. Active immediately after payment.';
+
   return (
     <>
       <style>{`
@@ -521,9 +562,10 @@ export default function Home() {
         .footer-link:hover{color:#c8a84b!important;}
         .btn-gold{transition:transform .25s ease, box-shadow .25s ease, filter .25s ease;}
         .btn-gold:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(200,168,75,.35);filter:brightness(1.08);}
-        .btn-gold:disabled{cursor:wait;transform:none;box-shadow:none;filter:none;opacity:.7;}
+        .btn-gold:disabled{cursor:not-allowed;transform:none;box-shadow:none;filter:none;opacity:.5;}
         .btn-ghost{transition:background .25s ease, color .25s ease, border-color .25s ease;}
         .btn-ghost:hover{background:rgba(200,168,75,.12);border-color:#c8a84b!important;}
+        .btn-ghost:disabled{cursor:not-allowed;opacity:.5;}
         .rrow{transition:border-color .3s ease, transform .25s ease, box-shadow .25s ease;}
         .rrow:hover{border-color:#c8a84b!important;cursor:pointer;transform:translateX(4px);box-shadow:-4px 0 0 #c8a84b;}
         .tier{transition:transform .35s ease, box-shadow .35s ease, background .35s ease;}
@@ -542,6 +584,7 @@ export default function Home() {
         .spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(8,16,10,.3);border-top-color:#08100a;border-radius:50%;animation:spinner .8s linear infinite;}
         .ptype-card{cursor:pointer;transition:all .25s ease;}
         .ptype-card:hover{border-color:#c8a84b!important;transform:translateY(-3px);}
+        .port-chip-disabled{opacity:.35;cursor:not-allowed!important;}
         .wave-bg{position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.06;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='1200' height='120' viewBox='0 0 1200 120'><path d='M0 60 Q 150 20 300 60 T 600 60 T 900 60 T 1200 60' stroke='%23c8a84b' stroke-width='1.2' fill='none'/><path d='M0 90 Q 150 50 300 90 T 600 90 T 900 90 T 1200 90' stroke='%23c8a84b' stroke-width='0.8' fill='none' opacity='0.6'/></svg>");background-repeat:repeat;animation:waveMove 40s linear infinite;}
         .hero-bg{position:absolute;inset:0;z-index:0;background:linear-gradient(180deg, rgba(8,16,10,.78) 0%, rgba(8,16,10,.82) 50%, rgba(8,16,10,.96) 100%),url('/hero-bg.jpg');background-size:cover;background-position:center 35%;background-repeat:no-repeat;}
         .hero-content{position:relative;z-index:2;}
@@ -1030,236 +1073,293 @@ export default function Home() {
           </div>
         )}
 
-        {/* FORM MODAL — Step 1: Provider Info */}
-        {showFormModal && (
-          <div style={{position:'fixed',inset:0,background:'rgba(8,16,10,.95)',backdropFilter:'blur(16px)',zIndex:600,display:'flex',alignItems:'flex-start',justifyContent:'center',padding:'30px 16px',overflowY:'auto'}} onClick={e=>{if(e.target===e.currentTarget){setShowFormModal(false);resetForm();}}}>
+        {/* ====================================================== */}
+        {/* 3-STEP LIST BUSINESS FLOW MODAL                          */}
+        {/* ====================================================== */}
+        {showFlowModal && (
+          <div style={{position:'fixed',inset:0,background:'rgba(8,16,10,.95)',backdropFilter:'blur(16px)',zIndex:600,display:'flex',alignItems:'flex-start',justifyContent:'center',padding:'30px 16px',overflowY:'auto'}} onClick={e=>{if(e.target===e.currentTarget)closeFlow();}}>
             <div className="modal-content" style={{background:'#0c1610',border:'1px solid rgba(200,168,75,.3)',width:'100%',maxWidth:760,margin:'auto'}}>
 
               {/* HEADER */}
               <div style={{padding:'22px 28px 18px',borderBottom:'1px solid rgba(200,168,75,.15)',display:'flex',justifyContent:'space-between',alignItems:'flex-start',gap:14}}>
                 <div>
-                  <div style={{fontFamily:rj,fontSize:10,letterSpacing:'2px',textTransform:'uppercase',color:'#c8a84b',marginBottom:6,fontWeight:700}}>Step 1 of 2 · Provider Information</div>
+                  <div style={{fontFamily:rj,fontSize:10,letterSpacing:'2px',textTransform:'uppercase',color:'#c8a84b',marginBottom:6,fontWeight:700}}>Step {flowStep} of 3 · {stepTitle}</div>
                   <h2 style={{fontFamily:lb,fontSize:22,fontWeight:700,lineHeight:1.2}}>List Your <em style={g}>Business</em></h2>
-                  <p style={{fontSize:12.5,color:'#b0c0a4',marginTop:6,lineHeight:1.5}}>Fill in your company details. After submission, you&apos;ll choose a subscription plan and complete payment.</p>
+                  <p style={{fontSize:12.5,color:'#b0c0a4',marginTop:6,lineHeight:1.5}}>{stepSubtitle}</p>
                 </div>
-                <button onClick={()=>{setShowFormModal(false);resetForm();}} style={{background:'none',border:'none',color:'#7a8a72',fontSize:20,cursor:'pointer',flexShrink:0}}>✕</button>
+                <button onClick={closeFlow} disabled={checkoutLoading} style={{background:'none',border:'none',color:'#7a8a72',fontSize:20,cursor:checkoutLoading?'not-allowed':'pointer',flexShrink:0}}>✕</button>
               </div>
 
               {/* PROGRESS BAR */}
-              <div style={{display:'flex',gap:0,padding:'0 28px',marginTop:14,marginBottom:6}}>
-                <div style={{flex:1,height:3,background:'#c8a84b'}}/>
-                <div style={{flex:1,height:3,background:'rgba(200,168,75,.2)'}}/>
-              </div>
+              <ProgressBar/>
 
               <div style={{padding:'18px 28px 24px'}}>
 
-                {/* PROVIDER TYPE SELECTION */}
-                <div style={{marginBottom:20}}>
-                  <label style={S.flbl}>Provider Type *</label>
-                  <div className="ptype-grid" style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:8}}>
-                    {[{key:'agent',ico:'🏢',label:'Ship Agent',desc:'Port agency services'},{key:'chandler',ico:'⚓',label:'Shipchandler',desc:'Provisions & supplies'},{key:'service',ico:'🔧',label:'Marine Service',desc:'Technical services'}].map(o=>(
-                      <div key={o.key} className="ptype-card" onClick={()=>setFProviderType(o.key)} style={{padding:'14px 12px',border:`1px solid ${fProviderType===o.key?'#c8a84b':'rgba(200,168,75,.2)'}`,background:fProviderType===o.key?'rgba(200,168,75,.08)':'#111c13',textAlign:'center'}}>
-                        <div style={{fontSize:22,marginBottom:6}}>{o.ico}</div>
-                        <div style={{fontFamily:rj,fontSize:12,fontWeight:700,color:fProviderType===o.key?'#c8a84b':'#f5f0e8',marginBottom:3,letterSpacing:'.5px'}}>{o.label}</div>
-                        <div style={{fontSize:10,color:'#7a8a72',fontFamily:rj}}>{o.desc}</div>
+                {/* ============================== */}
+                {/* STEP 1: PROVIDER TYPE          */}
+                {/* ============================== */}
+                {flowStep === 1 && (
+                  <div>
+                    <div style={{marginBottom:18}}>
+                      <label style={{...S.flbl,fontSize:12,marginBottom:12,display:'block'}}>What type of provider are you?</label>
+                      <div className="ptype-grid" style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:10}}>
+                        {[
+                          {key:'agent',ico:'🏢',label:'Ship Agent',desc:'Port agency services, husbandry, crew change, customs clearance'},
+                          {key:'chandler',ico:'⚓',label:'Shipchandler',desc:'Provisions, bonded stores, deck & engine stores, spare parts'},
+                          {key:'service',ico:'🔧',label:'Marine Service',desc:'Technical services: engine, electrical, diving, welding, surveys'}
+                        ].map(o=>(
+                          <div key={o.key} className="ptype-card" onClick={()=>setFProviderType(o.key)} style={{padding:'20px 14px',border:`1px solid ${fProviderType===o.key?'#c8a84b':'rgba(200,168,75,.2)'}`,background:fProviderType===o.key?'rgba(200,168,75,.08)':'#111c13',textAlign:'center'}}>
+                            <div style={{fontSize:32,marginBottom:10}}>{o.ico}</div>
+                            <div style={{fontFamily:rj,fontSize:13,fontWeight:700,color:fProviderType===o.key?'#c8a84b':'#f5f0e8',marginBottom:6,letterSpacing:'.5px'}}>{o.label}</div>
+                            <div style={{fontSize:11,color:'#7a8a72',fontFamily:rj,lineHeight:1.5}}>{o.desc}</div>
+                          </div>
+                        ))}
                       </div>
-                    ))}
-                  </div>
-                </div>
+                    </div>
 
-                {/* COMPANY NAME */}
-                <div style={{marginBottom:16}}>
-                  <label style={S.flbl}>Company Name *</label>
-                  <input className="card-input" type="text" value={fCompanyName} onChange={e=>setFCompanyName(e.target.value)} placeholder="e.g. Mersin Maritime Agency Ltd." style={S.inp}/>
-                </div>
+                    {fFormError && (
+                      <div style={{padding:'12px 14px',background:'rgba(255,138,138,.08)',border:'1px solid rgba(255,138,138,.3)',marginBottom:14,fontFamily:rj,fontSize:12,color:'#ff8a8a',fontWeight:600}}>⚠ {fFormError}</div>
+                    )}
 
-                {/* COMPANY BIO */}
-                <div style={{marginBottom:16}}>
-                  <label style={S.flbl}>Company Description / Bio *</label>
-                  <textarea className="card-input" value={fBio} onChange={e=>setFBio(e.target.value)} placeholder="Brief description of your services, certifications, experience..." rows={4} style={{...S.inp,resize:'vertical',minHeight:80,fontFamily:"'Outfit',sans-serif"}}/>
-                  <div style={{fontFamily:rj,fontSize:10,color:'#7a8a72',marginTop:4}}>{fBio.length} characters · minimum 30</div>
-                </div>
-
-                {/* COUNTRY */}
-                <div style={{marginBottom:16}}>
-                  <label style={S.flbl}>Country *</label>
-                  <select className="card-input" value={fCountry} onChange={e=>{setFCountry(e.target.value);setFPorts([]);}} style={S.inp}>
-                    <option value="">Select country...</option>
-                    {countries.map(c=><option key={c}>{c}</option>)}
-                  </select>
-                </div>
-
-                {/* PORTS - Multi Select */}
-                {fCountry && (
-                  <div style={{marginBottom:16}}>
-                    <label style={S.flbl}>Ports You Operate At * ({fPorts.length} selected)</label>
-                    <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(160px,1fr))',gap:6,maxHeight:200,overflowY:'auto',padding:10,background:'rgba(8,16,10,.6)',border:'1px solid rgba(200,168,75,.2)'}}>
-                      {fAvailablePorts.map(p=>(
-                        <div key={p} onClick={()=>togglePortInForm(p)} style={{padding:'7px 10px',border:`1px solid ${fPorts.includes(p)?'#c8a84b':'rgba(200,168,75,.18)'}`,background:fPorts.includes(p)?'#c8a84b':'transparent',color:fPorts.includes(p)?'#08100a':'#b0c0a4',fontFamily:rj,fontSize:11,fontWeight:600,cursor:'pointer',userSelect:'none',textAlign:'center'}}>{p}</div>
-                      ))}
+                    <div style={{display:'flex',gap:10,justifyContent:'flex-end',marginTop:18}}>
+                      <button onClick={closeFlow} className="btn-ghost" style={{background:'transparent',border:'1px solid rgba(200,168,75,.3)',color:'#c8a84b',padding:'12px 22px',fontFamily:rj,fontSize:12,letterSpacing:'1.5px',textTransform:'uppercase',fontWeight:700,cursor:'pointer'}}>Cancel</button>
+                      <button onClick={handleStep1Next} disabled={!fProviderType} className="btn-gold" style={{background:!fProviderType?'rgba(200,168,75,.3)':'#c8a84b',color:'#08100a',border:'none',padding:'12px 28px',fontFamily:rj,fontSize:12,letterSpacing:'1.5px',textTransform:'uppercase',fontWeight:700,cursor:!fProviderType?'not-allowed':'pointer'}}>Continue →</button>
                     </div>
                   </div>
                 )}
 
-                {/* MARINE SERVICES (only for service type) */}
-                {fProviderType === 'service' && (
-                  <div style={{marginBottom:16}}>
-                    <label style={S.flbl}>Service Categories * ({fSvc.size} selected)</label>
-                    <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(190px,1fr))',gap:5,maxHeight:240,overflowY:'auto',padding:10,background:'rgba(8,16,10,.6)',border:'1px solid rgba(200,168,75,.2)'}}>
-                      {MARINE_SERVICES.map(s=>(
-                        <div key={s.key} onClick={()=>toggleSvcInForm(s.key)} style={{padding:'6px 10px',border:`1px solid ${fSvc.has(s.key)?'#c8a84b':'rgba(200,168,75,.18)'}`,background:fSvc.has(s.key)?'#c8a84b':'transparent',color:fSvc.has(s.key)?'#08100a':'#b0c0a4',fontFamily:rj,fontSize:11,fontWeight:600,cursor:'pointer',userSelect:'none'}}>{s.label}</div>
-                      ))}
+                {/* ============================== */}
+                {/* STEP 2: FORM                   */}
+                {/* ============================== */}
+                {flowStep === 2 && (
+                  <div>
+
+                    {/* TYPE BADGE - selected type display */}
+                    <div style={{background:'rgba(200,168,75,.05)',border:'1px solid rgba(200,168,75,.18)',padding:'10px 14px',marginBottom:18,display:'flex',alignItems:'center',gap:10}}>
+                      <span style={{fontSize:18}}>{fProviderType==='agent'?'🏢':fProviderType==='chandler'?'⚓':'🔧'}</span>
+                      <div>
+                        <div style={{fontFamily:rj,fontSize:9,letterSpacing:'1.5px',textTransform:'uppercase',color:'#7a8a72',fontWeight:700}}>Selected Type</div>
+                        <div style={{fontFamily:rj,fontSize:13,fontWeight:700,color:'#c8a84b'}}>{TL(fProviderType)}</div>
+                      </div>
+                    </div>
+
+                    {/* COMPANY NAME */}
+                    <div style={{marginBottom:16}}>
+                      <label style={S.flbl}>Company Name *</label>
+                      <input className="card-input" type="text" value={fCompanyName} onChange={e=>setFCompanyName(e.target.value)} placeholder="e.g. Mersin Maritime Agency Ltd." style={S.inp}/>
+                    </div>
+
+                    {/* COMPANY BIO - MIN 600 CHARS */}
+                    <div style={{marginBottom:16}}>
+                      <label style={S.flbl}>Company Description / Bio * (minimum {MIN_BIO} characters)</label>
+                      <textarea className="card-input" value={fBio} onChange={e=>setFBio(e.target.value)} placeholder="Describe your services in detail: history, certifications, fleet capacity, specialties, geographic coverage, languages spoken, response time, vessel types handled, key clients/references, awards or memberships, your unique value proposition. The more detailed, the better — vessel operators want to know exactly who they're dealing with." rows={8} style={{...S.inp,resize:'vertical',minHeight:160,fontFamily:"'Outfit',sans-serif",lineHeight:1.6}}/>
+                      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginTop:6,fontFamily:rj,fontSize:11}}>
+                        <span style={{color:bioOk?'#4caf76':'#ff8a8a',fontWeight:700}}>
+                          {bioOk ? `✓ ${fBio.trim().length} / ${MIN_BIO} minimum` : `${fBio.trim().length} / ${MIN_BIO} (${bioRemaining} more characters needed)`}
+                        </span>
+                        <span style={{color:'#7a8a72'}}>Tip: write 4–6 sentences covering services, experience, certifications.</span>
+                      </div>
+                    </div>
+
+                    {/* COUNTRY */}
+                    <div style={{marginBottom:16}}>
+                      <label style={S.flbl}>Country *</label>
+                      <select className="card-input" value={fCountry} onChange={e=>{setFCountry(e.target.value);setFPorts([]);setPortLimitWarning('');}} style={S.inp}>
+                        <option value="">Select country...</option>
+                        {countries.map(c=><option key={c}>{c}</option>)}
+                      </select>
+                    </div>
+
+                    {/* PORTS - MAX 3 */}
+                    {fCountry && (
+                      <div style={{marginBottom:16}}>
+                        <label style={S.flbl}>
+                          Ports You Operate At * (max {MAX_PORTS}, {fPorts.length} selected)
+                        </label>
+                        {portLimitWarning && (
+                          <div style={{padding:'8px 12px',background:'rgba(255,138,138,.08)',border:'1px solid rgba(255,138,138,.3)',marginBottom:8,fontFamily:rj,fontSize:11,color:'#ff8a8a',fontWeight:600}}>⚠ {portLimitWarning}</div>
+                        )}
+                        {fPorts.length > 0 && (
+                          <div style={{display:'flex',gap:6,flexWrap:'wrap',marginBottom:8}}>
+                            {fPorts.map(p=>(
+                              <span key={p} style={{display:'inline-flex',alignItems:'center',gap:6,padding:'4px 10px',background:'#c8a84b',color:'#08100a',fontFamily:rj,fontSize:11,fontWeight:700}}>
+                                {p}
+                                <button onClick={()=>togglePortInForm(p)} style={{background:'none',border:'none',color:'#08100a',cursor:'pointer',fontSize:14,lineHeight:1,padding:0,fontWeight:700}}>✕</button>
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                        <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(160px,1fr))',gap:6,maxHeight:200,overflowY:'auto',padding:10,background:'rgba(8,16,10,.6)',border:'1px solid rgba(200,168,75,.2)'}}>
+                          {fAvailablePorts.map(p=>{
+                            const selected = fPorts.includes(p);
+                            const disabled = !selected && fPorts.length >= MAX_PORTS;
+                            return (
+                              <div
+                                key={p}
+                                className={disabled ? 'port-chip-disabled' : ''}
+                                onClick={()=>!disabled && togglePortInForm(p)}
+                                style={{
+                                  padding:'7px 10px',
+                                  border:`1px solid ${selected?'#c8a84b':'rgba(200,168,75,.18)'}`,
+                                  background:selected?'#c8a84b':'transparent',
+                                  color:selected?'#08100a':'#b0c0a4',
+                                  fontFamily:rj,fontSize:11,fontWeight:600,
+                                  cursor:disabled?'not-allowed':'pointer',
+                                  userSelect:'none',textAlign:'center'
+                                }}
+                              >
+                                {p}
+                              </div>
+                            );
+                          })}
+                        </div>
+                        <div style={{fontFamily:rj,fontSize:10,color:'#7a8a72',marginTop:6,fontStyle:'italic'}}>You can list at up to 3 ports. Don&apos;t see your port? <a href="mailto:contact@portservicefinder.com" style={{color:'#c8a84b',textDecoration:'underline'}}>Contact us</a> to add it.</div>
+                      </div>
+                    )}
+
+                    {/* MARINE SERVICES (only for service type) */}
+                    {fProviderType === 'service' && (
+                      <div style={{marginBottom:16}}>
+                        <label style={S.flbl}>Service Categories * ({fSvc.size} selected)</label>
+                        <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(190px,1fr))',gap:5,maxHeight:240,overflowY:'auto',padding:10,background:'rgba(8,16,10,.6)',border:'1px solid rgba(200,168,75,.2)'}}>
+                          {MARINE_SERVICES.map(s=>(
+                            <div key={s.key} onClick={()=>toggleSvcInForm(s.key)} style={{padding:'6px 10px',border:`1px solid ${fSvc.has(s.key)?'#c8a84b':'rgba(200,168,75,.18)'}`,background:fSvc.has(s.key)?'#c8a84b':'transparent',color:fSvc.has(s.key)?'#08100a':'#b0c0a4',fontFamily:rj,fontSize:11,fontWeight:600,cursor:'pointer',userSelect:'none'}}>{s.label}</div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* CONTACT INFO */}
+                    <div className="form-grid-2" style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12,marginBottom:16}}>
+                      <div>
+                        <label style={S.flbl}>Email *</label>
+                        <input className="card-input" type="email" value={fEmail} onChange={e=>setFEmail(e.target.value)} placeholder="ops@yourcompany.com" style={S.inp}/>
+                      </div>
+                      <div>
+                        <label style={S.flbl}>Phone *</label>
+                        <input className="card-input" type="tel" value={fPhone} onChange={e=>setFPhone(e.target.value)} placeholder="+90 324 238 0000" style={S.inp}/>
+                      </div>
+                    </div>
+
+                    <div className="form-grid-2" style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12,marginBottom:16}}>
+                      <div>
+                        <label style={S.flbl}>WhatsApp (optional)</label>
+                        <input className="card-input" type="tel" value={fWhatsapp} onChange={e=>setFWhatsapp(e.target.value)} placeholder="+905320000000" style={S.inp}/>
+                      </div>
+                      <div>
+                        <label style={S.flbl}>Website (optional)</label>
+                        <input className="card-input" type="url" value={fWebsite} onChange={e=>setFWebsite(e.target.value)} placeholder="https://yourcompany.com" style={S.inp}/>
+                      </div>
+                    </div>
+
+                    <div style={{marginBottom:16}}>
+                      <label style={S.flbl}>Contact Person *</label>
+                      <input className="card-input" type="text" value={fContactPerson} onChange={e=>setFContactPerson(e.target.value)} placeholder="Cpt. John Smith" style={S.inp}/>
+                    </div>
+
+                    <div style={{marginBottom:20}}>
+                      <label style={S.flbl}>Office Address (optional)</label>
+                      <input className="card-input" type="text" value={fAddress} onChange={e=>setFAddress(e.target.value)} placeholder="Street, City, ZIP" style={S.inp}/>
+                    </div>
+
+                    {/* ERROR */}
+                    {fFormError && (
+                      <div style={{padding:'12px 14px',background:'rgba(255,138,138,.08)',border:'1px solid rgba(255,138,138,.3)',marginBottom:14,fontFamily:rj,fontSize:12,color:'#ff8a8a',fontWeight:600}}>⚠ {fFormError}</div>
+                    )}
+
+                    {/* BUTTONS */}
+                    <div style={{display:'flex',gap:10,justifyContent:'space-between',marginTop:18,flexWrap:'wrap'}}>
+                      <button onClick={()=>{setFlowStep(1);setFFormError('');}} className="btn-ghost" style={{background:'transparent',border:'1px solid rgba(200,168,75,.3)',color:'#c8a84b',padding:'12px 22px',fontFamily:rj,fontSize:12,letterSpacing:'1.5px',textTransform:'uppercase',fontWeight:700,cursor:'pointer'}}>← Back</button>
+                      <button onClick={handleStep2Next} disabled={!bioOk} className="btn-gold" style={{background:!bioOk?'rgba(200,168,75,.3)':'#c8a84b',color:'#08100a',border:'none',padding:'12px 28px',fontFamily:rj,fontSize:12,letterSpacing:'1.5px',textTransform:'uppercase',fontWeight:700,cursor:!bioOk?'not-allowed':'pointer'}}>Continue to Plan →</button>
                     </div>
                   </div>
                 )}
 
-                {/* CONTACT INFO */}
-                <div className="form-grid-2" style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12,marginBottom:16}}>
+                {/* ============================== */}
+                {/* STEP 3: PLAN & CHECKOUT        */}
+                {/* ============================== */}
+                {flowStep === 3 && (
                   <div>
-                    <label style={S.flbl}>Email *</label>
-                    <input className="card-input" type="email" value={fEmail} onChange={e=>setFEmail(e.target.value)} placeholder="ops@yourcompany.com" style={S.inp}/>
-                  </div>
-                  <div>
-                    <label style={S.flbl}>Phone *</label>
-                    <input className="card-input" type="tel" value={fPhone} onChange={e=>setFPhone(e.target.value)} placeholder="+90 324 238 0000" style={S.inp}/>
-                  </div>
-                </div>
 
-                <div className="form-grid-2" style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12,marginBottom:16}}>
-                  <div>
-                    <label style={S.flbl}>WhatsApp (optional)</label>
-                    <input className="card-input" type="tel" value={fWhatsapp} onChange={e=>setFWhatsapp(e.target.value)} placeholder="+905320000000" style={S.inp}/>
-                  </div>
-                  <div>
-                    <label style={S.flbl}>Website (optional)</label>
-                    <input className="card-input" type="url" value={fWebsite} onChange={e=>setFWebsite(e.target.value)} placeholder="https://yourcompany.com" style={S.inp}/>
-                  </div>
-                </div>
-
-                <div style={{marginBottom:16}}>
-                  <label style={S.flbl}>Contact Person *</label>
-                  <input className="card-input" type="text" value={fContactPerson} onChange={e=>setFContactPerson(e.target.value)} placeholder="Cpt. John Smith" style={S.inp}/>
-                </div>
-
-                <div style={{marginBottom:20}}>
-                  <label style={S.flbl}>Office Address (optional)</label>
-                  <input className="card-input" type="text" value={fAddress} onChange={e=>setFAddress(e.target.value)} placeholder="Street, City, ZIP" style={S.inp}/>
-                </div>
-
-                {/* ERROR */}
-                {fFormError && (
-                  <div style={{padding:'12px 14px',background:'rgba(255,138,138,.08)',border:'1px solid rgba(255,138,138,.3)',marginBottom:14,fontFamily:rj,fontSize:12,color:'#ff8a8a',fontWeight:600}}>⚠ {fFormError}</div>
-                )}
-
-                {/* BUTTONS */}
-                <div style={{display:'flex',gap:10,justifyContent:'flex-end',marginTop:18}}>
-                  <button onClick={()=>{setShowFormModal(false);resetForm();}} className="btn-ghost" style={{background:'transparent',border:'1px solid rgba(200,168,75,.3)',color:'#c8a84b',padding:'12px 22px',fontFamily:rj,fontSize:12,letterSpacing:'1.5px',textTransform:'uppercase',fontWeight:700,cursor:'pointer'}}>Cancel</button>
-                  <button onClick={handleFormSubmit} className="btn-gold" style={{background:'#c8a84b',color:'#08100a',border:'none',padding:'12px 28px',fontFamily:rj,fontSize:12,letterSpacing:'1.5px',textTransform:'uppercase',fontWeight:700,cursor:'pointer'}}>Continue to Plan →</button>
-                </div>
-
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* PLAN MODAL — Step 2: Subscription Plan */}
-        {showPlanModal && (
-          <div style={{position:'fixed',inset:0,background:'rgba(8,16,10,.95)',backdropFilter:'blur(16px)',zIndex:600,display:'flex',alignItems:'flex-start',justifyContent:'center',padding:'30px 16px',overflowY:'auto'}} onClick={e=>{if(e.target===e.currentTarget && !checkoutLoading)closeAllModals();}}>
-            <div className="modal-content" style={{background:'#0c1610',border:'1px solid rgba(200,168,75,.3)',width:'100%',maxWidth:680,margin:'auto'}}>
-
-              {/* HEADER */}
-              <div style={{padding:'22px 28px 18px',borderBottom:'1px solid rgba(200,168,75,.15)',display:'flex',justifyContent:'space-between',alignItems:'flex-start',gap:14}}>
-                <div>
-                  <div style={{fontFamily:rj,fontSize:10,letterSpacing:'2px',textTransform:'uppercase',color:'#c8a84b',marginBottom:6,fontWeight:700}}>Step 2 of 2 · Choose Your Plan</div>
-                  <h2 style={{fontFamily:lb,fontSize:22,fontWeight:700,lineHeight:1.2}}>Select <em style={g}>Subscription</em> Plan</h2>
-                  <p style={{fontSize:12.5,color:'#b0c0a4',marginTop:6,lineHeight:1.5}}>Cancel anytime. No commission. Active immediately after payment.</p>
-                </div>
-                <button onClick={()=>{if(!checkoutLoading){setShowPlanModal(false);setShowFormModal(true);}}} style={{background:'none',border:'none',color:'#7a8a72',fontSize:20,cursor:checkoutLoading?'not-allowed':'pointer',flexShrink:0}}>✕</button>
-              </div>
-
-              {/* PROGRESS BAR */}
-              <div style={{display:'flex',gap:0,padding:'0 28px',marginTop:14,marginBottom:6}}>
-                <div style={{flex:1,height:3,background:'#c8a84b'}}/>
-                <div style={{flex:1,height:3,background:'#c8a84b'}}/>
-              </div>
-
-              <div style={{padding:'18px 28px 24px'}}>
-
-                {/* SUMMARY */}
-                <div style={{background:'rgba(200,168,75,.05)',border:'1px solid rgba(200,168,75,.18)',padding:'14px 16px',marginBottom:18}}>
-                  <div style={{fontFamily:rj,fontSize:10,letterSpacing:'1.5px',textTransform:'uppercase',color:'#c8a84b',marginBottom:6,fontWeight:700}}>Your Submission</div>
-                  <div style={{fontSize:13,color:'#f5f0e8',marginBottom:3,fontWeight:600}}>{fCompanyName}</div>
-                  <div style={{fontSize:11,color:'#b0c0a4',lineHeight:1.5}}>{TL(fProviderType)} · {fCountry} · {fPorts.length} port{fPorts.length!==1?'s':''}</div>
-                </div>
-
-                {/* PLAN CARDS */}
-                <div className="tiers2" style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12,marginBottom:18}}>
-
-                  {/* MONTHLY */}
-                  <div style={{background:'#111c13',border:'1px solid rgba(200,168,75,.2)',padding:'22px 20px',display:'flex',flexDirection:'column'}}>
-                    <div style={{fontFamily:rj,fontSize:10,letterSpacing:'2px',textTransform:'uppercase',color:'#c8a84b',marginBottom:8,fontWeight:700}}>Monthly</div>
-                    <div style={{display:'flex',alignItems:'baseline',gap:5,marginBottom:4}}>
-                      <span style={{fontFamily:lb,fontSize:32,fontWeight:700,lineHeight:1}}>$49.90</span>
-                      <span style={{fontFamily:rj,fontSize:11,color:'#7a8a72',fontWeight:600}}>/ month</span>
+                    {/* SUMMARY */}
+                    <div style={{background:'rgba(200,168,75,.05)',border:'1px solid rgba(200,168,75,.18)',padding:'14px 16px',marginBottom:18}}>
+                      <div style={{fontFamily:rj,fontSize:10,letterSpacing:'1.5px',textTransform:'uppercase',color:'#c8a84b',marginBottom:6,fontWeight:700}}>Your Submission</div>
+                      <div style={{fontSize:14,color:'#f5f0e8',marginBottom:4,fontWeight:600}}>{fCompanyName}</div>
+                      <div style={{fontSize:11.5,color:'#b0c0a4',lineHeight:1.5}}>{TL(fProviderType)} · {fCountry} · {fPorts.length} port{fPorts.length!==1?'s':''}: {fPorts.join(', ')}</div>
+                      <div style={{fontSize:11,color:'#7a8a72',lineHeight:1.5,marginTop:4}}>{fEmail} · {fPhone}</div>
                     </div>
-                    <div style={{fontSize:11,color:'#b0c0a4',marginBottom:14,fontFamily:rj,lineHeight:1.4}}>Billed monthly · Cancel anytime</div>
-                    <ul style={{listStyle:'none',flex:1,marginBottom:14,display:'flex',flexDirection:'column',gap:6}}>
-                      <li style={{fontSize:11.5,color:'#b0c0a4',display:'flex',alignItems:'flex-start',gap:6,lineHeight:1.4}}><span style={{color:'#c8a84b',fontWeight:700,flexShrink:0}}>✓</span>All your ports listed</li>
-                      <li style={{fontSize:11.5,color:'#b0c0a4',display:'flex',alignItems:'flex-start',gap:6,lineHeight:1.4}}><span style={{color:'#c8a84b',fontWeight:700,flexShrink:0}}>✓</span>Full company profile</li>
-                      <li style={{fontSize:11.5,color:'#b0c0a4',display:'flex',alignItems:'flex-start',gap:6,lineHeight:1.4}}><span style={{color:'#c8a84b',fontWeight:700,flexShrink:0}}>✓</span>Verified badge</li>
-                      <li style={{fontSize:11.5,color:'#b0c0a4',display:'flex',alignItems:'flex-start',gap:6,lineHeight:1.4}}><span style={{color:'#c8a84b',fontWeight:700,flexShrink:0}}>✓</span>Cancel anytime</li>
-                    </ul>
-                    <button onClick={()=>handleCheckout('monthly')} disabled={checkoutLoading} className="btn-ghost" style={{padding:11,background:'transparent',border:'1px solid rgba(200,168,75,.4)',color:'#c8a84b',fontFamily:rj,fontSize:11,letterSpacing:'1.5px',textTransform:'uppercase',fontWeight:700,cursor:checkoutLoading?'wait':'pointer',width:'100%',opacity:checkoutLoading?.6:1}}>
-                      {checkoutLoading ? <span className="spinner"/> : 'Subscribe Monthly'}
-                    </button>
-                  </div>
 
-                  {/* ANNUAL */}
-                  <div style={{background:'linear-gradient(180deg,rgba(200,168,75,.08),transparent)',border:'1px solid #c8a84b',padding:'22px 20px',position:'relative',display:'flex',flexDirection:'column'}}>
-                    <div style={{position:'absolute',top:-10,left:'50%',transform:'translateX(-50%)',background:'#c8a84b',color:'#08100a',fontFamily:rj,fontSize:9,letterSpacing:'1.5px',fontWeight:700,padding:'3px 10px'}}>BEST VALUE · SAVE $98.80</div>
-                    <div style={{fontFamily:rj,fontSize:10,letterSpacing:'2px',textTransform:'uppercase',color:'#c8a84b',marginBottom:8,fontWeight:700}}>Annual</div>
-                    <div style={{display:'flex',alignItems:'baseline',gap:5,marginBottom:4}}>
-                      <span style={{fontFamily:lb,fontSize:32,fontWeight:700,lineHeight:1}}>$500</span>
-                      <span style={{fontFamily:rj,fontSize:11,color:'#7a8a72',fontWeight:600}}>/ year</span>
+                    {/* PLAN CARDS */}
+                    <div className="tiers2" style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12,marginBottom:18}}>
+
+                      {/* MONTHLY */}
+                      <div style={{background:'#111c13',border:'1px solid rgba(200,168,75,.2)',padding:'22px 20px',display:'flex',flexDirection:'column'}}>
+                        <div style={{fontFamily:rj,fontSize:10,letterSpacing:'2px',textTransform:'uppercase',color:'#c8a84b',marginBottom:8,fontWeight:700}}>Monthly</div>
+                        <div style={{display:'flex',alignItems:'baseline',gap:5,marginBottom:4}}>
+                          <span style={{fontFamily:lb,fontSize:32,fontWeight:700,lineHeight:1}}>$49.90</span>
+                          <span style={{fontFamily:rj,fontSize:11,color:'#7a8a72',fontWeight:600}}>/ month</span>
+                        </div>
+                        <div style={{fontSize:11,color:'#b0c0a4',marginBottom:14,fontFamily:rj,lineHeight:1.4}}>Billed monthly · Cancel anytime</div>
+                        <ul style={{listStyle:'none',flex:1,marginBottom:14,display:'flex',flexDirection:'column',gap:6}}>
+                          <li style={{fontSize:11.5,color:'#b0c0a4',display:'flex',alignItems:'flex-start',gap:6,lineHeight:1.4}}><span style={{color:'#c8a84b',fontWeight:700,flexShrink:0}}>✓</span>All your ports listed</li>
+                          <li style={{fontSize:11.5,color:'#b0c0a4',display:'flex',alignItems:'flex-start',gap:6,lineHeight:1.4}}><span style={{color:'#c8a84b',fontWeight:700,flexShrink:0}}>✓</span>Full company profile</li>
+                          <li style={{fontSize:11.5,color:'#b0c0a4',display:'flex',alignItems:'flex-start',gap:6,lineHeight:1.4}}><span style={{color:'#c8a84b',fontWeight:700,flexShrink:0}}>✓</span>Verified badge</li>
+                          <li style={{fontSize:11.5,color:'#b0c0a4',display:'flex',alignItems:'flex-start',gap:6,lineHeight:1.4}}><span style={{color:'#c8a84b',fontWeight:700,flexShrink:0}}>✓</span>Cancel anytime</li>
+                        </ul>
+                        <button onClick={()=>handleCheckout('monthly')} disabled={checkoutLoading} className="btn-ghost" style={{padding:11,background:'transparent',border:'1px solid rgba(200,168,75,.4)',color:'#c8a84b',fontFamily:rj,fontSize:11,letterSpacing:'1.5px',textTransform:'uppercase',fontWeight:700,cursor:checkoutLoading?'not-allowed':'pointer',width:'100%',opacity:checkoutLoading?.6:1}}>
+                          {checkoutLoading ? <span className="spinner"/> : 'Subscribe Monthly'}
+                        </button>
+                      </div>
+
+                      {/* ANNUAL */}
+                      <div style={{background:'linear-gradient(180deg,rgba(200,168,75,.08),transparent)',border:'1px solid #c8a84b',padding:'22px 20px',position:'relative',display:'flex',flexDirection:'column'}}>
+                        <div style={{position:'absolute',top:-10,left:'50%',transform:'translateX(-50%)',background:'#c8a84b',color:'#08100a',fontFamily:rj,fontSize:9,letterSpacing:'1.5px',fontWeight:700,padding:'3px 10px'}}>BEST VALUE · SAVE $98.80</div>
+                        <div style={{fontFamily:rj,fontSize:10,letterSpacing:'2px',textTransform:'uppercase',color:'#c8a84b',marginBottom:8,fontWeight:700}}>Annual</div>
+                        <div style={{display:'flex',alignItems:'baseline',gap:5,marginBottom:4}}>
+                          <span style={{fontFamily:lb,fontSize:32,fontWeight:700,lineHeight:1}}>$500</span>
+                          <span style={{fontFamily:rj,fontSize:11,color:'#7a8a72',fontWeight:600}}>/ year</span>
+                        </div>
+                        <div style={{fontSize:11,color:'#b0c0a4',marginBottom:14,fontFamily:rj,lineHeight:1.4}}>$41.67/month · ~16% saving</div>
+                        <ul style={{listStyle:'none',flex:1,marginBottom:14,display:'flex',flexDirection:'column',gap:6}}>
+                          <li style={{fontSize:11.5,color:'#b0c0a4',display:'flex',alignItems:'flex-start',gap:6,lineHeight:1.4}}><span style={{color:'#c8a84b',fontWeight:700,flexShrink:0}}>✓</span>Everything in Monthly</li>
+                          <li style={{fontSize:11.5,color:'#b0c0a4',display:'flex',alignItems:'flex-start',gap:6,lineHeight:1.4}}><span style={{color:'#c8a84b',fontWeight:700,flexShrink:0}}>✓</span>Priority placement</li>
+                          <li style={{fontSize:11.5,color:'#b0c0a4',display:'flex',alignItems:'flex-start',gap:6,lineHeight:1.4}}><span style={{color:'#c8a84b',fontWeight:700,flexShrink:0}}>✓</span>Priority support</li>
+                          <li style={{fontSize:11.5,color:'#b0c0a4',display:'flex',alignItems:'flex-start',gap:6,lineHeight:1.4}}><span style={{color:'#c8a84b',fontWeight:700,flexShrink:0}}>✓</span>Save $98.80</li>
+                        </ul>
+                        <button onClick={()=>handleCheckout('annual')} disabled={checkoutLoading} className="btn-gold" style={{padding:11,background:'#c8a84b',color:'#08100a',border:'none',fontFamily:rj,fontSize:11,letterSpacing:'1.5px',textTransform:'uppercase',fontWeight:700,cursor:checkoutLoading?'not-allowed':'pointer',width:'100%',opacity:checkoutLoading?.6:1}}>
+                          {checkoutLoading ? <span className="spinner"/> : 'Subscribe Annual'}
+                        </button>
+                      </div>
                     </div>
-                    <div style={{fontSize:11,color:'#b0c0a4',marginBottom:14,fontFamily:rj,lineHeight:1.4}}>$41.67/month · ~16% saving</div>
-                    <ul style={{listStyle:'none',flex:1,marginBottom:14,display:'flex',flexDirection:'column',gap:6}}>
-                      <li style={{fontSize:11.5,color:'#b0c0a4',display:'flex',alignItems:'flex-start',gap:6,lineHeight:1.4}}><span style={{color:'#c8a84b',fontWeight:700,flexShrink:0}}>✓</span>Everything in Monthly</li>
-                      <li style={{fontSize:11.5,color:'#b0c0a4',display:'flex',alignItems:'flex-start',gap:6,lineHeight:1.4}}><span style={{color:'#c8a84b',fontWeight:700,flexShrink:0}}>✓</span>Priority placement</li>
-                      <li style={{fontSize:11.5,color:'#b0c0a4',display:'flex',alignItems:'flex-start',gap:6,lineHeight:1.4}}><span style={{color:'#c8a84b',fontWeight:700,flexShrink:0}}>✓</span>Priority support</li>
-                      <li style={{fontSize:11.5,color:'#b0c0a4',display:'flex',alignItems:'flex-start',gap:6,lineHeight:1.4}}><span style={{color:'#c8a84b',fontWeight:700,flexShrink:0}}>✓</span>Save $98.80</li>
-                    </ul>
-                    <button onClick={()=>handleCheckout('annual')} disabled={checkoutLoading} className="btn-gold" style={{padding:11,background:'#c8a84b',color:'#08100a',border:'none',fontFamily:rj,fontSize:11,letterSpacing:'1.5px',textTransform:'uppercase',fontWeight:700,cursor:checkoutLoading?'wait':'pointer',width:'100%',opacity:checkoutLoading?.6:1}}>
-                      {checkoutLoading ? <span className="spinner"/> : 'Subscribe Annual'}
-                    </button>
-                  </div>
-                </div>
 
-                {/* ERROR */}
-                {checkoutError && (
-                  <div style={{padding:'12px 14px',background:'rgba(255,138,138,.08)',border:'1px solid rgba(255,138,138,.3)',marginBottom:14,fontFamily:rj,fontSize:12,color:'#ff8a8a',fontWeight:600}}>⚠ {checkoutError}</div>
+                    {/* ERROR */}
+                    {checkoutError && (
+                      <div style={{padding:'12px 14px',background:'rgba(255,138,138,.08)',border:'1px solid rgba(255,138,138,.3)',marginBottom:14,fontFamily:rj,fontSize:12,color:'#ff8a8a',fontWeight:600}}>⚠ {checkoutError}</div>
+                    )}
+
+                    {/* LOADING MESSAGE */}
+                    {checkoutLoading && (
+                      <div style={{padding:'12px 14px',background:'rgba(200,168,75,.08)',border:'1px solid rgba(200,168,75,.3)',marginBottom:14,fontFamily:rj,fontSize:12,color:'#c8a84b',fontWeight:600,textAlign:'center'}}>
+                        Creating secure checkout session, please wait...
+                      </div>
+                    )}
+
+                    {/* INFO */}
+                    <div style={{padding:'12px 14px',background:'rgba(76,175,118,.06)',border:'1px solid rgba(76,175,118,.2)',display:'flex',alignItems:'flex-start',gap:10,marginBottom:14}}>
+                      <span style={{color:'#4caf76',fontSize:16,flexShrink:0}}>🔒</span>
+                      <div>
+                        <div style={{fontFamily:rj,fontSize:11,fontWeight:700,color:'#4caf76',marginBottom:3,letterSpacing:'.5px'}}>Secure Payment by Polar</div>
+                        <div style={{fontSize:11,color:'#b0c0a4',lineHeight:1.5}}>You&apos;ll be redirected to Polar&apos;s secure checkout. Your listing will activate automatically after successful payment.</div>
+                      </div>
+                    </div>
+
+                    {/* BACK BUTTON */}
+                    <div style={{textAlign:'center'}}>
+                      <button onClick={()=>{if(!checkoutLoading){setFlowStep(2);setCheckoutError('');}}} disabled={checkoutLoading} style={{background:'none',border:'none',color:'#7a8a72',fontFamily:rj,fontSize:11,letterSpacing:'1px',textTransform:'uppercase',fontWeight:600,cursor:checkoutLoading?'not-allowed':'pointer',textDecoration:'underline'}}>← Back to form</button>
+                    </div>
+
+                  </div>
                 )}
-
-                {/* LOADING MESSAGE */}
-                {checkoutLoading && (
-                  <div style={{padding:'12px 14px',background:'rgba(200,168,75,.08)',border:'1px solid rgba(200,168,75,.3)',marginBottom:14,fontFamily:rj,fontSize:12,color:'#c8a84b',fontWeight:600,textAlign:'center'}}>
-                    Creating secure checkout session, please wait...
-                  </div>
-                )}
-
-                {/* INFO */}
-                <div style={{padding:'12px 14px',background:'rgba(76,175,118,.06)',border:'1px solid rgba(76,175,118,.2)',display:'flex',alignItems:'flex-start',gap:10}}>
-                  <span style={{color:'#4caf76',fontSize:16,flexShrink:0}}>🔒</span>
-                  <div>
-                    <div style={{fontFamily:rj,fontSize:11,fontWeight:700,color:'#4caf76',marginBottom:3,letterSpacing:'.5px'}}>Secure Payment by Polar</div>
-                    <div style={{fontSize:11,color:'#b0c0a4',lineHeight:1.5}}>You&apos;ll be redirected to Polar&apos;s secure checkout. Your listing will activate automatically after successful payment.</div>
-                  </div>
-                </div>
-
-                {/* BACK BUTTON */}
-                <div style={{marginTop:14,textAlign:'center'}}>
-                  <button onClick={()=>{if(!checkoutLoading){setShowPlanModal(false);setShowFormModal(true);}}} disabled={checkoutLoading} style={{background:'none',border:'none',color:'#7a8a72',fontFamily:rj,fontSize:11,letterSpacing:'1px',textTransform:'uppercase',fontWeight:600,cursor:checkoutLoading?'not-allowed':'pointer',textDecoration:'underline'}}>← Back to form</button>
-                </div>
 
               </div>
             </div>
