@@ -61,6 +61,7 @@ import { portKlangGuide } from './port-klang-malaysia-complete-guide-2026';
 import { algecirasPortGuide } from './algeciras-port-spain-complete-guide-2026';
 import { jnptMumbaiPortGuide } from './jnpt-mumbai-nhava-sheva-complete-guide-2026';
 import { felixstowePortGuide } from './felixstowe-port-uk-complete-guide-2026';
+import { jebelAliPortGuide } from './jebel-ali-port-dubai-complete-guide-2026';
 export const BLOG_POSTS = [
   ...LEGACY_BLOG_POSTS,
   shanghai,
@@ -118,6 +119,7 @@ export const BLOG_POSTS = [
   algecirasPortGuide,
   jnptMumbaiPortGuide,
   felixstowePortGuide,
+  jebelAliPortGuide,
 ];
 export function getAllBlogSlugs(): string[] {
   return BLOG_POSTS.map((p) => p.slug);
