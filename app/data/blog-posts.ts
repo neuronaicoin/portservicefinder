@@ -10,11 +10,13 @@ export interface BlogPost {
   authorRole: string;
   publishedDate: string;
   readingTime: number;
-  category: 'port-guide' | 'industry-insights' | 'tips' | 'regulations';
+  category: 'port-guide' | 'port-guides' | 'industry-insights' | 'tips' | 'regulations' | 'regulatory' | 'maritime-fundamentals' | 'comparison' | 'how-to' | 'business';
   featuredPort?: string;
   metaDescription: string;
   keywords: string[];
   content: string;
+  heroImage?: string;
+  schema?: object;
 }
 
 export const BLOG_POSTS: BlogPost[] = [
