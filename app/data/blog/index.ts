@@ -48,6 +48,7 @@ import { howToStartMarinePainting } from './how-to-start-marine-painting';
 import { howToChooseShipAgent } from './how-to-choose-ship-agent';
 import { howProvidersReachOperators } from './how-providers-reach-operators';
 import { losAngelesVsNewYorkVsHouston } from './los-angeles-vs-new-york-vs-houston';
+import { maritimeRegulationsChanges2026 } from './maritime-regulations-changes-2026';
 export const BLOG_POSTS = [
   ...LEGACY_BLOG_POSTS,
   shanghai,
@@ -92,6 +93,7 @@ export const BLOG_POSTS = [
   howToChooseShipAgent,
   howProvidersReachOperators,
   losAngelesVsNewYorkVsHouston,
+  maritimeRegulationsChanges2026,
 ];
 export function getAllBlogSlugs(): string[] {
   return BLOG_POSTS.map((p) => p.slug);
