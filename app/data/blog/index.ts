@@ -54,6 +54,7 @@ import { euEtsForShipping2026 } from './eu-ets-for-shipping-2026-complete-operat
 import { whatDoesAShipAgentDo } from './what-does-a-ship-agent-do-complete-guide-2026';
 import { whatDoesAShipchandlerDo } from './what-does-a-shipchandler-do-complete-guide-2026';
 import { fuelEuMaritime2026 } from './fueleu-maritime-2026-compliance-and-pooling-strategy';
+import { ukEtsForShipping2026 } from './uk-ets-for-shipping-2026-complete-operator-guide';
 export const BLOG_POSTS = [
   ...LEGACY_BLOG_POSTS,
   shanghai,
@@ -104,6 +105,7 @@ export const BLOG_POSTS = [
   whatDoesAShipAgentDo,
   whatDoesAShipchandlerDo,
   fuelEuMaritime2026,
+  ukEtsForShipping2026,
 ];
 export function getAllBlogSlugs(): string[] {
   return BLOG_POSTS.map((p) => p.slug);
