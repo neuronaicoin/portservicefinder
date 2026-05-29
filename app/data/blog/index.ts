@@ -57,6 +57,7 @@ import { fuelEuMaritime2026 } from './fueleu-maritime-2026-compliance-and-poolin
 import { ukEtsForShipping2026 } from './uk-ets-for-shipping-2026-complete-operator-guide';
 import { howToChooseShipAgentBuyerGuide } from './how-to-choose-a-ship-agent-2026-buyer-guide';
 import { sydneyPortGuide } from './sydney-port-botany-complete-guide-2026';
+import { portKlangGuide } from './port-klang-malaysia-complete-guide-2026';
 export const BLOG_POSTS = [
   ...LEGACY_BLOG_POSTS,
   shanghai,
@@ -110,6 +111,7 @@ export const BLOG_POSTS = [
   ukEtsForShipping2026,
   howToChooseShipAgentBuyerGuide,
   sydneyPortGuide,
+  portKlangGuide,
 ];
 export function getAllBlogSlugs(): string[] {
   return BLOG_POSTS.map((p) => p.slug);
