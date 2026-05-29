@@ -51,6 +51,7 @@ import { losAngelesVsNewYorkVsHouston } from './los-angeles-vs-new-york-vs-houst
 import { maritimeRegulationsChanges2026 } from './maritime-regulations-changes-2026';
 import { top20BunkerHubsWorldwide2026 } from './top-20-bunker-hubs-worldwide-2026';
 import { euEtsForShipping2026 } from './eu-ets-for-shipping-2026-complete-operator-guide';
+import { whatDoesAShipAgentDo } from './what-does-a-ship-agent-do-complete-guide-2026';
 export const BLOG_POSTS = [
   ...LEGACY_BLOG_POSTS,
   shanghai,
@@ -98,6 +99,7 @@ export const BLOG_POSTS = [
   maritimeRegulationsChanges2026,
   top20BunkerHubsWorldwide2026,
   euEtsForShipping2026,
+  whatDoesAShipAgentDo,
 ];
 export function getAllBlogSlugs(): string[] {
   return BLOG_POSTS.map((p) => p.slug);
