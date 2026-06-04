@@ -63,8 +63,10 @@ import { jnptMumbaiPortGuide } from './jnpt-mumbai-nhava-sheva-complete-guide-20
 import { felixstowePortGuide } from './felixstowe-port-uk-complete-guide-2026';
 import { jebelAliPortGuide } from './jebel-ali-port-dubai-complete-guide-2026';
 import { crewChangePortCall } from './crew-change-port-call-operational-checklist-2026';
+import { vesselTechnicalServiceVisits } from './vessel-technical-service-visits-port-coordination-guide-2026';
 export const BLOG_POSTS = [
   ...LEGACY_BLOG_POSTS,
+  vesselTechnicalServiceVisits,
   crewChangePortCall,
   shanghai,
   hongKong,
