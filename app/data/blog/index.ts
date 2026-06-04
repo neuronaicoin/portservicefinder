@@ -64,8 +64,10 @@ import { felixstowePortGuide } from './felixstowe-port-uk-complete-guide-2026';
 import { jebelAliPortGuide } from './jebel-ali-port-dubai-complete-guide-2026';
 import { crewChangePortCall } from './crew-change-port-call-operational-checklist-2026';
 import { vesselTechnicalServiceVisits } from './vessel-technical-service-visits-port-coordination-guide-2026';
+import { singaporeEngineService } from './ship-engine-service-companies-singapore-2026-operator-buyer-guide';
 export const BLOG_POSTS = [
   ...LEGACY_BLOG_POSTS,
+  singaporeEngineService,
   vesselTechnicalServiceVisits,
   crewChangePortCall,
   shanghai,
