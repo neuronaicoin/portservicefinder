@@ -1,6 +1,6 @@
 import type { BlogPost } from '../blog-posts';
 
-export const post: BlogPost = {
+export const crewChangePortCall: BlogPost = {
   slug: 'crew-change-port-call-operational-checklist-2026',
   title: 'Crew Change During Port Call: Operational Checklist for Ship Operators',
   excerpt: 'A complete operational checklist for crew change at any port — pre-arrival planning, documentation, sign-on/sign-off procedures, common pitfalls, and port-specific considerations for major hubs.',
