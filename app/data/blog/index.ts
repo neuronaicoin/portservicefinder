@@ -69,8 +69,10 @@ import { singaporeHullCleaning } from './hull-cleaning-services-singapore-2026-o
 import { tuzlaShipRepair } from './ship-repair-services-tuzla-istanbul-2026-operator-buyer-guide';
 import { bosphorusShipAgents } from './ship-agents-istanbul-bosphorus-2026-operator-buyer-guide';
 import { istanbulBunkerSuppliers } from './bunker-suppliers-istanbul-2026-operator-buyer-guide';
+import { rotterdamShipRepair } from './ship-repair-services-rotterdam-2026-operator-buyer-guide';
 export const BLOG_POSTS = [
   ...LEGACY_BLOG_POSTS,
+  rotterdamShipRepair,
   istanbulBunkerSuppliers,
   bosphorusShipAgents,
   tuzlaShipRepair,
