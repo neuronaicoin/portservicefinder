@@ -71,8 +71,10 @@ import { bosphorusShipAgents } from './ship-agents-istanbul-bosphorus-2026-opera
 import { istanbulBunkerSuppliers } from './bunker-suppliers-istanbul-2026-operator-buyer-guide';
 import { rotterdamShipRepair } from './ship-repair-services-rotterdam-2026-operator-buyer-guide';
 import { singaporeShipAgents } from './how-to-find-ship-agents-singapore-2026-operator-buyer-guide';
+import { singaporeShipchandlers } from './how-to-find-shipchandlers-singapore-2026-operator-buyer-guide';
 export const BLOG_POSTS = [
   ...LEGACY_BLOG_POSTS,
+  singaporeShipchandlers,
   singaporeShipAgents,
   rotterdamShipRepair,
   istanbulBunkerSuppliers,
