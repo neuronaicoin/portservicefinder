@@ -27,7 +27,7 @@ function getAllUrls(): string[] {
   return urls;
 }
 
-// Bing IndexNow API - submit URLs
+// Bing IndexNow API - submit URLs (works instantly)
 async function submitToBingIndexNow(urls: string[]): Promise<{
   success: boolean;
   message: string;
@@ -79,37 +79,6 @@ async function submitToBingIndexNow(urls: string[]): Promise<{
   }
 }
 
-// Google sitemap ping (legacy but still works for sitemap discovery)
-async function pingGoogleSitemap(): Promise<{
-  success: boolean;
-  message: string;
-}> {
-  try {
-    const sitemapUrl = encodeURIComponent(`${SITE_URL}/sitemap.xml`);
-    const response = await fetch(
-      `https://www.google.com/ping?sitemap=${sitemapUrl}`,
-      { method: 'GET' }
-    );
-
-    if (response.ok) {
-      return {
-        success: true,
-        message: 'Google sitemap ping successful',
-      };
-    }
-
-    return {
-      success: false,
-      message: `Google ping returned ${response.status}`,
-    };
-  } catch (error: any) {
-    return {
-      success: false,
-      message: `Google ping error: ${error.message}`,
-    };
-  }
-}
-
 // Yandex IndexNow (same protocol as Bing)
 async function submitToYandexIndexNow(urls: string[]): Promise<{
   success: boolean;
@@ -157,6 +126,19 @@ async function submitToYandexIndexNow(urls: string[]): Promise<{
   }
 }
 
+// Google: Provide manual submission link instead (Google deprecated automatic ping in 2023)
+function getGoogleSubmissionInfo(): {
+  success: boolean;
+  message: string;
+  manualLink: string;
+} {
+  return {
+    success: true,
+    message: 'Google discovers via sitemap automatically. Use Search Console for manual submit.',
+    manualLink: 'https://search.google.com/search-console',
+  };
+}
+
 export async function POST(request: NextRequest) {
   // Auth check
   const isAuthenticated = await validateSession();
@@ -170,19 +152,20 @@ export async function POST(request: NextRequest) {
   try {
     const urls = getAllUrls();
 
-    // Submit to all search engines in parallel
-    const [bingResult, googleResult, yandexResult] = await Promise.all([
+    // Submit to Bing and Yandex in parallel
+    const [bingResult, yandexResult] = await Promise.all([
       submitToBingIndexNow(urls),
-      pingGoogleSitemap(),
       submitToYandexIndexNow(urls),
     ]);
+
+    const googleInfo = getGoogleSubmissionInfo();
 
     return NextResponse.json({
       success: true,
       totalUrls: urls.length,
       results: {
         bing: bingResult,
-        google: googleResult,
+        google: googleInfo,
         yandex: yandexResult,
       },
       submittedAt: new Date().toISOString(),
