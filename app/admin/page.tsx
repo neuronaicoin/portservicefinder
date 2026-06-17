@@ -24,6 +24,12 @@ interface Stats {
   serviceDistribution: { service: string; count: number }[];
 }
 
+interface IndexingResult {
+  bing: { success: boolean; message: string };
+  google: { success: boolean; message: string };
+  yandex: { success: boolean; message: string };
+}
+
 export default function AdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   const [password, setPassword] = useState('');
@@ -32,11 +38,19 @@ export default function AdminPage() {
 
   const [members, setMembers] = useState<Member[]>([]);
   const [stats, setStats] = useState<Stats | null>(null);
-  const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [portFilter, setPortFilter] = useState('all');
   const [refreshing, setRefreshing] = useState(false);
+
+  // Indexing state
+  const [indexing, setIndexing] = useState(false);
+  const [indexingResult, setIndexingResult] = useState<{
+    totalUrls: number;
+    results: IndexingResult;
+    submittedAt: string;
+  } | null>(null);
+  const [indexingError, setIndexingError] = useState('');
 
   const fetchData = useCallback(async () => {
     setRefreshing(true);
@@ -72,7 +86,6 @@ export default function AdminPage() {
     }
   }, [search, statusFilter, portFilter]);
 
-  // Initial auth check
   useEffect(() => {
     (async () => {
       try {
@@ -88,7 +101,6 @@ export default function AdminPage() {
     })();
   }, []);
 
-  // Fetch data when authenticated
   useEffect(() => {
     if (isAuthenticated) {
       fetchData();
@@ -139,6 +151,34 @@ export default function AdminPage() {
 
   const handleExport = () => {
     window.location.href = '/api/admin/export';
+  };
+
+  const handleNotifySearchEngines = async () => {
+    setIndexing(true);
+    setIndexingError('');
+    setIndexingResult(null);
+
+    try {
+      const res = await fetch('/api/admin/indexing', {
+        method: 'POST',
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        setIndexingResult({
+          totalUrls: data.totalUrls,
+          results: data.results,
+          submittedAt: data.submittedAt,
+        });
+      } else {
+        setIndexingError(data.error || 'Indexing failed');
+      }
+    } catch (error: any) {
+      setIndexingError(error.message || 'Network error');
+    } finally {
+      setIndexing(false);
+    }
   };
 
   // Loading state
@@ -203,10 +243,8 @@ export default function AdminPage() {
     );
   }
 
-  // Get unique ports for filter
   const uniquePorts = Array.from(new Set(members.map((m) => m.port).filter(Boolean))).sort();
 
-  // Dashboard
   return (
     <div className="min-h-screen bg-slate-900 text-white">
       {/* Header */}
@@ -227,6 +265,100 @@ export default function AdminPage() {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+        {/* Indexing Section */}
+        <div className="bg-gradient-to-r from-amber-900/20 to-amber-800/20 border border-amber-700/50 rounded-lg p-4 sm:p-6 mb-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div className="flex-1">
+              <h3 className="text-lg font-bold text-amber-400 mb-1">
+                🚀 Search Engine Indexing
+              </h3>
+              <p className="text-sm text-slate-300">
+                Notify Bing, Google, and Yandex to index all pages immediately.
+                Press after writing new blogs or member updates.
+              </p>
+            </div>
+            <button
+              onClick={handleNotifySearchEngines}
+              disabled={indexing}
+              className="bg-amber-500 hover:bg-amber-600 disabled:bg-slate-600 disabled:cursor-not-allowed text-slate-900 font-bold px-6 py-3 rounded-lg transition whitespace-nowrap"
+            >
+              {indexing ? '⏳ Submitting...' : '🚀 Notify Search Engines'}
+            </button>
+          </div>
+
+          {/* Indexing Result */}
+          {indexingResult && (
+            <div className="mt-4 bg-slate-800/80 border border-slate-700 rounded-lg p-4">
+              <div className="text-sm font-semibold text-amber-400 mb-3">
+                ✅ Submitted {indexingResult.totalUrls} URLs
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
+                <div
+                  className={`p-3 rounded ${
+                    indexingResult.results.bing.success
+                      ? 'bg-green-900/30 border border-green-700/50'
+                      : 'bg-red-900/30 border border-red-700/50'
+                  }`}
+                >
+                  <div className="font-semibold mb-1">
+                    {indexingResult.results.bing.success ? '✅' : '❌'} Bing
+                  </div>
+                  <div className="text-xs text-slate-300">
+                    {indexingResult.results.bing.message}
+                  </div>
+                </div>
+                <div
+                  className={`p-3 rounded ${
+                    indexingResult.results.google.success
+                      ? 'bg-green-900/30 border border-green-700/50'
+                      : 'bg-red-900/30 border border-red-700/50'
+                  }`}
+                >
+                  <div className="font-semibold mb-1">
+                    {indexingResult.results.google.success ? '✅' : '❌'} Google
+                  </div>
+                  <div className="text-xs text-slate-300">
+                    {indexingResult.results.google.message}
+                  </div>
+                </div>
+                <div
+                  className={`p-3 rounded ${
+                    indexingResult.results.yandex.success
+                      ? 'bg-green-900/30 border border-green-700/50'
+                      : 'bg-red-900/30 border border-red-700/50'
+                  }`}
+                >
+                  <div className="font-semibold mb-1">
+                    {indexingResult.results.yandex.success ? '✅' : '❌'} Yandex
+                  </div>
+                  <div className="text-xs text-slate-300">
+                    {indexingResult.results.yandex.message}
+                  </div>
+                </div>
+              </div>
+              <div className="mt-3 text-xs text-slate-400">
+                Submitted at: {new Date(indexingResult.submittedAt).toLocaleString()}
+              </div>
+              <div className="mt-3 pt-3 border-t border-slate-700">
+                <a
+                  href="https://search.google.com/search-console"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs text-amber-400 hover:text-amber-300 transition"
+                >
+                  → Open Google Search Console (manual submit)
+                </a>
+              </div>
+            </div>
+          )}
+
+          {indexingError && (
+            <div className="mt-4 bg-red-900/30 border border-red-700/50 rounded-lg p-3 text-sm text-red-300">
+              ❌ {indexingError}
+            </div>
+          )}
+        </div>
+
         {/* Stats Cards */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           <div className="bg-slate-800 border border-slate-700 rounded-lg p-4 sm:p-6">
