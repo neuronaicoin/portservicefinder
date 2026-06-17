@@ -73,8 +73,10 @@ import { rotterdamShipRepair } from './ship-repair-services-rotterdam-2026-opera
 import { singaporeShipAgents } from './how-to-find-ship-agents-singapore-2026-operator-buyer-guide';
 import { singaporeShipchandlers } from './how-to-find-shipchandlers-singapore-2026-operator-buyer-guide';
 import { singaporeBwtsService } from './bwts-service-singapore-2026-operator-buyer-guide';
+import { singaporeBoilerService } from './boiler-service-singapore-2026-operator-buyer-guide';
 export const BLOG_POSTS = [
   ...LEGACY_BLOG_POSTS,
+  singaporeBoilerService,
   singaporeBwtsService,
   singaporeShipchandlers,
   singaporeShipAgents,
