@@ -74,8 +74,10 @@ import { singaporeShipAgents } from './how-to-find-ship-agents-singapore-2026-op
 import { singaporeShipchandlers } from './how-to-find-shipchandlers-singapore-2026-operator-buyer-guide';
 import { singaporeBwtsService } from './bwts-service-singapore-2026-operator-buyer-guide';
 import { singaporeBoilerService } from './boiler-service-singapore-2026-operator-buyer-guide';
+import { singaporeEcdisGmdss } from './ecdis-service-gmdss-radio-survey-singapore-2026-operator-buyer-guide';
 export const BLOG_POSTS = [
   ...LEGACY_BLOG_POSTS,
+  singaporeEcdisGmdss,
   singaporeBoilerService,
   singaporeBwtsService,
   singaporeShipchandlers,
