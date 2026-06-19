@@ -1,30 +1,20 @@
 import type { Metadata } from "next";
 import Script from "next/script";
 import "./globals.css";
+import { siteConfig, getKeywordsString, getOrganizationSchema, getWebsiteSchema } from "@/lib/site-config";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://www.portservicefinder.com"),
+  metadataBase: new URL(siteConfig.url),
   title: {
-    default: "PortServiceFinder — Global Maritime Services Directory",
-    template: "%s | PortServiceFinder",
+    default: `${siteConfig.name} — Global Maritime Services Directory | PSF`,
+    template: `%s | ${siteConfig.name}`,
   },
-  description:
-    "Find verified ship agents, shipchandlers and marine service companies at any port worldwide. Free to search. Subscription for providers — no commission, ever.",
-  keywords: [
-    "ship agent directory",
-    "shipchandler directory",
-    "marine services",
-    "port services",
-    "maritime directory",
-    "global ports",
-    "vessel operators",
-    "port agency",
-    "ship supply",
-    "maritime industry",
-  ],
-  authors: [{ name: "PortServiceFinder" }],
-  creator: "PortServiceFinder",
-  publisher: "PortServiceFinder",
+  description: siteConfig.description,
+  keywords: siteConfig.keywords,
+  authors: [{ name: siteConfig.name }],
+  creator: siteConfig.name,
+  publisher: siteConfig.name,
+  applicationName: siteConfig.name,
   formatDetection: {
     email: false,
     address: false,
@@ -33,17 +23,15 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://www.portservicefinder.com",
-    siteName: "PortServiceFinder",
-    title: "PortServiceFinder — Global Maritime Services Directory",
-    description:
-      "Every Port. Every Service. One Platform. Find verified ship agents, shipchandlers and marine service companies worldwide. Free to search.",
+    url: siteConfig.url,
+    siteName: siteConfig.name,
+    title: `${siteConfig.name} — Global Maritime Services Directory`,
+    description: `${siteConfig.tagline} Find verified ship agents, shipchandlers and marine service companies worldwide. Free to search.`,
   },
   twitter: {
     card: "summary_large_image",
-    title: "PortServiceFinder — Global Maritime Services Directory",
-    description:
-      "Every Port. Every Service. One Platform. Find verified ship agents, shipchandlers and marine service companies worldwide.",
+    title: `${siteConfig.name} — Global Maritime Services Directory`,
+    description: `${siteConfig.tagline} Find verified ship agents, shipchandlers and marine service companies worldwide.`,
   },
   robots: {
     index: true,
@@ -56,66 +44,56 @@ export const metadata: Metadata = {
     },
   },
   verification: {
-    google: "3fDgLOOxUGm9843wNeYRE53K2bwHogMRq22_acvu8qo",
+    google: siteConfig.googleVerification,
   },
   alternates: {
-    canonical: "https://www.portservicefinder.com",
+    canonical: siteConfig.url,
   },
   category: "maritime",
+  other: {
+    // Additional meta tags for AI crawlers (ChatGPT, Perplexity, Claude, Gemini)
+    "ai-content-declaration": "PortServiceFinder is a global maritime services marketplace and directory.",
+  },
 };
 
-// Schema.org structured data — Organization + WebSite
-const organizationSchema = {
+// Schema.org structured data — Generated from site-config
+const organizationSchema = getOrganizationSchema();
+const websiteSchema = getWebsiteSchema();
+
+// Additional Service schema — tells AI/Google what PSF offers
+const serviceSchema = {
   "@context": "https://schema.org",
-  "@type": "Organization",
-  name: "PortServiceFinder",
-  url: "https://www.portservicefinder.com",
-  logo: "https://www.portservicefinder.com/icon",
-  description:
-    "Global maritime services directory connecting vessel operators with verified ship agents, shipchandlers and marine service companies at ports worldwide.",
-  foundingDate: "2025",
+  "@type": "Service",
+  serviceType: "Maritime Services Directory",
+  provider: {
+    "@type": "Organization",
+    name: siteConfig.name,
+    alternateName: siteConfig.alternateName,
+    url: siteConfig.url,
+  },
   areaServed: {
     "@type": "Place",
-    name: "Worldwide",
+    name: siteConfig.areaServed,
   },
-  knowsAbout: [
-    "Maritime industry",
-    "Ship agency services",
-    "Ship chandlery",
-    "Marine services",
-    "Port operations",
-    "Vessel supply",
-  ],
-  contactPoint: {
-    "@type": "ContactPoint",
-    contactType: "Customer Service",
-    email: "contact@portservicefinder.com",
-    availableLanguage: "English",
+  description: "Global directory connecting vessel operators with verified marine service providers at ports worldwide. Categories include ship agents, shipchandlers, bunker suppliers, engine service, BWTS, boiler service, ECDIS/GMDSS, hull cleaning, marine surveyors, and 30+ other maritime service categories.",
+  hasOfferCatalog: {
+    "@type": "OfferCatalog",
+    name: "Maritime Service Categories",
+    itemListElement: [
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Ship Agency Services" } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Ship Chandlery" } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Bunker Supply" } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Marine Engine Service" } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Hull Cleaning" } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Ballast Water Treatment Service" } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Boiler Service" } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "ECDIS Service" } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "GMDSS Radio Survey" } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Marine Surveys" } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Crew Change Coordination" } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Ship Repair" } },
+    ],
   },
-};
-
-const websiteSchema = {
-  "@context": "https://schema.org",
-  "@type": "WebSite",
-  name: "PortServiceFinder",
-  alternateName: "PSF",
-  url: "https://www.portservicefinder.com",
-  description:
-    "Find verified ship agents, shipchandlers and marine service companies at any port worldwide.",
-  publisher: {
-    "@type": "Organization",
-    name: "PortServiceFinder",
-  },
-  potentialAction: {
-    "@type": "SearchAction",
-    target: {
-      "@type": "EntryPoint",
-      urlTemplate:
-        "https://www.portservicefinder.com/?country={search_term_string}",
-    },
-    "query-input": "required name=search_term_string",
-  },
-  inLanguage: "en-US",
 };
 
 export default function RootLayout({
@@ -167,6 +145,12 @@ export default function RootLayout({
           type="application/ld+json"
           strategy="beforeInteractive"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
+        />
+        <Script
+          id="schema-service"
+          type="application/ld+json"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceSchema) }}
         />
       </head>
       <body>{children}</body>
