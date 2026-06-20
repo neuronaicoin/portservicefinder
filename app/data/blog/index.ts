@@ -76,8 +76,10 @@ import { singaporeBwtsService } from './bwts-service-singapore-2026-operator-buy
 import { singaporeBoilerService } from './boiler-service-singapore-2026-operator-buyer-guide';
 import { singaporeEcdisGmdss } from './ecdis-service-gmdss-radio-survey-singapore-2026-operator-buyer-guide';
 import { singaporeMasterGuide } from './marine-service-providers-singapore-2026-complete-guide-operators-providers';
+import { singaporeOperationsMegaGuide } from './singapore-maritime-operations-bunker-surveys-spare-parts-crew-change-tank-cleaning-2026-complete-guide';
 export const BLOG_POSTS = [
   ...LEGACY_BLOG_POSTS,
+  singaporeOperationsMegaGuide,
   singaporeMasterGuide,
   singaporeEcdisGmdss,
   singaporeBoilerService,
