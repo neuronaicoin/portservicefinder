@@ -78,8 +78,10 @@ import { singaporeEcdisGmdss } from './ecdis-service-gmdss-radio-survey-singapor
 import { singaporeMasterGuide } from './marine-service-providers-singapore-2026-complete-guide-operators-providers';
 import { singaporeOperationsMegaGuide } from './singapore-maritime-operations-bunker-surveys-spare-parts-crew-change-tank-cleaning-2026-complete-guide';
 import { singaporeTechnicalServicesGuide } from './singapore-technical-services-electrical-hydraulics-refrigeration-ndt-2026-complete-guide';
+import { singaporeDrydockRepairGuide } from './singapore-drydock-ship-repair-welding-painting-2026-complete-guide';
 export const BLOG_POSTS = [
   ...LEGACY_BLOG_POSTS,
+  singaporeDrydockRepairGuide,
   singaporeTechnicalServicesGuide,
   singaporeOperationsMegaGuide,
   singaporeMasterGuide,
