@@ -80,8 +80,10 @@ import { singaporeOperationsMegaGuide } from './singapore-maritime-operations-bu
 import { singaporeTechnicalServicesGuide } from './singapore-technical-services-electrical-hydraulics-refrigeration-ndt-2026-complete-guide';
 import { singaporeDrydockRepairGuide } from './singapore-drydock-ship-repair-welding-painting-2026-complete-guide';
 import { singaporeSuppliesWasteGuide } from './singapore-vessel-supplies-waste-management-2026-complete-guide';
+import { singaporeSafetySolasGuide } from './singapore-safety-solas-services-2026-complete-guide';
 export const BLOG_POSTS = [
   ...LEGACY_BLOG_POSTS,
+  singaporeSafetySolasGuide,
   singaporeSuppliesWasteGuide,
   singaporeDrydockRepairGuide,
   singaporeTechnicalServicesGuide,
