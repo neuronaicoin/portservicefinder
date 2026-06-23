@@ -2,6 +2,22 @@
 import { useState } from 'react';
 import Link from 'next/link';
 
+// ============================================================
+// GA4 EVENT TRACKING HELPER
+// ============================================================
+declare global {
+  interface Window {
+    gtag?: (...args: unknown[]) => void;
+    dataLayer?: unknown[];
+  }
+}
+
+const trackEvent = (eventName: string, params?: Record<string, unknown>) => {
+  if (typeof window !== 'undefined' && window.gtag) {
+    window.gtag('event', eventName, params || {});
+  }
+};
+
 const FLAG: Record<string, string> = {
   'Albania':'🇦🇱','Algeria':'🇩🇿','Angola':'🇦🇴','Antigua and Barbuda':'🇦🇬','Argentina':'🇦🇷','Aruba':'🇦🇼','Australia':'🇦🇺','Bahamas':'🇧🇸','Bahrain':'🇧🇭','Bangladesh':'🇧🇩','Barbados':'🇧🇧','Belgium':'🇧🇪','Belize':'🇧🇿','Benin':'🇧🇯','Bermuda':'🇧🇲','Brazil':'🇧🇷','Brunei':'🇧🇳','Bulgaria':'🇧🇬','Cambodia':'🇰🇭','Cameroon':'🇨🇲','Canada':'🇨🇦','Cape Verde':'🇨🇻','Cayman Islands':'🇰🇾','Chile':'🇨🇱','China':'🇨🇳','Colombia':'🇨🇴','Comoros':'🇰🇲','Congo (DRC)':'🇨🇩','Congo (Republic)':'🇨🇬','Cook Islands':'🇨🇰','Costa Rica':'🇨🇷','Croatia':'🇭🇷','Cuba':'🇨🇺','Curacao':'🇨🇼','Cyprus':'🇨🇾','Denmark':'🇩🇰','Djibouti':'🇩🇯','Dominica':'🇩🇲','Dominican Republic':'🇩🇴','Ecuador':'🇪🇨','Egypt':'🇪🇬','El Salvador':'🇸🇻','Equatorial Guinea':'🇬🇶','Eritrea':'🇪🇷','Estonia':'🇪🇪','Faroe Islands':'🇫🇴','Fiji':'🇫🇯','Finland':'🇫🇮','France':'🇫🇷','French Polynesia':'🇵🇫','Gabon':'🇬🇦','Gambia':'🇬🇲','Georgia':'🇬🇪','Germany':'🇩🇪','Ghana':'🇬🇭','Gibraltar':'🇬🇮','Greece':'🇬🇷','Greenland':'🇬🇱','Grenada':'🇬🇩','Guam':'🇬🇺','Guatemala':'🇬🇹','Guinea':'🇬🇳','Guinea-Bissau':'🇬🇼','Guyana':'🇬🇾','Haiti':'🇭🇹','Honduras':'🇭🇳','Hong Kong':'🇭🇰','Iceland':'🇮🇸','India':'🇮🇳','Indonesia':'🇮🇩','Iran':'🇮🇷','Iraq':'🇮🇶','Ireland':'🇮🇪','Israel':'🇮🇱','Italy':'🇮🇹','Ivory Coast':'🇨🇮','Jamaica':'🇯🇲','Japan':'🇯🇵','Jordan':'🇯🇴','Kenya':'🇰🇪','Kiribati':'🇰🇮','Kuwait':'🇰🇼','Latvia':'🇱🇻','Lebanon':'🇱🇧','Liberia':'🇱🇷','Libya':'🇱🇾','Lithuania':'🇱🇹','Madagascar':'🇲🇬','Malaysia':'🇲🇾','Maldives':'🇲🇻','Malta':'🇲🇹','Marshall Islands':'🇲🇭','Mauritania':'🇲🇷','Mauritius':'🇲🇺','Mexico':'🇲🇽','Micronesia':'🇫🇲','Monaco':'🇲🇨','Montenegro':'🇲🇪','Morocco':'🇲🇦','Mozambique':'🇲🇿','Myanmar':'🇲🇲','Namibia':'🇳🇦','Nauru':'🇳🇷','Netherlands':'🇳🇱','New Caledonia':'🇳🇨','New Zealand':'🇳🇿','Nicaragua':'🇳🇮','Nigeria':'🇳🇬','North Korea':'🇰🇵','Norway':'🇳🇴','Oman':'🇴🇲','Pakistan':'🇵🇰','Palau':'🇵🇼','Panama':'🇵🇦','Papua New Guinea':'🇵🇬','Paraguay':'🇵🇾','Peru':'🇵🇪','Philippines':'🇵🇭','Poland':'🇵🇱','Portugal':'🇵🇹','Puerto Rico':'🇵🇷','Qatar':'🇶🇦','Romania':'🇷🇴','Russia':'🇷🇺','Saint Kitts and Nevis':'🇰🇳','Saint Lucia':'🇱🇨','Saint Vincent':'🇻🇨','Samoa':'🇼🇸','Sao Tome and Principe':'🇸🇹','Saudi Arabia':'🇸🇦','Senegal':'🇸🇳','Seychelles':'🇸🇨','Sierra Leone':'🇸🇱','Singapore':'🇸🇬','Slovenia':'🇸🇮','Solomon Islands':'🇸🇧','Somalia':'🇸🇴','South Africa':'🇿🇦','South Korea':'🇰🇷','Spain':'🇪🇸','Sri Lanka':'🇱🇰','Sudan':'🇸🇩','Suriname':'🇸🇷','Sweden':'🇸🇪','Syria':'🇸🇾','Taiwan':'🇹🇼','Tanzania':'🇹🇿','Thailand':'🇹🇭','Timor-Leste':'🇹🇱','Togo':'🇹🇬','Tonga':'🇹🇴','Trinidad and Tobago':'🇹🇹','Tunisia':'🇹🇳','Turkey':'🇹🇷','UAE':'🇦🇪','Ukraine':'🇺🇦','United Kingdom':'🇬🇧','United States':'🇺🇸','Uruguay':'🇺🇾','Vanuatu':'🇻🇺','Venezuela':'🇻🇪','Vietnam':'🇻🇳','Virgin Islands (US)':'🇻🇮','Yemen':'🇾🇪',
 };
@@ -307,7 +323,7 @@ export default function Home() {
 
   // LIST BUSINESS FLOW - 3 STEPS
   const [showFlowModal, setShowFlowModal] = useState(false);
-  const [flowStep, setFlowStep] = useState(1); // 1: Type, 2: Form, 3: Plan
+  const [flowStep, setFlowStep] = useState(1);
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [checkoutError, setCheckoutError] = useState('');
 
@@ -342,6 +358,16 @@ export default function Home() {
     if (!c || !p) { setDone(false); return; }
     const res = runSearch(c, p, s, m);
     setResults(res.r); setFb(res.fb); setDone(true);
+
+    // 🎯 GA4 EVENT: Search performed
+    trackEvent('search_performed', {
+      country: c,
+      port: p,
+      service_type: s,
+      services_selected: Array.from(m).join(','),
+      results_count: res.r.length,
+      fallback: res.fb,
+    });
   }
 
   function toggleMs(key: string) {
@@ -355,6 +381,11 @@ export default function Home() {
     setShowFlowModal(true);
     setFlowStep(1);
     setMobileMenu(false);
+
+    // 🎯 GA4 EVENT: List business modal opened
+    trackEvent('list_business_click', {
+      source: 'cta_button',
+    });
   }
 
   function resetForm() {
@@ -401,7 +432,6 @@ export default function Home() {
     setFSvc(n);
   }
 
-  // STEP 1: Provider Type seçimi
   function handleStep1Next() {
     if (!fProviderType) {
       setFFormError('Please select a provider type.');
@@ -409,9 +439,13 @@ export default function Home() {
     }
     setFFormError('');
     setFlowStep(2);
+
+    // 🎯 GA4 EVENT: Signup step 1 complete
+    trackEvent('signup_step_1_complete', {
+      provider_type: fProviderType,
+    });
   }
 
-  // STEP 2: Form doldurma validasyonu
   function validateForm(): string {
     if (!fCompanyName.trim()) return 'Company name is required.';
     if (fCompanyName.trim().length < 3) return 'Company name is too short.';
@@ -436,12 +470,30 @@ export default function Home() {
     }
     setFFormError('');
     setFlowStep(3);
+
+    // 🎯 GA4 EVENT: Signup step 2 complete
+    trackEvent('signup_step_2_complete', {
+      provider_type: fProviderType,
+      company_name: fCompanyName.trim(),
+      country: fCountry,
+      ports_count: fPorts.length,
+      services_count: fSvc.size,
+    });
   }
 
-  // STEP 3: Plan & Checkout
   async function handleCheckout(plan: 'monthly' | 'annual') {
     setCheckoutLoading(true);
     setCheckoutError('');
+
+    // 🎯 GA4 EVENT: Checkout started
+    trackEvent('checkout_started', {
+      plan: plan,
+      provider_type: fProviderType,
+      country: fCountry,
+      value: plan === 'monthly' ? 49.90 : 500,
+      currency: 'USD',
+    });
+
     try {
       const payload = {
         provider_type: fProviderType,
@@ -476,6 +528,12 @@ export default function Home() {
       const msg = err instanceof Error ? err.message : 'Network error. Please try again.';
       setCheckoutError(msg);
       setCheckoutLoading(false);
+
+      // 🎯 GA4 EVENT: Checkout error
+      trackEvent('checkout_error', {
+        plan: plan,
+        error_message: msg,
+      });
     }
   }
 
@@ -505,11 +563,28 @@ export default function Home() {
       }
       setNewsletterSubmitted(true);
       setNewsletterEmail('');
+
+      // 🎯 GA4 EVENT: Newsletter signup success
+      trackEvent('newsletter_signup', {
+        source: 'footer',
+      });
     } catch {
       setNewsletterError('Network error. Please check your connection and try again.');
     } finally {
       setNewsletterSubmitting(false);
     }
+  }
+
+  // 🎯 Provider view (opens modal)
+  function openProviderDetail(p: Provider) {
+    setDetail(p);
+    trackEvent('provider_view', {
+      provider_id: p.id,
+      provider_name: p.name,
+      provider_type: p.type,
+      country: p.country,
+      ports: p.ports.join(','),
+    });
   }
 
   const S = {
@@ -519,7 +594,6 @@ export default function Home() {
     flbl: {display:'block',fontFamily:rj,fontSize:11,fontWeight:700,letterSpacing:'1.5px',textTransform:'uppercase' as const,color:'#c8a84b',marginBottom:6} as React.CSSProperties,
   };
 
-  // PROGRESS BAR component
   const ProgressBar = () => (
     <div style={{display:'flex',gap:6,padding:'0 28px',marginTop:14,marginBottom:6}}>
       <div style={{flex:1,height:3,background:flowStep>=1?'#c8a84b':'rgba(200,168,75,.2)'}}/>
@@ -761,7 +835,7 @@ export default function Home() {
                   {fb&&results.length>0&&(<div style={{padding:'10px 13px',background:'rgba(200,168,75,.06)',border:'1px solid rgba(200,168,75,.18)',fontSize:12,color:'#e2c06a',marginBottom:9,fontFamily:rj,lineHeight:1.5}}>No providers at <strong>{port}</strong> yet — showing others in <strong>{country}</strong>.</div>)}
                   {results.length===0&&(<div style={{padding:20,textAlign:'center',fontFamily:rj,fontSize:12,color:'#7a8a72'}}><strong style={{color:'#c8a84b',display:'block',marginBottom:4}}>No providers found.</strong><button onClick={openListBusiness} style={{color:'#c8a84b',cursor:'pointer',background:'none',border:'none',fontFamily:rj,fontSize:12,fontWeight:600}}>Register your business →</button></div>)}
                   {results.map(p=>(
-                    <div key={p.id} className="rrow" onClick={()=>setDetail(p)} style={{background:'rgba(8,16,10,.7)',border:'1px solid rgba(200,168,75,.2)',padding:'14px 18px',marginBottom:6,display:'grid',gridTemplateColumns:'44px 1fr auto',gap:14,alignItems:'center'}}>
+                    <div key={p.id} className="rrow" onClick={()=>openProviderDetail(p)} style={{background:'rgba(8,16,10,.7)',border:'1px solid rgba(200,168,75,.2)',padding:'14px 18px',marginBottom:6,display:'grid',gridTemplateColumns:'44px 1fr auto',gap:14,alignItems:'center'}}>
                       <div style={{width:44,height:44,background:'rgba(200,168,75,.1)',border:'1px solid rgba(200,168,75,.2)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:18}}>{p.ico}</div>
                       <div>
                         <div style={{fontSize:14,fontWeight:600,marginBottom:2,display:'flex',alignItems:'center',gap:8}}>
@@ -772,7 +846,7 @@ export default function Home() {
                       </div>
                       <div style={{textAlign:'right',flexShrink:0}}>
                         <div style={{fontFamily:rj,fontSize:9,letterSpacing:'1px',textTransform:'uppercase',color:'#7a8a72',marginBottom:5,fontWeight:600}}>{TL(p.type)}</div>
-                        <button className="btn-gold" onClick={e=>{e.stopPropagation();setDetail(p);}} style={{background:'#c8a84b',border:'none',color:'#08100a',padding:'6px 12px',fontFamily:rj,fontSize:10,letterSpacing:'1px',textTransform:'uppercase',fontWeight:700,cursor:'pointer'}}>View Contact</button>
+                        <button className="btn-gold" onClick={e=>{e.stopPropagation();openProviderDetail(p);}} style={{background:'#c8a84b',border:'none',color:'#08100a',padding:'6px 12px',fontFamily:rj,fontSize:10,letterSpacing:'1px',textTransform:'uppercase',fontWeight:700,cursor:'pointer'}}>View Contact</button>
                       </div>
                     </div>
                   ))}
@@ -792,7 +866,7 @@ export default function Home() {
 
           <div className="blogs-grid" style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:14,maxWidth:1180,margin:'0 auto'}}>
             {FEATURED_BLOGS.map(post=>(
-              <Link key={post.slug} href={`/blog/${post.slug}`} className="blog-card" style={{background:'#111c13',padding:'22px 22px',border:'1px solid rgba(200,168,75,.18)',textDecoration:'none',color:'inherit',display:'flex',flexDirection:'column'}}>
+              <Link key={post.slug} href={`/blog/${post.slug}`} className="blog-card" onClick={()=>trackEvent('blog_card_click',{slug:post.slug,title:post.title})} style={{background:'#111c13',padding:'22px 22px',border:'1px solid rgba(200,168,75,.18)',textDecoration:'none',color:'inherit',display:'flex',flexDirection:'column'}}>
                 <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:14}}>
                   <span style={{fontSize:30,lineHeight:1}}>{post.flag}</span>
                   <span style={{fontFamily:rj,fontSize:10,letterSpacing:'1.5px',color:'#7a8a72',fontWeight:600,background:'rgba(200,168,75,.06)',padding:'3px 9px',border:'1px solid rgba(200,168,75,.15)'}}>⏱️ {post.time}</span>
@@ -867,7 +941,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* INDUSTRY VOICES — TESTIMONIALS */}
+        {/* INDUSTRY VOICES */}
         <section className="sec-pad" style={{padding:'80px 48px',background:'#08100a',borderTop:'1px solid rgba(200,168,75,.1)'}}>
           <div style={{textAlign:'center',maxWidth:720,margin:'0 auto 44px'}}>
             <div style={{fontFamily:rj,fontSize:10,letterSpacing:'3px',textTransform:'uppercase',color:'#c8a84b',marginBottom:12,fontWeight:700}}>💬 Industry Feedback</div>
@@ -1053,10 +1127,15 @@ export default function Home() {
               <div style={{padding:'18px 28px 24px'}}>
                 <p style={{fontSize:13,color:'#f5f0e8',lineHeight:1.7,marginBottom:16}}>{detail.bio}</p>
                 <div className="dc2" style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8,marginBottom:16}}>
-                  {[{label:'Phone',value:detail.phone,href:`tel:${detail.phone.replace(/\s/g,'')}`},{label:'Email',value:detail.email,href:`mailto:${detail.email}`},{label:'WhatsApp',value:detail.wa,href:`https://wa.me/${detail.wa.replace(/\D/g,'')}`},{label:'Website',value:detail.web.replace(/^https?:\/\//,''),href:detail.web}].map(c=>(
+                  {[
+                    {label:'Phone',value:detail.phone,href:`tel:${detail.phone.replace(/\s/g,'')}`,eventName:'provider_phone_link_click'},
+                    {label:'Email',value:detail.email,href:`mailto:${detail.email}`,eventName:'provider_email_link_click'},
+                    {label:'WhatsApp',value:detail.wa,href:`https://wa.me/${detail.wa.replace(/\D/g,'')}`,eventName:'provider_whatsapp_link_click'},
+                    {label:'Website',value:detail.web.replace(/^https?:\/\//,''),href:detail.web,eventName:'provider_website_click'}
+                  ].map(c=>(
                     <div key={c.label} style={{background:'#111c13',border:'1px solid rgba(200,168,75,.15)',padding:'10px 12px'}}>
                       <div style={{fontFamily:rj,fontSize:9,letterSpacing:'1.5px',textTransform:'uppercase',color:'#7a8a72',marginBottom:3,fontWeight:600}}>{c.label}</div>
-                      <a href={c.href} target="_blank" rel="noreferrer" style={{fontSize:12,color:'#c8a84b',textDecoration:'none'}}>{c.value}</a>
+                      <a href={c.href} target="_blank" rel="noreferrer" onClick={()=>trackEvent(c.eventName,{provider_id:detail.id,provider_name:detail.name,provider_type:detail.type,country:detail.country})} style={{fontSize:12,color:'#c8a84b',textDecoration:'none'}}>{c.value}</a>
                     </div>
                   ))}
                 </div>
@@ -1064,23 +1143,20 @@ export default function Home() {
                   {detail.ports.map(p=><span key={p} style={{fontFamily:rj,fontSize:9,letterSpacing:1,fontWeight:700,padding:'2px 6px',border:'1px solid rgba(200,168,75,.3)',color:'#c8a84b'}}>{p}</span>)}
                 </div>
                 <div style={{display:'flex',gap:7,flexWrap:'wrap'}}>
-                  <a className="btn-gold" href={`tel:${detail.phone.replace(/\s/g,'')}`} style={{flex:1,minWidth:110,padding:10,background:'#c8a84b',color:'#08100a',textDecoration:'none',fontFamily:rj,fontSize:10,letterSpacing:'1px',textTransform:'uppercase',fontWeight:700,textAlign:'center',display:'flex',alignItems:'center',justifyContent:'center'}}>📞 Call</a>
-                  <a className="btn-gold" href={`mailto:${detail.email}`} style={{flex:1,minWidth:110,padding:10,background:'#c8a84b',color:'#08100a',textDecoration:'none',fontFamily:rj,fontSize:10,letterSpacing:'1px',textTransform:'uppercase',fontWeight:700,textAlign:'center',display:'flex',alignItems:'center',justifyContent:'center'}}>✉ Email</a>
-                  <a className="btn-ghost" href={`https://wa.me/${detail.wa.replace(/\D/g,'')}`} target="_blank" rel="noreferrer" style={{flex:1,minWidth:110,padding:10,background:'transparent',border:'1px solid rgba(200,168,75,.4)',color:'#c8a84b',textDecoration:'none',fontFamily:rj,fontSize:10,letterSpacing:'1px',textTransform:'uppercase',fontWeight:700,textAlign:'center',display:'flex',alignItems:'center',justifyContent:'center'}}>💬 WhatsApp</a>
+                  <a className="btn-gold" href={`tel:${detail.phone.replace(/\s/g,'')}`} onClick={()=>trackEvent('provider_call_click',{provider_id:detail.id,provider_name:detail.name,provider_type:detail.type,country:detail.country,source:'modal_button'})} style={{flex:1,minWidth:110,padding:10,background:'#c8a84b',color:'#08100a',textDecoration:'none',fontFamily:rj,fontSize:10,letterSpacing:'1px',textTransform:'uppercase',fontWeight:700,textAlign:'center',display:'flex',alignItems:'center',justifyContent:'center'}}>📞 Call</a>
+                  <a className="btn-gold" href={`mailto:${detail.email}`} onClick={()=>trackEvent('provider_email_click',{provider_id:detail.id,provider_name:detail.name,provider_type:detail.type,country:detail.country,source:'modal_button'})} style={{flex:1,minWidth:110,padding:10,background:'#c8a84b',color:'#08100a',textDecoration:'none',fontFamily:rj,fontSize:10,letterSpacing:'1px',textTransform:'uppercase',fontWeight:700,textAlign:'center',display:'flex',alignItems:'center',justifyContent:'center'}}>✉ Email</a>
+                  <a className="btn-ghost" href={`https://wa.me/${detail.wa.replace(/\D/g,'')}`} target="_blank" rel="noreferrer" onClick={()=>trackEvent('provider_whatsapp_click',{provider_id:detail.id,provider_name:detail.name,provider_type:detail.type,country:detail.country,source:'modal_button'})} style={{flex:1,minWidth:110,padding:10,background:'transparent',border:'1px solid rgba(200,168,75,.4)',color:'#c8a84b',textDecoration:'none',fontFamily:rj,fontSize:10,letterSpacing:'1px',textTransform:'uppercase',fontWeight:700,textAlign:'center',display:'flex',alignItems:'center',justifyContent:'center'}}>💬 WhatsApp</a>
                 </div>
               </div>
             </div>
           </div>
         )}
 
-        {/* ====================================================== */}
-        {/* 3-STEP LIST BUSINESS FLOW MODAL                          */}
-        {/* ====================================================== */}
+        {/* 3-STEP LIST BUSINESS FLOW MODAL */}
         {showFlowModal && (
           <div style={{position:'fixed',inset:0,background:'rgba(8,16,10,.95)',backdropFilter:'blur(16px)',zIndex:600,display:'flex',alignItems:'flex-start',justifyContent:'center',padding:'30px 16px',overflowY:'auto'}} onClick={e=>{if(e.target===e.currentTarget)closeFlow();}}>
             <div className="modal-content" style={{background:'#0c1610',border:'1px solid rgba(200,168,75,.3)',width:'100%',maxWidth:760,margin:'auto'}}>
 
-              {/* HEADER */}
               <div style={{padding:'22px 28px 18px',borderBottom:'1px solid rgba(200,168,75,.15)',display:'flex',justifyContent:'space-between',alignItems:'flex-start',gap:14}}>
                 <div>
                   <div style={{fontFamily:rj,fontSize:10,letterSpacing:'2px',textTransform:'uppercase',color:'#c8a84b',marginBottom:6,fontWeight:700}}>Step {flowStep} of 3 · {stepTitle}</div>
@@ -1090,14 +1166,10 @@ export default function Home() {
                 <button onClick={closeFlow} disabled={checkoutLoading} style={{background:'none',border:'none',color:'#7a8a72',fontSize:20,cursor:checkoutLoading?'not-allowed':'pointer',flexShrink:0}}>✕</button>
               </div>
 
-              {/* PROGRESS BAR */}
               <ProgressBar/>
 
               <div style={{padding:'18px 28px 24px'}}>
 
-                {/* ============================== */}
-                {/* STEP 1: PROVIDER TYPE          */}
-                {/* ============================== */}
                 {flowStep === 1 && (
                   <div>
                     <div style={{marginBottom:18}}>
@@ -1128,13 +1200,9 @@ export default function Home() {
                   </div>
                 )}
 
-                {/* ============================== */}
-                {/* STEP 2: FORM                   */}
-                {/* ============================== */}
                 {flowStep === 2 && (
                   <div>
 
-                    {/* TYPE BADGE - selected type display */}
                     <div style={{background:'rgba(200,168,75,.05)',border:'1px solid rgba(200,168,75,.18)',padding:'10px 14px',marginBottom:18,display:'flex',alignItems:'center',gap:10}}>
                       <span style={{fontSize:18}}>{fProviderType==='agent'?'🏢':fProviderType==='chandler'?'⚓':'🔧'}</span>
                       <div>
@@ -1143,13 +1211,11 @@ export default function Home() {
                       </div>
                     </div>
 
-                    {/* COMPANY NAME */}
                     <div style={{marginBottom:16}}>
                       <label style={S.flbl}>Company Name *</label>
                       <input className="card-input" type="text" value={fCompanyName} onChange={e=>setFCompanyName(e.target.value)} placeholder="e.g. Mersin Maritime Agency Ltd." style={S.inp}/>
                     </div>
 
-                    {/* COMPANY BIO - MIN 600 CHARS */}
                     <div style={{marginBottom:16}}>
                       <label style={S.flbl}>Company Description / Bio * (minimum {MIN_BIO} characters)</label>
                       <textarea className="card-input" value={fBio} onChange={e=>setFBio(e.target.value)} placeholder="Describe your services in detail: history, certifications, fleet capacity, specialties, geographic coverage, languages spoken, response time, vessel types handled, key clients/references, awards or memberships, your unique value proposition. The more detailed, the better — vessel operators want to know exactly who they're dealing with." rows={8} style={{...S.inp,resize:'vertical',minHeight:160,fontFamily:"'Outfit',sans-serif",lineHeight:1.6}}/>
@@ -1161,7 +1227,6 @@ export default function Home() {
                       </div>
                     </div>
 
-                    {/* COUNTRY */}
                     <div style={{marginBottom:16}}>
                       <label style={S.flbl}>Country *</label>
                       <select className="card-input" value={fCountry} onChange={e=>{setFCountry(e.target.value);setFPorts([]);setPortLimitWarning('');}} style={S.inp}>
@@ -1170,7 +1235,6 @@ export default function Home() {
                       </select>
                     </div>
 
-                    {/* PORTS - MAX 3 */}
                     {fCountry && (
                       <div style={{marginBottom:16}}>
                         <label style={S.flbl}>
@@ -1217,7 +1281,6 @@ export default function Home() {
                       </div>
                     )}
 
-                    {/* MARINE SERVICES (only for service type) */}
                     {fProviderType === 'service' && (
                       <div style={{marginBottom:16}}>
                         <label style={S.flbl}>Service Categories * ({fSvc.size} selected)</label>
@@ -1229,7 +1292,6 @@ export default function Home() {
                       </div>
                     )}
 
-                    {/* CONTACT INFO */}
                     <div className="form-grid-2" style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12,marginBottom:16}}>
                       <div>
                         <label style={S.flbl}>Email *</label>
@@ -1262,12 +1324,10 @@ export default function Home() {
                       <input className="card-input" type="text" value={fAddress} onChange={e=>setFAddress(e.target.value)} placeholder="Street, City, ZIP" style={S.inp}/>
                     </div>
 
-                    {/* ERROR */}
                     {fFormError && (
                       <div style={{padding:'12px 14px',background:'rgba(255,138,138,.08)',border:'1px solid rgba(255,138,138,.3)',marginBottom:14,fontFamily:rj,fontSize:12,color:'#ff8a8a',fontWeight:600}}>⚠ {fFormError}</div>
                     )}
 
-                    {/* BUTTONS */}
                     <div style={{display:'flex',gap:10,justifyContent:'space-between',marginTop:18,flexWrap:'wrap'}}>
                       <button onClick={()=>{setFlowStep(1);setFFormError('');}} className="btn-ghost" style={{background:'transparent',border:'1px solid rgba(200,168,75,.3)',color:'#c8a84b',padding:'12px 22px',fontFamily:rj,fontSize:12,letterSpacing:'1.5px',textTransform:'uppercase',fontWeight:700,cursor:'pointer'}}>← Back</button>
                       <button onClick={handleStep2Next} disabled={!bioOk} className="btn-gold" style={{background:!bioOk?'rgba(200,168,75,.3)':'#c8a84b',color:'#08100a',border:'none',padding:'12px 28px',fontFamily:rj,fontSize:12,letterSpacing:'1.5px',textTransform:'uppercase',fontWeight:700,cursor:!bioOk?'not-allowed':'pointer'}}>Continue to Plan →</button>
@@ -1275,13 +1335,9 @@ export default function Home() {
                   </div>
                 )}
 
-                {/* ============================== */}
-                {/* STEP 3: PLAN & CHECKOUT        */}
-                {/* ============================== */}
                 {flowStep === 3 && (
                   <div>
 
-                    {/* SUMMARY */}
                     <div style={{background:'rgba(200,168,75,.05)',border:'1px solid rgba(200,168,75,.18)',padding:'14px 16px',marginBottom:18}}>
                       <div style={{fontFamily:rj,fontSize:10,letterSpacing:'1.5px',textTransform:'uppercase',color:'#c8a84b',marginBottom:6,fontWeight:700}}>Your Submission</div>
                       <div style={{fontSize:14,color:'#f5f0e8',marginBottom:4,fontWeight:600}}>{fCompanyName}</div>
@@ -1289,10 +1345,8 @@ export default function Home() {
                       <div style={{fontSize:11,color:'#7a8a72',lineHeight:1.5,marginTop:4}}>{fEmail} · {fPhone}</div>
                     </div>
 
-                    {/* PLAN CARDS */}
                     <div className="tiers2" style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12,marginBottom:18}}>
 
-                      {/* MONTHLY */}
                       <div style={{background:'#111c13',border:'1px solid rgba(200,168,75,.2)',padding:'22px 20px',display:'flex',flexDirection:'column'}}>
                         <div style={{fontFamily:rj,fontSize:10,letterSpacing:'2px',textTransform:'uppercase',color:'#c8a84b',marginBottom:8,fontWeight:700}}>Monthly</div>
                         <div style={{display:'flex',alignItems:'baseline',gap:5,marginBottom:4}}>
@@ -1311,7 +1365,6 @@ export default function Home() {
                         </button>
                       </div>
 
-                      {/* ANNUAL */}
                       <div style={{background:'linear-gradient(180deg,rgba(200,168,75,.08),transparent)',border:'1px solid #c8a84b',padding:'22px 20px',position:'relative',display:'flex',flexDirection:'column'}}>
                         <div style={{position:'absolute',top:-10,left:'50%',transform:'translateX(-50%)',background:'#c8a84b',color:'#08100a',fontFamily:rj,fontSize:9,letterSpacing:'1.5px',fontWeight:700,padding:'3px 10px'}}>BEST VALUE · SAVE $98.80</div>
                         <div style={{fontFamily:rj,fontSize:10,letterSpacing:'2px',textTransform:'uppercase',color:'#c8a84b',marginBottom:8,fontWeight:700}}>Annual</div>
@@ -1332,19 +1385,16 @@ export default function Home() {
                       </div>
                     </div>
 
-                    {/* ERROR */}
                     {checkoutError && (
                       <div style={{padding:'12px 14px',background:'rgba(255,138,138,.08)',border:'1px solid rgba(255,138,138,.3)',marginBottom:14,fontFamily:rj,fontSize:12,color:'#ff8a8a',fontWeight:600}}>⚠ {checkoutError}</div>
                     )}
 
-                    {/* LOADING MESSAGE */}
                     {checkoutLoading && (
                       <div style={{padding:'12px 14px',background:'rgba(200,168,75,.08)',border:'1px solid rgba(200,168,75,.3)',marginBottom:14,fontFamily:rj,fontSize:12,color:'#c8a84b',fontWeight:600,textAlign:'center'}}>
                         Creating secure checkout session, please wait...
                       </div>
                     )}
 
-                    {/* INFO */}
                     <div style={{padding:'12px 14px',background:'rgba(76,175,118,.06)',border:'1px solid rgba(76,175,118,.2)',display:'flex',alignItems:'flex-start',gap:10,marginBottom:14}}>
                       <span style={{color:'#4caf76',fontSize:16,flexShrink:0}}>🔒</span>
                       <div>
@@ -1353,7 +1403,6 @@ export default function Home() {
                       </div>
                     </div>
 
-                    {/* BACK BUTTON */}
                     <div style={{textAlign:'center'}}>
                       <button onClick={()=>{if(!checkoutLoading){setFlowStep(2);setCheckoutError('');}}} disabled={checkoutLoading} style={{background:'none',border:'none',color:'#7a8a72',fontFamily:rj,fontSize:11,letterSpacing:'1px',textTransform:'uppercase',fontWeight:600,cursor:checkoutLoading?'not-allowed':'pointer',textDecoration:'underline'}}>← Back to form</button>
                     </div>
