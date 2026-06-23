@@ -1,532 +1,192 @@
-import type { Metadata } from 'next';
-import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import {
-  BLOG_POSTS,
-  getBlogPost,
-  getRelatedPosts,
-  formatBlogDate,
-  getAllBlogSlugs,
-} from '../../data/blog';
+import Link from 'next/link';
+import { Metadata } from 'next';
+import { BLOG_POSTS, getBlogPost, formatBlogDate, BlogPost } from '@/app/data/blog';
 
-export async function generateStaticParams() {
-  return getAllBlogSlugs().map((slug) => ({ slug }));
+interface PageProps {
+  params: Promise<{ slug: string }>;
 }
 
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}): Promise<Metadata> {
+// ============================================================
+// METADATA GENERATION
+// ============================================================
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
   const post = getBlogPost(slug);
 
   if (!post) {
-    return { title: 'Article Not Found — PortServiceFinder' };
+    return {
+      title: 'Post Not Found | PortServiceFinder',
+      description: 'The article you are looking for could not be found.',
+    };
   }
 
-  // Use heroImage if available, otherwise default og-image
-  const ogImage = post.heroImage || 'https://www.portservicefinder.com/og-image.jpg';
+  const description = post.metaDescription || post.excerpt;
+  const url = `https://www.portservicefinder.com/blog/${post.slug}`;
 
   return {
     title: `${post.title} | PortServiceFinder`,
-    description: post.metaDescription,
-    keywords: post.keywords,
-    authors: [{ name: post.author }],
+    description,
+    keywords: post.keywords?.join(', '),
+    authors: [{ name: post.author || 'PortServiceFinder Editorial Team' }],
     openGraph: {
       title: post.title,
-      description: post.metaDescription,
-      url: `https://www.portservicefinder.com/blog/${post.slug}`,
-      siteName: 'PortServiceFinder',
+      description,
+      url,
       type: 'article',
+      siteName: 'PortServiceFinder',
       publishedTime: post.publishedDate,
-      authors: [post.author],
-      images: [
-        {
-          url: ogImage,
-          width: 1200,
-          height: 630,
-          alt: post.title,
-        },
-      ],
+      authors: [post.author || 'PortServiceFinder Editorial Team'],
+      tags: post.keywords,
     },
     twitter: {
       card: 'summary_large_image',
       title: post.title,
-      description: post.metaDescription,
-      images: [ogImage],
+      description,
     },
     alternates: {
-      canonical: `https://www.portservicefinder.com/blog/${post.slug}`,
+      canonical: url,
+    },
+    robots: {
+      index: true,
+      follow: true,
     },
   };
 }
 
 // ============================================================
-// CATEGORY LABELS — Expanded to support all 10 categories
+// STATIC PARAMS
 // ============================================================
-const CATEGORY_LABELS: Record<string, { label: string; color: string }> = {
-  'port-guide': { label: 'Port Guide', color: '#4caf76' },
-  'port-guides': { label: 'Port Guide', color: '#4caf76' },
-  'industry-insights': { label: 'Industry Insights', color: '#c8a84b' },
-  'tips': { label: 'Tips & Tricks', color: '#6ab4d4' },
-  'regulations': { label: 'Regulations', color: '#e2c06a' },
-  'regulatory': { label: 'Regulations', color: '#e2c06a' },
-  'maritime-fundamentals': { label: 'Maritime Fundamentals', color: '#8ab4f8' },
-  'comparison': { label: 'Comparison', color: '#c594d4' },
-  'how-to': { label: 'How To Guide', color: '#f8b88a' },
-  'business': { label: 'Business', color: '#a4d48a' },
-};
-
-// Map category to Schema.org articleSection
-const CATEGORY_SECTIONS: Record<string, string> = {
-  'port-guide': 'Port Guides',
-  'port-guides': 'Port Guides',
-  'industry-insights': 'Industry Insights',
-  'tips': 'Tips & Tricks',
-  'regulations': 'Regulations',
-  'regulatory': 'Regulations',
-  'maritime-fundamentals': 'Maritime Fundamentals',
-  'comparison': 'Comparison Guides',
-  'how-to': 'How-To Guides',
-  'business': 'Business Guides',
-};
-
-// Default fallback for unknown categories
-const DEFAULT_CATEGORY = { label: 'Maritime Article', color: '#c8a84b' };
-
-// ============================================================
-// REGIONAL GROUPING — For internal linking
-// ============================================================
-const REGION_KEYWORDS: Record<string, { label: string; emoji: string; keywords: string[] }> = {
-  asiaPacific: {
-    label: 'Asia-Pacific Ports',
-    emoji: '🌏',
-    keywords: [
-      'shanghai', 'hong-kong', 'singapore', 'busan', 'yokohama',
-      'shenzhen', 'ningbo', 'guangzhou', 'qingdao', 'tianjin',
-      'tanjung-pelepas', 'mormugao', 'goa', 'tokyo', 'kobe',
-      'osaka', 'incheon', 'gwangyang', 'ulsan', 'mumbai',
-      'chennai', 'kolkata', 'kandla', 'nhava-sheva', 'jakarta',
-      'colombo', 'port-klang', 'laem-chabang', 'kaohsiung', 'jnpt',
-    ],
-  },
-  europe: {
-    label: 'European Ports',
-    emoji: '🌍',
-    keywords: [
-      'rotterdam', 'hamburg', 'antwerp', 'amsterdam', 'gibraltar',
-      'piraeus', 'istanbul', 'genoa', 'felixstowe', 'le-havre',
-      'algeciras', 'valencia', 'barcelona', 'bremerhaven',
-      'london', 'liverpool', 'southampton', 'marseille', 'naples',
-      'la-spezia', 'koper', 'gdansk', 'klaipeda', 'tallinn',
-    ],
-  },
-  americas: {
-    label: 'Americas',
-    emoji: '🌎',
-    keywords: [
-      'houston', 'new-york', 'los-angeles', 'long-beach', 'santos',
-      'rosario', 'vancouver', 'panama', 'baltimore', 'savannah',
-      'charleston', 'oakland', 'seattle', 'tacoma', 'miami',
-      'new-orleans', 'manzanillo', 'cartagena', 'callao',
-      'valparaiso', 'buenaventura', 'puerto-rico',
-    ],
-  },
-  middleEastAfrica: {
-    label: 'Middle East & Africa',
-    emoji: '🌍',
-    keywords: [
-      'dubai', 'jebel-ali', 'suez', 'casablanca', 'durban',
-      'fujairah', 'abu-dhabi', 'jeddah', 'tangier', 'tanger-med',
-      'sokhna', 'port-said', 'alexandria', 'cape-town',
-      'lagos', 'mombasa', 'aqaba', 'salalah', 'doha',
-    ],
-  },
-  industryResources: {
-    label: 'Industry Resources',
-    emoji: '🏗️',
-    keywords: [
-      'shipyard', 'shipyards', 'drydock', 'shipbuilding',
-      'comparison', 'compare', 'vs-', 'howto', 'worlds-top',
-      'eu-ets', 'uk-ets', 'fueleu', 'maritime-regulations',
-      'bunker-hubs', 'ship-agent', 'shipchandler', 'how-to-choose',
-    ],
-  },
-  otherRegions: {
-    label: 'Other Regions',
-    emoji: '❄️',
-    keywords: [
-      'melbourne', 'st-petersburg', 'sydney', 'auckland',
-      'brisbane', 'vladivostok', 'novorossiysk', 'reykjavik',
-    ],
-  },
-};
-
-interface GroupedPost {
-  slug: string;
-  title: string;
-  featuredPort?: string;
+export async function generateStaticParams() {
+  return BLOG_POSTS.map((post) => ({
+    slug: post.slug,
+  }));
 }
 
-interface RegionGroup {
-  label: string;
-  emoji: string;
-  posts: GroupedPost[];
+// ============================================================
+// HELPER: Get related posts intelligently
+// ============================================================
+function getSmartRelatedPosts(currentPost: BlogPost, limit: number = 6): BlogPost[] {
+  // Priority 1: Same port
+  const samePort = BLOG_POSTS.filter(
+    (p) =>
+      p.slug !== currentPost.slug &&
+      currentPost.featuredPort &&
+      p.featuredPort === currentPost.featuredPort
+  );
+
+  // Priority 2: Same category
+  const sameCategory = BLOG_POSTS.filter(
+    (p) =>
+      p.slug !== currentPost.slug &&
+      p.category === currentPost.category &&
+      (!currentPost.featuredPort || p.featuredPort !== currentPost.featuredPort)
+  );
+
+  // Priority 3: Recent posts
+  const recent = BLOG_POSTS.filter(
+    (p) =>
+      p.slug !== currentPost.slug &&
+      p.category !== currentPost.category &&
+      (!currentPost.featuredPort || p.featuredPort !== currentPost.featuredPort)
+  );
+
+  const combined = [...samePort, ...sameCategory, ...recent];
+  return combined.slice(0, limit);
 }
 
-function groupPostsByRegion(currentSlug: string): RegionGroup[] {
-  const allPosts = BLOG_POSTS.filter((p) => p.slug !== currentSlug);
-
-  const groups: Record<string, RegionGroup> = {};
-  const assigned = new Set<string>();
-
-  for (const [key, region] of Object.entries(REGION_KEYWORDS)) {
-    groups[key] = {
-      label: region.label,
-      emoji: region.emoji,
-      posts: [],
-    };
-  }
-
-  for (const post of allPosts) {
-    for (const [key, region] of Object.entries(REGION_KEYWORDS)) {
-      const matches = region.keywords.some((kw) =>
-        post.slug.toLowerCase().includes(kw)
-      );
-      if (matches) {
-        groups[key].posts.push({
-          slug: post.slug,
-          title: post.title,
-          featuredPort: post.featuredPort,
-        });
-        assigned.add(post.slug);
-        break;
-      }
+// ============================================================
+// HELPER: Extract FAQs from content
+// ============================================================
+function extractFAQs(content: string): Array<{ question: string; answer: string }> {
+  const faqs: Array<{ question: string; answer: string }> = [];
+  // Match Q: ... \n\nA: ... pattern
+  const qaRegex = /\*\*Q:\s*([^*]+?)\*\*\s*\n\s*\n\s*A:\s*([^*]+?)(?=\n\s*\*\*Q:|\n\s*###|\n\s*---|\n\s*##\s|$)/gs;
+  let match;
+  while ((match = qaRegex.exec(content)) !== null) {
+    const question = match[1].trim().replace(/\?$/, '').trim() + '?';
+    const answer = match[2].trim().replace(/\s+/g, ' ').slice(0, 800);
+    if (question.length > 5 && answer.length > 20) {
+      faqs.push({ question, answer });
     }
   }
+  return faqs.slice(0, 20); // limit to 20 FAQs for schema
+}
 
-  for (const post of allPosts) {
-    if (!assigned.has(post.slug)) {
-      groups.otherRegions.posts.push({
-        slug: post.slug,
-        title: post.title,
-        featuredPort: post.featuredPort,
+// ============================================================
+// HELPER: Render markdown content (simple)
+// ============================================================
+function renderContent(content: string): string {
+  let html = content;
+
+  // Headers
+  html = html.replace(/^### (.+)$/gm, '<h3>$1</h3>');
+  html = html.replace(/^## (.+)$/gm, '<h2>$1</h2>');
+  html = html.replace(/^# (.+)$/gm, '<h1>$1</h1>');
+
+  // Bold
+  html = html.replace(/\*\*([^*]+?)\*\*/g, '<strong>$1</strong>');
+
+  // Italics
+  html = html.replace(/(?<!\*)\*([^*\n]+?)\*(?!\*)/g, '<em>$1</em>');
+
+  // Links - external
+  html = html.replace(/\[([^\]]+)\]\((https?:\/\/[^\)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+
+  // Tables
+  html = html.replace(/((?:^\|.*\|[^\n]*\n)+)/gm, (match) => {
+    const rows = match.trim().split('\n').filter(r => r.startsWith('|'));
+    if (rows.length < 2) return match;
+    const isSeparator = (r: string) => /^\|[\s\-:|]+\|$/.test(r);
+    let tableHtml = '<div style="overflow-x:auto;margin:24px 0;"><table style="width:100%;border-collapse:collapse;font-family:Outfit,sans-serif;font-size:13px;">';
+    let inBody = false;
+    rows.forEach((row, idx) => {
+      if (isSeparator(row)) {
+        if (!inBody) tableHtml += '</thead><tbody>';
+        inBody = true;
+        return;
+      }
+      const cells = row.split('|').slice(1, -1).map(c => c.trim());
+      if (idx === 0 && !inBody) tableHtml += '<thead>';
+      const tag = inBody ? 'td' : 'th';
+      tableHtml += '<tr>';
+      cells.forEach(c => {
+        const style = inBody
+          ? 'padding:10px 12px;border-bottom:1px solid rgba(200,168,75,.15);color:#d4dcc8;'
+          : 'padding:12px;border-bottom:2px solid rgba(200,168,75,.4);color:#c8a84b;font-family:Rajdhani,sans-serif;font-size:11px;letter-spacing:1px;text-transform:uppercase;text-align:left;font-weight:700;';
+        tableHtml += `<${tag} style="${style}">${c}</${tag}>`;
       });
+      tableHtml += '</tr>';
+    });
+    tableHtml += '</tbody></table></div>';
+    return tableHtml;
+  });
+
+  // Horizontal rules
+  html = html.replace(/^---$/gm, '<hr style="border:none;border-top:1px solid rgba(200,168,75,.15);margin:32px 0;"/>');
+
+  // Lists
+  html = html.replace(/^- (.+)$/gm, '<li>$1</li>');
+  html = html.replace(/(<li>[\s\S]+?<\/li>(\n<li>[\s\S]+?<\/li>)*)/g, '<ul>$1</ul>');
+
+  // Paragraphs
+  const blocks = html.split(/\n\n+/);
+  html = blocks.map(b => {
+    const t = b.trim();
+    if (!t) return '';
+    if (t.startsWith('<h1') || t.startsWith('<h2') || t.startsWith('<h3') || t.startsWith('<ul') || t.startsWith('<table') || t.startsWith('<div') || t.startsWith('<hr')) {
+      return t;
     }
-  }
+    return `<p>${t}</p>`;
+  }).join('\n');
 
-  return Object.values(groups).filter((g) => g.posts.length > 0);
-}
-
-function getShortName(post: GroupedPost): string {
-  if (post.featuredPort) return post.featuredPort;
-  const firstPart = post.title.split(':')[0].trim();
-  return firstPart.replace(/\s+Port$/, '').replace(/\s+Canal$/, '').replace(/\s+Transit$/, '');
+  return html;
 }
 
 // ============================================================
-// FAQ EXTRACTION — Auto-extract Q&A pairs from content for FAQPage schema
+// MAIN PAGE COMPONENT
 // ============================================================
-interface FAQItem {
-  question: string;
-  answer: string;
-}
-
-function extractFAQs(content: string): FAQItem[] {
-  const faqs: FAQItem[] = [];
-  const lines = content.split('\n');
-
-  let currentQuestion: string | null = null;
-  let currentAnswer: string[] = [];
-
-  const flushFAQ = () => {
-    if (currentQuestion && currentAnswer.length > 0) {
-      const answerText = currentAnswer.join(' ').trim();
-      if (answerText.length > 10) {
-        faqs.push({
-          question: currentQuestion,
-          answer: answerText,
-        });
-      }
-    }
-    currentQuestion = null;
-    currentAnswer = [];
-  };
-
-  for (const line of lines) {
-    const trimmed = line.trim();
-
-    // Match **Q: ...** pattern
-    const qMatch = trimmed.match(/^\*\*Q:\s*(.+?)\*\*$/);
-    if (qMatch) {
-      flushFAQ();
-      currentQuestion = qMatch[1].trim();
-      continue;
-    }
-
-    // Match A: ... pattern
-    if (trimmed.startsWith('A:') && currentQuestion) {
-      const answerStart = trimmed.slice(2).trim();
-      // Strip markdown formatting for schema
-      const cleanAnswer = answerStart
-        .replace(/\*\*(.+?)\*\*/g, '$1')
-        .replace(/\*([^*]+?)\*/g, '$1')
-        .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1');
-      currentAnswer.push(cleanAnswer);
-      continue;
-    }
-
-    // Empty line ends current FAQ
-    if (trimmed === '' && currentQuestion) {
-      flushFAQ();
-      continue;
-    }
-
-    // New section ends current FAQ
-    if (trimmed.startsWith('##') && currentQuestion) {
-      flushFAQ();
-    }
-  }
-
-  flushFAQ();
-  return faqs;
-}
-
-// Simple markdown-to-React renderer (handles our basic content format)
-function renderContent(content: string): React.ReactNode[] {
-  const lines = content.trim().split('\n');
-  const elements: React.ReactNode[] = [];
-  let currentParagraph: string[] = [];
-  let inTable = false;
-  let tableRows: string[][] = [];
-
-  const flushParagraph = () => {
-    if (currentParagraph.length > 0) {
-      const text = currentParagraph.join(' ').trim();
-      if (text) {
-        elements.push(
-          <p key={`p-${elements.length}`} style={{
-            fontSize: 15, lineHeight: 1.85, color: '#d4dcc8',
-            marginBottom: 18, fontFamily: "'Outfit',sans-serif",
-          }} dangerouslySetInnerHTML={{ __html: formatInline(text) }} />
-        );
-      }
-      currentParagraph = [];
-    }
-  };
-
-  const flushTable = () => {
-    if (tableRows.length === 0) return;
-    const [header, ...rows] = tableRows;
-    elements.push(
-      <div key={`table-${elements.length}`} style={{
-        marginBottom: 22, overflowX: 'auto',
-        border: '1px solid rgba(200,168,75,.2)',
-      }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
-          <thead>
-            <tr style={{ background: 'rgba(200,168,75,.08)' }}>
-              {header.map((h, i) => (
-                <th key={i} style={{
-                  padding: '12px 16px', textAlign: 'left',
-                  fontFamily: "'Rajdhani',sans-serif", fontSize: 11,
-                  letterSpacing: '1.5px', textTransform: 'uppercase',
-                  color: '#c8a84b', fontWeight: 700,
-                  borderBottom: '1px solid rgba(200,168,75,.2)',
-                }}>{h}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((row, ri) => (
-              <tr key={ri} style={{
-                borderBottom: '1px solid rgba(200,168,75,.08)',
-              }}>
-                {row.map((cell, ci) => (
-                  <td key={ci} style={{
-                    padding: '10px 16px', color: '#d4dcc8', lineHeight: 1.6,
-                  }} dangerouslySetInnerHTML={{ __html: formatInline(cell) }} />
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    );
-    tableRows = [];
-    inTable = false;
-  };
-
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i];
-    const trimmed = line.trim();
-
-    if (trimmed.startsWith('|') && trimmed.endsWith('|')) {
-      flushParagraph();
-      const cells = trimmed.slice(1, -1).split('|').map(c => c.trim());
-      if (cells.every(c => /^[-:\s]+$/.test(c))) continue;
-      inTable = true;
-      tableRows.push(cells);
-      continue;
-    } else if (inTable) {
-      flushTable();
-    }
-
-    if (trimmed === '---') {
-      flushParagraph();
-      elements.push(
-        <hr key={`hr-${elements.length}`} style={{
-          border: 'none', borderTop: '1px solid rgba(200,168,75,.18)',
-          margin: '32px 0',
-        }} />
-      );
-      continue;
-    }
-
-    if (trimmed.startsWith('### ')) {
-      flushParagraph();
-      elements.push(
-        <h3 key={`h3-${elements.length}`} style={{
-          fontFamily: "'Libre Baskerville',serif", fontSize: 19, fontWeight: 700,
-          marginTop: 28, marginBottom: 12, color: '#f5f0e8', lineHeight: 1.3,
-        }}>{trimmed.slice(4)}</h3>
-      );
-      continue;
-    }
-    if (trimmed.startsWith('## ')) {
-      flushParagraph();
-      elements.push(
-        <h2 key={`h2-${elements.length}`} style={{
-          fontFamily: "'Libre Baskerville',serif", fontSize: 26, fontWeight: 700,
-          marginTop: 40, marginBottom: 16, color: '#f5f0e8', lineHeight: 1.2,
-          letterSpacing: -.5,
-        }}>{trimmed.slice(3)}</h2>
-      );
-      continue;
-    }
-
-    if (trimmed.startsWith('- ')) {
-      flushParagraph();
-      const listItems: string[] = [trimmed.slice(2)];
-      while (i + 1 < lines.length && lines[i + 1].trim().startsWith('- ')) {
-        i++;
-        listItems.push(lines[i].trim().slice(2));
-      }
-      elements.push(
-        <ul key={`ul-${elements.length}`} style={{
-          marginBottom: 20, paddingLeft: 0, listStyle: 'none',
-        }}>
-          {listItems.map((item, li) => (
-            <li key={li} style={{
-              fontSize: 14, lineHeight: 1.8, color: '#d4dcc8',
-              marginBottom: 8, paddingLeft: 22, position: 'relative',
-            }}>
-              <span style={{
-                position: 'absolute', left: 0, top: 0, color: '#c8a84b',
-                fontWeight: 700,
-              }}>▸</span>
-              <span dangerouslySetInnerHTML={{ __html: formatInline(item) }} />
-            </li>
-          ))}
-        </ul>
-      );
-      continue;
-    }
-
-    if (/^\d+\.\s/.test(trimmed)) {
-      flushParagraph();
-      const listItems: string[] = [trimmed.replace(/^\d+\.\s/, '')];
-      while (i + 1 < lines.length && /^\d+\.\s/.test(lines[i + 1].trim())) {
-        i++;
-        listItems.push(lines[i].trim().replace(/^\d+\.\s/, ''));
-      }
-      elements.push(
-        <ol key={`ol-${elements.length}`} style={{
-          marginBottom: 20, paddingLeft: 26,
-        }}>
-          {listItems.map((item, li) => (
-            <li key={li} style={{
-              fontSize: 14, lineHeight: 1.8, color: '#d4dcc8', marginBottom: 8,
-            }} dangerouslySetInnerHTML={{ __html: formatInline(item) }} />
-          ))}
-        </ol>
-      );
-      continue;
-    }
-
-    if (trimmed.startsWith('**Q:')) {
-      flushParagraph();
-      elements.push(
-        <div key={`q-${elements.length}`} style={{
-          fontFamily: "'Rajdhani',sans-serif", fontSize: 14, fontWeight: 700,
-          color: '#c8a84b', marginTop: 18, marginBottom: 6,
-          letterSpacing: '.5px',
-        }} dangerouslySetInnerHTML={{ __html: formatInline(trimmed) }} />
-      );
-      continue;
-    }
-    if (trimmed.startsWith('A:')) {
-      flushParagraph();
-      elements.push(
-        <p key={`a-${elements.length}`} style={{
-          fontSize: 14, lineHeight: 1.8, color: '#d4dcc8',
-          marginBottom: 14, paddingLeft: 18,
-          borderLeft: '2px solid rgba(200,168,75,.25)',
-        }} dangerouslySetInnerHTML={{ __html: formatInline(trimmed) }} />
-      );
-      continue;
-    }
-
-    // Blockquote support
-    if (trimmed.startsWith('> ')) {
-      flushParagraph();
-      const quoteItems: string[] = [trimmed.slice(2)];
-      while (i + 1 < lines.length && lines[i + 1].trim().startsWith('> ')) {
-        i++;
-        quoteItems.push(lines[i].trim().slice(2));
-      }
-      elements.push(
-        <blockquote key={`bq-${elements.length}`} style={{
-          margin: '24px 0',
-          padding: '18px 24px',
-          borderLeft: '3px solid #c8a84b',
-          background: 'rgba(200,168,75,.05)',
-          fontStyle: 'italic',
-          fontSize: 15,
-          lineHeight: 1.75,
-          color: '#d4dcc8',
-        }} dangerouslySetInnerHTML={{ __html: formatInline(quoteItems.join(' ')) }} />
-      );
-      continue;
-    }
-
-    if (trimmed === '') {
-      flushParagraph();
-      continue;
-    }
-
-    currentParagraph.push(trimmed);
-  }
-
-  flushParagraph();
-  flushTable();
-
-  return elements;
-}
-
-function formatInline(text: string): string {
-  return text
-    .replace(/\*\*(.+?)\*\*/g, '<strong style="color:#f5f0e8;font-weight:700">$1</strong>')
-    .replace(/\*([^*]+?)\*/g, '<em style="color:#c8a84b">$1</em>')
-    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" style="color:#c8a84b;text-decoration:underline">$1</a>');
-}
-
-export default async function BlogPostPage({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
+export default async function BlogPost({ params }: PageProps) {
   const { slug } = await params;
   const post = getBlogPost(slug);
 
@@ -534,53 +194,60 @@ export default async function BlogPostPage({
     notFound();
   }
 
-  const related = getRelatedPosts(post.slug, 3);
-  const regionGroups = groupPostsByRegion(post.slug);
-  const lb = "'Libre Baskerville',serif";
-  const rj = "'Rajdhani',sans-serif";
-  const g = { color: '#c8a84b' } as React.CSSProperties;
+  const relatedPosts = getSmartRelatedPosts(post, 6);
+  const faqs = extractFAQs(post.content);
+  const url = `https://www.portservicefinder.com/blog/${post.slug}`;
+  const publishedDate = new Date(post.publishedDate).toISOString();
+  const contentHtml = renderContent(post.content);
+  const wordCount = post.content.split(/\s+/).length;
 
-  const postUrl = `https://www.portservicefinder.com/blog/${post.slug}`;
-  const categoryInfo = CATEGORY_LABELS[post.category] || DEFAULT_CATEGORY;
+  // ============================================================
+  // SCHEMA MARKUP — Article + Breadcrumb + FAQ
+  // ============================================================
 
-  // Use heroImage if available, otherwise default og-image
-  const heroImageUrl = post.heroImage || null;
-  const schemaImage = post.heroImage || 'https://www.portservicefinder.com/og-image.jpg';
-
-  // JSON-LD: Article schema (enhanced)
-  const articleJsonLd = {
+  // 1. Article Schema (BlogPosting)
+  const articleSchema = {
     '@context': 'https://schema.org',
-    '@type': 'Article',
+    '@type': 'BlogPosting',
+    '@id': `${url}#article`,
     headline: post.title,
-    description: post.metaDescription,
-    image: schemaImage,
-    datePublished: post.publishedDate,
-    dateModified: post.publishedDate,
+    description: post.metaDescription || post.excerpt,
+    url: url,
+    datePublished: publishedDate,
+    dateModified: publishedDate,
     author: {
       '@type': 'Organization',
-      name: post.author,
-      url: 'https://www.portservicefinder.com',
+      name: post.author || 'PortServiceFinder Editorial Team',
+      url: 'https://www.portservicefinder.com/about',
     },
     publisher: {
       '@type': 'Organization',
       name: 'PortServiceFinder',
-      url: 'https://www.portservicefinder.com',
       logo: {
         '@type': 'ImageObject',
-        url: 'https://www.portservicefinder.com/favicon.ico',
+        url: 'https://www.portservicefinder.com/logo.png',
       },
     },
     mainEntityOfPage: {
       '@type': 'WebPage',
-      '@id': postUrl,
+      '@id': url,
     },
-    keywords: Array.isArray(post.keywords) ? post.keywords.join(', ') : post.keywords,
-    articleSection: CATEGORY_SECTIONS[post.category] || 'Maritime Industry',
+    keywords: post.keywords?.join(', '),
+    articleSection: post.category,
+    wordCount: wordCount,
+    timeRequired: `PT${post.readingTime}M`,
     inLanguage: 'en',
+    isAccessibleForFree: true,
+    about: post.featuredPort
+      ? [
+          { '@type': 'Place', name: post.featuredPort },
+          { '@type': 'Thing', name: 'Maritime Services' },
+        ]
+      : [{ '@type': 'Thing', name: 'Maritime Services' }],
   };
 
-  // JSON-LD: BreadcrumbList schema
-  const breadcrumbJsonLd = {
+  // 2. Breadcrumb Schema
+  const breadcrumbSchema = {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
@@ -596,447 +263,255 @@ export default async function BlogPostPage({
         name: 'Blog',
         item: 'https://www.portservicefinder.com/blog',
       },
-      {
-        '@type': 'ListItem',
-        position: 3,
-        name: post.title,
-        item: postUrl,
-      },
+      ...(post.featuredPort
+        ? [
+            {
+              '@type': 'ListItem',
+              position: 3,
+              name: post.featuredPort,
+              item: `https://www.portservicefinder.com/ports/${post.featuredPort.toLowerCase().replace(/\s+/g, '-')}`,
+            },
+            {
+              '@type': 'ListItem',
+              position: 4,
+              name: post.title,
+              item: url,
+            },
+          ]
+        : [
+            {
+              '@type': 'ListItem',
+              position: 3,
+              name: post.title,
+              item: url,
+            },
+          ]),
     ],
   };
 
-  // JSON-LD: FAQPage schema (auto-extracted from content)
-  const faqs = extractFAQs(post.content);
-  const faqJsonLd = faqs.length > 0 ? {
-    '@context': 'https://schema.org',
-    '@type': 'FAQPage',
-    mainEntity: faqs.map((faq) => ({
-      '@type': 'Question',
-      name: faq.question,
-      acceptedAnswer: {
-        '@type': 'Answer',
-        text: faq.answer,
-      },
-    })),
-  } : null;
+  // 3. FAQ Schema (only if FAQs exist)
+  const faqSchema = faqs.length > 0
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: faqs.map((faq) => ({
+          '@type': 'Question',
+          name: faq.question,
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: faq.answer,
+          },
+        })),
+      }
+    : null;
 
-  // Use custom schema if defined in post, otherwise auto-generated
-  const customSchema = post.schema || null;
+  const g = { color: '#c8a84b' } as React.CSSProperties;
+  const rj = "'Rajdhani',sans-serif";
+  const lb = "'Libre Baskerville',serif";
 
   return (
     <>
+      {/* SCHEMA MARKUP — Article */}
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
       />
+      {/* SCHEMA MARKUP — Breadcrumb */}
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
-      {faqJsonLd && (
+      {/* SCHEMA MARKUP — FAQ (if exists) */}
+      {faqSchema && (
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
-        />
-      )}
-      {customSchema && (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(customSchema) }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
         />
       )}
 
       <style>{`
         *{margin:0;padding:0;box-sizing:border-box;}
         html{scroll-behavior:smooth;}
-        body{background:#08100a;overflow-x:hidden;}
-        .article-link:hover{color:#c8a84b!important;}
-        .related-card{transition:border-color .3s ease, transform .3s ease;}
-        .related-card:hover{border-color:#c8a84b!important;transform:translateY(-3px);}
+        body{background:#08100a;color:#f5f0e8;font-family:'Outfit',sans-serif;font-weight:300;}
+        .article-content h1{font-family:${lb};font-size:32px;font-weight:700;line-height:1.15;margin:36px 0 18px;color:#f5f0e8;}
+        .article-content h2{font-family:${lb};font-size:26px;font-weight:700;line-height:1.2;margin:32px 0 16px;color:#f5f0e8;border-bottom:1px solid rgba(200,168,75,.15);padding-bottom:10px;}
+        .article-content h3{font-family:${lb};font-size:20px;font-weight:700;line-height:1.25;margin:28px 0 12px;color:#c8a84b;}
+        .article-content p{font-size:15px;line-height:1.85;color:#d4dcc8;margin-bottom:18px;}
+        .article-content ul{padding-left:0;list-style:none;margin:14px 0 22px;}
+        .article-content li{font-size:14.5px;line-height:1.75;color:#d4dcc8;margin-bottom:10px;padding-left:24px;position:relative;}
+        .article-content li:before{content:"›";position:absolute;left:6px;top:0;color:#c8a84b;font-weight:700;font-size:18px;line-height:1.5;}
+        .article-content a{color:#c8a84b;text-decoration:none;border-bottom:1px solid rgba(200,168,75,.4);transition:border-color .2s;}
+        .article-content a:hover{border-bottom-color:#c8a84b;}
+        .article-content strong{color:#f5f0e8;font-weight:600;}
+        .article-content em{font-style:italic;color:#d4dcc8;}
+        .blog-card-related{transition:transform .3s ease, border-color .3s ease, box-shadow .3s ease;}
+        .blog-card-related:hover{transform:translateY(-3px);border-color:#c8a84b!important;box-shadow:0 10px 28px rgba(0,0,0,.4);}
         .btn-gold{transition:transform .25s ease, box-shadow .25s ease, filter .25s ease;}
         .btn-gold:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(200,168,75,.35);filter:brightness(1.08);}
-        .region-link{transition:color .2s ease, background .2s ease, transform .2s ease;}
-        .region-link:hover{color:#08100a!important;background:#c8a84b!important;transform:translateY(-2px);}
-        .hero-image-wrapper{
-          width:100%;
-          max-width:880px;
-          margin:90px auto 0;
-          padding:0 48px;
-        }
-        .hero-image{
-          width:100%;
-          height:auto;
-          max-height:420px;
-          object-fit:cover;
-          border:1px solid rgba(200,168,75,.18);
-          display:block;
-        }
+        .breadcrumb-link:hover{color:#c8a84b!important;}
         @media(max-width:768px){
-          .nav-cta{font-size:11px!important;padding:7px 14px!important;}
-          .article-hero{padding:30px 20px 30px!important;}
-          .article-hero h1{font-size:clamp(24px,6vw,34px)!important;}
-          .article-body{padding:30px 20px 60px!important;}
-          .article-body h2{font-size:22px!important;margin-top:32px!important;}
-          .article-body h3{font-size:17px!important;}
-          .meta-row{flex-direction:column!important;gap:6px!important;align-items:flex-start!important;}
+          .article-wrap{padding:80px 16px 40px!important;}
+          .article-content h1{font-size:24px!important;margin:24px 0 14px!important;}
+          .article-content h2{font-size:20px!important;margin:24px 0 12px!important;}
+          .article-content h3{font-size:17px!important;margin:20px 0 10px!important;}
+          .article-content p{font-size:14px!important;line-height:1.75!important;}
           .related-grid{grid-template-columns:1fr!important;}
-          .region-section{padding:0 20px 50px!important;}
-          .region-grid{grid-template-columns:1fr!important;}
-          .ftgrid{grid-template-columns:1fr!important;}
-          .hero-image-wrapper{padding:0 20px;margin-top:80px;}
-          .hero-image{max-height:240px;}
+          .meta-row{flex-direction:column!important;gap:8px!important;align-items:flex-start!important;}
+          .hero-title{font-size:26px!important;}
+        }
+        @media(min-width:769px) and (max-width:1024px){
+          .related-grid{grid-template-columns:repeat(2,1fr)!important;}
         }
       `}</style>
 
-      <div style={{
-        background:'#08100a',
-        color:'#f5f0e8',
-        fontFamily:"'Outfit',sans-serif",
-        fontWeight:300,
-        minHeight:'100vh',
-      }}>
+      {/* NAV */}
+      <nav style={{position:'fixed',top:0,width:'100%',zIndex:100,height:62,display:'flex',alignItems:'center',justifyContent:'space-between',padding:'0 24px',background:'rgba(8,16,10,.97)',backdropFilter:'blur(20px)',borderBottom:'1px solid rgba(200,168,75,.2)'}}>
+        <Link href="/" style={{display:'flex',alignItems:'center',gap:10,textDecoration:'none',color:'#f5f0e8'}}>
+          <svg width="32" height="32" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="50" cy="50" r="44" fill="none" stroke="#c8a84b" strokeWidth="2.5"/>
+            <polygon points="50,15 56,50 50,50" fill="#f5f0e8"/>
+            <polygon points="50,15 44,50 50,50" fill="#c8a84b"/>
+            <polygon points="50,85 56,50 50,50" fill="#c8a84b"/>
+            <polygon points="50,85 44,50 50,50" fill="#f5f0e8"/>
+            <polygon points="85,50 50,44 50,50" fill="#c8a84b"/>
+            <polygon points="85,50 50,56 50,50" fill="#f5f0e8"/>
+            <polygon points="15,50 50,44 50,50" fill="#f5f0e8"/>
+            <polygon points="15,50 50,56 50,50" fill="#c8a84b"/>
+            <circle cx="50" cy="50" r="3.5" fill="#c8a84b"/>
+          </svg>
+          <span style={{fontFamily:lb,fontSize:20,fontWeight:700,letterSpacing:1}}>PortService<span style={g}>Finder</span></span>
+        </Link>
+        <div style={{display:'flex',gap:16,alignItems:'center'}}>
+          <Link href="/blog" style={{color:'#7a8a72',fontSize:12,letterSpacing:'1.5px',textTransform:'uppercase',fontFamily:rj,fontWeight:600,textDecoration:'none'}}>All Guides</Link>
+          <Link href="/" className="btn-gold" style={{background:'#c8a84b',color:'#08100a',border:'none',padding:'7px 14px',fontFamily:rj,fontSize:11,letterSpacing:'1.5px',textTransform:'uppercase',fontWeight:700,textDecoration:'none'}}>Search Providers</Link>
+        </div>
+      </nav>
 
-        {/* NAV */}
-        <nav style={{
-          position:'fixed',top:0,width:'100%',zIndex:300,height:64,
-          display:'flex',alignItems:'center',justifyContent:'space-between',
-          padding:'0 32px',background:'rgba(8,16,10,.97)',
-          backdropFilter:'blur(20px)',borderBottom:'1px solid rgba(200,168,75,.2)',
-        }}>
-          <Link href="/" style={{
-            fontFamily:lb,fontSize:22,fontWeight:700,letterSpacing:1,
-            textDecoration:'none',color:'#f5f0e8',
-          }}>
-            PortService<span style={g}>Finder</span>
-          </Link>
-          <Link href="/blog" className="btn-gold nav-cta" style={{
-            background:'transparent',color:'#c8a84b',
-            border:'1px solid rgba(200,168,75,.4)',
-            padding:'8px 18px',fontFamily:rj,fontSize:12,
-            letterSpacing:'1.5px',textTransform:'uppercase',fontWeight:700,
-            cursor:'pointer',textDecoration:'none',whiteSpace:'nowrap',
-          }}>
-            ← All Articles
-          </Link>
+      <div className="article-wrap" style={{maxWidth:880,margin:'0 auto',padding:'90px 24px 60px',position:'relative',zIndex:1}}>
+
+        {/* BREADCRUMB */}
+        <nav aria-label="Breadcrumb" style={{display:'flex',flexWrap:'wrap',gap:8,alignItems:'center',marginBottom:24,fontFamily:rj,fontSize:11,fontWeight:600,letterSpacing:'.5px'}}>
+          <Link href="/" className="breadcrumb-link" style={{color:'#7a8a72',textDecoration:'none'}}>Home</Link>
+          <span style={{color:'#3a4a32'}}>›</span>
+          <Link href="/blog" className="breadcrumb-link" style={{color:'#7a8a72',textDecoration:'none'}}>Blog</Link>
+          {post.featuredPort && (
+            <>
+              <span style={{color:'#3a4a32'}}>›</span>
+              <Link href={`/ports/${post.featuredPort.toLowerCase().replace(/\s+/g, '-')}`} className="breadcrumb-link" style={{color:'#7a8a72',textDecoration:'none'}}>{post.featuredPort}</Link>
+            </>
+          )}
+          <span style={{color:'#3a4a32'}}>›</span>
+          <span style={{color:'#c8a84b'}}>Article</span>
         </nav>
 
-        {/* HERO IMAGE (if available) */}
-        {heroImageUrl && (
-          <div className="hero-image-wrapper">
-            <img
-              src={heroImageUrl}
-              alt={post.title}
-              className="hero-image"
-              loading="eager"
-            />
-          </div>
-        )}
+        {/* HEADER */}
+        <header style={{marginBottom:32,paddingBottom:24,borderBottom:'1px solid rgba(200,168,75,.15)'}}>
+          {post.category && (
+            <div style={{fontFamily:rj,fontSize:10,letterSpacing:'2.5px',textTransform:'uppercase',color:'#c8a84b',marginBottom:14,fontWeight:700}}>
+              {post.category.replace(/-/g, ' ')}
+              {post.featuredPort && (<> · {post.featuredPort} 🚢</>)}
+            </div>
+          )}
 
-        {/* ARTICLE HERO */}
-        <section className="article-hero" style={{
-          padding: heroImageUrl ? '40px 48px 40px' : '120px 48px 40px',
-          maxWidth:880,margin:'0 auto',
-        }}>
-          <div style={{display:'flex',gap:10,alignItems:'center',marginBottom:18}}>
-            <span style={{
-              padding:'4px 11px',
-              background:`${categoryInfo.color}22`,
-              border:`1px solid ${categoryInfo.color}`,
-              color:categoryInfo.color,
-              fontFamily:rj,fontSize:10,letterSpacing:'1.5px',
-              textTransform:'uppercase',fontWeight:700,
-            }}>
-              {categoryInfo.label}
+          <h1 className="hero-title" style={{fontFamily:lb,fontSize:34,fontWeight:700,lineHeight:1.15,marginBottom:18,color:'#f5f0e8'}}>{post.title}</h1>
+
+          {post.excerpt && (
+            <p style={{fontSize:16,color:'#b0c0a4',lineHeight:1.7,marginBottom:18,fontStyle:'italic'}}>{post.excerpt}</p>
+          )}
+
+          <div className="meta-row" style={{display:'flex',flexWrap:'wrap',gap:18,alignItems:'center',fontFamily:rj,fontSize:11,letterSpacing:'.5px'}}>
+            <span style={{display:'flex',alignItems:'center',gap:6,color:'#7a8a72'}}>
+              <span style={{color:'#c8a84b'}}>✍</span> {post.author || 'PortServiceFinder Editorial Team'}
             </span>
-            {post.featuredPort && (
-              <span style={{
-                fontFamily:rj,fontSize:11,letterSpacing:'1.5px',
-                color:'#7a8a72',fontWeight:600,
-              }}>
-                🌍 {post.featuredPort}
-              </span>
-            )}
+            <span style={{color:'#3a4a32'}}>·</span>
+            <span style={{color:'#7a8a72'}}>📅 {formatBlogDate(post.publishedDate)}</span>
+            <span style={{color:'#3a4a32'}}>·</span>
+            <span style={{color:'#7a8a72'}}>⏱ {post.readingTime} min read</span>
+            <span style={{color:'#3a4a32'}}>·</span>
+            <span style={{color:'#7a8a72'}}>📊 {wordCount.toLocaleString()} words</span>
           </div>
-          <h1 style={{
-            fontFamily:lb,fontSize:'clamp(28px,3.6vw,46px)',fontWeight:700,
-            lineHeight:1.1,letterSpacing:-1.2,marginBottom:20,
-          }}>
-            {post.title}
-          </h1>
-          <p style={{
-            fontSize:17,lineHeight:1.7,color:'#b5bfa8',marginBottom:24,
-            fontWeight:300,
-          }}>
-            {post.excerpt}
-          </p>
-          <div className="meta-row" style={{
-            display:'flex',gap:22,alignItems:'center',
-            paddingBottom:24,borderBottom:'1px solid rgba(200,168,75,.15)',
-            fontFamily:rj,fontSize:12,color:'#7a8a72',fontWeight:600,
-            letterSpacing:'.5px',
-          }}>
-            <span>👤 {post.author}</span>
-            <span>📅 {formatBlogDate(post.publishedDate)}</span>
-            <span>⏱️ {post.readingTime} min read</span>
-          </div>
-        </section>
+        </header>
 
-        {/* ARTICLE BODY */}
-        <article className="article-body" style={{
-          maxWidth:760,margin:'0 auto',padding:'40px 48px 80px',
-        }}>
-          {renderContent(post.content)}
+        {/* ARTICLE CONTENT */}
+        <article className="article-content" dangerouslySetInnerHTML={{ __html: contentHtml }} />
 
-          {/* Author bio / CTA */}
-          <div style={{
-            marginTop:50,padding:'30px 32px',
-            background:'linear-gradient(135deg,rgba(200,168,75,.07),transparent)',
-            border:'1px solid rgba(200,168,75,.25)',
-          }}>
-            <div style={{
-              fontFamily:rj,fontSize:10,letterSpacing:'2.5px',
-              textTransform:'uppercase',color:'#c8a84b',
-              marginBottom:10,fontWeight:700,
-            }}>
-              💼 About PortServiceFinder
-            </div>
-            <p style={{fontSize:14,color:'#d4dcc8',lineHeight:1.7,marginBottom:16}}>
-              PortServiceFinder is the global directory connecting vessel operators with verified ship agents, shipchandlers, and marine service providers at every port worldwide. <strong style={{color:'#f5f0e8'}}>Free to search for vessel operators. Subscription model for providers — no commission, ever.</strong>
+        {/* CTA */}
+        <div style={{marginTop:48,padding:'28px 30px',background:'linear-gradient(180deg,rgba(200,168,75,.06),rgba(200,168,75,.02))',border:'1px solid rgba(200,168,75,.25)',display:'grid',gridTemplateColumns:'1fr auto',gap:20,alignItems:'center'}}>
+          <div>
+            <div style={{fontFamily:rj,fontSize:10,letterSpacing:'2px',textTransform:'uppercase',color:'#c8a84b',marginBottom:8,fontWeight:700}}>🔍 Find Verified Providers</div>
+            <h3 style={{fontFamily:lb,fontSize:22,fontWeight:700,lineHeight:1.25,marginBottom:8}}>
+              {post.featuredPort
+                ? <>Find {post.featuredPort} Maritime Service <em style={g}>Providers</em></>
+                : <>Find Maritime Service <em style={g}>Providers</em> Worldwide</>}
+            </h3>
+            <p style={{fontSize:13,color:'#b0c0a4',lineHeight:1.65}}>
+              {post.featuredPort
+                ? `Browse verified ${post.featuredPort} ship agents, shipchandlers, marine services. Free to search.`
+                : 'Search 1,200+ ports worldwide. Verified providers. No commission.'}
             </p>
-            <div style={{display:'flex',gap:10,flexWrap:'wrap'}}>
-              <Link href="/" className="btn-gold" style={{
-                background:'#c8a84b',color:'#08100a',
-                padding:'11px 22px',fontFamily:rj,fontSize:12,
-                letterSpacing:'1.8px',textTransform:'uppercase',
-                fontWeight:700,textDecoration:'none',
-              }}>
-                Search Ports →
-              </Link>
-              <Link href="/for-providers" style={{
-                background:'transparent',color:'#c8a84b',
-                border:'1px solid rgba(200,168,75,.4)',
-                padding:'11px 22px',fontFamily:rj,fontSize:12,
-                letterSpacing:'1.8px',textTransform:'uppercase',
-                fontWeight:700,textDecoration:'none',
-              }}>
-                For Providers
-              </Link>
-            </div>
           </div>
-        </article>
+          <div style={{display:'flex',flexDirection:'column',gap:8}}>
+            <Link href={post.featuredPort ? `/ports/${post.featuredPort.toLowerCase().replace(/\s+/g, '-')}` : '/'} className="btn-gold" style={{background:'#c8a84b',color:'#08100a',textDecoration:'none',padding:'12px 20px',fontFamily:rj,fontSize:11,letterSpacing:'1.5px',textTransform:'uppercase',fontWeight:700,textAlign:'center',whiteSpace:'nowrap'}}>
+              {post.featuredPort ? `Search ${post.featuredPort}` : 'Search Providers'}
+            </Link>
+          </div>
+        </div>
 
         {/* RELATED POSTS */}
-        {related.length > 0 && (
-          <section style={{
-            maxWidth:1100,margin:'0 auto',padding:'0 48px 50px',
-          }}>
-            <div style={{
-              fontFamily:rj,fontSize:10,letterSpacing:'2.5px',
-              textTransform:'uppercase',color:'#c8a84b',
-              marginBottom:18,fontWeight:700,
-            }}>
-              Related Articles
+        {relatedPosts.length > 0 && (
+          <section style={{marginTop:52,paddingTop:36,borderTop:'1px solid rgba(200,168,75,.15)'}}>
+            <div style={{marginBottom:24}}>
+              <div style={{fontFamily:rj,fontSize:10,letterSpacing:'2.5px',textTransform:'uppercase',color:'#c8a84b',marginBottom:8,fontWeight:700}}>📚 Continue Reading</div>
+              <h2 style={{fontFamily:lb,fontSize:24,fontWeight:700,lineHeight:1.2}}>
+                {post.featuredPort
+                  ? <>Related <em style={g}>{post.featuredPort}</em> Guides</>
+                  : <>Related <em style={g}>Maritime</em> Guides</>}
+              </h2>
             </div>
-            <div className="related-grid" style={{
-              display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(300px,1fr))',gap:14,
-            }}>
-              {related.map(r => {
-                const rCat = CATEGORY_LABELS[r.category] || DEFAULT_CATEGORY;
-                return (
-                  <Link key={r.slug} href={`/blog/${r.slug}`} className="related-card" style={{
-                    background:'#111c13',border:'1px solid rgba(200,168,75,.18)',
-                    padding:'20px 22px',textDecoration:'none',color:'inherit',
-                    display:'block',
-                  }}>
-                    <div style={{
-                      fontFamily:rj,fontSize:9,letterSpacing:'1.2px',
-                      textTransform:'uppercase',color:'#c8a84b',
-                      fontWeight:700,marginBottom:8,
-                    }}>
-                      {rCat.label}
-                    </div>
-                    <h4 style={{
-                      fontFamily:lb,fontSize:16,fontWeight:700,
-                      lineHeight:1.3,marginBottom:8,
-                    }}>
-                      {r.title}
-                    </h4>
-                    <div style={{
-                      fontFamily:rj,fontSize:10,color:'#7a8a72',
-                      fontWeight:600,letterSpacing:'.5px',
-                    }}>
-                      ⏱️ {r.readingTime} min read
-                    </div>
-                  </Link>
-                );
-              })}
-            </div>
-          </section>
-        )}
 
-        {/* ============================================== */}
-        {/* EXPLORE MORE PORT GUIDES — Regional Internal Linking */}
-        {/* ============================================== */}
-        {regionGroups.length > 0 && (
-          <section className="region-section" style={{
-            maxWidth:1100,margin:'0 auto',padding:'0 48px 70px',
-            borderTop:'1px solid rgba(200,168,75,.15)',paddingTop:50,
-          }}>
-            <div style={{
-              fontFamily:rj,fontSize:10,letterSpacing:'2.5px',
-              textTransform:'uppercase',color:'#c8a84b',
-              marginBottom:8,fontWeight:700,
-            }}>
-              🌐 Explore More Port Guides
-            </div>
-            <h2 style={{
-              fontFamily:lb,fontSize:24,fontWeight:700,
-              lineHeight:1.2,marginBottom:24,color:'#f5f0e8',
-            }}>
-              Comprehensive Guides for <em style={g}>Major Ports</em> Worldwide
-            </h2>
-            <p style={{
-              fontSize:13.5,color:'#b5bfa8',lineHeight:1.7,marginBottom:30,
-              maxWidth:680,
-            }}>
-              Detailed operational guides covering terminals, pilotage, bunkering, agency services, and best practices for vessel operators at major ports across the globe.
-            </p>
-
-            <div className="region-grid" style={{
-              display:'grid',
-              gridTemplateColumns:'repeat(auto-fit,minmax(280px,1fr))',
-              gap:20,
-            }}>
-              {regionGroups.map((region) => (
-                <div key={region.label} style={{
-                  background:'#111c13',
-                  border:'1px solid rgba(200,168,75,.15)',
-                  padding:'22px 22px',
-                }}>
-                  <div style={{
-                    fontFamily:rj,fontSize:11,letterSpacing:'1.8px',
-                    textTransform:'uppercase',color:'#c8a84b',
-                    marginBottom:14,fontWeight:700,
-                    display:'flex',alignItems:'center',gap:8,
-                  }}>
-                    <span style={{fontSize:16}}>{region.emoji}</span>
-                    <span>{region.label}</span>
-                    <span style={{
-                      fontSize:9,color:'#7a8a72',fontWeight:600,
-                      marginLeft:'auto',
-                    }}>
-                      {region.posts.length} {region.posts.length === 1 ? 'guide' : 'guides'}
-                    </span>
+            <div className="related-grid" style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:14}}>
+              {relatedPosts.map((related) => (
+                <Link
+                  key={related.slug}
+                  href={`/blog/${related.slug}`}
+                  className="blog-card-related"
+                  style={{
+                    background:'#111c13',
+                    padding:'20px 20px',
+                    border:'1px solid rgba(200,168,75,.18)',
+                    textDecoration:'none',
+                    color:'inherit',
+                    display:'flex',
+                    flexDirection:'column',
+                  }}
+                >
+                  <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:12,gap:8}}>
+                    {related.featuredPort && (
+                      <span style={{fontFamily:rj,fontSize:9,letterSpacing:'1.2px',textTransform:'uppercase',color:'#c8a84b',fontWeight:700,background:'rgba(200,168,75,.08)',padding:'3px 8px',border:'1px solid rgba(200,168,75,.2)',whiteSpace:'nowrap'}}>{related.featuredPort}</span>
+                    )}
+                    <span style={{fontFamily:rj,fontSize:10,color:'#7a8a72',fontWeight:600,whiteSpace:'nowrap'}}>⏱ {related.readingTime}m</span>
                   </div>
-                  <div style={{
-                    display:'flex',flexWrap:'wrap',gap:6,
-                  }}>
-                    {region.posts.map((p) => (
-                      <Link
-                        key={p.slug}
-                        href={`/blog/${p.slug}`}
-                        className="region-link"
-                        style={{
-                          fontFamily:rj,fontSize:11.5,
-                          padding:'5px 11px',
-                          background:'rgba(200,168,75,.08)',
-                          border:'1px solid rgba(200,168,75,.18)',
-                          color:'#d4dcc8',
-                          textDecoration:'none',
-                          fontWeight:600,
-                          letterSpacing:'.3px',
-                          whiteSpace:'nowrap',
-                        }}
-                        title={p.title}
-                      >
-                        {getShortName(p)}
-                      </Link>
-                    ))}
-                  </div>
-                </div>
+                  <h3 style={{fontFamily:lb,fontSize:15,fontWeight:700,lineHeight:1.35,marginBottom:8,color:'#f5f0e8'}}>{related.title.length > 80 ? related.title.slice(0, 80) + '...' : related.title}</h3>
+                  <p style={{fontSize:12,lineHeight:1.55,color:'#b0c0a4',marginBottom:12,flex:1}}>{related.excerpt.length > 110 ? related.excerpt.slice(0, 110) + '...' : related.excerpt}</p>
+                  <div style={{fontFamily:rj,fontSize:10,letterSpacing:'1.5px',textTransform:'uppercase',color:'#c8a84b',fontWeight:700,paddingTop:8,borderTop:'1px solid rgba(200,168,75,.1)'}}>Read Guide →</div>
+                </Link>
               ))}
             </div>
-
-            <div style={{
-              marginTop:30,textAlign:'center',
-              paddingTop:24,borderTop:'1px solid rgba(200,168,75,.1)',
-            }}>
-              <Link href="/blog" style={{
-                fontFamily:rj,fontSize:12,letterSpacing:'1.8px',
-                textTransform:'uppercase',color:'#c8a84b',
-                fontWeight:700,textDecoration:'none',
-                padding:'12px 28px',
-                border:'1px solid rgba(200,168,75,.4)',
-                display:'inline-block',
-              }} className="btn-gold">
-                View All Port Guides →
-              </Link>
-            </div>
           </section>
         )}
 
+        {/* BOTTOM CTA */}
+        <section style={{marginTop:52,padding:'28px 24px',textAlign:'center',background:'#0c1610',border:'1px solid rgba(200,168,75,.18)'}}>
+          <h3 style={{fontFamily:lb,fontSize:22,fontWeight:700,marginBottom:10}}>Are You a Maritime Service <em style={g}>Provider?</em></h3>
+          <p style={{fontSize:13,color:'#b0c0a4',marginBottom:16,maxWidth:480,margin:'0 auto 16px',lineHeight:1.65}}>
+            List your business on PortServiceFinder. <strong style={g}>$49.90/month or $500/year.</strong> No commission. Reach vessel operators worldwide.
+          </p>
+          <Link href="/#pricing" className="btn-gold" style={{display:'inline-block',background:'#c8a84b',color:'#08100a',textDecoration:'none',padding:'11px 24px',fontFamily:rj,fontSize:12,letterSpacing:'1.5px',textTransform:'uppercase',fontWeight:700}}>List Your Business →</Link>
+        </section>
+
         {/* FOOTER */}
-        <footer style={{
-          borderTop:'1px solid rgba(200,168,75,.15)',padding:'40px 48px',
-        }}>
-          <div className="ftgrid" style={{
-            display:'grid',gridTemplateColumns:'2fr 1fr 1fr',gap:36,
-            marginBottom:24,maxWidth:1180,margin:'0 auto 24px',
-          }}>
-            <div>
-              <div style={{
-                fontFamily:lb,fontSize:18,fontWeight:700,letterSpacing:1,marginBottom:10,
-              }}>
-                PortService<span style={g}>Finder</span>
-              </div>
-              <p style={{
-                fontSize:12,color:'#7a8a72',lineHeight:1.7,
-                maxWidth:260,marginBottom:10,
-              }}>
-                The global maritime services directory and industry knowledge hub.
-              </p>
-              <a href="mailto:portservicefinder@gmail.com" style={{
-                fontSize:12,color:'rgba(200,168,75,.6)',textDecoration:'none',
-              }}>
-                portservicefinder@gmail.com
-              </a>
-            </div>
-            <div>
-              <h4 style={{
-                fontFamily:rj,fontSize:10,letterSpacing:'2px',
-                textTransform:'uppercase',color:'#c8a84b',
-                marginBottom:12,fontWeight:700,
-              }}>
-                Explore
-              </h4>
-              <ul style={{listStyle:'none',display:'flex',flexDirection:'column',gap:7}}>
-                <li><Link href="/" className="article-link" style={{color:'#7a8a72',textDecoration:'none',fontSize:12}}>Home / Search</Link></li>
-                <li><Link href="/blog" className="article-link" style={{color:'#7a8a72',textDecoration:'none',fontSize:12}}>Blog & Guides</Link></li>
-                <li><Link href="/for-providers" className="article-link" style={{color:'#7a8a72',textDecoration:'none',fontSize:12}}>For Providers</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h4 style={{
-                fontFamily:rj,fontSize:10,letterSpacing:'2px',
-                textTransform:'uppercase',color:'#c8a84b',
-                marginBottom:12,fontWeight:700,
-              }}>
-                Top Ports
-              </h4>
-              <ul style={{listStyle:'none',display:'flex',flexDirection:'column',gap:7}}>
-                <li><Link href="/ports/singapore" className="article-link" style={{color:'#7a8a72',textDecoration:'none',fontSize:12}}>Singapore</Link></li>
-                <li><Link href="/ports/rotterdam" className="article-link" style={{color:'#7a8a72',textDecoration:'none',fontSize:12}}>Rotterdam</Link></li>
-                <li><Link href="/ports/suez" className="article-link" style={{color:'#7a8a72',textDecoration:'none',fontSize:12}}>Suez</Link></li>
-              </ul>
-            </div>
-          </div>
-          <div style={{
-            borderTop:'1px solid rgba(200,168,75,.1)',paddingTop:14,
-            textAlign:'center',fontFamily:rj,fontSize:10,
-            color:'#3a3a2a',letterSpacing:1,fontWeight:600,
-          }}>
-            © 2026 PortServiceFinder. All rights reserved. · MARITIME DIRECTORY · GLOBAL · FREE TO SEARCH
-          </div>
+        <footer style={{marginTop:44,paddingTop:24,borderTop:'1px solid rgba(200,168,75,.1)',textAlign:'center',fontFamily:rj,fontSize:10,color:'#3a3a2a',letterSpacing:1}}>
+          © 2026 PortServiceFinder. Maritime Services Directory · Free to Search · No Commission.
         </footer>
 
       </div>
