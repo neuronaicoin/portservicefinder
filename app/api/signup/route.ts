@@ -35,21 +35,26 @@ export async function POST(request: Request) {
 
     const ico = provider_type === 'agent' ? '🏢' : provider_type === 'chandler' ? '⚓' : '🔧';
 
+    // Supabase column mapping
     const newProvider = {
       type: provider_type,
-      ico: ico,
       name: company_name,
       bio: bio,
-      ports: ports,
       country: country,
+      ports: ports,
       svc: provider_type === 'service' ? svc : [provider_type],
       phone: phone,
       email: email,
-      wa: whatsapp || phone,
-      web: website || '',
-      addr: address || '',
-      person: contact_person,
+      whatsapp: whatsapp || phone,
+      website: website || '',
+      address: address || '',
+      contact_person: contact_person,
+      plan: plan,
       plan_type: plan,
+      status: 'active',
+      verified: true,
+      verified_at: new Date().toISOString(),
+      display_icon: ico,
       expires_at: expiresAt.toISOString(),
     };
 
