@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import Link from 'next/link';
+import { supabase } from '@/lib/supabase';
 
 // ============================================================
 // GA4 EVENT TRACKING HELPER
@@ -289,7 +290,7 @@ const PROVIDERS: Provider[] = [
 ];
 
 const MAX_PORTS = 3;
-const MIN_BIO = 600;
+const MIN_BIO = 50;
 
 function runSearch(country: string, port: string, cat: string, ms: Set<string>) {
   const ok = (p: Provider) => {
@@ -324,8 +325,10 @@ export default function Home() {
   // LIST BUSINESS FLOW - 3 STEPS
   const [showFlowModal, setShowFlowModal] = useState(false);
   const [flowStep, setFlowStep] = useState(1);
-  const [checkoutLoading, setCheckoutLoading] = useState(false);
-  const [checkoutError, setCheckoutError] = useState('');
+  const [signupLoading, setSignupLoading] = useState(false);
+  const [signupError, setSignupError] = useState('');
+  const [signupSuccess, setSignupSuccess] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState<'free_trial' | 'monthly' | 'annual'>('free_trial');
 
   // FORM DATA
   const [fProviderType, setFProviderType] = useState('');
@@ -403,12 +406,14 @@ export default function Home() {
     setFContactPerson('');
     setFFormError('');
     setPortLimitWarning('');
-    setCheckoutError('');
+    setSignupError('');
+    setSignupSuccess(false);
+    setSelectedPlan('free_trial');
     setFlowStep(1);
   }
 
   function closeFlow() {
-    if (checkoutLoading) return;
+    if (signupLoading) return;
     setShowFlowModal(false);
     resetForm();
   }
@@ -457,7 +462,7 @@ export default function Home() {
     if (!fPhone.trim()) return 'Phone number is required.';
     if (!fContactPerson.trim()) return 'Contact person name is required.';
     if (!fBio.trim()) return 'Company description is required.';
-    if (fBio.trim().length < MIN_BIO) return `Company description must be at least ${MIN_BIO} characters (currently ${fBio.trim().length}).`;
+    if (fBio.trim().length < MIN_BIO) return `Please write a more detailed company description (at least ${MIN_BIO} characters).`;
     if (fProviderType === 'service' && fSvc.size === 0) return 'Please select at least one service category.';
     return '';
   }
@@ -481,56 +486,67 @@ export default function Home() {
     });
   }
 
-  async function handleCheckout(plan: 'monthly' | 'annual') {
-    setCheckoutLoading(true);
-    setCheckoutError('');
+  async function handleSignup(plan: 'free_trial' | 'monthly' | 'annual') {
+    setSignupLoading(true);
+    setSignupError('');
+    setSelectedPlan(plan);
 
-    // 🎯 GA4 EVENT: Checkout started
-    trackEvent('checkout_started', {
+    // 🎯 GA4 EVENT: Signup started
+    trackEvent('signup_submitted', {
       plan: plan,
       provider_type: fProviderType,
       country: fCountry,
-      value: plan === 'monthly' ? 49.90 : 500,
-      currency: 'USD',
     });
 
     try {
-      const payload = {
-        provider_type: fProviderType,
-        company_name: fCompanyName.trim(),
+      // 3 ay sonra expire (tüm planlar şimdilik free)
+      const expiresAt = new Date();
+      expiresAt.setMonth(expiresAt.getMonth() + 3);
+
+      const ico = fProviderType === 'agent' ? '🏢' : fProviderType === 'chandler' ? '⚓' : '🔧';
+
+      const newProvider = {
+        type: fProviderType,
+        ico: ico,
+        name: fCompanyName.trim(),
         bio: fBio.trim(),
-        country: fCountry,
         ports: fPorts,
-        email: fEmail.trim(),
+        country: fCountry,
+        svc: fProviderType === 'service' ? Array.from(fSvc) : [fProviderType],
         phone: fPhone.trim(),
-        whatsapp: fWhatsapp.trim(),
-        website: fWebsite.trim(),
-        address: fAddress.trim(),
-        contact_person: fContactPerson.trim(),
-        svc: Array.from(fSvc),
-        plan,
+        email: fEmail.trim(),
+        wa: fWhatsapp.trim() || fPhone.trim(),
+        web: fWebsite.trim(),
+        addr: fAddress.trim(),
+        person: fContactPerson.trim(),
+        plan_type: plan,
+        expires_at: expiresAt.toISOString(),
       };
 
-      const response = await fetch('/api/checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
+      const { error } = await supabase
+        .from('providers')
+        .insert([newProvider]);
 
-      const data = await response.json();
-
-      if (!response.ok || !data.checkout_url) {
-        throw new Error(data.error || 'Failed to create checkout. Please try again.');
+      if (error) {
+        throw new Error(error.message || 'Database error. Please try again.');
       }
 
-      window.location.href = data.checkout_url;
+      setSignupSuccess(true);
+      setSignupLoading(false);
+
+      // 🎯 GA4 EVENT: Signup completed
+      trackEvent('signup_completed', {
+        plan: plan,
+        provider_type: fProviderType,
+        country: fCountry,
+      });
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Network error. Please try again.';
-      setCheckoutError(msg);
-      setCheckoutLoading(false);
+      setSignupError(msg);
+      setSignupLoading(false);
 
-      // 🎯 GA4 EVENT: Checkout error
-      trackEvent('checkout_error', {
+      // 🎯 GA4 EVENT: Signup error
+      trackEvent('signup_error', {
         plan: plan,
         error_message: msg,
       });
@@ -603,7 +619,7 @@ export default function Home() {
   );
 
   const stepTitle = flowStep === 1 ? 'Provider Type' : flowStep === 2 ? 'Business Information' : 'Choose Your Plan';
-  const stepSubtitle = flowStep === 1 ? 'Select the category that best describes your business.' : flowStep === 2 ? 'Fill in your company details. All fields marked with * are required.' : 'Cancel anytime. No commission. Active immediately after payment.';
+  const stepSubtitle = flowStep === 1 ? 'Select the category that best describes your business.' : flowStep === 2 ? 'Fill in your company details. All fields marked with * are required.' : 'All plans are FREE during our launch. Choose one to activate your listing.';
 
   return (
     <>
@@ -1163,7 +1179,7 @@ export default function Home() {
                   <h2 style={{fontFamily:lb,fontSize:22,fontWeight:700,lineHeight:1.2}}>List Your <em style={g}>Business</em></h2>
                   <p style={{fontSize:12.5,color:'#b0c0a4',marginTop:6,lineHeight:1.5}}>{stepSubtitle}</p>
                 </div>
-                <button onClick={closeFlow} disabled={checkoutLoading} style={{background:'none',border:'none',color:'#7a8a72',fontSize:20,cursor:checkoutLoading?'not-allowed':'pointer',flexShrink:0}}>✕</button>
+                <button onClick={closeFlow} disabled={signupLoading} style={{background:'none',border:'none',color:'#7a8a72',fontSize:20,cursor:signupLoading?'not-allowed':'pointer',flexShrink:0}}>✕</button>
               </div>
 
               <ProgressBar/>
@@ -1217,13 +1233,10 @@ export default function Home() {
                     </div>
 
                     <div style={{marginBottom:16}}>
-                      <label style={S.flbl}>Company Description / Bio * (minimum {MIN_BIO} characters)</label>
-                      <textarea className="card-input" value={fBio} onChange={e=>setFBio(e.target.value)} placeholder="Describe your services in detail: history, certifications, fleet capacity, specialties, geographic coverage, languages spoken, response time, vessel types handled, key clients/references, awards or memberships, your unique value proposition. The more detailed, the better — vessel operators want to know exactly who they're dealing with." rows={8} style={{...S.inp,resize:'vertical',minHeight:160,fontFamily:"'Outfit',sans-serif",lineHeight:1.6}}/>
-                      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginTop:6,fontFamily:rj,fontSize:11}}>
-                        <span style={{color:bioOk?'#4caf76':'#ff8a8a',fontWeight:700}}>
-                          {bioOk ? `✓ ${fBio.trim().length} / ${MIN_BIO} minimum` : `${fBio.trim().length} / ${MIN_BIO} (${bioRemaining} more characters needed)`}
-                        </span>
-                        <span style={{color:'#7a8a72'}}>Tip: write 4–6 sentences covering services, experience, certifications.</span>
+                      <label style={S.flbl}>Company Description / Bio *</label>
+                      <textarea className="card-input" value={fBio} onChange={e=>setFBio(e.target.value)} placeholder="Describe your services in detail: history, certifications, fleet capacity, specialties, geographic coverage, languages spoken, response time, vessel types handled, key clients/references, awards or memberships, your unique value proposition." rows={8} style={{...S.inp,resize:'vertical',minHeight:160,fontFamily:"'Outfit',sans-serif",lineHeight:1.6}}/>
+                      <div style={{marginTop:8,padding:'10px 12px',background:'rgba(200,168,75,.08)',border:'1px solid rgba(200,168,75,.25)',fontFamily:rj,fontSize:11.5,color:'#e2c06a',lineHeight:1.5}}>
+                        💡 <strong>Tip:</strong> Write your bio as long and detailed as possible — vessel operators are more likely to find and contact providers with comprehensive descriptions. Include services, certifications, experience, and what makes you different.
                       </div>
                     </div>
 
@@ -1338,6 +1351,21 @@ export default function Home() {
                 {flowStep === 3 && (
                   <div>
 
+                    {signupSuccess ? (
+                      <div style={{padding:'30px 24px',textAlign:'center',background:'rgba(76,175,118,.08)',border:'1px solid rgba(76,175,118,.4)'}}>
+                        <div style={{fontSize:54,marginBottom:14}}>✅</div>
+                        <h3 style={{fontFamily:lb,fontSize:22,fontWeight:700,marginBottom:10,color:'#f5f0e8'}}>Your information has been received!</h3>
+                        <p style={{fontSize:14,color:'#d4dcc8',lineHeight:1.7,marginBottom:8,maxWidth:480,margin:'0 auto 8px'}}>
+                          Your profile is now <strong style={{color:'#4caf76'}}>active</strong> on PortServiceFinder.
+                        </p>
+                        <p style={{fontSize:12.5,color:'#b0c0a4',lineHeight:1.65,marginBottom:18,maxWidth:480,margin:'0 auto 18px'}}>
+                          Vessel operators can now find and contact you directly. We&apos;ll be in touch by email in 3 months when your free period ends.
+                        </p>
+                        <button onClick={closeFlow} className="btn-gold" style={{background:'#c8a84b',color:'#08100a',border:'none',padding:'12px 32px',fontFamily:rj,fontSize:12,letterSpacing:'1.5px',textTransform:'uppercase',fontWeight:700,cursor:'pointer'}}>Close</button>
+                      </div>
+                    ) : (
+                      <>
+
                     <div style={{background:'rgba(200,168,75,.05)',border:'1px solid rgba(200,168,75,.18)',padding:'14px 16px',marginBottom:18}}>
                       <div style={{fontFamily:rj,fontSize:10,letterSpacing:'1.5px',textTransform:'uppercase',color:'#c8a84b',marginBottom:6,fontWeight:700}}>Your Submission</div>
                       <div style={{fontSize:14,color:'#f5f0e8',marginBottom:4,fontWeight:600}}>{fCompanyName}</div>
@@ -1345,67 +1373,91 @@ export default function Home() {
                       <div style={{fontSize:11,color:'#7a8a72',lineHeight:1.5,marginTop:4}}>{fEmail} · {fPhone}</div>
                     </div>
 
-                    <div className="tiers2" style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12,marginBottom:18}}>
+                    <div style={{padding:'12px 14px',background:'rgba(76,175,118,.06)',border:'1px solid rgba(76,175,118,.25)',marginBottom:14,fontFamily:rj,fontSize:12,color:'#4caf76',fontWeight:700,textAlign:'center'}}>
+                      🎉 All plans are currently FREE — choose one to activate your listing
+                    </div>
 
-                      <div style={{background:'#111c13',border:'1px solid rgba(200,168,75,.2)',padding:'22px 20px',display:'flex',flexDirection:'column'}}>
-                        <div style={{fontFamily:rj,fontSize:10,letterSpacing:'2px',textTransform:'uppercase',color:'#c8a84b',marginBottom:8,fontWeight:700}}>Monthly</div>
-                        <div style={{display:'flex',alignItems:'baseline',gap:5,marginBottom:4}}>
-                          <span style={{fontFamily:lb,fontSize:32,fontWeight:700,lineHeight:1}}>$49.90</span>
-                          <span style={{fontFamily:rj,fontSize:11,color:'#7a8a72',fontWeight:600}}>/ month</span>
+                    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:10,marginBottom:18}} className="tiers2">
+
+                      <div style={{background:'#111c13',border:'1px solid rgba(200,168,75,.2)',padding:'20px 16px',display:'flex',flexDirection:'column'}}>
+                        <div style={{fontFamily:rj,fontSize:10,letterSpacing:'1.5px',textTransform:'uppercase',color:'#c8a84b',marginBottom:8,fontWeight:700}}>3 Months Free</div>
+                        <div style={{display:'flex',alignItems:'baseline',gap:4,marginBottom:4}}>
+                          <span style={{fontFamily:lb,fontSize:28,fontWeight:700,lineHeight:1}}>FREE</span>
                         </div>
-                        <div style={{fontSize:11,color:'#b0c0a4',marginBottom:14,fontFamily:rj,lineHeight:1.4}}>Billed monthly · Cancel anytime</div>
-                        <ul style={{listStyle:'none',flex:1,marginBottom:14,display:'flex',flexDirection:'column',gap:6}}>
-                          <li style={{fontSize:11.5,color:'#b0c0a4',display:'flex',alignItems:'flex-start',gap:6,lineHeight:1.4}}><span style={{color:'#c8a84b',fontWeight:700,flexShrink:0}}>✓</span>All your ports listed</li>
-                          <li style={{fontSize:11.5,color:'#b0c0a4',display:'flex',alignItems:'flex-start',gap:6,lineHeight:1.4}}><span style={{color:'#c8a84b',fontWeight:700,flexShrink:0}}>✓</span>Full company profile</li>
-                          <li style={{fontSize:11.5,color:'#b0c0a4',display:'flex',alignItems:'flex-start',gap:6,lineHeight:1.4}}><span style={{color:'#c8a84b',fontWeight:700,flexShrink:0}}>✓</span>Verified badge</li>
-                          <li style={{fontSize:11.5,color:'#b0c0a4',display:'flex',alignItems:'flex-start',gap:6,lineHeight:1.4}}><span style={{color:'#c8a84b',fontWeight:700,flexShrink:0}}>✓</span>Cancel anytime</li>
+                        <div style={{fontSize:11,color:'#b0c0a4',marginBottom:12,fontFamily:rj,lineHeight:1.4}}>3 months trial · No payment</div>
+                        <ul style={{listStyle:'none',flex:1,marginBottom:12,display:'flex',flexDirection:'column',gap:5}}>
+                          <li style={{fontSize:11,color:'#b0c0a4',display:'flex',alignItems:'flex-start',gap:5,lineHeight:1.4}}><span style={{color:'#c8a84b',fontWeight:700,flexShrink:0}}>✓</span>All ports listed</li>
+                          <li style={{fontSize:11,color:'#b0c0a4',display:'flex',alignItems:'flex-start',gap:5,lineHeight:1.4}}><span style={{color:'#c8a84b',fontWeight:700,flexShrink:0}}>✓</span>Full profile</li>
+                          <li style={{fontSize:11,color:'#b0c0a4',display:'flex',alignItems:'flex-start',gap:5,lineHeight:1.4}}><span style={{color:'#c8a84b',fontWeight:700,flexShrink:0}}>✓</span>Verified badge</li>
+                          <li style={{fontSize:11,color:'#b0c0a4',display:'flex',alignItems:'flex-start',gap:5,lineHeight:1.4}}><span style={{color:'#c8a84b',fontWeight:700,flexShrink:0}}>✓</span>Active immediately</li>
                         </ul>
-                        <button onClick={()=>handleCheckout('monthly')} disabled={checkoutLoading} className="btn-ghost" style={{padding:11,background:'transparent',border:'1px solid rgba(200,168,75,.4)',color:'#c8a84b',fontFamily:rj,fontSize:11,letterSpacing:'1.5px',textTransform:'uppercase',fontWeight:700,cursor:checkoutLoading?'not-allowed':'pointer',width:'100%',opacity:checkoutLoading?.6:1}}>
-                          {checkoutLoading ? <span className="spinner"/> : 'Subscribe Monthly'}
+                        <button onClick={()=>handleSignup('free_trial')} disabled={signupLoading} className="btn-gold" style={{padding:11,background:'#c8a84b',color:'#08100a',border:'none',fontFamily:rj,fontSize:10.5,letterSpacing:'1px',textTransform:'uppercase',fontWeight:700,cursor:signupLoading?'not-allowed':'pointer',width:'100%',opacity:signupLoading?.6:1}}>
+                          {signupLoading && selectedPlan==='free_trial' ? <span className="spinner"/> : 'Start Free Trial'}
                         </button>
                       </div>
 
-                      <div style={{background:'linear-gradient(180deg,rgba(200,168,75,.08),transparent)',border:'1px solid #c8a84b',padding:'22px 20px',position:'relative',display:'flex',flexDirection:'column'}}>
-                        <div style={{position:'absolute',top:-10,left:'50%',transform:'translateX(-50%)',background:'#c8a84b',color:'#08100a',fontFamily:rj,fontSize:9,letterSpacing:'1.5px',fontWeight:700,padding:'3px 10px'}}>BEST VALUE · SAVE $98.80</div>
-                        <div style={{fontFamily:rj,fontSize:10,letterSpacing:'2px',textTransform:'uppercase',color:'#c8a84b',marginBottom:8,fontWeight:700}}>Annual</div>
-                        <div style={{display:'flex',alignItems:'baseline',gap:5,marginBottom:4}}>
-                          <span style={{fontFamily:lb,fontSize:32,fontWeight:700,lineHeight:1}}>$500</span>
-                          <span style={{fontFamily:rj,fontSize:11,color:'#7a8a72',fontWeight:600}}>/ year</span>
+                      <div style={{background:'#111c13',border:'1px solid rgba(200,168,75,.2)',padding:'20px 16px',display:'flex',flexDirection:'column'}}>
+                        <div style={{fontFamily:rj,fontSize:10,letterSpacing:'1.5px',textTransform:'uppercase',color:'#c8a84b',marginBottom:8,fontWeight:700}}>Monthly</div>
+                        <div style={{display:'flex',alignItems:'baseline',gap:4,marginBottom:4}}>
+                          <span style={{fontFamily:lb,fontSize:28,fontWeight:700,lineHeight:1,textDecoration:'line-through',color:'#7a8a72'}}>$49.90</span>
+                          <span style={{fontFamily:rj,fontSize:11,color:'#4caf76',fontWeight:700}}>FREE</span>
                         </div>
-                        <div style={{fontSize:11,color:'#b0c0a4',marginBottom:14,fontFamily:rj,lineHeight:1.4}}>$41.67/month · ~16% saving</div>
-                        <ul style={{listStyle:'none',flex:1,marginBottom:14,display:'flex',flexDirection:'column',gap:6}}>
-                          <li style={{fontSize:11.5,color:'#b0c0a4',display:'flex',alignItems:'flex-start',gap:6,lineHeight:1.4}}><span style={{color:'#c8a84b',fontWeight:700,flexShrink:0}}>✓</span>Everything in Monthly</li>
-                          <li style={{fontSize:11.5,color:'#b0c0a4',display:'flex',alignItems:'flex-start',gap:6,lineHeight:1.4}}><span style={{color:'#c8a84b',fontWeight:700,flexShrink:0}}>✓</span>Priority placement</li>
-                          <li style={{fontSize:11.5,color:'#b0c0a4',display:'flex',alignItems:'flex-start',gap:6,lineHeight:1.4}}><span style={{color:'#c8a84b',fontWeight:700,flexShrink:0}}>✓</span>Priority support</li>
-                          <li style={{fontSize:11.5,color:'#b0c0a4',display:'flex',alignItems:'flex-start',gap:6,lineHeight:1.4}}><span style={{color:'#c8a84b',fontWeight:700,flexShrink:0}}>✓</span>Save $98.80</li>
+                        <div style={{fontSize:11,color:'#b0c0a4',marginBottom:12,fontFamily:rj,lineHeight:1.4}}>Will be $49.90/mo later</div>
+                        <ul style={{listStyle:'none',flex:1,marginBottom:12,display:'flex',flexDirection:'column',gap:5}}>
+                          <li style={{fontSize:11,color:'#b0c0a4',display:'flex',alignItems:'flex-start',gap:5,lineHeight:1.4}}><span style={{color:'#c8a84b',fontWeight:700,flexShrink:0}}>✓</span>All ports listed</li>
+                          <li style={{fontSize:11,color:'#b0c0a4',display:'flex',alignItems:'flex-start',gap:5,lineHeight:1.4}}><span style={{color:'#c8a84b',fontWeight:700,flexShrink:0}}>✓</span>Full profile</li>
+                          <li style={{fontSize:11,color:'#b0c0a4',display:'flex',alignItems:'flex-start',gap:5,lineHeight:1.4}}><span style={{color:'#c8a84b',fontWeight:700,flexShrink:0}}>✓</span>Verified badge</li>
+                          <li style={{fontSize:11,color:'#b0c0a4',display:'flex',alignItems:'flex-start',gap:5,lineHeight:1.4}}><span style={{color:'#c8a84b',fontWeight:700,flexShrink:0}}>✓</span>Cancel anytime</li>
                         </ul>
-                        <button onClick={()=>handleCheckout('annual')} disabled={checkoutLoading} className="btn-gold" style={{padding:11,background:'#c8a84b',color:'#08100a',border:'none',fontFamily:rj,fontSize:11,letterSpacing:'1.5px',textTransform:'uppercase',fontWeight:700,cursor:checkoutLoading?'not-allowed':'pointer',width:'100%',opacity:checkoutLoading?.6:1}}>
-                          {checkoutLoading ? <span className="spinner"/> : 'Subscribe Annual'}
+                        <button onClick={()=>handleSignup('monthly')} disabled={signupLoading} className="btn-ghost" style={{padding:11,background:'transparent',border:'1px solid rgba(200,168,75,.4)',color:'#c8a84b',fontFamily:rj,fontSize:10.5,letterSpacing:'1px',textTransform:'uppercase',fontWeight:700,cursor:signupLoading?'not-allowed':'pointer',width:'100%',opacity:signupLoading?.6:1}}>
+                          {signupLoading && selectedPlan==='monthly' ? <span className="spinner"/> : 'Subscribe Monthly'}
+                        </button>
+                      </div>
+
+                      <div style={{background:'linear-gradient(180deg,rgba(200,168,75,.08),transparent)',border:'1px solid #c8a84b',padding:'20px 16px',position:'relative',display:'flex',flexDirection:'column'}}>
+                        <div style={{position:'absolute',top:-10,left:'50%',transform:'translateX(-50%)',background:'#c8a84b',color:'#08100a',fontFamily:rj,fontSize:8.5,letterSpacing:'1px',fontWeight:700,padding:'3px 8px'}}>BEST VALUE</div>
+                        <div style={{fontFamily:rj,fontSize:10,letterSpacing:'1.5px',textTransform:'uppercase',color:'#c8a84b',marginBottom:8,fontWeight:700}}>Annual</div>
+                        <div style={{display:'flex',alignItems:'baseline',gap:4,marginBottom:4}}>
+                          <span style={{fontFamily:lb,fontSize:28,fontWeight:700,lineHeight:1,textDecoration:'line-through',color:'#7a8a72'}}>$500</span>
+                          <span style={{fontFamily:rj,fontSize:11,color:'#4caf76',fontWeight:700}}>FREE</span>
+                        </div>
+                        <div style={{fontSize:11,color:'#b0c0a4',marginBottom:12,fontFamily:rj,lineHeight:1.4}}>Will be $500/year later</div>
+                        <ul style={{listStyle:'none',flex:1,marginBottom:12,display:'flex',flexDirection:'column',gap:5}}>
+                          <li style={{fontSize:11,color:'#b0c0a4',display:'flex',alignItems:'flex-start',gap:5,lineHeight:1.4}}><span style={{color:'#c8a84b',fontWeight:700,flexShrink:0}}>✓</span>Everything in Monthly</li>
+                          <li style={{fontSize:11,color:'#b0c0a4',display:'flex',alignItems:'flex-start',gap:5,lineHeight:1.4}}><span style={{color:'#c8a84b',fontWeight:700,flexShrink:0}}>✓</span>Priority placement</li>
+                          <li style={{fontSize:11,color:'#b0c0a4',display:'flex',alignItems:'flex-start',gap:5,lineHeight:1.4}}><span style={{color:'#c8a84b',fontWeight:700,flexShrink:0}}>✓</span>Priority support</li>
+                          <li style={{fontSize:11,color:'#b0c0a4',display:'flex',alignItems:'flex-start',gap:5,lineHeight:1.4}}><span style={{color:'#c8a84b',fontWeight:700,flexShrink:0}}>✓</span>Save $98.80</li>
+                        </ul>
+                        <button onClick={()=>handleSignup('annual')} disabled={signupLoading} className="btn-gold" style={{padding:11,background:'#c8a84b',color:'#08100a',border:'none',fontFamily:rj,fontSize:10.5,letterSpacing:'1px',textTransform:'uppercase',fontWeight:700,cursor:signupLoading?'not-allowed':'pointer',width:'100%',opacity:signupLoading?.6:1}}>
+                          {signupLoading && selectedPlan==='annual' ? <span className="spinner"/> : 'Subscribe Annual'}
                         </button>
                       </div>
                     </div>
 
-                    {checkoutError && (
-                      <div style={{padding:'12px 14px',background:'rgba(255,138,138,.08)',border:'1px solid rgba(255,138,138,.3)',marginBottom:14,fontFamily:rj,fontSize:12,color:'#ff8a8a',fontWeight:600}}>⚠ {checkoutError}</div>
+                    {signupError && (
+                      <div style={{padding:'12px 14px',background:'rgba(255,138,138,.08)',border:'1px solid rgba(255,138,138,.3)',marginBottom:14,fontFamily:rj,fontSize:12,color:'#ff8a8a',fontWeight:600}}>⚠ {signupError}</div>
                     )}
 
-                    {checkoutLoading && (
+                    {signupLoading && (
                       <div style={{padding:'12px 14px',background:'rgba(200,168,75,.08)',border:'1px solid rgba(200,168,75,.3)',marginBottom:14,fontFamily:rj,fontSize:12,color:'#c8a84b',fontWeight:600,textAlign:'center'}}>
-                        Creating secure checkout session, please wait...
+                        Activating your profile, please wait...
                       </div>
                     )}
 
-                    <div style={{padding:'12px 14px',background:'rgba(76,175,118,.06)',border:'1px solid rgba(76,175,118,.2)',display:'flex',alignItems:'flex-start',gap:10,marginBottom:14}}>
-                      <span style={{color:'#4caf76',fontSize:16,flexShrink:0}}>🔒</span>
+                    <div style={{padding:'12px 14px',background:'rgba(200,168,75,.04)',border:'1px solid rgba(200,168,75,.15)',display:'flex',alignItems:'flex-start',gap:10,marginBottom:14}}>
+                      <span style={{color:'#c8a84b',fontSize:16,flexShrink:0}}>ℹ️</span>
                       <div>
-                        <div style={{fontFamily:rj,fontSize:11,fontWeight:700,color:'#4caf76',marginBottom:3,letterSpacing:'.5px'}}>Secure Payment by Polar</div>
-                        <div style={{fontSize:11,color:'#b0c0a4',lineHeight:1.5}}>You&apos;ll be redirected to Polar&apos;s secure checkout. Your listing will activate automatically after successful payment.</div>
+                        <div style={{fontFamily:rj,fontSize:11,fontWeight:700,color:'#c8a84b',marginBottom:3,letterSpacing:'.5px'}}>No Payment Required</div>
+                        <div style={{fontSize:11,color:'#b0c0a4',lineHeight:1.5}}>Your listing will activate immediately. All plans are currently free during our launch period.</div>
                       </div>
                     </div>
 
                     <div style={{textAlign:'center'}}>
-                      <button onClick={()=>{if(!checkoutLoading){setFlowStep(2);setCheckoutError('');}}} disabled={checkoutLoading} style={{background:'none',border:'none',color:'#7a8a72',fontFamily:rj,fontSize:11,letterSpacing:'1px',textTransform:'uppercase',fontWeight:600,cursor:checkoutLoading?'not-allowed':'pointer',textDecoration:'underline'}}>← Back to form</button>
+                      <button onClick={()=>{if(!signupLoading){setFlowStep(2);setSignupError('');}}} disabled={signupLoading} style={{background:'none',border:'none',color:'#7a8a72',fontFamily:rj,fontSize:11,letterSpacing:'1px',textTransform:'uppercase',fontWeight:600,cursor:signupLoading?'not-allowed':'pointer',textDecoration:'underline'}}>← Back to form</button>
                     </div>
+
+                      </>
+                    )}
 
                   </div>
                 )}
