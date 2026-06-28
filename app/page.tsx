@@ -1,7 +1,6 @@
 'use client';
 import { useState } from 'react';
 import Link from 'next/link';
-import { supabase } from '@/lib/supabase';
 
 // ============================================================
 // GA4 EVENT TRACKING HELPER
@@ -499,36 +498,32 @@ export default function Home() {
     });
 
     try {
-      // 3 ay sonra expire (tüm planlar şimdilik free)
-      const expiresAt = new Date();
-      expiresAt.setMonth(expiresAt.getMonth() + 3);
-
-      const ico = fProviderType === 'agent' ? '🏢' : fProviderType === 'chandler' ? '⚓' : '🔧';
-
-      const newProvider = {
-        type: fProviderType,
-        ico: ico,
-        name: fCompanyName.trim(),
+      const payload = {
+        provider_type: fProviderType,
+        company_name: fCompanyName.trim(),
         bio: fBio.trim(),
-        ports: fPorts,
         country: fCountry,
-        svc: fProviderType === 'service' ? Array.from(fSvc) : [fProviderType],
-        phone: fPhone.trim(),
+        ports: fPorts,
         email: fEmail.trim(),
-        wa: fWhatsapp.trim() || fPhone.trim(),
-        web: fWebsite.trim(),
-        addr: fAddress.trim(),
-        person: fContactPerson.trim(),
-        plan_type: plan,
-        expires_at: expiresAt.toISOString(),
+        phone: fPhone.trim(),
+        whatsapp: fWhatsapp.trim(),
+        website: fWebsite.trim(),
+        address: fAddress.trim(),
+        contact_person: fContactPerson.trim(),
+        svc: Array.from(fSvc),
+        plan,
       };
 
-      const { error } = await supabase
-        .from('providers')
-        .insert([newProvider]);
+      const response = await fetch('/api/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
 
-      if (error) {
-        throw new Error(error.message || 'Database error. Please try again.');
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        throw new Error(data.error || 'Failed to create listing. Please try again.');
       }
 
       setSignupSuccess(true);
