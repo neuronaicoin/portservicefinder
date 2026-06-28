@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 
 // ============================================================
@@ -291,7 +291,7 @@ const PROVIDERS: Provider[] = [
 const MAX_PORTS = 3;
 const MIN_BIO = 50;
 
-function runSearch(country: string, port: string, cat: string, ms: Set<string>) {
+function runSearch(allProviders: Provider[], country: string, port: string, cat: string, ms: Set<string>) {
   const ok = (p: Provider) => {
     if (cat === 'all') return true;
     if (cat === 'agent') return p.type === 'agent';
@@ -299,9 +299,9 @@ function runSearch(country: string, port: string, cat: string, ms: Set<string>) 
     if (cat === 'service') { if (p.type !== 'service') return false; return ms.size === 0 || p.svc.some(s => ms.has(s)); }
     return false;
   };
-  let r = PROVIDERS.filter(p => p.ports.includes(port) && ok(p));
+  let r = allProviders.filter(p => p.ports.includes(port) && ok(p));
   let fb = false;
-  if (!r.length && country) { r = PROVIDERS.filter(p => p.country === country && ok(p)); fb = true; }
+  if (!r.length && country) { r = allProviders.filter(p => p.country === country && ok(p)); fb = true; }
   return { r, fb };
 }
 
@@ -313,6 +313,19 @@ export default function Home() {
   const [done, setDone] = useState(false);
   const [results, setResults] = useState<Provider[]>([]);
   const [fb, setFb] = useState(false);
+  const [dbProviders, setDbProviders] = useState<Provider[]>([]);
+
+  // Supabase'den providerları yükle
+  useEffect(() => {
+    fetch('/api/providers')
+      .then(r => r.json())
+      .then(data => {
+        if (data.providers && Array.isArray(data.providers)) {
+          setDbProviders(data.providers);
+        }
+      })
+      .catch(err => console.error('Failed to load DB providers:', err));
+  }, []);
   const [detail, setDetail] = useState<Provider | null>(null);
   const [mobileMenu, setMobileMenu] = useState(false);
 
@@ -358,7 +371,9 @@ export default function Home() {
 
   function doSearch(c: string, p: string, s: string, m: Set<string>) {
     if (!c || !p) { setDone(false); return; }
-    const res = runSearch(c, p, s, m);
+    // Yeni kayıtlar (dbProviders) önce, sonra hardcoded
+    const allProviders = [...dbProviders, ...PROVIDERS];
+    const res = runSearch(allProviders, c, p, s, m);
     setResults(res.r); setFb(res.fb); setDone(true);
 
     // 🎯 GA4 EVENT: Search performed
@@ -524,6 +539,28 @@ export default function Home() {
 
       if (!response.ok || !data.success) {
         throw new Error(data.error || 'Failed to create listing. Please try again.');
+      }
+
+      // Yeni provider'ı listeye ekle (refresh'siz arama yapılabilsin)
+      if (data.data && data.data[0]) {
+        const row = data.data[0];
+        const newProv: Provider = {
+          id: row.id,
+          type: row.type,
+          ico: row.display_icon || (row.type === 'agent' ? '🏢' : row.type === 'chandler' ? '⚓' : '🔧'),
+          name: row.name,
+          bio: row.bio,
+          ports: row.ports || [],
+          country: row.country,
+          svc: row.svc || [],
+          phone: row.phone || '',
+          email: row.email || '',
+          wa: row.whatsapp || row.phone || '',
+          web: row.website || '',
+          addr: row.address || '',
+          person: row.contact_person || '',
+        };
+        setDbProviders(prev => [newProv, ...prev]);
       }
 
       setSignupSuccess(true);
