@@ -77,7 +77,7 @@ const CATEGORIES: Category[] = [
     tools: [
       { href: '/voyage/tce', icon: '💵', title: 'TCE Calculator', desc: 'Time charter equivalent + Worldscale.', status: 'ready' },
       { href: '/voyage/laytime', icon: '⏱️', title: 'Laytime / Demurrage', desc: 'Auto SoF & demurrage statements.', status: 'ready' },
-      { href: '/voyage/hire', icon: '📊', title: 'Hire Statement', desc: 'Time charter hire calc + bunker.', status: 'soon' },
+      { href: '/voyage/hire', icon: '📊', title: 'Hire Statement', desc: 'Time charter hire calc + bunker.', status: 'ready' },
       { href: '/voyage/cp', icon: '📜', title: 'CP Manager (AI)', desc: 'Upload CP — AI extracts terms.', status: 'ai' },
     ],
   },
