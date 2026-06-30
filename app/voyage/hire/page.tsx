@@ -1,629 +1,635 @@
 'use client';
+import { useState, useEffect, useMemo } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
+import { saveItem, loadItem, genId } from '@/lib/voyage-storage';
 
-import { useState, useEffect, useMemo, useCallback } from 'react';
+const lb = "'Libre Bodoni', serif";
+const rj = "'Rajdhani', sans-serif";
+const g = { color: '#c8a84b', fontStyle: 'italic' } as React.CSSProperties;
 
-/* ============================================================
-   Hire Statement — Time Charter hire calculation
-   /voyage/hire
-   ============================================================ */
-
-type OffHire = {
+interface OffHire {
   id: string;
   reason: string;
-  from: string; // datetime-local
-  to: string;   // datetime-local
-  // off-hire bunker consumed (charterer not liable) — optional
-  bunkerVlsfo: string;
-  bunkerMgo: string;
-};
+  from: string;
+  to: string;
+}
 
-type HireState = {
-  // header
-  vessel: string;
+interface OtherItem {
+  id: string;
+  label: string;
+  amount: number;
+  dir: 'add' | 'deduct';
+}
+
+interface HireData {
+  vesselName: string;
   imo: string;
-  charterer: string;
   owner: string;
+  charterer: string;
   cpDate: string;
   voyageNo: string;
   statementNo: string;
-
-  // on-hire period
-  deliveryDate: string;   // datetime-local
-  redeliveryDate: string; // datetime-local
-  hireRate: string;       // $/day
-
-  // commissions / CVE
-  cveRate: string;        // $/month (lumpsum CVE) e.g. 1500
-  addressCommPct: string; // %
-  brokeragePct: string;   // %
-
-  // bunkers on delivery (charterer buys from owner -> charterer owes owner)
-  delVlsfoQty: string;
-  delVlsfoPrice: string;
-  delMgoQty: string;
-  delMgoPrice: string;
-
-  // bunkers on redelivery (owner buys from charterer -> owner owes charterer)
-  redVlsfoQty: string;
-  redVlsfoPrice: string;
-  redMgoQty: string;
-  redMgoPrice: string;
-
-  // off-hire
+  delivery: string;
+  redelivery: string;
+  hireRate: number;
+  cveMonthly: number;
+  addressCommPct: number;
+  brokeragePct: number;
+  delVlsfoQty: number;
+  delVlsfoPrice: number;
+  delMgoQty: number;
+  delMgoPrice: number;
+  redVlsfoQty: number;
+  redVlsfoPrice: number;
+  redMgoQty: number;
+  redMgoPrice: number;
   offHires: OffHire[];
+  others: OtherItem[];
+  paid: number;
+  notes: string;
+}
 
-  // other deductions (claims, advances, ports paid by charterer etc.)
-  otherLabel1: string;
-  otherAmount1: string; // + owner owes charterer / - charterer owes owner. Sign handled by direction
-  otherDir1: 'deduct' | 'add';
-  otherLabel2: string;
-  otherAmount2: string;
-  otherDir2: 'deduct' | 'add';
-
-  // payments already made by charterer
-  paid: string;
-};
-
-const todayLocal = () => {
-  const d = new Date();
-  d.setSeconds(0, 0);
-  const off = d.getTimezoneOffset();
-  const local = new Date(d.getTime() - off * 60000);
-  return local.toISOString().slice(0, 16);
-};
-
-const blank = (): HireState => ({
-  vessel: '',
+const DEFAULT_DATA: HireData = {
+  vesselName: '',
   imo: '',
-  charterer: '',
   owner: '',
+  charterer: '',
   cpDate: '',
   voyageNo: '',
   statementNo: '1',
-  deliveryDate: todayLocal(),
-  redeliveryDate: todayLocal(),
-  hireRate: '',
-  cveRate: '1500',
-  addressCommPct: '3.75',
-  brokeragePct: '1.25',
-  delVlsfoQty: '',
-  delVlsfoPrice: '',
-  delMgoQty: '',
-  delMgoPrice: '',
-  redVlsfoQty: '',
-  redVlsfoPrice: '',
-  redMgoQty: '',
-  redMgoPrice: '',
+  delivery: '',
+  redelivery: '',
+  hireRate: 0,
+  cveMonthly: 1500,
+  addressCommPct: 3.75,
+  brokeragePct: 1.25,
+  delVlsfoQty: 0,
+  delVlsfoPrice: 0,
+  delMgoQty: 0,
+  delMgoPrice: 0,
+  redVlsfoQty: 0,
+  redVlsfoPrice: 0,
+  redMgoQty: 0,
+  redMgoPrice: 0,
   offHires: [],
-  otherLabel1: '',
-  otherAmount1: '',
-  otherDir1: 'deduct',
-  otherLabel2: '',
-  otherAmount2: '',
-  otherDir2: 'deduct',
-  paid: '',
-});
-
-const C = {
-  bg: '#0a2540',
-  card: '#0f2f52',
-  card2: '#13395f',
-  border: '#1d4a78',
-  ink: '#e8eef5',
-  sub: '#93a7be',
-  gold: '#fbbf24',
-  green: '#34d399',
-  red: '#f87171',
-  blue: '#60a5fa',
+  others: [],
+  paid: 0,
+  notes: '',
 };
 
-const n = (v: string) => {
-  const x = parseFloat(v);
-  return isNaN(x) ? 0 : x;
-};
-
-const fmt = (v: number, dp = 2) =>
-  v.toLocaleString('en-US', { minimumFractionDigits: dp, maximumFractionDigits: dp });
-
-const money = (v: number) =>
-  (v < 0 ? '-$' : '$') + Math.abs(v).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-
-const hoursBetween = (a: string, b: string) => {
+function hoursBetween(a: string, b: string): number {
   if (!a || !b) return 0;
   const t1 = new Date(a).getTime();
   const t2 = new Date(b).getTime();
   if (isNaN(t1) || isNaN(t2)) return 0;
   return (t2 - t1) / 3600000;
+}
+
+function calculate(d: HireData) {
+  const grossHours = hoursBetween(d.delivery, d.redelivery);
+  const offHireHours = d.offHires.reduce((s, o) => s + Math.max(0, hoursBetween(o.from, o.to)), 0);
+  const onHireHours = Math.max(0, grossHours - offHireHours);
+
+  const grossDays = grossHours / 24;
+  const offHireDays = offHireHours / 24;
+  const onHireDays = onHireHours / 24;
+
+  const hireNet = onHireDays * d.hireRate;
+  const offHireDeduction = offHireDays * d.hireRate;
+
+  const cve = (d.cveMonthly / 30) * onHireDays;
+
+  const commBase = hireNet + cve;
+  const addrComm = commBase * (d.addressCommPct / 100);
+  const brokerage = commBase * (d.brokeragePct / 100);
+  const totalComm = addrComm + brokerage;
+
+  const bunkerDelivery = d.delVlsfoQty * d.delVlsfoPrice + d.delMgoQty * d.delMgoPrice;
+  const bunkerRedelivery = d.redVlsfoQty * d.redVlsfoPrice + d.redMgoQty * d.redMgoPrice;
+
+  const otherAdj = d.others.reduce((s, o) => s + o.amount * (o.dir === 'add' ? 1 : -1), 0);
+
+  const totalDue = hireNet + bunkerDelivery - cve - totalComm - bunkerRedelivery + otherAdj;
+  const balance = totalDue - d.paid;
+
+  return {
+    grossDays,
+    offHireDays,
+    onHireDays,
+    hireNet,
+    offHireDeduction,
+    cve,
+    addrComm,
+    brokerage,
+    totalComm,
+    bunkerDelivery,
+    bunkerRedelivery,
+    otherAdj,
+    totalDue,
+    balance,
+  };
+}
+
+function fmt(n: number, dec = 2): string {
+  if (!isFinite(n)) return '–';
+  return n.toLocaleString('en-US', { minimumFractionDigits: dec, maximumFractionDigits: dec });
+}
+function money(n: number): string {
+  return (n < 0 ? '-$' : '$') + fmt(Math.abs(n), 2);
+}
+
+const card: React.CSSProperties = {
+  background: '#111c13',
+  border: '1px solid rgba(200,168,75,.18)',
+  padding: '20px 18px',
+  borderRadius: 4,
+  marginBottom: 16,
+};
+const sectionTitle: React.CSSProperties = {
+  fontFamily: rj,
+  fontSize: 11,
+  letterSpacing: '2px',
+  textTransform: 'uppercase',
+  color: '#c8a84b',
+  fontWeight: 700,
+  marginBottom: 14,
+  paddingBottom: 8,
+  borderBottom: '1px solid rgba(200,168,75,.12)',
+};
+const label: React.CSSProperties = {
+  display: 'block',
+  fontFamily: rj,
+  fontSize: 10,
+  letterSpacing: '.5px',
+  textTransform: 'uppercase',
+  color: '#7a8a72',
+  fontWeight: 600,
+  marginBottom: 4,
+};
+const inputStyle: React.CSSProperties = {
+  width: '100%',
+  background: '#0c1610',
+  border: '1px solid rgba(200,168,75,.2)',
+  color: '#f5f0e8',
+  padding: '7px 9px',
+  fontFamily: rj,
+  fontSize: 12.5,
+  fontWeight: 500,
+  borderRadius: 3,
+  boxSizing: 'border-box',
+};
+const ghostBtn: React.CSSProperties = {
+  background: 'transparent',
+  color: '#c8a84b',
+  border: '1px solid rgba(200,168,75,.4)',
+  padding: '8px 14px',
+  fontFamily: rj,
+  fontSize: 11,
+  letterSpacing: '1.5px',
+  textTransform: 'uppercase',
+  fontWeight: 700,
+  cursor: 'pointer',
+  borderRadius: 4,
+};
+const goldBtn: React.CSSProperties = {
+  background: '#c8a84b',
+  color: '#08100a',
+  border: 'none',
+  padding: '8px 16px',
+  fontFamily: rj,
+  fontSize: 11,
+  letterSpacing: '1.5px',
+  textTransform: 'uppercase',
+  fontWeight: 700,
+  cursor: 'pointer',
+  borderRadius: 4,
+};
+const rowStyle: React.CSSProperties = {
+  display: 'flex',
+  justifyContent: 'space-between',
+  padding: '8px 0',
+  borderBottom: '1px dashed rgba(200,168,75,.1)',
+  fontFamily: rj,
+  fontSize: 13,
 };
 
 export default function HireStatementPage() {
-  const [s, setS] = useState<HireState>(blank);
-  const [savedList, setSavedList] = useState<{ id: string; name: string }[]>([]);
-  const [currentId, setCurrentId] = useState<string | null>(null);
-  const [toast, setToast] = useState('');
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const existingId = searchParams.get('id');
 
-  // load saved list + URL id
+  const [data, setData] = useState<HireData>(DEFAULT_DATA);
+  const [recordId, setRecordId] = useState<string | null>(existingId);
+  const [recordName, setRecordName] = useState('');
+  const [showSave, setShowSave] = useState(false);
+  const [saveMsg, setSaveMsg] = useState('');
+
   useEffect(() => {
-    try {
-      const idx = JSON.parse(localStorage.getItem('psf_hire_index') || '[]');
-      setSavedList(Array.isArray(idx) ? idx : []);
-      const params = new URLSearchParams(window.location.search);
-      const id = params.get('id');
-      if (id) {
-        const raw = localStorage.getItem('psf_hire_' + id);
-        if (raw) {
-          setS(JSON.parse(raw));
-          setCurrentId(id);
-        }
+    if (existingId) {
+      const saved = loadItem<HireData>('hire', existingId);
+      if (saved) {
+        setData(saved.data);
+        setRecordName(saved.name);
       }
-    } catch {
-      /* ignore */
     }
-  }, []);
+  }, [existingId]);
 
-  const set = useCallback(<K extends keyof HireState>(k: K, v: HireState[K]) => {
-    setS((p) => ({ ...p, [k]: v }));
-  }, []);
+  const calc = useMemo(() => calculate(data), [data]);
 
-  const showToast = (m: string) => {
-    setToast(m);
-    setTimeout(() => setToast(''), 2200);
-  };
+  function update<K extends keyof HireData>(key: K, value: HireData[K]) {
+    setData((prev) => ({ ...prev, [key]: value }));
+  }
+  function num(v: string): number {
+    return parseFloat(v) || 0;
+  }
 
-  /* ---------- Off-hire helpers ---------- */
-  const addOffHire = () => {
-    setS((p) => ({
-      ...p,
-      offHires: [
-        ...p.offHires,
-        { id: Math.random().toString(36).slice(2, 9), reason: '', from: todayLocal(), to: todayLocal(), bunkerVlsfo: '', bunkerMgo: '' },
-      ],
-    }));
-  };
-  const updOffHire = (id: string, k: keyof OffHire, v: string) => {
-    setS((p) => ({ ...p, offHires: p.offHires.map((o) => (o.id === id ? { ...o, [k]: v } : o)) }));
-  };
-  const delOffHire = (id: string) => {
-    setS((p) => ({ ...p, offHires: p.offHires.filter((o) => o.id !== id) }));
-  };
+  function addOffHire() {
+    setData((p) => ({ ...p, offHires: [...p.offHires, { id: genId(), reason: '', from: '', to: '' }] }));
+  }
+  function updOffHire(id: string, key: keyof OffHire, value: string) {
+    setData((p) => ({ ...p, offHires: p.offHires.map((o) => (o.id === id ? { ...o, [key]: value } : o)) }));
+  }
+  function delOffHire(id: string) {
+    setData((p) => ({ ...p, offHires: p.offHires.filter((o) => o.id !== id) }));
+  }
 
-  /* ---------- Calculations ---------- */
-  const calc = useMemo(() => {
-    const grossHours = hoursBetween(s.deliveryDate, s.redeliveryDate);
-    const offHireHours = s.offHires.reduce((sum, o) => sum + Math.max(0, hoursBetween(o.from, o.to)), 0);
-    const onHireHours = Math.max(0, grossHours - offHireHours);
+  function addOther() {
+    setData((p) => ({ ...p, others: [...p.others, { id: genId(), label: '', amount: 0, dir: 'deduct' }] }));
+  }
+  function updOther<K extends keyof OtherItem>(id: string, key: K, value: OtherItem[K]) {
+    setData((p) => ({ ...p, others: p.others.map((o) => (o.id === id ? { ...o, [key]: value } : o)) }));
+  }
+  function delOther(id: string) {
+    setData((p) => ({ ...p, others: p.others.filter((o) => o.id !== id) }));
+  }
 
-    const grossDays = grossHours / 24;
-    const offHireDays = offHireHours / 24;
-    const onHireDays = onHireHours / 24;
+  function handleSave() {
+    const name = recordName.trim() || `${data.vesselName || 'Vessel'} — Hire #${data.statementNo || '1'}`;
+    const id = recordId || genId();
+    saveItem('hire', name, data, id);
+    setRecordId(id);
+    setRecordName(name);
+    setSaveMsg('✓ Saved');
+    setShowSave(false);
+    setTimeout(() => setSaveMsg(''), 3000);
+  }
 
-    const rate = n(s.hireRate);
-    const hireGross = (grossDays) * rate;            // if no off-hire deducted
-    const offHireDeduction = offHireDays * rate;
-    const hireNet = onHireDays * rate;               // hire actually owed for on-hire time
+  function handleReset() {
+    if (!confirm('Reset all fields?')) return;
+    setData(DEFAULT_DATA);
+    setRecordId(null);
+    setRecordName('');
+    router.replace('/voyage/hire');
+  }
 
-    // CVE: $/month -> pro-rata on ON-HIRE days (30-day month convention)
-    const cveMonthly = n(s.cveRate);
-    const cve = (cveMonthly / 30) * onHireDays;
-
-    // commission on (hire net + cve) — standard: addr comm + brokerage
-    const commBase = hireNet + cve;
-    const addrComm = commBase * (n(s.addressCommPct) / 100);
-    const brokerage = commBase * (n(s.brokeragePct) / 100);
-    const totalComm = addrComm + brokerage;
-
-    // Bunkers on delivery: charterer OWES owner
-    const delV = n(s.delVlsfoQty) * n(s.delVlsfoPrice);
-    const delM = n(s.delMgoQty) * n(s.delMgoPrice);
-    const bunkerDelivery = delV + delM;
-
-    // Bunkers on redelivery: owner OWES charterer
-    const redV = n(s.redVlsfoQty) * n(s.redVlsfoPrice);
-    const redM = n(s.redMgoQty) * n(s.redMgoPrice);
-    const bunkerRedelivery = redV + redM;
-
-    const netBunkerToOwner = bunkerDelivery - bunkerRedelivery; // + charterer owes owner
-
-    // other adjustments
-    const o1 = n(s.otherAmount1) * (s.otherDir1 === 'deduct' ? -1 : 1);
-    const o2 = n(s.otherAmount2) * (s.otherDir2 === 'deduct' ? -1 : 1);
-    const otherAdj = o1 + o2; // + increases amount charterer owes owner
-
-    // Amount charterer owes owner (gross of payments):
-    //   hire (on-hire) + bunker delivery - CVE - commissions - bunker redelivery + other
-    const totalDue =
-      hireNet
-      + bunkerDelivery
-      - cve
-      - totalComm
-      - bunkerRedelivery
-      + otherAdj;
-
-    const paid = n(s.paid);
-    const balance = totalDue - paid;
-
-    return {
-      grossHours, offHireHours, onHireHours,
-      grossDays, offHireDays, onHireDays,
-      rate, hireGross, offHireDeduction, hireNet,
-      cve, addrComm, brokerage, totalComm,
-      bunkerDelivery, bunkerRedelivery, netBunkerToOwner,
-      delV, delM, redV, redM,
-      otherAdj, totalDue, paid, balance,
-    };
-  }, [s]);
-
-  /* ---------- Save / Load / Reset ---------- */
-  const save = () => {
-    try {
-      const id = currentId || Math.random().toString(36).slice(2, 9);
-      const name = (s.vessel || 'Hire') + ' #' + (s.statementNo || '1');
-      localStorage.setItem('psf_hire_' + id, JSON.stringify(s));
-      const idx = JSON.parse(localStorage.getItem('psf_hire_index') || '[]') as { id: string; name: string }[];
-      const next = idx.filter((x) => x.id !== id);
-      next.unshift({ id, name });
-      localStorage.setItem('psf_hire_index', JSON.stringify(next));
-      setSavedList(next);
-      setCurrentId(id);
-      const url = new URL(window.location.href);
-      url.searchParams.set('id', id);
-      window.history.replaceState({}, '', url.toString());
-      showToast('Saved');
-    } catch {
-      showToast('Save failed — storage unavailable');
-    }
-  };
-
-  const load = (id: string) => {
-    try {
-      const raw = localStorage.getItem('psf_hire_' + id);
-      if (raw) {
-        setS(JSON.parse(raw));
-        setCurrentId(id);
-        const url = new URL(window.location.href);
-        url.searchParams.set('id', id);
-        window.history.replaceState({}, '', url.toString());
-        showToast('Loaded');
-      }
-    } catch {
-      showToast('Load failed');
-    }
-  };
-
-  const remove = (id: string) => {
-    localStorage.removeItem('psf_hire_' + id);
-    const next = savedList.filter((x) => x.id !== id);
-    localStorage.setItem('psf_hire_index', JSON.stringify(next));
-    setSavedList(next);
-    if (currentId === id) {
-      setCurrentId(null);
-      const url = new URL(window.location.href);
-      url.searchParams.delete('id');
-      window.history.replaceState({}, '', url.toString());
-    }
-  };
-
-  const reset = () => {
-    if (confirm('Clear this statement and start fresh?')) {
-      setS(blank());
-      setCurrentId(null);
-      const url = new URL(window.location.href);
-      url.searchParams.delete('id');
-      window.history.replaceState({}, '', url.toString());
-    }
-  };
-
-  const doPrint = () => window.print();
-
-  /* ---------- Small UI helpers ---------- */
-  const Field = ({ label, children, hint }: { label: string; children: React.ReactNode; hint?: string }) => (
-    <label style={{ display: 'block', marginBottom: 12 }}>
-      <span style={{ display: 'block', fontSize: 12, color: C.sub, marginBottom: 5, fontWeight: 600 }}>{label}</span>
-      {children}
-      {hint && <span style={{ display: 'block', fontSize: 11, color: C.sub, marginTop: 3 }}>{hint}</span>}
-    </label>
-  );
-
-  const inputStyle: React.CSSProperties = {
-    width: '100%',
-    padding: '10px 12px',
-    background: C.bg,
-    border: `1px solid ${C.border}`,
-    borderRadius: 8,
-    color: C.ink,
-    fontSize: 14,
-    outline: 'none',
-    boxSizing: 'border-box',
-  };
-
-  const Section = ({ icon, title, children }: { icon: string; title: string; children: React.ReactNode }) => (
-    <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 14, padding: 18, marginBottom: 16 }}>
-      <h3 style={{ margin: '0 0 14px', fontSize: 15, color: C.gold, display: 'flex', alignItems: 'center', gap: 8 }}>
-        <span>{icon}</span> {title}
-      </h3>
-      {children}
-    </div>
-  );
-
-  const Row = ({ children, cols = 2 }: { children: React.ReactNode; cols?: number }) => (
-    <div style={{ display: 'grid', gridTemplateColumns: `repeat(${cols}, 1fr)`, gap: 12 }}>{children}</div>
-  );
-
-  const StatLine = ({ label, value, color = C.ink, strong = false }: { label: string; value: string; color?: string; strong?: boolean }) => (
-    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '7px 0', borderBottom: `1px solid ${C.border}`, fontSize: strong ? 15 : 13.5 }}>
-      <span style={{ color: C.sub }}>{label}</span>
-      <span style={{ color, fontWeight: strong ? 800 : 600, fontVariantNumeric: 'tabular-nums' }}>{value}</span>
-    </div>
-  );
+  function handlePrint() {
+    window.print();
+  }
 
   return (
-    <div style={{ minHeight: '100vh', background: C.bg, color: C.ink, fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif" }}>
-      <style>{`
-        @media print {
-          .no-print { display: none !important; }
-          .print-only { display: block !important; }
-          body { background: #fff !important; }
-        }
-        .print-only { display: none; }
-        input::placeholder { color: #5a7494; }
-        input:focus, select:focus { border-color: ${C.gold} !important; }
-        @media (max-width: 640px) {
-          .grid-2 { grid-template-columns: 1fr 1fr !important; }
-          .hire-cols { grid-template-columns: 1fr !important; }
-        }
-      `}</style>
+    <div>
+      <div style={{ marginBottom: 24 }}>
+        <div style={{ fontFamily: rj, fontSize: 10, letterSpacing: '2px', textTransform: 'uppercase', color: '#c8a84b', fontWeight: 700, marginBottom: 8 }}>
+          ⚓ Voyage Hub · Hire Statement
+        </div>
+        <h1 style={{ fontFamily: lb, fontSize: 'clamp(22px,3vw,32px)', fontWeight: 700, lineHeight: 1.1, marginBottom: 8 }}>
+          Hire <em style={g}>Statement</em>
+        </h1>
+        <p style={{ fontSize: 13, color: '#b0c0a4', lineHeight: 1.6, maxWidth: 720 }}>
+          Time charter hire calculation — on-hire / off-hire periods, bunkers on delivery and
+          redelivery, CVE, commissions, and balance due. Always reconcile against the charter party.
+        </p>
+      </div>
 
-      <div style={{ maxWidth: 1080, margin: '0 auto', padding: '20px 16px 80px' }}>
-        {/* Header */}
-        <div className="no-print" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8, flexWrap: 'wrap', gap: 12 }}>
-          <div>
-            <div style={{ fontSize: 12, color: C.gold, fontWeight: 700, letterSpacing: 0.5 }}>📋 CHARTER &amp; COMMERCIAL</div>
-            <h1 style={{ margin: '4px 0 0', fontSize: 26, fontWeight: 800 }}>Hire Statement</h1>
-            <p style={{ margin: '4px 0 0', color: C.sub, fontSize: 13.5 }}>
-              Time charter hire, bunkers on delivery/redelivery, off-hire &amp; commissions.
-            </p>
-          </div>
-          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-            <button onClick={save} style={btn(C.gold, C.bg)}>💾 Save</button>
-            <button onClick={doPrint} style={btn(C.blue, C.bg)}>🖨️ Print / PDF</button>
-            <button onClick={reset} style={btn('transparent', C.sub, C.border)}>↺ Reset</button>
+      <div className="action-bar" style={{ display: 'flex', gap: 10, marginBottom: 22, flexWrap: 'wrap', alignItems: 'center' }}>
+        <button onClick={() => setShowSave(true)} style={goldBtn}>💾 Save</button>
+        <button onClick={handlePrint} style={ghostBtn}>🖨️ Print / PDF</button>
+        <button onClick={handleReset} style={{ ...ghostBtn, color: '#ff8a8a', borderColor: 'rgba(255,138,138,.3)' }}>🗑️ Reset</button>
+        {saveMsg && <span style={{ color: '#4caf76', fontFamily: rj, fontSize: 12, fontWeight: 600 }}>{saveMsg}</span>}
+        {recordName && <span style={{ color: '#7a8a72', fontFamily: rj, fontSize: 11, marginLeft: 'auto' }}>📂 {recordName}</span>}
+      </div>
+
+      {showSave && (
+        <div style={{ ...card, background: 'rgba(200,168,75,.05)', borderColor: 'rgba(200,168,75,.4)' }}>
+          <label style={label}>Name</label>
+          <input type="text" value={recordName} onChange={(e) => setRecordName(e.target.value)} placeholder="e.g. MV NEURONAI — Q1 Hire Statement" style={{ ...inputStyle, marginBottom: 10 }} />
+          <div style={{ display: 'flex', gap: 8 }}>
+            <button onClick={handleSave} style={{ ...goldBtn, padding: '8px 14px', letterSpacing: '1px' }}>Save</button>
+            <button onClick={() => setShowSave(false)} style={ghostBtn}>Cancel</button>
           </div>
         </div>
+      )}
 
-        {/* Saved list */}
-        {savedList.length > 0 && (
-          <div className="no-print" style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 16 }}>
-            {savedList.map((x) => (
-              <span key={x.id} style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: currentId === x.id ? C.card2 : C.card, border: `1px solid ${currentId === x.id ? C.gold : C.border}`, borderRadius: 20, padding: '5px 8px 5px 12px', fontSize: 12.5 }}>
-                <button onClick={() => load(x.id)} style={{ background: 'none', border: 'none', color: C.ink, cursor: 'pointer', fontSize: 12.5 }}>{x.name}</button>
-                <button onClick={() => remove(x.id)} style={{ background: 'none', border: 'none', color: C.red, cursor: 'pointer', fontSize: 14, lineHeight: 1 }}>×</button>
-              </span>
-            ))}
-          </div>
-        )}
-
-        <div className="hire-cols" style={{ display: 'grid', gridTemplateColumns: '1.3fr 1fr', gap: 16, alignItems: 'start' }}>
-          {/* LEFT: inputs */}
+      <div style={card}>
+        <div style={sectionTitle}>1. Vessel &amp; Charter</div>
+        <div className="g3" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 12 }}>
           <div>
-            <Section icon="🚢" title="Vessel & Charter">
-              <Row>
-                <Field label="Vessel"><input style={inputStyle} value={s.vessel} onChange={(e) => set('vessel', e.target.value)} placeholder="MV NEURONAI" /></Field>
-                <Field label="IMO"><input style={inputStyle} value={s.imo} onChange={(e) => set('imo', e.target.value)} placeholder="9876543" /></Field>
-              </Row>
-              <Row>
-                <Field label="Owner / Disponent Owner"><input style={inputStyle} value={s.owner} onChange={(e) => set('owner', e.target.value)} placeholder="ABC Shipping Ltd" /></Field>
-                <Field label="Charterer"><input style={inputStyle} value={s.charterer} onChange={(e) => set('charterer', e.target.value)} placeholder="XYZ Chartering" /></Field>
-              </Row>
-              <Row cols={3}>
-                <Field label="CP Date"><input type="date" style={inputStyle} value={s.cpDate} onChange={(e) => set('cpDate', e.target.value)} /></Field>
-                <Field label="Voyage No."><input style={inputStyle} value={s.voyageNo} onChange={(e) => set('voyageNo', e.target.value)} placeholder="V-01" /></Field>
-                <Field label="Statement No."><input style={inputStyle} value={s.statementNo} onChange={(e) => set('statementNo', e.target.value)} placeholder="1" /></Field>
-              </Row>
-            </Section>
-
-            <Section icon="⏱️" title="Hire Period">
-              <Row>
-                <Field label="Delivery (on-hire)"><input type="datetime-local" style={inputStyle} value={s.deliveryDate} onChange={(e) => set('deliveryDate', e.target.value)} /></Field>
-                <Field label="Redelivery (off-hire)"><input type="datetime-local" style={inputStyle} value={s.redeliveryDate} onChange={(e) => set('redeliveryDate', e.target.value)} /></Field>
-              </Row>
-              <Field label="Hire Rate (USD / day)" hint="Daily hire as per charter party.">
-                <input type="number" style={inputStyle} value={s.hireRate} onChange={(e) => set('hireRate', e.target.value)} placeholder="15000" />
-              </Field>
-              <div style={{ fontSize: 12.5, color: C.sub, background: C.bg, border: `1px solid ${C.border}`, borderRadius: 8, padding: '8px 10px' }}>
-                Gross period: <b style={{ color: C.ink }}>{fmt(calc.grossDays, 4)} days</b> ({fmt(calc.grossHours, 1)} h)
-                {calc.offHireHours > 0 && <> · Off-hire <b style={{ color: C.red }}>{fmt(calc.offHireDays, 4)} d</b> · On-hire <b style={{ color: C.green }}>{fmt(calc.onHireDays, 4)} d</b></>}
-              </div>
-            </Section>
-
-            <Section icon="⏸️" title="Off-Hire Periods">
-              {s.offHires.length === 0 && <p style={{ color: C.sub, fontSize: 13, margin: '0 0 12px' }}>No off-hire. Add periods (breakdown, deviation, detention) to deduct from hire.</p>}
-              {s.offHires.map((o, i) => {
-                const h = Math.max(0, hoursBetween(o.from, o.to));
-                return (
-                  <div key={o.id} style={{ background: C.bg, border: `1px solid ${C.border}`, borderRadius: 10, padding: 12, marginBottom: 10 }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                      <b style={{ fontSize: 13, color: C.red }}>Off-hire #{i + 1} — {fmt(h / 24, 3)} d ({fmt(h, 1)} h)</b>
-                      <button onClick={() => delOffHire(o.id)} style={{ background: 'none', border: 'none', color: C.red, cursor: 'pointer', fontSize: 13 }}>Delete</button>
-                    </div>
-                    <Field label="Reason"><input style={inputStyle} value={o.reason} onChange={(e) => updOffHire(o.id, 'reason', e.target.value)} placeholder="ME breakdown / deviation" /></Field>
-                    <Row>
-                      <Field label="From"><input type="datetime-local" style={inputStyle} value={o.from} onChange={(e) => updOffHire(o.id, 'from', e.target.value)} /></Field>
-                      <Field label="To"><input type="datetime-local" style={inputStyle} value={o.to} onChange={(e) => updOffHire(o.id, 'to', e.target.value)} /></Field>
-                    </Row>
-                  </div>
-                );
-              })}
-              <button onClick={addOffHire} style={{ ...btn(C.card2, C.gold, C.border), width: '100%' }}>+ Add Off-Hire Period</button>
-            </Section>
-
-            <Section icon="⛽" title="Bunkers on Delivery (charterer pays owner)">
-              <Row cols={2}>
-                <Field label="VLSFO Qty (MT)"><input type="number" style={inputStyle} value={s.delVlsfoQty} onChange={(e) => set('delVlsfoQty', e.target.value)} placeholder="350" /></Field>
-                <Field label="VLSFO Price ($/MT)"><input type="number" style={inputStyle} value={s.delVlsfoPrice} onChange={(e) => set('delVlsfoPrice', e.target.value)} placeholder="580" /></Field>
-              </Row>
-              <Row cols={2}>
-                <Field label="MGO Qty (MT)"><input type="number" style={inputStyle} value={s.delMgoQty} onChange={(e) => set('delMgoQty', e.target.value)} placeholder="80" /></Field>
-                <Field label="MGO Price ($/MT)"><input type="number" style={inputStyle} value={s.delMgoPrice} onChange={(e) => set('delMgoPrice', e.target.value)} placeholder="780" /></Field>
-              </Row>
-              <div style={{ fontSize: 13, color: C.green, fontWeight: 700 }}>Bunker on delivery: {money(calc.bunkerDelivery)}</div>
-            </Section>
-
-            <Section icon="⛽" title="Bunkers on Redelivery (owner pays charterer)">
-              <Row cols={2}>
-                <Field label="VLSFO Qty (MT)"><input type="number" style={inputStyle} value={s.redVlsfoQty} onChange={(e) => set('redVlsfoQty', e.target.value)} placeholder="350" /></Field>
-                <Field label="VLSFO Price ($/MT)"><input type="number" style={inputStyle} value={s.redVlsfoPrice} onChange={(e) => set('redVlsfoPrice', e.target.value)} placeholder="580" /></Field>
-              </Row>
-              <Row cols={2}>
-                <Field label="MGO Qty (MT)"><input type="number" style={inputStyle} value={s.redMgoQty} onChange={(e) => set('redMgoQty', e.target.value)} placeholder="80" /></Field>
-                <Field label="MGO Price ($/MT)"><input type="number" style={inputStyle} value={s.redMgoPrice} onChange={(e) => set('redMgoPrice', e.target.value)} placeholder="780" /></Field>
-              </Row>
-              <div style={{ fontSize: 13, color: C.red, fontWeight: 700 }}>Bunker on redelivery: {money(calc.bunkerRedelivery)}</div>
-            </Section>
-
-            <Section icon="📉" title="Commissions & CVE">
-              <Field label="CVE / Victualling (USD / month)" hint="Lumpsum, pro-rated on on-hire days (30-day month).">
-                <input type="number" style={inputStyle} value={s.cveRate} onChange={(e) => set('cveRate', e.target.value)} placeholder="1500" />
-              </Field>
-              <Row>
-                <Field label="Address Commission (%)"><input type="number" style={inputStyle} value={s.addressCommPct} onChange={(e) => set('addressCommPct', e.target.value)} placeholder="3.75" /></Field>
-                <Field label="Brokerage (%)"><input type="number" style={inputStyle} value={s.brokeragePct} onChange={(e) => set('brokeragePct', e.target.value)} placeholder="1.25" /></Field>
-              </Row>
-              <div style={{ fontSize: 12, color: C.sub }}>Commission applied on hire (on-hire) + CVE.</div>
-            </Section>
-
-            <Section icon="±" title="Other Adjustments">
-              <Row cols={3}>
-                <Field label="Item 1 label"><input style={inputStyle} value={s.otherLabel1} onChange={(e) => set('otherLabel1', e.target.value)} placeholder="Owner's port DA" /></Field>
-                <Field label="Amount ($)"><input type="number" style={inputStyle} value={s.otherAmount1} onChange={(e) => set('otherAmount1', e.target.value)} placeholder="0" /></Field>
-                <Field label="Direction">
-                  <select style={inputStyle} value={s.otherDir1} onChange={(e) => set('otherDir1', e.target.value as 'deduct' | 'add')}>
-                    <option value="deduct">Deduct (owner owes)</option>
-                    <option value="add">Add (charterer owes)</option>
-                  </select>
-                </Field>
-              </Row>
-              <Row cols={3}>
-                <Field label="Item 2 label"><input style={inputStyle} value={s.otherLabel2} onChange={(e) => set('otherLabel2', e.target.value)} placeholder="Speed/cons claim" /></Field>
-                <Field label="Amount ($)"><input type="number" style={inputStyle} value={s.otherAmount2} onChange={(e) => set('otherAmount2', e.target.value)} placeholder="0" /></Field>
-                <Field label="Direction">
-                  <select style={inputStyle} value={s.otherDir2} onChange={(e) => set('otherDir2', e.target.value as 'deduct' | 'add')}>
-                    <option value="deduct">Deduct (owner owes)</option>
-                    <option value="add">Add (charterer owes)</option>
-                  </select>
-                </Field>
-              </Row>
-            </Section>
-
-            <Section icon="💳" title="Payments Received">
-              <Field label="Hire already paid by charterer ($)" hint="Sum of installments paid to date.">
-                <input type="number" style={inputStyle} value={s.paid} onChange={(e) => set('paid', e.target.value)} placeholder="0" />
-              </Field>
-            </Section>
+            <label style={label}>Vessel Name</label>
+            <input style={inputStyle} type="text" value={data.vesselName} onChange={(e) => update('vesselName', e.target.value)} placeholder="MV NEURONAI" />
           </div>
-
-          {/* RIGHT: statement */}
-          <div style={{ position: 'sticky', top: 16 }}>
-            <div style={{ background: C.card, border: `1px solid ${C.gold}`, borderRadius: 14, padding: 20 }}>
-              <div style={{ textAlign: 'center', marginBottom: 14 }}>
-                <div style={{ fontSize: 11, color: C.gold, fontWeight: 700, letterSpacing: 1 }}>HIRE STATEMENT</div>
-                <div style={{ fontSize: 17, fontWeight: 800, marginTop: 2 }}>{s.vessel || 'Vessel'}</div>
-                <div style={{ fontSize: 12, color: C.sub }}>
-                  {s.voyageNo && <>Voyage {s.voyageNo} · </>}Statement #{s.statementNo || '1'}
-                </div>
-              </div>
-
-              <StatLine label={`Hire — on-hire ${fmt(calc.onHireDays, 3)} d × $${fmt(calc.rate, 2)}`} value={money(calc.hireNet)} />
-              {calc.offHireDeduction > 0 && (
-                <StatLine label={`Off-hire deducted (${fmt(calc.offHireDays, 3)} d)`} value={'-' + money(calc.offHireDeduction)} color={C.red} />
-              )}
-              <StatLine label="(+) Bunkers on delivery" value={money(calc.bunkerDelivery)} color={C.green} />
-              <StatLine label="(−) Bunkers on redelivery" value={'-' + money(calc.bunkerRedelivery)} color={C.red} />
-              <StatLine label="(−) CVE / victualling" value={'-' + money(calc.cve)} color={C.red} />
-              <StatLine label={`(−) Address comm. ${s.addressCommPct || 0}%`} value={'-' + money(calc.addrComm)} color={C.red} />
-              <StatLine label={`(−) Brokerage ${s.brokeragePct || 0}%`} value={'-' + money(calc.brokerage)} color={C.red} />
-              {n(s.otherAmount1) !== 0 && (
-                <StatLine label={`${s.otherDir1 === 'add' ? '(+)' : '(−)'} ${s.otherLabel1 || 'Item 1'}`} value={(s.otherDir1 === 'add' ? '' : '-') + money(n(s.otherAmount1))} color={s.otherDir1 === 'add' ? C.green : C.red} />
-              )}
-              {n(s.otherAmount2) !== 0 && (
-                <StatLine label={`${s.otherDir2 === 'add' ? '(+)' : '(−)'} ${s.otherLabel2 || 'Item 2'}`} value={(s.otherDir2 === 'add' ? '' : '-') + money(n(s.otherAmount2))} color={s.otherDir2 === 'add' ? C.green : C.red} />
-              )}
-
-              <div style={{ height: 8 }} />
-              <StatLine label="TOTAL DUE TO OWNER" value={money(calc.totalDue)} color={C.gold} strong />
-              {calc.paid > 0 && <StatLine label="Less: hire paid" value={'-' + money(calc.paid)} color={C.red} />}
-
-              <div style={{ marginTop: 12, background: C.bg, border: `1px solid ${calc.balance >= 0 ? C.gold : C.green}`, borderRadius: 10, padding: 14, textAlign: 'center' }}>
-                <div style={{ fontSize: 11, color: C.sub, fontWeight: 700, letterSpacing: 0.5 }}>
-                  {calc.balance >= 0 ? 'BALANCE DUE FROM CHARTERER' : 'BALANCE DUE TO CHARTERER'}
-                </div>
-                <div style={{ fontSize: 24, fontWeight: 800, color: calc.balance >= 0 ? C.gold : C.green, marginTop: 4, fontVariantNumeric: 'tabular-nums' }}>
-                  {money(Math.abs(calc.balance))}
-                </div>
-              </div>
-
-              <div style={{ marginTop: 12, fontSize: 11.5, color: C.sub, lineHeight: 1.5 }}>
-                Owner {s.owner || '—'} · Charterer {s.charterer || '—'}
-                {s.cpDate && <> · CP {s.cpDate}</>}
-              </div>
-            </div>
-
-            <div className="no-print" style={{ marginTop: 12, fontSize: 11.5, color: C.sub, lineHeight: 1.55, background: C.card, border: `1px solid ${C.border}`, borderRadius: 12, padding: 14 }}>
-              <b style={{ color: C.gold }}>How it's calculated</b><br />
-              Hire = on-hire days × daily rate (off-hire deducted). Bunkers on delivery are added (charterer buys owner's bunkers); bunkers on redelivery are deducted (owner buys back). CVE pro-rated on on-hire days. Commissions apply to hire + CVE. Always reconcile against the charter party — this is a working estimate, not legal advice.
-            </div>
+          <div>
+            <label style={label}>IMO</label>
+            <input style={inputStyle} type="text" value={data.imo} onChange={(e) => update('imo', e.target.value)} placeholder="9876543" />
+          </div>
+          <div>
+            <label style={label}>CP Date</label>
+            <input style={inputStyle} type="date" value={data.cpDate} onChange={(e) => update('cpDate', e.target.value)} />
           </div>
         </div>
-
-        {/* Print-only clean statement */}
-        <div className="print-only" style={{ color: '#111', marginTop: 24 }}>
-          <h2 style={{ margin: '0 0 4px' }}>HIRE STATEMENT — {s.vessel}</h2>
-          <p style={{ margin: 0, fontSize: 13 }}>
-            Owner: {s.owner} · Charterer: {s.charterer} · Voyage {s.voyageNo} · Statement #{s.statementNo} · CP {s.cpDate}
-          </p>
-          <p style={{ margin: '4px 0', fontSize: 13 }}>
-            Delivery {s.deliveryDate} → Redelivery {s.redeliveryDate} · On-hire {fmt(calc.onHireDays, 3)} d @ ${fmt(calc.rate, 2)}/day
-          </p>
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13, marginTop: 8 }}>
-            <tbody>
-              {[
-                [`Hire — on-hire ${fmt(calc.onHireDays, 3)} d`, money(calc.hireNet)],
-                ['Bunkers on delivery', money(calc.bunkerDelivery)],
-                ['Bunkers on redelivery', '-' + money(calc.bunkerRedelivery)],
-                ['CVE / victualling', '-' + money(calc.cve)],
-                [`Address commission ${s.addressCommPct}%`, '-' + money(calc.addrComm)],
-                [`Brokerage ${s.brokeragePct}%`, '-' + money(calc.brokerage)],
-                ['Total due to owner', money(calc.totalDue)],
-                ['Hire paid', '-' + money(calc.paid)],
-                ['BALANCE', money(calc.balance)],
-              ].map(([k, v], i) => (
-                <tr key={i} style={{ borderBottom: '1px solid #ccc' }}>
-                  <td style={{ padding: '6px 4px' }}>{k}</td>
-                  <td style={{ padding: '6px 4px', textAlign: 'right', fontWeight: i >= 6 ? 800 : 400 }}>{v}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="g3" style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 12, marginTop: 12 }}>
+          <div>
+            <label style={label}>Owner / Disponent Owner</label>
+            <input style={inputStyle} type="text" value={data.owner} onChange={(e) => update('owner', e.target.value)} placeholder="ABC Shipping Ltd" />
+          </div>
+          <div>
+            <label style={label}>Charterer</label>
+            <input style={inputStyle} type="text" value={data.charterer} onChange={(e) => update('charterer', e.target.value)} placeholder="XYZ Chartering" />
+          </div>
+        </div>
+        <div className="g3" style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 12, marginTop: 12 }}>
+          <div>
+            <label style={label}>Voyage No.</label>
+            <input style={inputStyle} type="text" value={data.voyageNo} onChange={(e) => update('voyageNo', e.target.value)} placeholder="V-01" />
+          </div>
+          <div>
+            <label style={label}>Statement No.</label>
+            <input style={inputStyle} type="text" value={data.statementNo} onChange={(e) => update('statementNo', e.target.value)} placeholder="1" />
+          </div>
         </div>
       </div>
 
-      {toast && (
-        <div className="no-print" style={{ position: 'fixed', bottom: 20, left: '50%', transform: 'translateX(-50%)', background: C.gold, color: C.bg, padding: '10px 20px', borderRadius: 24, fontWeight: 700, fontSize: 13.5, boxShadow: '0 8px 24px rgba(0,0,0,.4)' }}>
-          {toast}
+      <div style={card}>
+        <div style={sectionTitle}>2. Hire Period</div>
+        <div className="g3" style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 12 }}>
+          <div>
+            <label style={label}>Delivery (On-Hire)</label>
+            <input style={inputStyle} type="datetime-local" value={data.delivery} onChange={(e) => update('delivery', e.target.value)} />
+          </div>
+          <div>
+            <label style={label}>Redelivery (Off-Hire)</label>
+            <input style={inputStyle} type="datetime-local" value={data.redelivery} onChange={(e) => update('redelivery', e.target.value)} />
+          </div>
         </div>
-      )}
+        <div className="g3" style={{ display: 'grid', gridTemplateColumns: 'repeat(1,1fr)', gap: 12, marginTop: 12 }}>
+          <div>
+            <label style={label}>Hire Rate — USD / day</label>
+            <input style={inputStyle} type="number" step="0.01" value={data.hireRate || ''} onChange={(e) => update('hireRate', num(e.target.value))} placeholder="15000" />
+          </div>
+        </div>
+        <div style={{ marginTop: 12, padding: '8px 12px', background: 'rgba(200,168,75,.05)', border: '1px solid rgba(200,168,75,.15)', borderRadius: 3, fontSize: 12, fontFamily: rj, color: '#b0c0a4' }}>
+          Gross period: <strong style={{ color: '#f5f0e8' }}>{fmt(calc.grossDays, 4)} days</strong>
+          {calc.offHireDays > 0 && (
+            <>
+              {' · '}Off-hire: <strong style={{ color: '#ff8a8a' }}>{fmt(calc.offHireDays, 4)} d</strong>
+              {' · '}On-hire: <strong style={{ color: '#4caf76' }}>{fmt(calc.onHireDays, 4)} d</strong>
+            </>
+          )}
+        </div>
+      </div>
+
+      <div style={card}>
+        <div style={sectionTitle}>3. Off-Hire Periods</div>
+        {data.offHires.length === 0 && (
+          <p style={{ fontSize: 11.5, color: '#7a8a72', fontFamily: rj, marginBottom: 12, lineHeight: 1.5 }}>
+            No off-hire. Add periods (breakdown, deviation, detention) to deduct from hire.
+          </p>
+        )}
+        {data.offHires.map((o, i) => {
+          const h = Math.max(0, hoursBetween(o.from, o.to));
+          return (
+            <div key={o.id} style={{ background: '#0c1610', border: '1px solid rgba(200,168,75,.15)', padding: 12, borderRadius: 3, marginBottom: 10 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                <span style={{ fontFamily: rj, fontSize: 11, color: '#ff8a8a', fontWeight: 700, letterSpacing: '.5px' }}>
+                  Off-Hire #{i + 1} — {fmt(h / 24, 3)} d ({fmt(h, 1)} h)
+                </span>
+                <button onClick={() => delOffHire(o.id)} style={{ background: 'transparent', border: 'none', color: '#ff8a8a', fontFamily: rj, fontSize: 11, cursor: 'pointer', letterSpacing: '.5px' }}>Delete</button>
+              </div>
+              <div style={{ marginBottom: 8 }}>
+                <label style={label}>Reason</label>
+                <input style={inputStyle} type="text" value={o.reason} onChange={(e) => updOffHire(o.id, 'reason', e.target.value)} placeholder="ME breakdown / deviation" />
+              </div>
+              <div className="g3" style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 10 }}>
+                <div>
+                  <label style={label}>From</label>
+                  <input style={inputStyle} type="datetime-local" value={o.from} onChange={(e) => updOffHire(o.id, 'from', e.target.value)} />
+                </div>
+                <div>
+                  <label style={label}>To</label>
+                  <input style={inputStyle} type="datetime-local" value={o.to} onChange={(e) => updOffHire(o.id, 'to', e.target.value)} />
+                </div>
+              </div>
+            </div>
+          );
+        })}
+        <button onClick={addOffHire} style={{ ...ghostBtn, width: '100%' }}>+ Add Off-Hire Period</button>
+      </div>
+
+      <div style={card}>
+        <div style={sectionTitle}>4. Bunkers on Delivery (Charterer pays Owner)</div>
+        <div className="g3" style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 12 }}>
+          <div>
+            <label style={label}>VLSFO Qty — MT</label>
+            <input style={inputStyle} type="number" step="0.1" value={data.delVlsfoQty || ''} onChange={(e) => update('delVlsfoQty', num(e.target.value))} placeholder="350" />
+          </div>
+          <div>
+            <label style={label}>VLSFO Price — $/MT</label>
+            <input style={inputStyle} type="number" step="0.01" value={data.delVlsfoPrice || ''} onChange={(e) => update('delVlsfoPrice', num(e.target.value))} placeholder="580" />
+          </div>
+        </div>
+        <div className="g3" style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 12, marginTop: 12 }}>
+          <div>
+            <label style={label}>MGO Qty — MT</label>
+            <input style={inputStyle} type="number" step="0.1" value={data.delMgoQty || ''} onChange={(e) => update('delMgoQty', num(e.target.value))} placeholder="80" />
+          </div>
+          <div>
+            <label style={label}>MGO Price — $/MT</label>
+            <input style={inputStyle} type="number" step="0.01" value={data.delMgoPrice || ''} onChange={(e) => update('delMgoPrice', num(e.target.value))} placeholder="780" />
+          </div>
+        </div>
+        <div style={{ marginTop: 10, padding: '6px 12px', background: '#0c1610', border: '1px solid rgba(200,168,75,.2)', borderRadius: 3, fontSize: 12, color: '#4caf76', fontFamily: rj, fontWeight: 700, textAlign: 'right' }}>
+          Bunker on Delivery: {money(calc.bunkerDelivery)}
+        </div>
+      </div>
+
+      <div style={card}>
+        <div style={sectionTitle}>5. Bunkers on Redelivery (Owner pays Charterer)</div>
+        <div className="g3" style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 12 }}>
+          <div>
+            <label style={label}>VLSFO Qty — MT</label>
+            <input style={inputStyle} type="number" step="0.1" value={data.redVlsfoQty || ''} onChange={(e) => update('redVlsfoQty', num(e.target.value))} placeholder="350" />
+          </div>
+          <div>
+            <label style={label}>VLSFO Price — $/MT</label>
+            <input style={inputStyle} type="number" step="0.01" value={data.redVlsfoPrice || ''} onChange={(e) => update('redVlsfoPrice', num(e.target.value))} placeholder="580" />
+          </div>
+        </div>
+        <div className="g3" style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 12, marginTop: 12 }}>
+          <div>
+            <label style={label}>MGO Qty — MT</label>
+            <input style={inputStyle} type="number" step="0.1" value={data.redMgoQty || ''} onChange={(e) => update('redMgoQty', num(e.target.value))} placeholder="80" />
+          </div>
+          <div>
+            <label style={label}>MGO Price — $/MT</label>
+            <input style={inputStyle} type="number" step="0.01" value={data.redMgoPrice || ''} onChange={(e) => update('redMgoPrice', num(e.target.value))} placeholder="780" />
+          </div>
+        </div>
+        <div style={{ marginTop: 10, padding: '6px 12px', background: '#0c1610', border: '1px solid rgba(200,168,75,.2)', borderRadius: 3, fontSize: 12, color: '#ff8a8a', fontFamily: rj, fontWeight: 700, textAlign: 'right' }}>
+          Bunker on Redelivery: {money(calc.bunkerRedelivery)}
+        </div>
+      </div>
+
+      <div style={card}>
+        <div style={sectionTitle}>6. Commissions &amp; CVE</div>
+        <div className="g3" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 12 }}>
+          <div>
+            <label style={label}>CVE / Victualling — $/month</label>
+            <input style={inputStyle} type="number" step="0.01" value={data.cveMonthly || ''} onChange={(e) => update('cveMonthly', num(e.target.value))} placeholder="1500" />
+            <span style={{ fontSize: 9.5, color: '#7a8a72', fontFamily: rj }}>Pro-rated on on-hire days</span>
+          </div>
+          <div>
+            <label style={label}>Address Commission — %</label>
+            <input style={inputStyle} type="number" step="0.01" value={data.addressCommPct || ''} onChange={(e) => update('addressCommPct', num(e.target.value))} placeholder="3.75" />
+          </div>
+          <div>
+            <label style={label}>Brokerage — %</label>
+            <input style={inputStyle} type="number" step="0.01" value={data.brokeragePct || ''} onChange={(e) => update('brokeragePct', num(e.target.value))} placeholder="1.25" />
+          </div>
+        </div>
+        <p style={{ fontSize: 10.5, color: '#7a8a72', fontFamily: rj, marginTop: 10 }}>
+          Commission applied on hire (on-hire) + CVE.
+        </p>
+      </div>
+
+      <div style={card}>
+        <div style={sectionTitle}>7. Other Adjustments</div>
+        {data.others.length === 0 && (
+          <p style={{ fontSize: 11.5, color: '#7a8a72', fontFamily: rj, marginBottom: 12, lineHeight: 1.5 }}>
+            Add claims, owner&apos;s DA, speed/consumption settlements, advances, etc.
+          </p>
+        )}
+        {data.others.map((o, i) => (
+          <div key={o.id} style={{ background: '#0c1610', border: '1px solid rgba(200,168,75,.15)', padding: 12, borderRadius: 3, marginBottom: 10 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+              <span style={{ fontFamily: rj, fontSize: 11, color: '#c8a84b', fontWeight: 700, letterSpacing: '.5px' }}>Item #{i + 1}</span>
+              <button onClick={() => delOther(o.id)} style={{ background: 'transparent', border: 'none', color: '#ff8a8a', fontFamily: rj, fontSize: 11, cursor: 'pointer', letterSpacing: '.5px' }}>Delete</button>
+            </div>
+            <div className="g3" style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1.4fr', gap: 10 }}>
+              <div>
+                <label style={label}>Label</label>
+                <input style={inputStyle} type="text" value={o.label} onChange={(e) => updOther(o.id, 'label', e.target.value)} placeholder="Speed/cons claim" />
+              </div>
+              <div>
+                <label style={label}>Amount — $</label>
+                <input style={inputStyle} type="number" step="0.01" value={o.amount || ''} onChange={(e) => updOther(o.id, 'amount', num(e.target.value))} placeholder="0" />
+              </div>
+              <div>
+                <label style={label}>Direction</label>
+                <select style={inputStyle} value={o.dir} onChange={(e) => updOther(o.id, 'dir', e.target.value as OtherItem['dir'])}>
+                  <option value="deduct">Deduct (owner owes)</option>
+                  <option value="add">Add (charterer owes)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        ))}
+        <button onClick={addOther} style={{ ...ghostBtn, width: '100%' }}>+ Add Adjustment</button>
+      </div>
+
+      <div style={card}>
+        <div style={sectionTitle}>8. Payments Received</div>
+        <div className="g3" style={{ display: 'grid', gridTemplateColumns: 'repeat(1,1fr)', gap: 12 }}>
+          <div>
+            <label style={label}>Hire already paid by charterer — $</label>
+            <input style={inputStyle} type="number" step="0.01" value={data.paid || ''} onChange={(e) => update('paid', num(e.target.value))} placeholder="0" />
+            <span style={{ fontSize: 9.5, color: '#7a8a72', fontFamily: rj }}>Sum of installments paid to date</span>
+          </div>
+        </div>
+      </div>
+
+      <div style={{ ...card, background: 'linear-gradient(135deg,rgba(200,168,75,.08),transparent)', borderColor: 'rgba(200,168,75,.4)' }}>
+        <div style={sectionTitle}>⚡ Hire Statement Summary</div>
+
+        <div style={rowStyle}>
+          <span style={{ color: '#7a8a72' }}>Hire — on-hire {fmt(calc.onHireDays, 3)} d × ${fmt(data.hireRate, 2)}</span>
+          <strong>{money(calc.hireNet)}</strong>
+        </div>
+        {calc.offHireDeduction > 0 && (
+          <div style={rowStyle}>
+            <span style={{ color: '#7a8a72' }}>Off-hire deducted ({fmt(calc.offHireDays, 3)} d)</span>
+            <strong style={{ color: '#ff8a8a' }}>-{money(calc.offHireDeduction)}</strong>
+          </div>
+        )}
+        <div style={rowStyle}>
+          <span style={{ color: '#7a8a72' }}>(+) Bunkers on delivery</span>
+          <strong style={{ color: '#4caf76' }}>{money(calc.bunkerDelivery)}</strong>
+        </div>
+        <div style={rowStyle}>
+          <span style={{ color: '#7a8a72' }}>(−) Bunkers on redelivery</span>
+          <strong style={{ color: '#ff8a8a' }}>-{money(calc.bunkerRedelivery)}</strong>
+        </div>
+        <div style={rowStyle}>
+          <span style={{ color: '#7a8a72' }}>(−) CVE / victualling</span>
+          <strong style={{ color: '#ff8a8a' }}>-{money(calc.cve)}</strong>
+        </div>
+        <div style={rowStyle}>
+          <span style={{ color: '#7a8a72' }}>(−) Address comm. {fmt(data.addressCommPct, 2)}%</span>
+          <strong style={{ color: '#ff8a8a' }}>-{money(calc.addrComm)}</strong>
+        </div>
+        <div style={rowStyle}>
+          <span style={{ color: '#7a8a72' }}>(−) Brokerage {fmt(data.brokeragePct, 2)}%</span>
+          <strong style={{ color: '#ff8a8a' }}>-{money(calc.brokerage)}</strong>
+        </div>
+        {data.others.map((o) => (
+          <div key={o.id} style={rowStyle}>
+            <span style={{ color: '#7a8a72' }}>{o.dir === 'add' ? '(+)' : '(−)'} {o.label || 'Adjustment'}</span>
+            <strong style={{ color: o.dir === 'add' ? '#4caf76' : '#ff8a8a' }}>
+              {o.dir === 'add' ? '' : '-'}{money(o.amount)}
+            </strong>
+          </div>
+        ))}
+
+        <div style={{ ...rowStyle, borderTop: '2px solid #c8a84b', paddingTop: 14, marginTop: 10, borderBottom: 'none' }}>
+          <span style={{ color: '#c8a84b', fontWeight: 700, fontSize: 14 }}>TOTAL DUE TO OWNER</span>
+          <strong style={{ fontFamily: lb, fontSize: 22, color: '#c8a84b' }}>{money(calc.totalDue)}</strong>
+        </div>
+        {data.paid > 0 && (
+          <div style={rowStyle}>
+            <span style={{ color: '#7a8a72' }}>Less: hire paid</span>
+            <strong style={{ color: '#ff8a8a' }}>-{money(data.paid)}</strong>
+          </div>
+        )}
+
+        <div style={{ marginTop: 14, padding: '14px 16px', background: '#0c1610', border: `1px solid ${calc.balance >= 0 ? 'rgba(200,168,75,.5)' : 'rgba(76,175,118,.5)'}`, borderRadius: 4, textAlign: 'center' }}>
+          <div style={{ fontFamily: rj, fontSize: 10, letterSpacing: '1.5px', textTransform: 'uppercase', color: '#7a8a72', fontWeight: 700 }}>
+            {calc.balance >= 0 ? 'Balance Due from Charterer' : 'Balance Due to Charterer'}
+          </div>
+          <div style={{ fontFamily: lb, fontSize: 30, fontWeight: 700, color: calc.balance >= 0 ? '#c8a84b' : '#4caf76', marginTop: 4 }}>
+            {money(Math.abs(calc.balance))}
+          </div>
+        </div>
+
+        <div style={{ marginTop: 12, fontSize: 11, color: '#7a8a72', fontFamily: rj, lineHeight: 1.5 }}>
+          Owner {data.owner || '—'} · Charterer {data.charterer || '—'}
+          {data.cpDate && <> · CP {data.cpDate}</>}
+        </div>
+      </div>
+
+      <div style={card}>
+        <div style={sectionTitle}>Notes</div>
+        <textarea value={data.notes} onChange={(e) => update('notes', e.target.value)} placeholder="Settlement terms, disputed items, payment instructions..." rows={3} style={{ ...inputStyle, minHeight: 70, resize: 'vertical' }} />
+      </div>
+
+      <style>{`
+        @media (max-width: 720px) {
+          .g3 { grid-template-columns: 1fr !important; }
+          .action-bar button { font-size: 10px !important; padding: 7px 10px !important; }
+        }
+        @media print {
+          @page { size: A4; margin: 14mm; }
+          body { background: white !important; color: black !important; }
+          nav, footer, .action-bar, [style*="position: sticky"] { display: none !important; }
+        }
+      `}</style>
     </div>
   );
-}
-
-function btn(bg: string, fg: string, border?: string): React.CSSProperties {
-  return {
-    padding: '9px 14px',
-    background: bg,
-    color: fg,
-    border: `1px solid ${border || bg}`,
-    borderRadius: 9,
-    fontSize: 13.5,
-    fontWeight: 700,
-    cursor: 'pointer',
-  };
 }
