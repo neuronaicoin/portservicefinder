@@ -7,467 +7,165 @@ const lb = "'Libre Bodoni', serif";
 const rj = "'Rajdhani', sans-serif";
 const g = { color: '#c8a84b', fontStyle: 'italic' };
 
-interface Tool {
+interface SideCard {
   href: string;
+  badge: string;
+  badgeColor: string;
   icon: string;
   title: string;
-  desc: string;
-  status?: 'ready' | 'soon' | 'beta' | 'ai';
+  tagline: string;
+  bullets: string[];
+  toolCount: number;
+  cta: string;
 }
 
-interface Category {
-  title: string;
-  desc: string;
-  icon: string;
-  tools: Tool[];
-}
-
-const CATEGORIES: Category[] = [
+const SIDES: SideCard[] = [
   {
-    title: 'Voyage Planning',
-    desc: 'Plan routes, calculate distances, estimate fuel and time.',
-    icon: '🗺️',
-    tools: [
-      { href: '/voyage/planner', icon: '🧭', title: 'AI Route Optimizer', desc: 'Best route with weather, fuel & constraints.', status: 'ai' },
-      { href: '/voyage/distance', icon: '📏', title: 'Distance Calculator', desc: 'Port-to-port distance & ETA in seconds.', status: 'ready' },
-      { href: '/voyage/bunker-plan', icon: '⛽', title: 'Bunker Planner', desc: 'ROB management — delivery to redelivery.', status: 'ready' },
-      { href: '/voyage/weather', icon: '🌊', title: 'Weather Windows', desc: 'Operation limits vs forecast — GO / no-go.', status: 'ready' },
+    href: '/voyage/operators',
+    badge: 'COMMERCIAL',
+    badgeColor: '#c8a84b',
+    icon: '🏢',
+    title: 'Operator · Owner · Charterer',
+    tagline: 'Charter, claims, performance and fleet — the commercial desk in one place.',
+    bullets: [
+      'TCE, laytime & demurrage, hire statements',
+      'Voyage & fleet performance, CP vs actual',
+      'Disbursements, bunker prices, market indices',
+      'AI charter-party reader & email assistant',
     ],
+    toolCount: 22,
+    cta: 'Enter Shore Office',
   },
   {
-    title: 'Performance & Claims',
-    desc: 'Track voyages, analyze performance, generate claim reports.',
-    icon: '📊',
-    tools: [
-      { href: '/voyage/tracker', icon: '📈', title: 'Voyage Tracker', desc: 'Daily reports + auto performance analysis.', status: 'ready' },
-      { href: '/voyage/bunker', icon: '⚡', title: 'CP Performance', desc: 'CP vs Actual — speed & consumption claims.', status: 'ready' },
-      { href: '/voyage/noon', icon: '📝', title: 'Noon Report Manager', desc: 'Daily noon reports vs CP warranties.', status: 'ready' },
-      { href: '/voyage/claims', icon: '⚖️', title: 'Claims Center', desc: 'Demurrage, off-hire, speed/consumption.', status: 'ready' },
+    href: '/voyage/ship',
+    badge: 'ALWAYS FREE',
+    badgeColor: '#4caf76',
+    icon: '⚓',
+    title: 'Ship Side',
+    tagline: 'Cargo, safety, compliance and deck tools — free for every vessel and seafarer.',
+    bullets: [
+      'Draft survey, stability, lashing, cargo database',
+      'MARPOL, drills, incidents, PSC preparation',
+      'Certificates, rest hours, drydock & maintenance',
+      'Tides, weather windows, port database',
     ],
-  },
-  {
-    title: 'Port Operations',
-    desc: 'Everything about ports — info, tides, agents, congestion.',
-    icon: '🏴',
-    tools: [
-      { href: '/voyage/ports', icon: '🌍', title: 'Port Database', desc: 'Major hub ports + PSC history links.', status: 'ready' },
-      { href: '/voyage/tide', icon: '🌊', title: 'Tide Calculator', desc: 'HW/LW interpolation + UKC windows.', status: 'ready' },
-      { href: '/voyage/disbursement', icon: '💰', title: 'Disbursement Tracker', desc: 'DA estimate vs final cost tracker.', status: 'ready' },
-      { href: '/voyage/congestion', icon: '⚓', title: 'Port Congestion', desc: 'Agent reports + berth estimate.', status: 'ready' },
-      { href: '/voyage/holidays', icon: '📅', title: 'Holidays Calendar', desc: 'Per-port holidays for SHEX calc.', status: 'ready' },
-    ],
-  },
-  {
-    title: 'Compliance & Safety',
-    desc: 'Stay compliant — CII, EU ETS, PSC, MARPOL, MLC.',
-    icon: '🛂',
-    tools: [
-      { href: '/voyage/cii', icon: '🌍', title: 'CII Calculator', desc: 'Carbon Intensity Indicator — A to E rating.', status: 'ready' },
-      { href: '/voyage/ets', icon: '🌫️', title: 'EU ETS / FuelEU', desc: 'Allowance cost & FuelEU compliance.', status: 'ready' },
-      { href: '/voyage/psc', icon: '🔍', title: 'PSC Sentry', desc: 'MoU search, deficiency codes, CIC tracker.', status: 'ready' },
-      { href: '/voyage/marpol', icon: '🛢️', title: 'MARPOL Tracker', desc: 'Annex I-VI compliance & records.', status: 'ready' },
-      { href: '/voyage/incidents', icon: '⚠️', title: 'Incident Log', desc: 'Near miss & accident reporting.', status: 'ready' },
-      { href: '/voyage/drills', icon: '🚨', title: 'Drill Tracker', desc: 'SOLAS-mandated drill schedule & log.', status: 'ready' },
-    ],
-  },
-  {
-    title: 'Charter & Commercial',
-    desc: 'Charter party, hire, TCE, freight calculations.',
-    icon: '📋',
-    tools: [
-      { href: '/voyage/tce', icon: '💵', title: 'TCE Calculator', desc: 'Time charter equivalent + Worldscale.', status: 'ready' },
-      { href: '/voyage/laytime', icon: '⏱️', title: 'Laytime / Demurrage', desc: 'Auto SoF & demurrage statements.', status: 'ready' },
-      { href: '/voyage/hire', icon: '📊', title: 'Hire Statement', desc: 'Time charter hire calc + bunker.', status: 'ready' },
-      { href: '/voyage/cp', icon: '📜', title: 'CP Manager (AI)', desc: 'Upload CP — AI extracts terms.', status: 'ai' },
-    ],
-  },
-  {
-    title: 'Cargo & Stowage',
-    desc: 'Cargo planning, stowage, draft survey, lashing.',
-    icon: '📦',
-    tools: [
-      { href: '/voyage/draft', icon: '⚓', title: 'Draft Survey', desc: 'Cargo weight from draft readings.', status: 'ready' },
-      { href: '/voyage/cargo', icon: '📦', title: 'Cargo Database', desc: '68 cargoes — stowage factors + hazards.', status: 'ready' },
-      { href: '/voyage/stability', icon: '⚖️', title: 'Stability Check', desc: 'Quick trim & stability calculator.', status: 'ready' },
-      { href: '/voyage/lashing', icon: '🔗', title: 'Lashing Calculator', desc: 'Heavy weather cargo securing.', status: 'ready' },
-    ],
-  },
-  {
-    title: 'Crew & HR',
-    desc: 'Crew management, certificates, MLC compliance.',
-    icon: '👥',
-    tools: [
-      { href: '/voyage/crew', icon: '👥', title: 'Crew Matrix', desc: 'Rank, contract, certificates tracking.', status: 'soon' },
-      { href: '/voyage/mlc', icon: '📋', title: 'MLC Compliance', desc: 'Rest hours grid + MLC self-check.', status: 'ready' },
-      { href: '/voyage/wages', icon: '💵', title: 'Wage Calculator', desc: 'Crew wage bill — basic, OT, allowances.', status: 'ready' },
-      { href: '/voyage/visa', icon: '🛂', title: 'Visa Requirements', desc: 'Crew visa per nationality + port.', status: 'ready' },
-    ],
-  },
-  {
-    title: 'Vessel & Maintenance',
-    desc: 'Vessel database, maintenance, drydock, spares.',
-    icon: '🔧',
-    tools: [
-      { href: '/voyage/vessel', icon: '🚢', title: 'Vessel Database', desc: 'Search by IMO — particulars & history.', status: 'ready' },
-      { href: '/voyage/drydock', icon: '🏗️', title: 'Drydock Planner', desc: 'Survey cycle + scope & cost estimator.', status: 'ready' },
-      { href: '/voyage/maintenance', icon: '🔧', title: 'PMS Mini', desc: 'Running-hours + calendar maintenance.', status: 'ready' },
-      { href: '/voyage/spares', icon: '📦', title: 'Spares Inventory', desc: 'Critical spares & supplier tracking.', status: 'ready' },
-    ],
-  },
-  {
-    title: 'Documents & Records',
-    desc: 'Auto-generate maritime documents and reports.',
-    icon: '📄',
-    tools: [
-      { href: '/voyage/documents', icon: '📝', title: 'Document Generator', desc: 'NOR, SOF, LOI, LOP — auto-fill.', status: 'ready' },
-      { href: '/voyage/vault', icon: '🗄️', title: 'Document Vault', desc: 'Certificates with expiry alerts.', status: 'ready' },
-      { href: '/voyage/photos', icon: '📸', title: 'Photo Reference Log', desc: 'Index evidence photos for claims.', status: 'ready' },
-      { href: '/voyage/diary', icon: '📖', title: 'Voyage Diary', desc: 'Ops log + shareable summaries.', status: 'ready' },
-    ],
-  },
-  {
-    title: 'AI & Intelligence',
-    desc: 'AI-powered tools — your maritime co-pilot.',
-    icon: '🤖',
-    tools: [
-      { href: '/voyage/assistant', icon: '🤖', title: 'AI Assistant', desc: 'Ask anything: CP, weather, regulations.', status: 'ai' },
-      { href: '/voyage/cp', icon: '📜', title: 'AI CP Reader', desc: 'Upload CP — AI extracts key terms.', status: 'ai' },
-      { href: '/voyage/email-ai', icon: '✉️', title: 'Email Assistant', desc: 'AI drafts demurrage, LOP, etc.', status: 'ai' },
-      { href: '/voyage/insights', icon: '💡', title: 'Smart Insights', desc: 'AI analyzes your voyage trends.', status: 'ai' },
-    ],
-  },
-  {
-    title: 'Fleet Operations',
-    desc: 'Multi-vessel dashboard, team collaboration.',
-    icon: '🎛️',
-    tools: [
-      { href: '/voyage/fleet', icon: '🎛️', title: 'Fleet Dashboard', desc: 'All vessels — one screen.', status: 'ready' },
-      { href: '/voyage/ops', icon: '💬', title: 'Ops Chat', desc: 'Vessel-office secure messaging.', status: 'soon' },
-      { href: '/voyage/contacts', icon: '📇', title: 'Contact Book', desc: 'Agents, surveyors, P&I — organized.', status: 'ready' },
-      { href: '/voyage/emergency', icon: '🚨', title: 'Emergency Reference', desc: 'Quick cards & contacts.', status: 'ready' },
-    ],
-  },
-  {
-    title: 'Market & News',
-    desc: 'Bunker prices, indices, news, vessel marketplace.',
-    icon: '📰',
-    tools: [
-      { href: '/voyage/bunker-prices', icon: '⛽', title: 'Bunker Price Tracker', desc: 'Compare ports + stem savings.', status: 'ready' },
-      { href: '/voyage/indices', icon: '📈', title: 'Market Indices', desc: 'BDI, BCI, BPI, BSI tracker.', status: 'ready' },
-      { href: '/voyage/news', icon: '📰', title: 'Maritime News', desc: 'AI-summarized industry news.', status: 'soon' },
-      { href: '/voyage/marketplace', icon: '🚢', title: 'Vessel Marketplace', desc: 'S&P, demolition, newbuilds.', status: 'soon' },
-    ],
+    toolCount: 25,
+    cta: 'Enter Ship Side',
   },
 ];
 
-const statusBadge = (status?: string) => {
-  if (status === 'ai') return { label: 'AI', color: '#c8a84b', bg: 'rgba(200,168,75,.18)' };
-  if (status === 'ready') return { label: 'LIVE', color: '#4caf76', bg: 'rgba(76,175,118,.15)' };
-  if (status === 'beta') return { label: 'BETA', color: '#5aa6e8', bg: 'rgba(90,166,232,.15)' };
-  if (status === 'soon') return { label: 'SOON', color: '#7a8a72', bg: 'rgba(122,138,114,.12)' };
-  return null;
-};
-
-export default function VoyageHubPage() {
+export default function VoyageLandingPage() {
   const [savedCount, setSavedCount] = useState(0);
-  const [activeCategory, setActiveCategory] = useState<string>('all');
-
-  useEffect(() => {
-    setSavedCount(countAll());
-  }, []);
-
-  const totalTools = CATEGORIES.reduce((sum, c) => sum + c.tools.length, 0);
-  const readyTools = CATEGORIES.reduce(
-    (sum, c) => sum + c.tools.filter((t) => t.status === 'ready' || t.status === 'ai').length,
-    0
-  );
-
-  const filteredCategories =
-    activeCategory === 'all' ? CATEGORIES : CATEGORIES.filter((c) => c.title === activeCategory);
+  useEffect(() => { setSavedCount(countAll()); }, []);
 
   return (
     <div>
       {/* HERO */}
-      <section
-        style={{
-          padding: '40px 0 30px',
-          textAlign: 'center',
-          borderBottom: '1px solid rgba(200,168,75,.1)',
-          marginBottom: 32,
-        }}
-      >
-        <div
-          style={{
-            display: 'inline-block',
-            padding: '5px 14px',
-            background: 'rgba(200,168,75,.12)',
-            border: '1px solid rgba(200,168,75,.35)',
-            color: '#c8a84b',
-            fontFamily: rj,
-            fontSize: 10,
-            letterSpacing: '2px',
-            textTransform: 'uppercase',
-            fontWeight: 700,
-            marginBottom: 16,
-          }}
-        >
-          ⚓ Voyage Hub · 100% Free
+      <section style={{ padding: '48px 0 36px', textAlign: 'center', borderBottom: '1px solid rgba(200,168,75,.1)', marginBottom: 40 }}>
+        <div style={{ display: 'inline-block', padding: '5px 14px', background: 'rgba(200,168,75,.12)', border: '1px solid rgba(200,168,75,.35)', color: '#c8a84b', fontFamily: rj, fontSize: 10, letterSpacing: '2px', textTransform: 'uppercase', fontWeight: 700, marginBottom: 18 }}>
+          ⚓ Voyage Hub · Free Maritime Tools
         </div>
-        <h1
-          style={{
-            fontFamily: lb,
-            fontSize: 'clamp(28px,4vw,52px)',
-            fontWeight: 700,
-            lineHeight: 1.05,
-            marginBottom: 16,
-          }}
-        >
-          Maritime <em style={g}>Tools</em> for Operators & Captains
+        <h1 style={{ fontFamily: lb, fontSize: 'clamp(30px,4.5vw,56px)', fontWeight: 700, lineHeight: 1.04, marginBottom: 18 }}>
+          The Maritime <em style={g}>Toolkit</em><br />for Shore &amp; Ship
         </h1>
-        <p
-          style={{
-            fontSize: 14,
-            color: '#b0c0a4',
-            lineHeight: 1.7,
-            maxWidth: 700,
-            margin: '0 auto 22px',
-          }}
-        >
-          {totalTools}+ professional tools — voyage planning, performance analysis, compliance, AI
-          assistant. No signup. Your data stays in your browser.
+        <p style={{ fontSize: 15, color: '#b0c0a4', lineHeight: 1.7, maxWidth: 660, margin: '0 auto 8px' }}>
+          Professional tools for the whole voyage — from the chartering desk to the bridge.
+          Pick your side to see the tools built for your role.
         </p>
-
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'center',
-            gap: 24,
-            flexWrap: 'wrap',
-            marginTop: 22,
-            fontFamily: rj,
-            fontSize: 12,
-            color: '#7a8a72',
-            letterSpacing: '.5px',
-          }}
-        >
-          <span>
-            <strong style={{ color: '#4caf76', fontSize: 18, fontFamily: lb, fontWeight: 700 }}>{readyTools}</strong>{' '}
-            tools live
-          </span>
-          <span>
-            <strong style={{ color: '#c8a84b', fontSize: 18, fontFamily: lb, fontWeight: 700 }}>{totalTools}</strong>{' '}
-            tools total
-          </span>
-          {savedCount > 0 && (
-            <Link
-              href="/voyage/saved"
-              style={{
-                color: '#c8a84b',
-                textDecoration: 'none',
-                fontWeight: 700,
-              }}
-            >
-              💾 {savedCount} saved item{savedCount !== 1 ? 's' : ''}
-            </Link>
-          )}
-        </div>
+        <p style={{ fontSize: 12.5, color: '#7a8a72', fontFamily: rj, letterSpacing: '.5px', marginTop: 14 }}>
+          No signup · Your data stays in your browser · Built by maritime professionals
+        </p>
       </section>
 
-      {/* CATEGORY FILTER */}
-      <div
-        style={{
-          display: 'flex',
-          gap: 8,
-          flexWrap: 'wrap',
-          marginBottom: 28,
-          justifyContent: 'center',
-        }}
-      >
-        <button
-          onClick={() => setActiveCategory('all')}
-          style={{
-            padding: '7px 14px',
-            background: activeCategory === 'all' ? '#c8a84b' : 'transparent',
-            color: activeCategory === 'all' ? '#08100a' : '#7a8a72',
-            border: `1px solid ${activeCategory === 'all' ? '#c8a84b' : 'rgba(200,168,75,.25)'}`,
-            fontFamily: rj,
-            fontSize: 11,
-            letterSpacing: '1px',
-            textTransform: 'uppercase',
-            fontWeight: 700,
-            cursor: 'pointer',
-            borderRadius: 4,
-          }}
-        >
-          All Tools
-        </button>
-        {CATEGORIES.map((cat) => (
-          <button
-            key={cat.title}
-            onClick={() => setActiveCategory(cat.title)}
-            style={{
-              padding: '7px 14px',
-              background: activeCategory === cat.title ? '#c8a84b' : 'transparent',
-              color: activeCategory === cat.title ? '#08100a' : '#7a8a72',
-              border: `1px solid ${
-                activeCategory === cat.title ? '#c8a84b' : 'rgba(200,168,75,.25)'
-              }`,
-              fontFamily: rj,
-              fontSize: 11,
-              letterSpacing: '1px',
-              textTransform: 'uppercase',
-              fontWeight: 700,
-              cursor: 'pointer',
-              borderRadius: 4,
-            }}
-          >
-            {cat.icon} {cat.title}
-          </button>
+      {/* TWO CHOICE CARDS */}
+      <div className="side-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 20, marginBottom: 44 }}>
+        {SIDES.map((s) => (
+          <Link key={s.href} href={s.href} style={{ textDecoration: 'none' }}>
+            <div className="side-card" style={{
+              background: 'linear-gradient(165deg, #142016, #0f1a11)',
+              border: `1px solid ${s.badgeColor}40`,
+              borderRadius: 8,
+              padding: '30px 26px',
+              height: '100%',
+              position: 'relative',
+              transition: 'all .28s ease',
+              display: 'flex',
+              flexDirection: 'column',
+            }}>
+              {/* badge */}
+              <div style={{ position: 'absolute', top: 16, right: 16, fontSize: 9, background: `${s.badgeColor}22`, color: s.badgeColor, padding: '4px 10px', borderRadius: 4, fontFamily: rj, fontWeight: 700, letterSpacing: '1.5px', border: `1px solid ${s.badgeColor}55` }}>
+                {s.badge}
+              </div>
+
+              <div style={{ fontSize: 44, marginBottom: 14 }}>{s.icon}</div>
+
+              <h2 style={{ fontFamily: lb, fontSize: 'clamp(20px,2.4vw,26px)', fontWeight: 700, color: '#f5f0e8', lineHeight: 1.15, marginBottom: 10 }}>
+                {s.title}
+              </h2>
+
+              <p style={{ fontSize: 13.5, color: '#b0c0a4', lineHeight: 1.6, marginBottom: 18 }}>
+                {s.tagline}
+              </p>
+
+              <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 22px', display: 'flex', flexDirection: 'column', gap: 8, flex: 1 }}>
+                {s.bullets.map((b) => (
+                  <li key={b} style={{ fontFamily: rj, fontSize: 12.5, color: '#9fb094', lineHeight: 1.45, display: 'flex', gap: 9, alignItems: 'flex-start' }}>
+                    <span style={{ color: s.badgeColor, flexShrink: 0, fontWeight: 700 }}>›</span>
+                    {b}
+                  </li>
+                ))}
+              </ul>
+
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: 16, borderTop: '1px solid rgba(200,168,75,.12)' }}>
+                <span style={{ fontFamily: rj, fontSize: 11, color: '#7a8a72', letterSpacing: '.5px' }}>
+                  <strong style={{ color: s.badgeColor, fontSize: 16, fontFamily: lb }}>{s.toolCount}</strong> tools
+                </span>
+                <span className="side-cta" style={{ fontFamily: rj, fontSize: 12, color: s.badgeColor, fontWeight: 700, letterSpacing: '1px', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: 6 }}>
+                  {s.cta} <span style={{ transition: 'transform .2s' }}>→</span>
+                </span>
+              </div>
+            </div>
+          </Link>
         ))}
       </div>
 
-      {/* CATEGORIES */}
-      {filteredCategories.map((cat) => (
-        <section key={cat.title} style={{ marginBottom: 40 }}>
-          <div style={{ marginBottom: 18, display: 'flex', alignItems: 'center', gap: 14 }}>
-            <span style={{ fontSize: 26 }}>{cat.icon}</span>
-            <div>
-              <h2 style={{ fontFamily: lb, fontSize: 22, fontWeight: 700, lineHeight: 1.1 }}>
-                {cat.title}
-              </h2>
-              <p style={{ fontSize: 12, color: '#7a8a72', marginTop: 3 }}>{cat.desc}</p>
-            </div>
-          </div>
-
-          <div
-            className="tool-grid"
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(4,1fr)',
-              gap: 12,
-            }}
-          >
-            {cat.tools.map((tool) => {
-              const badge = statusBadge(tool.status);
-              const isLive = tool.status === 'ready' || tool.status === 'ai';
-              return (
-                <Link
-                  key={tool.title}
-                  href={isLive ? tool.href : '#'}
-                  onClick={(e) => {
-                    if (!isLive) e.preventDefault();
-                  }}
-                  style={{ textDecoration: 'none', opacity: isLive ? 1 : 0.55, cursor: isLive ? 'pointer' : 'default' }}
-                >
-                  <div
-                    className={isLive ? 'tool-card-live' : ''}
-                    style={{
-                      background: '#111c13',
-                      border: '1px solid rgba(200,168,75,.15)',
-                      padding: '16px 14px',
-                      height: '100%',
-                      position: 'relative',
-                      transition: 'all .25s ease',
-                      borderRadius: 4,
-                    }}
-                  >
-                    {badge && (
-                      <div
-                        style={{
-                          position: 'absolute',
-                          top: 8,
-                          right: 8,
-                          fontSize: 8,
-                          background: badge.bg,
-                          color: badge.color,
-                          padding: '2px 6px',
-                          borderRadius: 3,
-                          fontFamily: rj,
-                          fontWeight: 700,
-                          letterSpacing: '1px',
-                          border: `1px solid ${badge.color}40`,
-                        }}
-                      >
-                        {badge.label}
-                      </div>
-                    )}
-                    <div style={{ fontSize: 24, marginBottom: 8 }}>{tool.icon}</div>
-                    <div
-                      style={{
-                        fontFamily: lb,
-                        fontSize: 13.5,
-                        fontWeight: 700,
-                        color: '#f5f0e8',
-                        marginBottom: 5,
-                        lineHeight: 1.2,
-                      }}
-                    >
-                      {tool.title}
-                    </div>
-                    <div style={{ fontSize: 11, color: '#b0c0a4', lineHeight: 1.5 }}>{tool.desc}</div>
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
-        </section>
-      ))}
-
-      {/* INFO BAR */}
-      <section
-        style={{
-          marginTop: 30,
-          padding: '24px 20px',
-          background: 'rgba(200,168,75,.04)',
-          border: '1px solid rgba(200,168,75,.15)',
-          borderRadius: 6,
-          textAlign: 'center',
-        }}
-      >
-        <div
-          style={{
-            fontFamily: rj,
-            fontSize: 10,
-            letterSpacing: '2px',
-            textTransform: 'uppercase',
-            color: '#c8a84b',
-            fontWeight: 700,
-            marginBottom: 8,
-          }}
-        >
-          💡 How Voyage Hub Works
+      {/* SAVED ITEMS */}
+      {savedCount > 0 && (
+        <div style={{ textAlign: 'center', marginBottom: 40 }}>
+          <Link href="/voyage/saved" style={{ color: '#c8a84b', textDecoration: 'none', fontFamily: rj, fontSize: 13, fontWeight: 700 }}>
+            💾 {savedCount} saved item{savedCount !== 1 ? 's' : ''} →
+          </Link>
         </div>
-        <p
-          style={{
-            fontSize: 12.5,
-            color: '#b0c0a4',
-            lineHeight: 1.7,
-            maxWidth: 720,
-            margin: '0 auto',
-          }}
-        >
-          All tools are <strong style={{ color: '#c8a84b' }}>100% free</strong> and require no signup.
-          Your data is stored <strong>locally in your browser</strong> — nothing leaves your device
-          unless you explicitly share or export it. Tools marked <strong style={{ color: '#4caf76' }}>LIVE</strong> are
-          ready to use. Tools marked <strong style={{ color: '#7a8a72' }}>SOON</strong> are coming
-          in upcoming updates.
+      )}
+
+      {/* SEO / AI-READABLE EXPLAINER */}
+      <section style={{ marginTop: 20, padding: '28px 24px', background: 'rgba(200,168,75,.04)', border: '1px solid rgba(200,168,75,.15)', borderRadius: 8 }}>
+        <h2 style={{ fontFamily: lb, fontSize: 20, fontWeight: 700, color: '#f5f0e8', marginBottom: 12, textAlign: 'center' }}>
+          What is the <em style={g}>Voyage Hub</em>?
+        </h2>
+        <p style={{ fontSize: 13, color: '#b0c0a4', lineHeight: 1.8, maxWidth: 760, margin: '0 auto 14px', textAlign: 'center' }}>
+          The Voyage Hub is a free suite of professional maritime tools covering the entire voyage cycle.
+          The <strong style={{ color: '#c8a84b' }}>Shore Office</strong> side serves vessel operators, shipowners and
+          charterers with chartering, laytime and demurrage, hire statements, voyage and fleet performance,
+          disbursements, bunker prices and market indices. The <strong style={{ color: '#4caf76' }}>Ship Side</strong> serves
+          vessels and seafarers with cargo and stowage, stability, lashing, MARPOL and safety compliance,
+          drills, certificate tracking, drydock planning, tides and weather windows — and stays free forever.
+        </p>
+        <p style={{ fontSize: 12.5, color: '#7a8a72', lineHeight: 1.7, maxWidth: 760, margin: '0 auto', textAlign: 'center', fontFamily: rj }}>
+          Every tool runs in your browser with no signup. Your data never leaves your device unless you choose to export or share it.
         </p>
       </section>
 
       <style>{`
-        @media (max-width: 1024px) {
-          .tool-grid { grid-template-columns: repeat(3,1fr) !important; }
-        }
         @media (max-width: 720px) {
-          .tool-grid { grid-template-columns: repeat(2,1fr) !important; gap: 8px !important; }
+          .side-grid { grid-template-columns: 1fr !important; gap: 16px !important; }
         }
-        @media (max-width: 420px) {
-          .tool-grid { grid-template-columns: 1fr !important; }
+        .side-card:hover {
+          transform: translateY(-3px);
+          box-shadow: 0 10px 28px rgba(0,0,0,.35);
         }
-        .tool-card-live:hover {
-          border-color: #c8a84b !important;
-          transform: translateY(-2px);
-          box-shadow: 0 6px 16px rgba(200,168,75,.15);
+        .side-card:hover .side-cta span:last-child {
+          transform: translateX(4px);
         }
       `}</style>
     </div>
