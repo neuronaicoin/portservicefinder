@@ -31,7 +31,7 @@ const CATEGORIES: Category[] = [
       { href: '/voyage/planner', icon: '🧭', title: 'AI Route Optimizer', desc: 'Best route with weather, fuel & constraints.', status: 'ai' },
       { href: '/voyage/distance', icon: '📏', title: 'Distance Calculator', desc: 'Port-to-port distance & ETA in seconds.', status: 'ready' },
       { href: '/voyage/bunker-plan', icon: '⛽', title: 'Bunker Planner', desc: 'ROB management — delivery to redelivery.', status: 'ready' },
-      { href: '/voyage/weather', icon: '🌊', title: 'Weather Windows', desc: 'Best departure time for your route.', status: 'soon' },
+      { href: '/voyage/weather', icon: '🌊', title: 'Weather Windows', desc: 'Operation limits vs forecast — GO / no-go.', status: 'ready' },
     ],
   },
   {
@@ -41,8 +41,8 @@ const CATEGORIES: Category[] = [
     tools: [
       { href: '/voyage/tracker', icon: '📈', title: 'Voyage Tracker', desc: 'Daily reports + auto performance analysis.', status: 'ready' },
       { href: '/voyage/bunker', icon: '⚡', title: 'CP Performance', desc: 'CP vs Actual — speed & consumption claims.', status: 'ready' },
-      { href: '/voyage/noon', icon: '📝', title: 'Noon Report Manager', desc: 'Auto-process daily noon reports.', status: 'soon' },
-      { href: '/voyage/claims', icon: '⚖️', title: 'Claims Center', desc: 'Demurrage, off-hire, speed/consumption.', status: 'soon' },
+      { href: '/voyage/noon', icon: '📝', title: 'Noon Report Manager', desc: 'Daily noon reports vs CP warranties.', status: 'ready' },
+      { href: '/voyage/claims', icon: '⚖️', title: 'Claims Center', desc: 'Demurrage, off-hire, speed/consumption.', status: 'ready' },
     ],
   },
   {
@@ -50,11 +50,11 @@ const CATEGORIES: Category[] = [
     desc: 'Everything about ports — info, tides, agents, congestion.',
     icon: '🏴',
     tools: [
-      { href: '/voyage/ports', icon: '🌍', title: 'Port Database', desc: '3,700+ ports worldwide with full specs.', status: 'ready' },
-      { href: '/voyage/tide', icon: '🌊', title: 'Tide Tables', desc: 'Tides, currents, berthing windows.', status: 'soon' },
-      { href: '/voyage/disbursement', icon: '💰', title: 'Disbursement Tracker', desc: 'DA estimate vs final cost tracker.', status: 'soon' },
-      { href: '/voyage/congestion', icon: '⚓', title: 'Port Congestion', desc: 'Live waiting times from AIS data.', status: 'soon' },
-      { href: '/voyage/holidays', icon: '📅', title: 'Holidays Calendar', desc: 'Per-port holidays for SHEX calc.', status: 'soon' },
+      { href: '/voyage/ports', icon: '🌍', title: 'Port Database', desc: 'Major hub ports + PSC history links.', status: 'ready' },
+      { href: '/voyage/tide', icon: '🌊', title: 'Tide Calculator', desc: 'HW/LW interpolation + UKC windows.', status: 'ready' },
+      { href: '/voyage/disbursement', icon: '💰', title: 'Disbursement Tracker', desc: 'DA estimate vs final cost tracker.', status: 'ready' },
+      { href: '/voyage/congestion', icon: '⚓', title: 'Port Congestion', desc: 'Agent reports + berth estimate.', status: 'ready' },
+      { href: '/voyage/holidays', icon: '📅', title: 'Holidays Calendar', desc: 'Per-port holidays for SHEX calc.', status: 'ready' },
     ],
   },
   {
@@ -65,9 +65,9 @@ const CATEGORIES: Category[] = [
       { href: '/voyage/cii', icon: '🌍', title: 'CII Calculator', desc: 'Carbon Intensity Indicator — A to E rating.', status: 'ready' },
       { href: '/voyage/ets', icon: '🌫️', title: 'EU ETS / FuelEU', desc: 'Allowance cost & FuelEU compliance.', status: 'ready' },
       { href: '/voyage/psc', icon: '🔍', title: 'PSC Sentry', desc: 'MoU search, deficiency codes, CIC tracker.', status: 'ready' },
-      { href: '/voyage/marpol', icon: '🛢️', title: 'MARPOL Tracker', desc: 'Annex I-VI compliance & records.', status: 'soon' },
-      { href: '/voyage/incidents', icon: '⚠️', title: 'Incident Log', desc: 'Near miss & accident reporting.', status: 'soon' },
-      { href: '/voyage/drills', icon: '🚨', title: 'Drill Tracker', desc: 'SOLAS-mandated drill schedule & log.', status: 'soon' },
+      { href: '/voyage/marpol', icon: '🛢️', title: 'MARPOL Tracker', desc: 'Annex I-VI compliance & records.', status: 'ready' },
+      { href: '/voyage/incidents', icon: '⚠️', title: 'Incident Log', desc: 'Near miss & accident reporting.', status: 'ready' },
+      { href: '/voyage/drills', icon: '🚨', title: 'Drill Tracker', desc: 'SOLAS-mandated drill schedule & log.', status: 'ready' },
     ],
   },
   {
@@ -87,9 +87,9 @@ const CATEGORIES: Category[] = [
     icon: '📦',
     tools: [
       { href: '/voyage/draft', icon: '⚓', title: 'Draft Survey', desc: 'Cargo weight from draft readings.', status: 'ready' },
-      { href: '/voyage/cargo', icon: '📦', title: 'Cargo Database', desc: '300+ stowage factors + compatibility.', status: 'soon' },
-      { href: '/voyage/stability', icon: '⚖️', title: 'Stability Check', desc: 'Quick trim & stability calculator.', status: 'soon' },
-      { href: '/voyage/lashing', icon: '🔗', title: 'Lashing Calculator', desc: 'Heavy weather cargo securing.', status: 'soon' },
+      { href: '/voyage/cargo', icon: '📦', title: 'Cargo Database', desc: '68 cargoes — stowage factors + hazards.', status: 'ready' },
+      { href: '/voyage/stability', icon: '⚖️', title: 'Stability Check', desc: 'Quick trim & stability calculator.', status: 'ready' },
+      { href: '/voyage/lashing', icon: '🔗', title: 'Lashing Calculator', desc: 'Heavy weather cargo securing.', status: 'ready' },
     ],
   },
   {
@@ -98,9 +98,9 @@ const CATEGORIES: Category[] = [
     icon: '👥',
     tools: [
       { href: '/voyage/crew', icon: '👥', title: 'Crew Matrix', desc: 'Rank, contract, certificates tracking.', status: 'soon' },
-      { href: '/voyage/mlc', icon: '📋', title: 'MLC Compliance', desc: 'Rest hours, wages, complaint handling.', status: 'soon' },
-      { href: '/voyage/wages', icon: '💵', title: 'Wage Calculator', desc: 'ITF benchmarks by rank/nationality.', status: 'soon' },
-      { href: '/voyage/visa', icon: '🛂', title: 'Visa Requirements', desc: 'Crew visa per nationality + port.', status: 'soon' },
+      { href: '/voyage/mlc', icon: '📋', title: 'MLC Compliance', desc: 'Rest hours grid + MLC self-check.', status: 'ready' },
+      { href: '/voyage/wages', icon: '💵', title: 'Wage Calculator', desc: 'Crew wage bill — basic, OT, allowances.', status: 'ready' },
+      { href: '/voyage/visa', icon: '🛂', title: 'Visa Requirements', desc: 'Crew visa per nationality + port.', status: 'ready' },
     ],
   },
   {
@@ -109,9 +109,9 @@ const CATEGORIES: Category[] = [
     icon: '🔧',
     tools: [
       { href: '/voyage/vessel', icon: '🚢', title: 'Vessel Database', desc: 'Search by IMO — particulars & history.', status: 'ready' },
-      { href: '/voyage/drydock', icon: '🏗️', title: 'Drydock Planner', desc: '5-yearly survey + shipyard finder.', status: 'soon' },
-      { href: '/voyage/maintenance', icon: '🔧', title: 'PMS Mini', desc: 'Maintenance schedule + work orders.', status: 'soon' },
-      { href: '/voyage/spares', icon: '📦', title: 'Spares Inventory', desc: 'Critical spares & supplier tracking.', status: 'soon' },
+      { href: '/voyage/drydock', icon: '🏗️', title: 'Drydock Planner', desc: 'Survey cycle + scope & cost estimator.', status: 'ready' },
+      { href: '/voyage/maintenance', icon: '🔧', title: 'PMS Mini', desc: 'Running-hours + calendar maintenance.', status: 'ready' },
+      { href: '/voyage/spares', icon: '📦', title: 'Spares Inventory', desc: 'Critical spares & supplier tracking.', status: 'ready' },
     ],
   },
   {
@@ -120,9 +120,9 @@ const CATEGORIES: Category[] = [
     icon: '📄',
     tools: [
       { href: '/voyage/documents', icon: '📝', title: 'Document Generator', desc: 'NOR, SOF, LOI, LOP — auto-fill.', status: 'ready' },
-      { href: '/voyage/vault', icon: '🗄️', title: 'Document Vault', desc: 'Certificates with expiry alerts.', status: 'soon' },
-      { href: '/voyage/photos', icon: '📸', title: 'Photo Archive', desc: 'GPS-tagged vessel photos.', status: 'soon' },
-      { href: '/voyage/diary', icon: '📖', title: 'Voyage Diary', desc: 'Ops log + shareable summaries.', status: 'soon' },
+      { href: '/voyage/vault', icon: '🗄️', title: 'Document Vault', desc: 'Certificates with expiry alerts.', status: 'ready' },
+      { href: '/voyage/photos', icon: '📸', title: 'Photo Reference Log', desc: 'Index evidence photos for claims.', status: 'ready' },
+      { href: '/voyage/diary', icon: '📖', title: 'Voyage Diary', desc: 'Ops log + shareable summaries.', status: 'ready' },
     ],
   },
   {
@@ -141,10 +141,10 @@ const CATEGORIES: Category[] = [
     desc: 'Multi-vessel dashboard, team collaboration.',
     icon: '🎛️',
     tools: [
-      { href: '/voyage/fleet', icon: '🎛️', title: 'Fleet Dashboard', desc: 'All vessels — one screen.', status: 'soon' },
+      { href: '/voyage/fleet', icon: '🎛️', title: 'Fleet Dashboard', desc: 'All vessels — one screen.', status: 'ready' },
       { href: '/voyage/ops', icon: '💬', title: 'Ops Chat', desc: 'Vessel-office secure messaging.', status: 'soon' },
-      { href: '/voyage/contacts', icon: '📇', title: 'Contact Book', desc: 'Agents, surveyors, P&I — organized.', status: 'soon' },
-      { href: '/voyage/emergency', icon: '🚨', title: 'Emergency Reference', desc: 'Quick cards & contacts.', status: 'soon' },
+      { href: '/voyage/contacts', icon: '📇', title: 'Contact Book', desc: 'Agents, surveyors, P&I — organized.', status: 'ready' },
+      { href: '/voyage/emergency', icon: '🚨', title: 'Emergency Reference', desc: 'Quick cards & contacts.', status: 'ready' },
     ],
   },
   {
@@ -152,8 +152,8 @@ const CATEGORIES: Category[] = [
     desc: 'Bunker prices, indices, news, vessel marketplace.',
     icon: '📰',
     tools: [
-      { href: '/voyage/bunker-prices', icon: '⛽', title: 'Bunker Price Index', desc: 'Live prices — 50+ ports.', status: 'soon' },
-      { href: '/voyage/indices', icon: '📈', title: 'Market Indices', desc: 'BDI, BCI, BPI, BSI tracker.', status: 'soon' },
+      { href: '/voyage/bunker-prices', icon: '⛽', title: 'Bunker Price Tracker', desc: 'Compare ports + stem savings.', status: 'ready' },
+      { href: '/voyage/indices', icon: '📈', title: 'Market Indices', desc: 'BDI, BCI, BPI, BSI tracker.', status: 'ready' },
       { href: '/voyage/news', icon: '📰', title: 'Maritime News', desc: 'AI-summarized industry news.', status: 'soon' },
       { href: '/voyage/marketplace', icon: '🚢', title: 'Vessel Marketplace', desc: 'S&P, demolition, newbuilds.', status: 'soon' },
     ],
