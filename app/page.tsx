@@ -1020,19 +1020,26 @@ export default function Home() {
         {/* PRICING */}
         <section id="pricing" className="sec-pad" style={{padding:'80px 48px'}}>
           <div style={{fontFamily:rj,fontSize:10,letterSpacing:'3px',textTransform:'uppercase',color:'#c8a84b',marginBottom:12,fontWeight:700}}>Pricing</div>
-          <h2 style={{fontFamily:lb,fontSize:'clamp(24px,3vw,38px)',fontWeight:700,lineHeight:1.05,marginBottom:40}}>Simple, <em style={g}>Transparent</em> Pricing</h2>
-          <p style={{color:'#b0c0a4',maxWidth:440,margin:'-26px auto 32px',fontSize:13,lineHeight:1.7,textAlign:'center'}}>Affordable subscription. No commission. No hidden fees. Cancel anytime.</p>
-          <div className="tiers2" style={{display:'grid',gridTemplateColumns:'repeat(2,1fr)',gap:14,maxWidth:680,margin:'0 auto'}}>
-            {[{name:'Monthly',amt:'$49.90',per:'/ month',yr:'Billed monthly · Direct paid subscription',badge:null,items:['Listed at all your ports','Full company profile','Phone, email & WhatsApp','Verified provider badge','Active immediately after verification','Cancel anytime']},{name:'Annual',amt:'$500',per:'/ year',yr:'$41.67/month equivalent — save $98.80 (~16%)',badge:'Save $98.80',items:['Everything in Monthly','Priority placement in results','$98.80 saved vs monthly','Priority support','Best value','Active immediately after verification']}].map(tier=>(
-              <div key={tier.name} className="tier" style={{background:tier.badge?'linear-gradient(180deg,rgba(200,168,75,.06),transparent)':'#111c13',border:`1px solid ${tier.badge?'#c8a84b':'rgba(200,168,75,.2)'}`,padding:'28px 24px',position:'relative',display:'flex',flexDirection:'column'}}>
-                {tier.badge&&<div style={{position:'absolute',top:-10,left:'50%',transform:'translateX(-50%)',background:'#c8a84b',color:'#08100a',fontFamily:rj,fontSize:10,letterSpacing:'2px',fontWeight:700,padding:'4px 12px'}}>{tier.badge}</div>}
+          <h2 style={{fontFamily:lb,fontSize:'clamp(24px,3vw,38px)',fontWeight:700,lineHeight:1.05,marginBottom:14}}>Simple, <em style={g}>Transparent</em> Pricing</h2>
+          <p style={{color:'#b0c0a4',maxWidth:460,margin:'0 auto 14px',fontSize:13,lineHeight:1.7,textAlign:'center'}}>Start with <strong style={g}>3 months free</strong> — no payment required. Affordable subscription, no commission, cancel anytime.</p>
+          <div style={{textAlign:'center',marginBottom:32}}>
+            <span style={{display:'inline-block',padding:'5px 14px',background:'rgba(76,175,118,.1)',border:'1px solid rgba(76,175,118,.4)',color:'#4caf76',fontFamily:rj,fontSize:10,letterSpacing:'1.5px',textTransform:'uppercase',fontWeight:700}}>🎉 Launch Offer · All Plans Currently FREE</span>
+          </div>
+          <div className="tiers2" style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:14,maxWidth:1000,margin:'0 auto'}}>
+            {[
+              {name:'3 Months Free',amt:'FREE',per:'',yr:'No payment required · 3 months full access',badge:'START HERE',primary:false,items:['Listed at all your ports','Full company profile','Phone, email & WhatsApp','Verified provider badge','Active immediately','No credit card needed']},
+              {name:'Monthly',amt:'$49.90',per:'/ month',yr:'Billed monthly · Direct paid subscription',badge:null,primary:false,items:['Listed at all your ports','Full company profile','Phone, email & WhatsApp','Verified provider badge','Active immediately','Cancel anytime']},
+              {name:'Annual',amt:'$500',per:'/ year',yr:'$41.67/month equivalent — save $98.80 (~16%)',badge:'Save $98.80',primary:true,items:['Everything in Monthly','Priority placement in results','$98.80 saved vs monthly','Priority support','Best value','Active immediately']}
+            ].map(tier=>(
+              <div key={tier.name} className="tier" style={{background:tier.primary?'linear-gradient(180deg,rgba(200,168,75,.06),transparent)':'#111c13',border:`1px solid ${tier.primary?'#c8a84b':'rgba(200,168,75,.2)'}`,padding:'28px 22px',position:'relative',display:'flex',flexDirection:'column'}}>
+                {tier.badge&&<div style={{position:'absolute',top:-10,left:'50%',transform:'translateX(-50%)',background:tier.primary?'#c8a84b':'#4caf76',color:'#08100a',fontFamily:rj,fontSize:10,letterSpacing:'2px',fontWeight:700,padding:'4px 12px'}}>{tier.badge}</div>}
                 <div style={{fontFamily:rj,fontSize:10,letterSpacing:'2px',textTransform:'uppercase',color:'#c8a84b',marginBottom:10,fontWeight:700}}>{tier.name}</div>
-                <div style={{display:'flex',alignItems:'baseline',gap:5,marginBottom:4}}><span style={{fontFamily:lb,fontSize:38,fontWeight:700,lineHeight:1}}>{tier.amt}</span><span style={{fontFamily:rj,fontSize:12,color:'#7a8a72',fontWeight:600}}>{tier.per}</span></div>
-                <div style={{fontSize:11,color:'#b0c0a4',marginBottom:18,fontFamily:rj}}>{tier.yr}</div>
+                <div style={{display:'flex',alignItems:'baseline',gap:5,marginBottom:4}}><span style={{fontFamily:lb,fontSize:tier.amt==='FREE'?30:34,fontWeight:700,lineHeight:1,color:tier.amt==='FREE'?'#4caf76':'#f5f0e8'}}>{tier.amt}</span>{tier.per&&<span style={{fontFamily:rj,fontSize:12,color:'#7a8a72',fontWeight:600}}>{tier.per}</span>}</div>
+                <div style={{fontSize:11,color:'#b0c0a4',marginBottom:18,fontFamily:rj,lineHeight:1.4}}>{tier.yr}</div>
                 <ul style={{listStyle:'none',flex:1,marginBottom:18,display:'flex',flexDirection:'column',gap:7}}>
                   {tier.items.map(item=>(<li key={item} style={{fontSize:12,color:'#b0c0a4',display:'flex',alignItems:'flex-start',gap:7,lineHeight:1.5}}><span style={{color:'#c8a84b',fontWeight:700,flexShrink:0}}>✓</span>{item}</li>))}
                 </ul>
-                <button onClick={openListBusiness} className={tier.badge?'btn-gold':'btn-ghost'} style={{padding:11,background:tier.badge?'#c8a84b':'transparent',border:'1px solid rgba(200,168,75,.35)',color:tier.badge?'#08100a':'#c8a84b',fontFamily:rj,fontSize:11,letterSpacing:'2px',textTransform:'uppercase',fontWeight:700,cursor:'pointer',width:'100%'}}>Subscribe Now</button>
+                <button onClick={openListBusiness} className={tier.primary?'btn-gold':'btn-ghost'} style={{padding:11,background:tier.primary?'#c8a84b':'transparent',border:'1px solid rgba(200,168,75,.35)',color:tier.primary?'#08100a':'#c8a84b',fontFamily:rj,fontSize:11,letterSpacing:'1.5px',textTransform:'uppercase',fontWeight:700,cursor:'pointer',width:'100%'}}>{tier.name==='3 Months Free'?'Start Free':'Subscribe Now'}</button>
               </div>
             ))}
           </div>
@@ -1041,7 +1048,7 @@ export default function Home() {
         {/* CTA */}
         <section className="ctapad" style={{padding:'72px 48px',textAlign:'center',background:'#0c1610',borderTop:'1px solid rgba(200,168,75,.1)'}}>
           <h2 style={{fontFamily:lb,fontSize:'clamp(26px,3.5vw,48px)',fontWeight:700,lineHeight:1.05,marginBottom:12}}>Be Found by Every Vessel <em style={g}>Worldwide</em></h2>
-          <p style={{fontSize:14,color:'#b0c0a4',maxWidth:400,margin:'0 auto 28px',lineHeight:1.75}}>List on PortServiceFinder — <strong style={g}>$49.90/month or $500/year</strong>. Direct subscription, cancel anytime.</p>
+          <p style={{fontSize:14,color:'#b0c0a4',maxWidth:440,margin:'0 auto 28px',lineHeight:1.75}}>List on PortServiceFinder — <strong style={g}>Start FREE for 3 months</strong>. Then $49.90/month or $500/year. No commission. Cancel anytime.</p>
           <div style={{display:'flex',gap:10,justifyContent:'center',flexWrap:'wrap'}}>
             <button onClick={openListBusiness} className="btn-gold" style={{background:'#c8a84b',color:'#08100a',border:'none',padding:'12px 28px',fontFamily:rj,fontSize:13,letterSpacing:'2px',textTransform:'uppercase',fontWeight:700,cursor:'pointer'}}>Subscribe Now</button>
             <button className="btn-ghost" onClick={()=>window.scrollTo({top:0,behavior:'smooth'})} style={{background:'transparent',color:'#f5f0e8',border:'1px solid rgba(200,168,75,.3)',padding:'11px 22px',fontFamily:rj,fontSize:13,letterSpacing:'2px',textTransform:'uppercase',fontWeight:600,cursor:'pointer'}}>Search Free</button>
