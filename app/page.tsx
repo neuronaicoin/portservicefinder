@@ -690,6 +690,8 @@ export default function Home() {
         .btn-ghost:disabled{cursor:not-allowed;opacity:.5;}
         .rrow{transition:border-color .3s ease, transform .25s ease, box-shadow .25s ease;}
         .rrow:hover{border-color:#c8a84b!important;cursor:pointer;transform:translateX(4px);box-shadow:-4px 0 0 #c8a84b;}
+        .vtool-card{transition:all .25s ease;}
+        .vtool-card:hover{border-color:#c8a84b!important;transform:translateY(-3px);box-shadow:0 8px 20px rgba(200,168,75,.15);}
         .tier{transition:transform .35s ease, box-shadow .35s ease, background .35s ease;}
         .tier:hover{transform:translateY(-6px);box-shadow:0 14px 38px rgba(0,0,0,.45);background:#162019!important;}
         .step{transition:transform .35s ease, background .35s ease;}
@@ -752,6 +754,7 @@ export default function Home() {
           .blogs-grid{grid-template-columns:1fr!important;}
           .testi-grid{grid-template-columns:1fr!important;}
           .tiers2{grid-template-columns:1fr!important;}
+          .voyage-tools-grid{grid-template-columns:repeat(2,1fr)!important;gap:10px!important;}
           .ftgrid{grid-template-columns:1fr!important;}
           .ftpad{padding:36px 16px 0!important;}
           .newsletter-wrap{grid-template-columns:1fr!important;padding:20px 18px!important;gap:18px!important;}
@@ -793,6 +796,7 @@ export default function Home() {
             <span className="logo-text" style={{fontFamily:lb,fontSize:20,fontWeight:700,letterSpacing:1}}>PortService<span style={g}>Finder</span></span>
           </Link>
           <div className="nav-links-desktop" style={{display:'flex',alignItems:'center',gap:18}}>
+            <Link href="/voyage" className="nlnk" style={{color:'#c8a84b',fontSize:12,letterSpacing:'1.5px',textTransform:'uppercase',cursor:'pointer',fontFamily:rj,fontWeight:700,textDecoration:'none',display:'flex',alignItems:'center',gap:5}}>⚓ Voyage Hub <span style={{fontSize:8,background:'#c8a84b',color:'#08100a',padding:'2px 5px',borderRadius:3,fontWeight:700}}>NEW</span></Link>
             <span className="nlnk" style={{color:'#7a8a72',fontSize:12,letterSpacing:'1.5px',textTransform:'uppercase',cursor:'pointer',fontFamily:rj,fontWeight:600}} onClick={()=>document.getElementById('how')?.scrollIntoView({behavior:'smooth'})}>How It Works</span>
             <Link href="/blog" className="nlnk" style={{color:'#7a8a72',fontSize:12,letterSpacing:'1.5px',textTransform:'uppercase',cursor:'pointer',fontFamily:rj,fontWeight:600,textDecoration:'none'}}>Guides</Link>
             <Link href="/faq" className="nlnk" style={{color:'#7a8a72',fontSize:12,letterSpacing:'1.5px',textTransform:'uppercase',cursor:'pointer',fontFamily:rj,fontWeight:600,textDecoration:'none'}}>FAQ</Link>
@@ -808,6 +812,7 @@ export default function Home() {
         {/* MOBILE MENU OVERLAY */}
         {mobileMenu&&(
           <div style={{position:'fixed',top:62,left:0,right:0,background:'rgba(8,16,10,.98)',backdropFilter:'blur(20px)',borderBottom:'1px solid rgba(200,168,75,.2)',zIndex:299,padding:'20px 16px',display:'flex',flexDirection:'column',gap:12}}>
+            <Link href="/voyage" style={{color:'#c8a84b',fontSize:15,letterSpacing:'1.5px',textTransform:'uppercase',fontFamily:rj,fontWeight:700,padding:'12px 0',borderBottom:'1px solid rgba(200,168,75,.2)',textDecoration:'none',display:'flex',alignItems:'center',gap:8}} onClick={()=>setMobileMenu(false)}>⚓ Voyage Hub <span style={{fontSize:9,background:'#c8a84b',color:'#08100a',padding:'2px 6px',borderRadius:3,fontWeight:700}}>NEW</span></Link>
             <span style={{color:'#f5f0e8',fontSize:14,letterSpacing:'1.5px',textTransform:'uppercase',cursor:'pointer',fontFamily:rj,fontWeight:600,padding:'10px 0',borderBottom:'1px solid rgba(200,168,75,.1)'}} onClick={()=>{document.getElementById('how')?.scrollIntoView({behavior:'smooth'});setMobileMenu(false);}}>How It Works</span>
             <Link href="/blog" style={{color:'#f5f0e8',fontSize:14,letterSpacing:'1.5px',textTransform:'uppercase',fontFamily:rj,fontWeight:600,padding:'10px 0',borderBottom:'1px solid rgba(200,168,75,.1)',textDecoration:'none'}}>Guides & Blog</Link>
             <Link href="/faq" style={{color:'#f5f0e8',fontSize:14,letterSpacing:'1.5px',textTransform:'uppercase',fontFamily:rj,fontWeight:600,padding:'10px 0',borderBottom:'1px solid rgba(200,168,75,.1)',textDecoration:'none'}}>FAQ</Link>
@@ -901,6 +906,107 @@ export default function Home() {
                 </div>
               )}
             </div>
+          </div>
+        </section>
+
+        {/* VOYAGE HUB SECTION - NEW */}
+        <section id="voyage-hub-teaser" style={{padding:'80px 48px',background:'linear-gradient(135deg,#0c1610 0%,#08100a 100%)',borderTop:'1px solid rgba(200,168,75,.15)',position:'relative',overflow:'hidden'}}>
+          <div style={{position:'absolute',top:0,right:0,width:300,height:300,background:'radial-gradient(circle,rgba(200,168,75,.08),transparent 70%)',pointerEvents:'none'}}/>
+          <div style={{maxWidth:1200,margin:'0 auto',position:'relative'}}>
+
+            <div style={{textAlign:'center',marginBottom:42,maxWidth:720,margin:'0 auto 42px'}}>
+              <div style={{display:'inline-block',padding:'5px 14px',background:'rgba(200,168,75,.12)',border:'1px solid rgba(200,168,75,.4)',color:'#c8a84b',fontFamily:rj,fontSize:10,letterSpacing:'2px',textTransform:'uppercase',fontWeight:700,marginBottom:16}}>⚓ NEW · 100% Free Tools</div>
+              <h2 className="blog-hero-title" style={{fontFamily:lb,fontSize:'clamp(26px,3.2vw,42px)',fontWeight:700,lineHeight:1.05,marginBottom:14}}>Voyage <em style={g}>Hub</em></h2>
+              <p style={{fontSize:14,color:'#b0c0a4',lineHeight:1.7,marginBottom:8}}>Professional maritime tools for operators, charterers, and captains.</p>
+              <p style={{fontSize:12.5,color:'#7a8a72',lineHeight:1.6}}>Voyage planning · Performance analysis · Bunker calculations · Port info · CII/EU ETS · PSC tracker · AI assistant · and 30+ more tools.</p>
+            </div>
+
+            <div className="voyage-tools-grid" style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:14,marginBottom:32}}>
+
+              <Link href="/voyage/bunker" style={{textDecoration:'none'}}>
+                <div className="vtool-card" style={{background:'#111c13',border:'1px solid rgba(200,168,75,.18)',padding:'20px 18px',cursor:'pointer',transition:'all .2s',height:'100%'}}>
+                  <div style={{fontSize:28,marginBottom:10}}>⛽</div>
+                  <div style={{fontFamily:rj,fontSize:10,letterSpacing:'1.5px',textTransform:'uppercase',color:'#c8a84b',fontWeight:700,marginBottom:6}}>CP Performance</div>
+                  <div style={{fontSize:13,color:'#f5f0e8',fontWeight:600,marginBottom:6,fontFamily:lb}}>Bunker Calculator</div>
+                  <div style={{fontSize:11,color:'#b0c0a4',lineHeight:1.5}}>CP vs Actual consumption, claim calculations, PDF reports.</div>
+                </div>
+              </Link>
+
+              <Link href="/voyage/tracker" style={{textDecoration:'none'}}>
+                <div className="vtool-card" style={{background:'#111c13',border:'1px solid rgba(200,168,75,.18)',padding:'20px 18px',cursor:'pointer',transition:'all .2s',height:'100%'}}>
+                  <div style={{fontSize:28,marginBottom:10}}>📊</div>
+                  <div style={{fontFamily:rj,fontSize:10,letterSpacing:'1.5px',textTransform:'uppercase',color:'#c8a84b',fontWeight:700,marginBottom:6}}>Voyage Tracker</div>
+                  <div style={{fontSize:13,color:'#f5f0e8',fontWeight:600,marginBottom:6,fontFamily:lb}}>Performance Tracking</div>
+                  <div style={{fontSize:11,color:'#b0c0a4',lineHeight:1.5}}>Daily reports, weather analysis, full voyage performance.</div>
+                </div>
+              </Link>
+
+              <Link href="/voyage/distance" style={{textDecoration:'none'}}>
+                <div className="vtool-card" style={{background:'#111c13',border:'1px solid rgba(200,168,75,.18)',padding:'20px 18px',cursor:'pointer',transition:'all .2s',height:'100%'}}>
+                  <div style={{fontSize:28,marginBottom:10}}>📏</div>
+                  <div style={{fontFamily:rj,fontSize:10,letterSpacing:'1.5px',textTransform:'uppercase',color:'#c8a84b',fontWeight:700,marginBottom:6}}>Distance & ETA</div>
+                  <div style={{fontSize:13,color:'#f5f0e8',fontWeight:600,marginBottom:6,fontFamily:lb}}>Distance Calculator</div>
+                  <div style={{fontSize:11,color:'#b0c0a4',lineHeight:1.5}}>Port-to-port distance, voyage time, fuel estimation.</div>
+                </div>
+              </Link>
+
+              <Link href="/voyage/ports" style={{textDecoration:'none'}}>
+                <div className="vtool-card" style={{background:'#111c13',border:'1px solid rgba(200,168,75,.18)',padding:'20px 18px',cursor:'pointer',transition:'all .2s',height:'100%'}}>
+                  <div style={{fontSize:28,marginBottom:10}}>🏴</div>
+                  <div style={{fontFamily:rj,fontSize:10,letterSpacing:'1.5px',textTransform:'uppercase',color:'#c8a84b',fontWeight:700,marginBottom:6}}>Port Database</div>
+                  <div style={{fontSize:13,color:'#f5f0e8',fontWeight:600,marginBottom:6,fontFamily:lb}}>3,700+ Ports</div>
+                  <div style={{fontSize:11,color:'#b0c0a4',lineHeight:1.5}}>Specs, weather, tides, providers, PSC info worldwide.</div>
+                </div>
+              </Link>
+
+              <Link href="/voyage/cii" style={{textDecoration:'none'}}>
+                <div className="vtool-card" style={{background:'#111c13',border:'1px solid rgba(200,168,75,.18)',padding:'20px 18px',cursor:'pointer',transition:'all .2s',height:'100%'}}>
+                  <div style={{fontSize:28,marginBottom:10}}>🌍</div>
+                  <div style={{fontFamily:rj,fontSize:10,letterSpacing:'1.5px',textTransform:'uppercase',color:'#c8a84b',fontWeight:700,marginBottom:6}}>Compliance</div>
+                  <div style={{fontSize:13,color:'#f5f0e8',fontWeight:600,marginBottom:6,fontFamily:lb}}>CII / EU ETS</div>
+                  <div style={{fontSize:11,color:'#b0c0a4',lineHeight:1.5}}>CO2 emissions, ETS cost, FuelEU compliance.</div>
+                </div>
+              </Link>
+
+              <Link href="/voyage/laytime" style={{textDecoration:'none'}}>
+                <div className="vtool-card" style={{background:'#111c13',border:'1px solid rgba(200,168,75,.18)',padding:'20px 18px',cursor:'pointer',transition:'all .2s',height:'100%'}}>
+                  <div style={{fontSize:28,marginBottom:10}}>⏱️</div>
+                  <div style={{fontFamily:rj,fontSize:10,letterSpacing:'1.5px',textTransform:'uppercase',color:'#c8a84b',fontWeight:700,marginBottom:6}}>Laytime</div>
+                  <div style={{fontSize:13,color:'#f5f0e8',fontWeight:600,marginBottom:6,fontFamily:lb}}>Demurrage Calc</div>
+                  <div style={{fontSize:11,color:'#b0c0a4',lineHeight:1.5}}>Laytime statement, demurrage, despatch automation.</div>
+                </div>
+              </Link>
+
+              <Link href="/voyage/psc" style={{textDecoration:'none'}}>
+                <div className="vtool-card" style={{background:'#111c13',border:'1px solid rgba(200,168,75,.18)',padding:'20px 18px',cursor:'pointer',transition:'all .2s',height:'100%'}}>
+                  <div style={{fontSize:28,marginBottom:10}}>🛂</div>
+                  <div style={{fontFamily:rj,fontSize:10,letterSpacing:'1.5px',textTransform:'uppercase',color:'#c8a84b',fontWeight:700,marginBottom:6}}>PSC Sentry</div>
+                  <div style={{fontSize:13,color:'#f5f0e8',fontWeight:600,marginBottom:6,fontFamily:lb}}>Port State Control</div>
+                  <div style={{fontSize:11,color:'#b0c0a4',lineHeight:1.5}}>Deficiency codes, MoU search, CIC tracker.</div>
+                </div>
+              </Link>
+
+              <Link href="/voyage/assistant" style={{textDecoration:'none'}}>
+                <div className="vtool-card" style={{background:'linear-gradient(135deg,rgba(200,168,75,.08),transparent)',border:'1px solid rgba(200,168,75,.4)',padding:'20px 18px',cursor:'pointer',transition:'all .2s',height:'100%',position:'relative'}}>
+                  <div style={{position:'absolute',top:8,right:8,fontSize:8,background:'#c8a84b',color:'#08100a',padding:'2px 6px',borderRadius:3,fontFamily:rj,fontWeight:700,letterSpacing:'1px'}}>AI</div>
+                  <div style={{fontSize:28,marginBottom:10}}>🤖</div>
+                  <div style={{fontFamily:rj,fontSize:10,letterSpacing:'1.5px',textTransform:'uppercase',color:'#c8a84b',fontWeight:700,marginBottom:6}}>AI Assistant</div>
+                  <div style={{fontSize:13,color:'#f5f0e8',fontWeight:600,marginBottom:6,fontFamily:lb}}>Maritime AI</div>
+                  <div style={{fontSize:11,color:'#b0c0a4',lineHeight:1.5}}>Ask anything: voyage, CP, weather, regulations.</div>
+                </div>
+              </Link>
+
+            </div>
+
+            <div style={{textAlign:'center'}}>
+              <Link href="/voyage" style={{textDecoration:'none'}}>
+                <button className="btn-gold" style={{background:'#c8a84b',color:'#08100a',border:'none',padding:'13px 32px',fontFamily:rj,fontSize:12,letterSpacing:'2px',textTransform:'uppercase',fontWeight:700,cursor:'pointer'}}>
+                  Explore All 40+ Tools →
+                </button>
+              </Link>
+              <p style={{fontSize:11.5,color:'#7a8a72',marginTop:14,fontFamily:rj,letterSpacing:'.5px'}}>100% Free · No signup required · Made by mariners, for mariners</p>
+            </div>
+
           </div>
         </section>
 
