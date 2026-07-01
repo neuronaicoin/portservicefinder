@@ -29,6 +29,7 @@ interface Vessel {
   robVlsfo: number;       // MT on departure
   robMgo: number;         // MT on departure
   fuelType: 'VLSFO' | 'HSFO' | 'LSMGO';
+  mgoSeaCons: number;     // aux MGO MT/day at sea
 }
 
 interface PlannerData {
@@ -39,16 +40,17 @@ interface PlannerData {
   departureDate: string;   // ISO date
   departureTime: string;   // HH:MM
   seaMargin: number;       // % added to distance for weather/routing
+  portDays: number;        // days in port at arrival (for MGO/aux burn)
 }
 
 const DEFAULT_VESSEL: Vessel = {
   name: '', loa: 0, beam: 0, draft: 0, serviceSpeed: 12,
-  ladenCons: 0, portCons: 0, robVlsfo: 0, robMgo: 0, fuelType: 'VLSFO',
+  ladenCons: 0, portCons: 0, robVlsfo: 0, robMgo: 0, fuelType: 'VLSFO', mgoSeaCons: 0,
 };
 
 const DEFAULT_DATA: PlannerData = {
   departure: null, arrival: null, waypoints: [], vessel: DEFAULT_VESSEL,
-  departureDate: new Date().toISOString().slice(0, 10), departureTime: '12:00', seaMargin: 5,
+  departureDate: new Date().toISOString().slice(0, 10), departureTime: '12:00', seaMargin: 5, portDays: 0,
 };
 
 // Common routing waypoints operators add manually (canals, capes, straits)
@@ -621,6 +623,27 @@ export default function VoyagePlannerPage() {
   const robTotal = data.vessel.robVlsfo + data.vessel.robMgo;
   const robOnArrival = data.vessel.robVlsfo - fuelBurn; // simplified (main fuel = VLSFO)
 
+  // ---- FULL FUEL PLAN ----
+  const fuelPlan = useMemo(() => {
+    const seaMain = data.vessel.ladenCons * seaDays;            // main fuel (VLSFO/HSFO/LSMGO) at sea
+    const seaMgo = data.vessel.mgoSeaCons * seaDays;            // aux MGO at sea
+    const portMgo = data.vessel.portCons * (data.portDays || 0); // MGO/idle at port
+    const mainType = data.vessel.fuelType;
+
+    // main fuel drawn from VLSFO ROB unless main fuel is LSMGO
+    let vlsfoUsed = 0, mgoUsed = 0;
+    if (mainType === 'LSMGO') {
+      mgoUsed = seaMain + seaMgo + portMgo;
+    } else {
+      vlsfoUsed = seaMain;
+      mgoUsed = seaMgo + portMgo;
+    }
+    const vlsfoArr = data.vessel.robVlsfo - vlsfoUsed;
+    const mgoArr = data.vessel.robMgo - mgoUsed;
+
+    return { seaMain, seaMgo, portMgo, vlsfoUsed, mgoUsed, vlsfoArr, mgoArr, mainType };
+  }, [data.vessel, seaDays, data.portDays]);
+
   function handleSave() {
     const name = recordName.trim() || `${data.departure?.name || 'From'} → ${data.arrival?.name || 'To'}`;
     const id = recordId || genId();
@@ -741,11 +764,16 @@ export default function VoyagePlannerPage() {
       {/* 3. Departure + bunkers on board */}
       <div style={card}>
         <div style={sectionTitle}>3. Departure &amp; Bunkers ROB</div>
-        <div className="pl-g4" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 10 }}>
+        <div className="pl-g4" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 10, marginBottom: 10 }}>
           <div><label style={labelS}>Departure Date</label><input style={inputStyle} type="date" value={data.departureDate} onChange={(e) => update('departureDate', e.target.value)} /></div>
           <div><label style={labelS}>Departure Time</label><input style={inputStyle} type="time" value={data.departureTime} onChange={(e) => update('departureTime', e.target.value)} /></div>
           <div><label style={labelS}>ROB VLSFO (MT)</label><input style={inputStyle} type="number" value={data.vessel.robVlsfo || ''} onChange={(e) => setVessel('robVlsfo', num(e.target.value))} placeholder="800" /></div>
           <div><label style={labelS}>ROB MGO (MT)</label><input style={inputStyle} type="number" value={data.vessel.robMgo || ''} onChange={(e) => setVessel('robMgo', num(e.target.value))} placeholder="90" /></div>
+        </div>
+        <div className="pl-g4" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 10 }}>
+          <div><label style={labelS}>Aux MGO at Sea (MT/day)</label><input style={inputStyle} type="number" step="0.1" value={data.vessel.mgoSeaCons || ''} onChange={(e) => setVessel('mgoSeaCons', num(e.target.value))} placeholder="1.5" /></div>
+          <div><label style={labelS}>Port/Idle Cons (MT/day)</label><input style={inputStyle} type="number" step="0.1" value={data.vessel.portCons || ''} onChange={(e) => setVessel('portCons', num(e.target.value))} placeholder="3" /></div>
+          <div><label style={labelS}>Port Days at Arrival</label><input style={inputStyle} type="number" step="0.5" value={data.portDays || ''} onChange={(e) => update('portDays', num(e.target.value))} placeholder="2" /></div>
         </div>
       </div>
 
@@ -893,6 +921,149 @@ export default function VoyagePlannerPage() {
               })()}
             </div>
           )}
+        </div>
+      )}
+
+
+      {/* FULL FUEL PLAN */}
+      {ready && (
+        <div style={card}>
+          <div style={sectionTitle}>⛽ Fuel Plan</div>
+          <div className="pl-kpis" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 10, marginBottom: 16 }}>
+            <KPI label="Main at Sea" value={fmt(fuelPlan.seaMain, 0)} sub={`MT ${fuelPlan.mainType}`} color="#c8a84b" />
+            <KPI label="Aux MGO at Sea" value={fmt(fuelPlan.seaMgo, 1)} sub="MT" color="#5aa6e8" />
+            <KPI label="Port MGO" value={fmt(fuelPlan.portMgo, 1)} sub="MT" color="#5aa6e8" />
+            <KPI label="Total Burn" value={fmt(fuelPlan.seaMain + fuelPlan.seaMgo + fuelPlan.portMgo, 0)} sub="MT" color="#e8b85a" big />
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 0, marginBottom: 14 }}>
+            <RowR label={`VLSFO ROB on departure`} value={`${fmt(data.vessel.robVlsfo, 0)} MT`} />
+            <RowR label="VLSFO consumed" value={`${fmt(fuelPlan.vlsfoUsed, 0)} MT`} />
+            <RowR label="VLSFO on arrival" value={`${fmt(fuelPlan.vlsfoArr, 0)} MT`} color={fuelPlan.vlsfoArr < 0 ? '#ff6b6b' : fuelPlan.vlsfoArr < data.vessel.robVlsfo * 0.1 ? '#e8b85a' : '#4caf76'} />
+            <RowR label="MGO ROB on departure" value={`${fmt(data.vessel.robMgo, 0)} MT`} />
+            <RowR label="MGO consumed" value={`${fmt(fuelPlan.mgoUsed, 1)} MT`} />
+            <RowR label="MGO on arrival" value={`${fmt(fuelPlan.mgoArr, 1)} MT`} color={fuelPlan.mgoArr < 0 ? '#ff6b6b' : fuelPlan.mgoArr < data.vessel.robMgo * 0.15 ? '#e8b85a' : '#4caf76'} />
+          </div>
+
+          {(fuelPlan.vlsfoArr < 0 || fuelPlan.mgoArr < 0) && (
+            <div style={{ padding: '10px 14px', background: 'rgba(255,107,107,.1)', border: '1px solid rgba(255,107,107,.4)', borderRadius: 4, fontFamily: rj, fontSize: 12.5, color: '#ff8a8a' }}>
+              ⚠ Bunkers insufficient for this passage. Plan a stem before departure or en route, or reduce speed to cut consumption.
+            </div>
+          )}
+
+          {/* Daily fuel burn-down mini chart */}
+          {dailyPositions.length > 1 && data.vessel.ladenCons > 0 && (() => {
+            const W = 600, H = 120, pad = 26;
+            const nmPerDay = speed * 24;
+            const dailyMain = data.vessel.ladenCons; // per day
+            const startROB = fuelPlan.mainType === 'LSMGO' ? data.vessel.robMgo : data.vessel.robVlsfo;
+            const pts = dailyPositions.map((dp) => {
+              const burned = Math.min(startROB, (dp.cumDist / Math.max(1, nmPerDay)) * dailyMain);
+              return { day: dp.day, rob: Math.max(0, startROB - burned) };
+            });
+            const maxR = Math.max(startROB, 1);
+            const px = (i: number) => pad + (i / Math.max(1, pts.length - 1)) * (W - 2 * pad);
+            const py = (v: number) => H - pad - (v / maxR) * (H - 2 * pad);
+            const d = pts.map((p, i) => `${i === 0 ? 'M' : 'L'} ${px(i).toFixed(1)} ${py(p.rob).toFixed(1)}`).join(' ');
+            return (
+              <div style={{ marginTop: 8 }}>
+                <div style={{ fontFamily: rj, fontSize: 10, color: '#c8a84b', letterSpacing: '1px', textTransform: 'uppercase', fontWeight: 700, marginBottom: 6 }}>
+                  {fuelPlan.mainType} ROB burn-down
+                </div>
+                <svg viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', height: 'auto' }}>
+                  <path d={`${d} L ${px(pts.length - 1)} ${H - pad} L ${px(0)} ${H - pad} Z`} fill="rgba(200,168,75,.12)" />
+                  <path d={d} fill="none" stroke="#c8a84b" strokeWidth={2} />
+                  <text x={pad} y={H - 8} fill="#7a8a72" fontSize={8} fontFamily={rj}>Day 0</text>
+                  <text x={W - pad} y={H - 8} fill="#7a8a72" fontSize={8} fontFamily={rj} textAnchor="end">Day {pts[pts.length - 1].day}</text>
+                  <text x={pad} y={py(maxR) + 8} fill="#7a8a72" fontSize={8} fontFamily={rj}>{fmt(maxR, 0)} MT</text>
+                </svg>
+              </div>
+            );
+          })()}
+        </div>
+      )}
+
+      {/* WEATHER OUTLOOK TABLE */}
+      {ready && wxFetched && weather.length > 0 && (
+        <div style={card}>
+          <div style={sectionTitle}>🌦️ Weather Outlook Along the Route</div>
+          <div style={{ overflowX: 'auto' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 520, fontFamily: rj }}>
+              <thead>
+                <tr style={{ color: '#7a8a72', fontSize: 9.5, letterSpacing: '.5px', textTransform: 'uppercase' }}>
+                  <th style={{ ...thd, textAlign: 'left' }}>Day / Date</th>
+                  <th style={thd}>Wind</th>
+                  <th style={thd}>Wave Hs</th>
+                  <th style={thd}>Current</th>
+                  <th style={{ ...thd, textAlign: 'left', paddingLeft: 12 }}>Outlook</th>
+                </tr>
+              </thead>
+              <tbody>
+                {weather.map((w) => {
+                  const dp = dailyPositions.find((d) => d.day === w.day);
+                  const sev = severity(w);
+                  return (
+                    <tr key={w.day} style={{ borderTop: '1px solid rgba(200,168,75,.08)' }}>
+                      <td style={{ padding: '6px', color: '#f5f0e8', fontSize: 12 }}>
+                        <b>Day {w.day}</b> {dp ? dp.date.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }) : ''}
+                      </td>
+                      {w.available ? (
+                        <>
+                          <td style={{ padding: '6px', textAlign: 'right', color: '#b0c0a4', fontSize: 12 }}>{w.windSpeed.toFixed(0)} kt {degToCompass(w.windDir)}</td>
+                          <td style={{ padding: '6px', textAlign: 'right', color: '#b0c0a4', fontSize: 12 }}>{w.waveHs.toFixed(1)} m</td>
+                          <td style={{ padding: '6px', textAlign: 'right', color: '#5aa6e8', fontSize: 12 }}>{w.currentSpeed > 0 ? `${w.currentSpeed.toFixed(1)} kt ${degToCompass(w.currentDir)}` : '–'}</td>
+                          <td style={{ padding: '6px 6px 6px 12px', color: SEV_COLOR[sev], fontSize: 11.5, fontWeight: 600 }}>{w.note}</td>
+                        </>
+                      ) : (
+                        <td colSpan={4} style={{ padding: '6px 6px 6px 12px', color: '#7a8a72', fontSize: 11.5 }}>{w.note || 'No forecast'}</td>
+                      )}
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* AI SUMMARY (Pro placeholder) */}
+      {ready && (
+        <div style={{ ...card, background: 'linear-gradient(135deg,rgba(200,168,75,.06),transparent)', borderColor: 'rgba(200,168,75,.3)' }}>
+          <div style={sectionTitle}>🤖 AI Voyage Summary</div>
+          <p style={{ fontFamily: rj, fontSize: 12.5, color: '#b0c0a4', lineHeight: 1.6, marginBottom: 12 }}>
+            Let AI read this entire plan — route, distance, ETA, fuel and the weather outlook — and write an
+            operator-ready summary with routing advice, weather risk flags and a bunker recommendation.
+          </p>
+          <button
+            onClick={() => alert('AI Voyage Summary is a Pro feature — coming soon. It will analyse this plan and produce routing advice, weather risk flags and a bunker recommendation.')}
+            style={{ ...goldBtn, opacity: 0.85 }}
+          >
+            ✨ Generate AI Summary — Pro (coming soon)
+          </button>
+        </div>
+      )}
+
+      {/* PRINTABLE PERFORMANCE SUMMARY */}
+      {ready && (
+        <div style={card}>
+          <div style={sectionTitle}>📋 Voyage Performance Summary</div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 0, fontFamily: rj, fontSize: 12.5 }}>
+            <RowR label="Vessel" value={data.vessel.name || '—'} />
+            <RowR label="Route" value={`${data.departure?.name || '—'} → ${data.arrival?.name || '—'}${data.waypoints.length ? ` via ${data.waypoints.map((w) => w.name).join(', ')}` : ''}`} />
+            <RowR label="Departure" value={fmtDateTime(addHours(data.departureDate, data.departureTime, 0))} />
+            <RowR label="ETA" value={fmtDateTime(eta)} />
+            <RowR label="Distance (with margin)" value={`${fmt(distanceWithMargin)} nm`} />
+            <RowR label="Sea time" value={`${fmt(seaDays, 1)} days at ${data.vessel.serviceSpeed} kts`} />
+            <RowR label="Total fuel burn" value={`${fmt(fuelPlan.seaMain + fuelPlan.seaMgo + fuelPlan.portMgo, 0)} MT`} />
+            <RowR label={`${fuelPlan.mainType} on arrival`} value={`${fmt(fuelPlan.mainType === 'LSMGO' ? fuelPlan.mgoArr : fuelPlan.vlsfoArr, 0)} MT`} />
+            <RowR label="MGO on arrival" value={`${fmt(fuelPlan.mgoArr, 1)} MT`} />
+            {wxFetched && weather.some((w) => severity(w) >= 3) && (
+              <RowR label="Weather risk" value={`Gale-force conditions expected on ${weather.filter((w) => severity(w) >= 3).map((w) => `Day ${w.day}`).join(', ')}`} color="#ff8a8a" />
+            )}
+          </div>
+          <p style={{ fontFamily: rj, fontSize: 10.5, color: '#7a8a72', marginTop: 12, lineHeight: 1.5 }}>
+            Indicative planning figures. Distances are great-circle via your waypoints (not a navigated track); weather is Open-Meteo forecast (~16-day horizon). Always plan the actual passage with approved charts, routing and the vessel&apos;s own data.
+          </p>
         </div>
       )}
 
