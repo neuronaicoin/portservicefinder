@@ -3,6 +3,7 @@ import { useState, useEffect, useMemo, useRef } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { saveItem, loadItem, genId } from '@/lib/voyage-storage';
 import { PORTS_SORTED, searchPorts, haversineDistance, initialBearing, bearingToCompass, type PortCoord } from '@/lib/ports-data';
+import { computeSeaRoute, type RouteWaypoint } from '@/lib/sea-router';
 
 const lb = "'Libre Bodoni', serif";
 const rj = "'Rajdhani', sans-serif";
@@ -300,7 +301,7 @@ function loadLeaflet(): Promise<any> {
 interface MapProps {
   departure: PortCoord | null;
   arrival: PortCoord | null;
-  waypoints: Waypoint[];
+  waypoints: { name: string; lat: number; lon: number; major?: boolean }[];
   densified: RoutePoint[];
   dailyPositions: DailyPos[];
   weather: DayWeather[];
@@ -366,7 +367,7 @@ function RouteMap({ departure, arrival, waypoints, densified, dailyPositions, we
 
     if (departure) L.marker([departure.lat, departure.lon], { icon: portIcon('#4caf76', '● ' + departure.name) }).addTo(lg);
     if (arrival) L.marker([arrival.lat, arrival.lon], { icon: portIcon('#ff8a8a', '◉ ' + arrival.name) }).addTo(lg);
-    waypoints.forEach((w) => L.marker([w.lat, w.lon], { icon: portIcon('#5aa6e8', '◇ ' + w.name) }).addTo(lg));
+    waypoints.forEach((w) => { if (w.major !== false) L.marker([w.lat, w.lon], { icon: portIcon('#5aa6e8', '◇ ' + w.name) }).addTo(lg); });
 
     // weather-coloured segments between consecutive daily positions (if weather loaded)
     if (weather.length > 0) {
@@ -491,6 +492,10 @@ export default function VoyagePlannerPage() {
   const [saveMsg, setSaveMsg] = useState('');
   const [wpPick, setWpPick] = useState('');
   const [activeDay, setActiveDay] = useState<number | null>(null);
+  const [autoWps, setAutoWps] = useState<RouteWaypoint[]>([]);
+  const [autoOn, setAutoOn] = useState(true);
+  const [routing, setRouting] = useState(false);
+  const [routeErr, setRouteErr] = useState('');
   const [weather, setWeather] = useState<DayWeather[]>([]);
   const [wxLoading, setWxLoading] = useState(false);
   const [wxError, setWxError] = useState('');
@@ -570,6 +575,25 @@ export default function VoyagePlannerPage() {
     setWpPick('');
   }
   function delWaypoint(id: string) { setData((p) => ({ ...p, waypoints: p.waypoints.filter((w) => w.id !== id) })); }
+
+  // AUTO SEA ROUTE — real land/sea mask + A* (async, loads world map once)
+  useEffect(() => {
+    let cancelled = false;
+    if (!autoOn) { setAutoWps([]); setRouteErr(''); return; }
+    if (!data.departure || !data.arrival) { setAutoWps([]); setRouteErr(''); return; }
+    setRouting(true); setRouteErr('');
+    computeSeaRoute(
+      { lat: data.departure.lat, lon: data.departure.lon },
+      { lat: data.arrival.lat, lon: data.arrival.lon }
+    ).then((wps) => {
+      if (cancelled) return;
+      if (!wps || wps.length === 0) { setRouteErr('Could not compute a sea route for these ports. Try manual waypoints.'); setAutoWps([]); }
+      else setAutoWps(wps);
+    }).catch(() => {
+      if (!cancelled) setRouteErr('Sea-route map could not load (check your connection). You can add waypoints manually.');
+    }).finally(() => { if (!cancelled) setRouting(false); });
+    return () => { cancelled = true; };
+  }, [autoOn, data.departure, data.arrival]);
   function moveWaypoint(id: string, dir: -1 | 1) {
     setData((p) => {
       const arr = [...p.waypoints];
@@ -581,7 +605,25 @@ export default function VoyagePlannerPage() {
     });
   }
 
-  const legs = useMemo(() => buildLegs(data), [data]);
+  // effective waypoints: manual list takes priority; otherwise auto sea route
+  const usingAuto = data.waypoints.length === 0 && autoWps.length > 0;
+  const effectiveWps = useMemo(() => {
+    if (data.waypoints.length > 0) return data.waypoints.map((w) => ({ name: w.name, lat: w.lat, lon: w.lon, major: true }));
+    return autoWps;
+  }, [data.waypoints, autoWps]);
+
+  const legs = useMemo(() => {
+    const named: { name: string; lat: number; lon: number }[] = [];
+    if (data.departure) named.push({ name: data.departure.name, lat: data.departure.lat, lon: data.departure.lon });
+    effectiveWps.forEach((w) => named.push({ name: w.name, lat: w.lat, lon: w.lon }));
+    if (data.arrival) named.push({ name: data.arrival.name, lat: data.arrival.lat, lon: data.arrival.lon });
+    const out: Leg[] = [];
+    for (let i = 0; i < named.length - 1; i++) {
+      const a = named[i], b = named[i + 1];
+      out.push({ from: a, to: b, distance: haversineDistance(a.lat, a.lon, b.lat, b.lon), bearing: initialBearing(a.lat, a.lon, b.lat, b.lon) });
+    }
+    return out;
+  }, [data.departure, data.arrival, effectiveWps]);
   const baseDistance = useMemo(() => legs.reduce((s, l) => s + l.distance, 0), [legs]);
   const distanceWithMargin = baseDistance * (1 + (data.seaMargin || 0) / 100);
   const speed = data.vessel.serviceSpeed > 0 ? data.vessel.serviceSpeed : 0;
@@ -589,14 +631,14 @@ export default function VoyagePlannerPage() {
   const seaDays = seaHours / 24;
   const eta = addHours(data.departureDate, data.departureTime, seaHours);
 
-  // ordered route points (departure -> waypoints -> arrival)
+  // ordered route points (departure -> effective waypoints -> arrival)
   const routePoints = useMemo<RoutePoint[]>(() => {
     const pts: RoutePoint[] = [];
     if (data.departure) pts.push({ lat: data.departure.lat, lon: data.departure.lon });
-    data.waypoints.forEach((w) => pts.push({ lat: w.lat, lon: w.lon }));
+    effectiveWps.forEach((w) => pts.push({ lat: w.lat, lon: w.lon }));
     if (data.arrival) pts.push({ lat: data.arrival.lat, lon: data.arrival.lon });
     return pts;
-  }, [data.departure, data.arrival, data.waypoints]);
+  }, [data.departure, data.arrival, effectiveWps]);
 
   const densified = useMemo(() => densifyRoute(routePoints, 50), [routePoints]);
 
@@ -707,19 +749,54 @@ export default function VoyagePlannerPage() {
           <PortSearch label="Arrival Port" value={data.arrival} onSelect={(p) => update('arrival', p)} placeholder="e.g. Amsterdam" />
         </div>
 
-        {/* Waypoints */}
-        <div style={{ marginBottom: 8 }}>
-          <label style={labelS}>Routing Waypoints (canals, capes, straits)</label>
-          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
-            <select value={wpPick} onChange={(e) => addCommonWp(e.target.value)} style={{ ...inputStyle, maxWidth: 260 }}>
-              <option value="">+ Add common waypoint…</option>
-              {COMMON_WAYPOINTS.map((w) => <option key={w.name} value={w.name}>{w.name}</option>)}
-            </select>
-            <span style={{ fontFamily: rj, fontSize: 10.5, color: '#7a8a72' }}>Add points in the order the ship passes them.</span>
-          </div>
+        {/* Routing mode */}
+        <div style={{ marginBottom: 10, display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+          <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', fontFamily: rj, fontSize: 12, color: '#b0c0a4' }}>
+            <input type="checkbox" checked={autoOn} onChange={(e) => setAutoOn(e.target.checked)} style={{ accentColor: '#c8a84b', width: 16, height: 16 }} />
+            <b style={{ color: autoOn ? '#4caf76' : '#7a8a72' }}>Auto sea route</b> — draw a sea-only path (avoids land)
+          </label>
         </div>
 
-        {data.waypoints.length > 0 && (
+        {/* Auto route info */}
+        {autoOn && routing && (
+          <div style={{ padding: '10px 12px', background: 'rgba(90,166,232,.06)', border: '1px solid rgba(90,166,232,.25)', borderRadius: 4, marginBottom: 8 }}>
+            <div style={{ fontFamily: rj, fontSize: 12, color: '#5aa6e8', fontWeight: 600 }}>⏳ Computing sea route (loading world map)…</div>
+          </div>
+        )}
+        {autoOn && routeErr && !routing && (
+          <div style={{ padding: '10px 12px', background: 'rgba(255,138,138,.06)', border: '1px solid rgba(255,138,138,.3)', borderRadius: 4, marginBottom: 8 }}>
+            <div style={{ fontFamily: rj, fontSize: 12, color: '#ff8a8a' }}>{routeErr}</div>
+          </div>
+        )}
+        {autoOn && usingAuto && !routing && !routeErr && (
+          <div style={{ padding: '10px 12px', background: 'rgba(76,175,118,.06)', border: '1px solid rgba(76,175,118,.25)', borderRadius: 4, marginBottom: 8 }}>
+            <div style={{ fontFamily: rj, fontSize: 11, color: '#4caf76', fontWeight: 700, letterSpacing: '.5px', marginBottom: 4 }}>🌊 AUTO SEA ROUTE ACTIVE (land-avoiding)</div>
+            <div style={{ fontFamily: rj, fontSize: 12, color: '#b0c0a4', lineHeight: 1.5 }}>
+              {autoWps.filter((w) => w.major).length > 0
+                ? <>Passing via: <b style={{ color: '#f5f0e8' }}>{autoWps.filter((w) => w.major).map((w) => w.name).join(' → ')}</b></>
+                : <>Direct sea leg — open water, no major choke points.</>}
+            </div>
+            <div style={{ fontFamily: rj, fontSize: 10.5, color: '#7a8a72', marginTop: 4 }}>
+              Route computed over a real land/sea map. To fine-tune, turn off Auto and add waypoints manually.
+            </div>
+          </div>
+        )}
+
+        {/* Manual waypoints (used when Auto is off) */}
+        {!autoOn && (
+          <div style={{ marginBottom: 8 }}>
+            <label style={labelS}>Routing Waypoints (canals, capes, straits)</label>
+            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
+              <select value={wpPick} onChange={(e) => addCommonWp(e.target.value)} style={{ ...inputStyle, maxWidth: 260 }}>
+                <option value="">+ Add common waypoint…</option>
+                {COMMON_WAYPOINTS.map((w) => <option key={w.name} value={w.name}>{w.name}</option>)}
+              </select>
+              <span style={{ fontFamily: rj, fontSize: 10.5, color: '#7a8a72' }}>Add points in the order the ship passes them.</span>
+            </div>
+          </div>
+        )}
+
+        {!autoOn && data.waypoints.length > 0 && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginTop: 10 }}>
             {data.waypoints.map((w, i) => (
               <div key={w.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#0c1610', border: '1px solid rgba(200,168,75,.12)', borderRadius: 3, padding: '6px 10px' }}>
@@ -838,7 +915,7 @@ export default function VoyagePlannerPage() {
           <RouteMap
             departure={data.departure}
             arrival={data.arrival}
-            waypoints={data.waypoints}
+            waypoints={effectiveWps.filter((w) => w.major)}
             densified={densified}
             dailyPositions={dailyPositions}
             weather={weather}
@@ -1049,7 +1126,7 @@ export default function VoyagePlannerPage() {
           <div style={sectionTitle}>📋 Voyage Performance Summary</div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 0, fontFamily: rj, fontSize: 12.5 }}>
             <RowR label="Vessel" value={data.vessel.name || '—'} />
-            <RowR label="Route" value={`${data.departure?.name || '—'} → ${data.arrival?.name || '—'}${data.waypoints.length ? ` via ${data.waypoints.map((w) => w.name).join(', ')}` : ''}`} />
+            <RowR label="Route" value={`${data.departure?.name || '—'} → ${data.arrival?.name || '—'}${effectiveWps.filter((w) => w.major).length ? ` via ${effectiveWps.filter((w) => w.major).map((w) => w.name).join(', ')}` : ''}`} />
             <RowR label="Departure" value={fmtDateTime(addHours(data.departureDate, data.departureTime, 0))} />
             <RowR label="ETA" value={fmtDateTime(eta)} />
             <RowR label="Distance (with margin)" value={`${fmt(distanceWithMargin)} nm`} />
