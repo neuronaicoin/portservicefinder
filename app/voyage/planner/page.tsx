@@ -182,6 +182,84 @@ function positionAtDistance(pts: RoutePoint[], targetNm: number): RoutePoint {
 }
 
 
+
+// ============================================================
+// OPEN-METEO — marine weather + current along the route
+// Free, no API key, CORS-enabled. Forecast horizon ~16 days.
+// Marine API: wave height/direction/period + ocean current.
+// Forecast API: wind speed/direction (10m).
+// ============================================================
+interface DayWeather {
+  day: number;
+  available: boolean;       // within forecast horizon & data returned
+  windSpeed: number;        // kt
+  windDir: number;          // deg
+  waveHs: number;           // m
+  waveDir: number;          // deg
+  wavePeriod: number;       // s
+  currentSpeed: number;     // kt
+  currentDir: number;       // deg
+  note: string;
+}
+
+function degToCompass(d: number): string {
+  const dirs = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW'];
+  return dirs[Math.round(((d % 360) / 22.5)) % 16];
+}
+
+// weather severity 0..3 for colour coding (based on wind & wave)
+function severity(w: DayWeather): 0 | 1 | 2 | 3 {
+  if (!w.available) return 0;
+  const wind = w.windSpeed, hs = w.waveHs;
+  if (wind >= 34 || hs >= 4) return 3;        // gale / rough
+  if (wind >= 22 || hs >= 2.5) return 2;      // strong breeze / moderate
+  if (wind >= 11 || hs >= 1.25) return 1;     // moderate
+  return 0;                                   // calm
+}
+const SEV_COLOR = ['#4caf76', '#8bc34a', '#e8b85a', '#ff6b6b'];
+
+// fetch one point's forecast for a specific date (returns midday value)
+async function fetchPointWeather(lat: number, lon: number, dateISO: string): Promise<Partial<DayWeather>> {
+  const marineUrl = `https://marine-api.open-meteo.com/v1/marine?latitude=${lat.toFixed(3)}&longitude=${lon.toFixed(3)}&daily=wave_height_max,wave_direction_dominant,wave_period_max&hourly=ocean_current_velocity,ocean_current_direction&start_date=${dateISO}&end_date=${dateISO}&timezone=UTC`;
+  const windUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat.toFixed(3)}&longitude=${lon.toFixed(3)}&daily=wind_speed_10m_max,wind_direction_10m_dominant&wind_speed_unit=kn&start_date=${dateISO}&end_date=${dateISO}&timezone=UTC`;
+
+  const out: Partial<DayWeather> = {};
+  try {
+    const [mRes, wRes] = await Promise.all([fetch(marineUrl), fetch(windUrl)]);
+    if (mRes.ok) {
+      const m = await mRes.json();
+      if (m.daily) {
+        out.waveHs = m.daily.wave_height_max?.[0] ?? 0;
+        out.waveDir = m.daily.wave_direction_dominant?.[0] ?? 0;
+        out.wavePeriod = m.daily.wave_period_max?.[0] ?? 0;
+      }
+      if (m.hourly && Array.isArray(m.hourly.ocean_current_velocity)) {
+        // take midday (index 12) if present, else first non-null
+        const vArr = m.hourly.ocean_current_velocity;
+        const dArr = m.hourly.ocean_current_direction || [];
+        const idx = vArr.length > 12 ? 12 : 0;
+        const vMs = vArr[idx];
+        if (vMs != null) { out.currentSpeed = vMs * 1.94384; out.currentDir = dArr[idx] ?? 0; } // m/s -> kt
+      }
+    }
+    if (wRes.ok) {
+      const w = await wRes.json();
+      if (w.daily) {
+        out.windSpeed = w.daily.wind_speed_10m_max?.[0] ?? 0;
+        out.windDir = w.daily.wind_direction_10m_dominant?.[0] ?? 0;
+      }
+    }
+    out.available = out.waveHs != null || out.windSpeed != null;
+  } catch (e) {
+    out.available = false;
+  }
+  return out;
+}
+
+function isoDate(d: Date): string {
+  return d.toISOString().slice(0, 10);
+}
+
 // ============================================================
 // LEAFLET MAP — real world map + GEBCO bathymetry + route
 // Leaflet is loaded from CDN at runtime to avoid SSR issues.
@@ -223,10 +301,11 @@ interface MapProps {
   waypoints: Waypoint[];
   densified: RoutePoint[];
   dailyPositions: DailyPos[];
+  weather: DayWeather[];
   activeDay: number | null;   // which day's ship position to highlight
 }
 
-function RouteMap({ departure, arrival, waypoints, densified, dailyPositions, activeDay }: MapProps) {
+function RouteMap({ departure, arrival, waypoints, densified, dailyPositions, weather, activeDay }: MapProps) {
   const mapRef = useRef<HTMLDivElement | null>(null);
   const mapObj = useRef<any>(null);
   const layerGroup = useRef<any>(null);
@@ -287,10 +366,27 @@ function RouteMap({ departure, arrival, waypoints, densified, dailyPositions, ac
     if (arrival) L.marker([arrival.lat, arrival.lon], { icon: portIcon('#ff8a8a', '◉ ' + arrival.name) }).addTo(lg);
     waypoints.forEach((w) => L.marker([w.lat, w.lon], { icon: portIcon('#5aa6e8', '◇ ' + w.name) }).addTo(lg));
 
-    // daily dots
+    // weather-coloured segments between consecutive daily positions (if weather loaded)
+    if (weather.length > 0) {
+      for (let i = 0; i < dailyPositions.length - 1; i++) {
+        const a = dailyPositions[i], b = dailyPositions[i + 1];
+        const w = weather.find((x) => x.day === a.day);
+        const sev = w ? severity(w) : 0;
+        const col = w && w.available ? SEV_COLOR[sev] : '#5a6b52';
+        L.polyline([[a.lat, a.lon], [b.lat, b.lon]], { color: col, weight: 5, opacity: 0.85 }).addTo(lg);
+      }
+    }
+
+    // daily dots (coloured by weather severity when available)
     dailyPositions.forEach((dp) => {
-      L.circleMarker([dp.lat, dp.lon], { radius: 3, color: '#e8b85a', fillColor: '#e8b85a', fillOpacity: 0.8, weight: 1 })
-        .bindTooltip(`Day ${dp.day}`, { direction: 'top', offset: [0, -4] })
+      const w = weather.find((x) => x.day === dp.day);
+      const sev = w ? severity(w) : 0;
+      const col = w && w.available ? SEV_COLOR[sev] : '#e8b85a';
+      const tip = w && w.available
+        ? `Day ${dp.day}: ${w.windSpeed.toFixed(0)}kt, Hs ${w.waveHs.toFixed(1)}m`
+        : (w && w.note ? `Day ${dp.day}: ${w.note}` : `Day ${dp.day}`);
+      L.circleMarker([dp.lat, dp.lon], { radius: 4, color: col, fillColor: col, fillOpacity: 0.9, weight: 1 })
+        .bindTooltip(tip, { direction: 'top', offset: [0, -4] })
         .addTo(lg);
     });
 
@@ -298,7 +394,7 @@ function RouteMap({ departure, arrival, waypoints, densified, dailyPositions, ac
     if (latlngs.length >= 2) {
       try { mapObj.current.fitBounds(L.latLngBounds(latlngs).pad(0.2)); } catch (e) { /* noop */ }
     }
-  }, [ready, densified, departure, arrival, waypoints, dailyPositions]);
+  }, [ready, densified, departure, arrival, waypoints, dailyPositions, weather]);
 
   // ship marker for active day
   useEffect(() => {
@@ -393,6 +489,62 @@ export default function VoyagePlannerPage() {
   const [saveMsg, setSaveMsg] = useState('');
   const [wpPick, setWpPick] = useState('');
   const [activeDay, setActiveDay] = useState<number | null>(null);
+  const [weather, setWeather] = useState<DayWeather[]>([]);
+  const [wxLoading, setWxLoading] = useState(false);
+  const [wxError, setWxError] = useState('');
+  const [wxFetched, setWxFetched] = useState(false);
+
+  async function fetchWeatherAlongRoute() {
+    if (dailyPositions.length === 0) return;
+    setWxLoading(true); setWxError(''); setWxFetched(false);
+    const HORIZON_DAYS = 16;
+    const results: DayWeather[] = [];
+    try {
+      // sequential-ish but capped; fetch each day's position
+      for (const dp of dailyPositions) {
+        const base: DayWeather = { day: dp.day, available: false, windSpeed: 0, windDir: 0, waveHs: 0, waveDir: 0, wavePeriod: 0, currentSpeed: 0, currentDir: 0, note: '' };
+        // beyond forecast horizon -> mark unavailable, skip fetch
+        const daysFromNow = (dp.date.getTime() - Date.now()) / 86400000;
+        if (daysFromNow > HORIZON_DAYS) {
+          base.note = 'Beyond forecast horizon';
+          results.push(base);
+          continue;
+        }
+        if (daysFromNow < -1) {
+          base.note = 'Past date';
+          results.push(base);
+          continue;
+        }
+        const w = await fetchPointWeather(dp.lat, dp.lon, isoDate(dp.date));
+        const merged: DayWeather = { ...base, ...w, day: dp.day } as DayWeather;
+        merged.available = !!w.available;
+        results.push(merged);
+      }
+      // build notes: describe worsening/improving vs previous
+      for (let i = 0; i < results.length; i++) {
+        const cur = results[i];
+        if (!cur.available) continue;
+        const sev = severity(cur);
+        const label = sev === 3 ? 'gale / rough seas' : sev === 2 ? 'strong winds, moderate seas' : sev === 1 ? 'moderate conditions' : 'calm';
+        let trend = '';
+        const prev = results[i - 1];
+        if (prev && prev.available) {
+          const ps = severity(prev);
+          if (sev > ps) trend = ' — worsening';
+          else if (sev < ps) trend = ' — improving';
+        }
+        cur.note = `${cur.windSpeed.toFixed(0)}kt ${degToCompass(cur.windDir)}, Hs ${cur.waveHs.toFixed(1)}m — ${label}${trend}`;
+      }
+      setWeather(results);
+      setWxFetched(true);
+    } catch (e) {
+      setWxError('Weather could not be loaded. Check your connection and try again.');
+    } finally {
+      setWxLoading(false);
+    }
+  }
+
+
 
   useEffect(() => {
     if (existingId) {
@@ -460,6 +612,9 @@ export default function VoyagePlannerPage() {
     }
     return out;
   }, [routePoints, speed, seaDays, distanceWithMargin, data.departureDate, data.departureTime]);
+
+  // clear weather if route/date/speed changes materially
+  useEffect(() => { setWeather([]); setWxFetched(false); }, [routePoints, data.departureDate, data.vessel.serviceSpeed]);
 
   // fuel quick preview (full plan comes in Part 5)
   const fuelBurn = data.vessel.ladenCons * seaDays;
@@ -658,8 +813,33 @@ export default function VoyagePlannerPage() {
             waypoints={data.waypoints}
             densified={densified}
             dailyPositions={dailyPositions}
+            weather={weather}
             activeDay={activeDay}
           />
+
+          {/* Weather load bar */}
+          <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap', marginTop: 12 }}>
+            <button onClick={fetchWeatherAlongRoute} disabled={wxLoading} style={{ ...goldBtn, opacity: wxLoading ? 0.6 : 1 }}>
+              {wxLoading ? '⏳ Loading weather…' : wxFetched ? '🔄 Refresh Weather' : '🌦️ Load Weather & Current'}
+            </button>
+            {wxError && <span style={{ fontFamily: rj, fontSize: 12, color: '#ff8a8a' }}>{wxError}</span>}
+            {wxFetched && !wxError && (
+              <span style={{ fontFamily: rj, fontSize: 11, color: '#7a8a72' }}>
+                Data: Open-Meteo · forecast horizon ~16 days
+              </span>
+            )}
+          </div>
+
+          {/* Weather legend */}
+          {wxFetched && (
+            <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', marginTop: 10, fontFamily: rj, fontSize: 10.5, color: '#b0c0a4' }}>
+              <span><b style={{ color: SEV_COLOR[0] }}>●</b> Calm</span>
+              <span><b style={{ color: SEV_COLOR[1] }}>●</b> Moderate</span>
+              <span><b style={{ color: SEV_COLOR[2] }}>●</b> Strong / rough</span>
+              <span><b style={{ color: SEV_COLOR[3] }}>●</b> Gale</span>
+              <span><b style={{ color: '#5a6b52' }}>●</b> Beyond forecast</span>
+            </div>
+          )}
           {/* day scrubber (positions only for now; weather arrives next part) */}
           {dailyPositions.length > 1 && (
             <div style={{ marginTop: 14 }}>
@@ -679,18 +859,38 @@ export default function VoyagePlannerPage() {
               />
               {activeDay != null && (() => {
                 const dp = dailyPositions[activeDay];
+                const w = weather.find((x) => x.day === dp.day);
+                const sev = w ? severity(w) : 0;
                 return (
-                  <div style={{ marginTop: 10, padding: '10px 14px', background: '#0c1610', border: '1px solid rgba(200,168,75,.2)', borderRadius: 4, display: 'flex', gap: 18, flexWrap: 'wrap', fontFamily: rj, fontSize: 12, color: '#b0c0a4' }}>
-                    <span>📅 <b style={{ color: '#f5f0e8' }}>{dp.date.toLocaleDateString('en-GB', { weekday: 'short', day: '2-digit', month: 'short' })}</b></span>
-                    <span>📍 <b style={{ color: '#f5f0e8' }}>{dp.lat.toFixed(2)}°, {dp.lon.toFixed(2)}°</b></span>
-                    <span>➡️ Covered <b style={{ color: '#c8a84b' }}>{fmt(dp.cumDist)} nm</b></span>
-                    <span>⛳ Remaining <b style={{ color: '#5aa6e8' }}>{fmt(dp.remainingDist)} nm</b></span>
+                  <div style={{ marginTop: 10 }}>
+                    <div style={{ padding: '10px 14px', background: '#0c1610', border: '1px solid rgba(200,168,75,.2)', borderRadius: 4, display: 'flex', gap: 18, flexWrap: 'wrap', fontFamily: rj, fontSize: 12, color: '#b0c0a4' }}>
+                      <span>📅 <b style={{ color: '#f5f0e8' }}>{dp.date.toLocaleDateString('en-GB', { weekday: 'short', day: '2-digit', month: 'short' })}</b></span>
+                      <span>📍 <b style={{ color: '#f5f0e8' }}>{dp.lat.toFixed(2)}°, {dp.lon.toFixed(2)}°</b></span>
+                      <span>➡️ Covered <b style={{ color: '#c8a84b' }}>{fmt(dp.cumDist)} nm</b></span>
+                      <span>⛳ Remaining <b style={{ color: '#5aa6e8' }}>{fmt(dp.remainingDist)} nm</b></span>
+                    </div>
+                    {w && w.available ? (
+                      <div style={{ marginTop: 8, padding: '12px 14px', background: '#0c1610', border: `1px solid ${SEV_COLOR[sev]}55`, borderRadius: 4 }}>
+                        <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap', fontFamily: rj, fontSize: 12.5 }}>
+                          <span style={{ color: '#7a8a72' }}>🌬️ Wind <b style={{ color: '#f5f0e8' }}>{w.windSpeed.toFixed(0)} kt {degToCompass(w.windDir)}</b></span>
+                          <span style={{ color: '#7a8a72' }}>🌊 Wave Hs <b style={{ color: '#f5f0e8' }}>{w.waveHs.toFixed(1)} m {degToCompass(w.waveDir)}</b></span>
+                          {w.wavePeriod > 0 && <span style={{ color: '#7a8a72' }}>⏱️ Period <b style={{ color: '#f5f0e8' }}>{w.wavePeriod.toFixed(0)} s</b></span>}
+                          {w.currentSpeed > 0 && <span style={{ color: '#7a8a72' }}>🌀 Current <b style={{ color: '#5aa6e8' }}>{w.currentSpeed.toFixed(1)} kt {degToCompass(w.currentDir)}</b></span>}
+                        </div>
+                        {w.note && <div style={{ marginTop: 6, fontFamily: rj, fontSize: 12, color: SEV_COLOR[sev], fontWeight: 600 }}>{w.note}</div>}
+                      </div>
+                    ) : wxFetched ? (
+                      <div style={{ marginTop: 8, padding: '10px 14px', background: '#0c1610', border: '1px solid rgba(122,138,114,.3)', borderRadius: 4, fontFamily: rj, fontSize: 12, color: '#7a8a72' }}>
+                        {w?.note || 'No forecast for this day'} — beyond the ~16-day forecast horizon or no marine data at this point.
+                      </div>
+                    ) : (
+                      <div style={{ marginTop: 8, fontFamily: rj, fontSize: 11, color: '#7a8a72' }}>
+                        Tap <b style={{ color: '#c8a84b' }}>Load Weather</b> above to see wind, waves and current for this position.
+                      </div>
+                    )}
                   </div>
                 );
               })()}
-              <p style={{ fontFamily: rj, fontSize: 10.5, color: '#7a8a72', marginTop: 8 }}>
-                Weather &amp; current for each day&apos;s position load in the next step.
-              </p>
             </div>
           )}
         </div>
