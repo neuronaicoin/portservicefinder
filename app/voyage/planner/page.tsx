@@ -112,6 +112,218 @@ function fmtDateTime(d: Date | null): string {
   return d.toLocaleString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
 }
 
+
+// ============================================================
+// GEODESY — great-circle interpolation for daily positions
+// ============================================================
+function toRad(d: number) { return (d * Math.PI) / 180; }
+function toDeg(r: number) { return (r * 180) / Math.PI; }
+
+// intermediate point at fraction f (0..1) along great circle A->B
+function interpGC(lat1: number, lon1: number, lat2: number, lon2: number, f: number): [number, number] {
+  const φ1 = toRad(lat1), λ1 = toRad(lon1), φ2 = toRad(lat2), λ2 = toRad(lon2);
+  const Δφ = φ2 - φ1, Δλ = λ2 - λ1;
+  const a = Math.sin(Δφ / 2) ** 2 + Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) ** 2;
+  const δ = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  if (δ === 0) return [lat1, lon1];
+  const A = Math.sin((1 - f) * δ) / Math.sin(δ);
+  const B = Math.sin(f * δ) / Math.sin(δ);
+  const x = A * Math.cos(φ1) * Math.cos(λ1) + B * Math.cos(φ2) * Math.cos(λ2);
+  const y = A * Math.cos(φ1) * Math.sin(λ1) + B * Math.cos(φ2) * Math.sin(λ2);
+  const z = A * Math.sin(φ1) + B * Math.sin(φ2);
+  const φi = Math.atan2(z, Math.sqrt(x * x + y * y));
+  const λi = Math.atan2(y, x);
+  return [toDeg(φi), ((toDeg(λi) + 540) % 360) - 180];
+}
+
+interface RoutePoint { lat: number; lon: number; }
+interface DailyPos {
+  day: number;          // 0,1,2...
+  date: Date;
+  lat: number;
+  lon: number;
+  cumDist: number;      // nm covered
+  remainingDist: number;
+}
+
+// densify the route into many small segments for smooth drawing
+function densifyRoute(pts: RoutePoint[], stepNm = 60): RoutePoint[] {
+  if (pts.length < 2) return pts;
+  const out: RoutePoint[] = [];
+  for (let i = 0; i < pts.length - 1; i++) {
+    const a = pts[i], b = pts[i + 1];
+    const d = haversineDistance(a.lat, a.lon, b.lat, b.lon);
+    const steps = Math.max(1, Math.round(d / stepNm));
+    for (let s = 0; s < steps; s++) {
+      const [la, lo] = interpGC(a.lat, a.lon, b.lat, b.lon, s / steps);
+      out.push({ lat: la, lon: lo });
+    }
+  }
+  out.push({ lat: pts[pts.length - 1].lat, lon: pts[pts.length - 1].lon });
+  return out;
+}
+
+// compute a position at a given cumulative distance along the ordered points
+function positionAtDistance(pts: RoutePoint[], targetNm: number): RoutePoint {
+  if (pts.length === 0) return { lat: 0, lon: 0 };
+  if (pts.length === 1 || targetNm <= 0) return pts[0];
+  let acc = 0;
+  for (let i = 0; i < pts.length - 1; i++) {
+    const a = pts[i], b = pts[i + 1];
+    const d = haversineDistance(a.lat, a.lon, b.lat, b.lon);
+    if (acc + d >= targetNm) {
+      const f = d > 0 ? (targetNm - acc) / d : 0;
+      const [la, lo] = interpGC(a.lat, a.lon, b.lat, b.lon, f);
+      return { lat: la, lon: lo };
+    }
+    acc += d;
+  }
+  return pts[pts.length - 1];
+}
+
+
+// ============================================================
+// LEAFLET MAP — real world map + GEBCO bathymetry + route
+// Leaflet is loaded from CDN at runtime to avoid SSR issues.
+// ============================================================
+declare global {
+  interface Window { L?: any; }
+}
+
+function loadLeaflet(): Promise<any> {
+  return new Promise((resolve, reject) => {
+    if (typeof window === 'undefined') { reject('no window'); return; }
+    if (window.L) { resolve(window.L); return; }
+    // CSS
+    if (!document.getElementById('leaflet-css')) {
+      const link = document.createElement('link');
+      link.id = 'leaflet-css';
+      link.rel = 'stylesheet';
+      link.href = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css';
+      document.head.appendChild(link);
+    }
+    // JS
+    const existing = document.getElementById('leaflet-js') as HTMLScriptElement | null;
+    if (existing) {
+      existing.addEventListener('load', () => resolve(window.L));
+      return;
+    }
+    const script = document.createElement('script');
+    script.id = 'leaflet-js';
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js';
+    script.onload = () => resolve(window.L);
+    script.onerror = () => reject('leaflet failed');
+    document.head.appendChild(script);
+  });
+}
+
+interface MapProps {
+  departure: PortCoord | null;
+  arrival: PortCoord | null;
+  waypoints: Waypoint[];
+  densified: RoutePoint[];
+  dailyPositions: DailyPos[];
+  activeDay: number | null;   // which day's ship position to highlight
+}
+
+function RouteMap({ departure, arrival, waypoints, densified, dailyPositions, activeDay }: MapProps) {
+  const mapRef = useRef<HTMLDivElement | null>(null);
+  const mapObj = useRef<any>(null);
+  const layerGroup = useRef<any>(null);
+  const shipMarker = useRef<any>(null);
+  const [ready, setReady] = useState(false);
+  const [err, setErr] = useState('');
+
+  // init map once
+  useEffect(() => {
+    let cancelled = false;
+    loadLeaflet().then((L) => {
+      if (cancelled || !mapRef.current || mapObj.current) return;
+      const map = L.map(mapRef.current, {
+        center: [20, 0], zoom: 2, worldCopyJump: true, minZoom: 2, maxZoom: 12,
+        attributionControl: true,
+      });
+      // Base: dark ocean-friendly tiles (Carto dark) — good contrast for the gold route
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; OpenStreetMap &copy; CARTO', subdomains: 'abcd', maxZoom: 20,
+      }).addTo(map);
+      // Bathymetry overlay: GEBCO shaded relief (shows sea depth when zoomed) — WMS
+      try {
+        L.tileLayer.wms('https://wms.gebco.net/mapserv?', {
+          layers: 'GEBCO_LATEST', format: 'image/png', transparent: true,
+          opacity: 0.45, attribution: 'GEBCO',
+        }).addTo(map);
+      } catch (e) { /* bathymetry optional */ }
+
+      mapObj.current = map;
+      layerGroup.current = L.layerGroup().addTo(map);
+      setReady(true);
+    }).catch(() => setErr('Map could not load (check your connection).'));
+    return () => {
+      cancelled = true;
+      if (mapObj.current) { mapObj.current.remove(); mapObj.current = null; }
+    };
+  }, []);
+
+  // redraw route when inputs change
+  useEffect(() => {
+    if (!ready || !mapObj.current || !window.L) return;
+    const L = window.L;
+    const lg = layerGroup.current;
+    lg.clearLayers();
+
+    const latlngs = densified.map((p) => [p.lat, p.lon]);
+    if (latlngs.length >= 2) {
+      // route line (gold)
+      L.polyline(latlngs, { color: '#c8a84b', weight: 3, opacity: 0.9 }).addTo(lg);
+    }
+
+    const portIcon = (color: string, label: string) => L.divIcon({
+      className: '', html: `<div style="background:${color};color:#08100a;font-family:${rj};font-size:10px;font-weight:700;padding:2px 6px;border-radius:3px;white-space:nowrap;box-shadow:0 2px 6px rgba(0,0,0,.4)">${label}</div>`,
+      iconSize: [0, 0], iconAnchor: [0, 0],
+    });
+
+    if (departure) L.marker([departure.lat, departure.lon], { icon: portIcon('#4caf76', '● ' + departure.name) }).addTo(lg);
+    if (arrival) L.marker([arrival.lat, arrival.lon], { icon: portIcon('#ff8a8a', '◉ ' + arrival.name) }).addTo(lg);
+    waypoints.forEach((w) => L.marker([w.lat, w.lon], { icon: portIcon('#5aa6e8', '◇ ' + w.name) }).addTo(lg));
+
+    // daily dots
+    dailyPositions.forEach((dp) => {
+      L.circleMarker([dp.lat, dp.lon], { radius: 3, color: '#e8b85a', fillColor: '#e8b85a', fillOpacity: 0.8, weight: 1 })
+        .bindTooltip(`Day ${dp.day}`, { direction: 'top', offset: [0, -4] })
+        .addTo(lg);
+    });
+
+    // fit bounds
+    if (latlngs.length >= 2) {
+      try { mapObj.current.fitBounds(L.latLngBounds(latlngs).pad(0.2)); } catch (e) { /* noop */ }
+    }
+  }, [ready, densified, departure, arrival, waypoints, dailyPositions]);
+
+  // ship marker for active day
+  useEffect(() => {
+    if (!ready || !mapObj.current || !window.L) return;
+    const L = window.L;
+    if (shipMarker.current) { mapObj.current.removeLayer(shipMarker.current); shipMarker.current = null; }
+    if (activeDay == null) return;
+    const dp = dailyPositions.find((d) => d.day === activeDay);
+    if (!dp) return;
+    const icon = L.divIcon({
+      className: '', html: `<div style="font-size:22px;filter:drop-shadow(0 2px 4px rgba(0,0,0,.6))">🚢</div>`,
+      iconSize: [24, 24], iconAnchor: [12, 12],
+    });
+    shipMarker.current = L.marker([dp.lat, dp.lon], { icon, zIndexOffset: 1000 }).addTo(mapObj.current);
+  }, [ready, activeDay, dailyPositions]);
+
+  return (
+    <div style={{ position: 'relative' }}>
+      <div ref={mapRef} style={{ width: '100%', height: 420, borderRadius: 6, overflow: 'hidden', border: '1px solid rgba(200,168,75,.2)', background: '#0c1610' }} />
+      {err && <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: rj, fontSize: 12, color: '#ff8a8a', background: 'rgba(12,22,16,.9)', borderRadius: 6 }}>{err}</div>}
+      {!ready && !err && <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: rj, fontSize: 12, color: '#7a8a72' }}>Loading map…</div>}
+    </div>
+  );
+}
+
 // ============================================================
 // STYLES
 // ============================================================
@@ -180,6 +392,7 @@ export default function VoyagePlannerPage() {
   const [showSave, setShowSave] = useState(false);
   const [saveMsg, setSaveMsg] = useState('');
   const [wpPick, setWpPick] = useState('');
+  const [activeDay, setActiveDay] = useState<number | null>(null);
 
   useEffect(() => {
     if (existingId) {
@@ -221,6 +434,32 @@ export default function VoyagePlannerPage() {
   const seaHours = speed > 0 ? distanceWithMargin / speed : 0;
   const seaDays = seaHours / 24;
   const eta = addHours(data.departureDate, data.departureTime, seaHours);
+
+  // ordered route points (departure -> waypoints -> arrival)
+  const routePoints = useMemo<RoutePoint[]>(() => {
+    const pts: RoutePoint[] = [];
+    if (data.departure) pts.push({ lat: data.departure.lat, lon: data.departure.lon });
+    data.waypoints.forEach((w) => pts.push({ lat: w.lat, lon: w.lon }));
+    if (data.arrival) pts.push({ lat: data.arrival.lat, lon: data.arrival.lon });
+    return pts;
+  }, [data.departure, data.arrival, data.waypoints]);
+
+  const densified = useMemo(() => densifyRoute(routePoints, 50), [routePoints]);
+
+  // daily positions along the route (day 0 = departure)
+  const dailyPositions = useMemo<DailyPos[]>(() => {
+    if (routePoints.length < 2 || speed <= 0) return [];
+    const totalDays = Math.ceil(seaDays);
+    const nmPerDay = speed * 24;
+    const out: DailyPos[] = [];
+    for (let day = 0; day <= totalDays; day++) {
+      const cum = Math.min(day * nmPerDay, distanceWithMargin);
+      const pos = positionAtDistance(routePoints, cum);
+      const dt = addHours(data.departureDate, data.departureTime, day * 24);
+      out.push({ day, date: dt || new Date(), lat: pos.lat, lon: pos.lon, cumDist: cum, remainingDist: distanceWithMargin - cum });
+    }
+    return out;
+  }, [routePoints, speed, seaDays, distanceWithMargin, data.departureDate, data.departureTime]);
 
   // fuel quick preview (full plan comes in Part 5)
   const fuelBurn = data.vessel.ladenCons * seaDays;
@@ -409,14 +648,54 @@ export default function VoyagePlannerPage() {
         </div>
       )}
 
-      {/* Placeholder for next parts */}
-      {ready && (
-        <div style={{ ...card, background: 'rgba(90,166,232,.05)', borderColor: 'rgba(90,166,232,.2)', textAlign: 'center' }}>
-          <div style={{ fontFamily: rj, fontSize: 12.5, color: '#9fc6ef', lineHeight: 1.6 }}>
-            🗺️ <b>Interactive map, weather &amp; current outlook, day-by-day scrubber and the full fuel report</b> load in the next steps of this planner.
-          </div>
+      {/* MAP */}
+      {ready && routePoints.length >= 2 && (
+        <div style={card}>
+          <div style={sectionTitle}>🗺️ Route Map</div>
+          <RouteMap
+            departure={data.departure}
+            arrival={data.arrival}
+            waypoints={data.waypoints}
+            densified={densified}
+            dailyPositions={dailyPositions}
+            activeDay={activeDay}
+          />
+          {/* day scrubber (positions only for now; weather arrives next part) */}
+          {dailyPositions.length > 1 && (
+            <div style={{ marginTop: 14 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+                <label style={labelS}>Move the ship along the route</label>
+                <span style={{ fontFamily: rj, fontSize: 11, color: '#c8a84b', fontWeight: 700 }}>
+                  {activeDay == null ? 'Drag to preview' : `Day ${activeDay}`}
+                </span>
+              </div>
+              <input
+                type="range"
+                min={0}
+                max={dailyPositions.length - 1}
+                value={activeDay ?? 0}
+                onChange={(e) => setActiveDay(parseInt(e.target.value, 10))}
+                style={{ width: '100%', accentColor: '#c8a84b' }}
+              />
+              {activeDay != null && (() => {
+                const dp = dailyPositions[activeDay];
+                return (
+                  <div style={{ marginTop: 10, padding: '10px 14px', background: '#0c1610', border: '1px solid rgba(200,168,75,.2)', borderRadius: 4, display: 'flex', gap: 18, flexWrap: 'wrap', fontFamily: rj, fontSize: 12, color: '#b0c0a4' }}>
+                    <span>📅 <b style={{ color: '#f5f0e8' }}>{dp.date.toLocaleDateString('en-GB', { weekday: 'short', day: '2-digit', month: 'short' })}</b></span>
+                    <span>📍 <b style={{ color: '#f5f0e8' }}>{dp.lat.toFixed(2)}°, {dp.lon.toFixed(2)}°</b></span>
+                    <span>➡️ Covered <b style={{ color: '#c8a84b' }}>{fmt(dp.cumDist)} nm</b></span>
+                    <span>⛳ Remaining <b style={{ color: '#5aa6e8' }}>{fmt(dp.remainingDist)} nm</b></span>
+                  </div>
+                );
+              })()}
+              <p style={{ fontFamily: rj, fontSize: 10.5, color: '#7a8a72', marginTop: 8 }}>
+                Weather &amp; current for each day&apos;s position load in the next step.
+              </p>
+            </div>
+          )}
         </div>
       )}
+
 
       {!ready && (
         <div style={{ ...card, textAlign: 'center', color: '#7a8a72', fontFamily: rj }}>
