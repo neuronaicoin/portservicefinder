@@ -82,7 +82,7 @@ import { singaporeDrydockRepairGuide } from './singapore-drydock-ship-repair-wel
 import { singaporeSuppliesWasteGuide } from './singapore-vessel-supplies-waste-management-2026-complete-guide';
 import { singaporeSafetySolasGuide } from './singapore-safety-solas-services-2026-complete-guide';
 import { singaporeUltimatePillar } from './singapore-maritime-services-2026-ultimate-pillar-guide';
-import { singaporePortCallCostGuide } from './singapore-port-call-cost-guide-2026-port-dues-pilotage-towage-agency-fees';
+import { singaporePortCallCostGuide } from './singapore-port-call-cost-guide-2026';
 export const BLOG_POSTS = [
   ...LEGACY_BLOG_POSTS,
   singaporePortCallCostGuide,
