@@ -85,8 +85,10 @@ import { singaporeUltimatePillar } from './singapore-maritime-services-2026-ulti
 import { singaporePortCallCostGuide } from './singapore-port-call-cost-guide-2026';
 import { singaporeEmergencyRepairSalvage } from './singapore-emergency-repair-salvage-2026';
 import { seafarerShortage2026OperatorImpact } from './seafarer-shortage-2026-operator-impact';
+import { imoNetZeroFramework2026 } from './imo-net-zero-framework-2026-operator-guide';
 export const BLOG_POSTS = [
   ...LEGACY_BLOG_POSTS,
+  imoNetZeroFramework2026,
   seafarerShortage2026OperatorImpact,
   singaporeEmergencyRepairSalvage,
   singaporePortCallCostGuide,
