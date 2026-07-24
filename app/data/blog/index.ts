@@ -84,8 +84,10 @@ import { singaporeSafetySolasGuide } from './singapore-safety-solas-services-202
 import { singaporeUltimatePillar } from './singapore-maritime-services-2026-ultimate-pillar-guide';
 import { singaporePortCallCostGuide } from './singapore-port-call-cost-guide-2026';
 import { singaporeEmergencyRepairSalvage } from './singapore-emergency-repair-salvage-2026';
+import { seafarerShortage2026OperatorImpact } from './seafarer-shortage-2026-operator-impact';
 export const BLOG_POSTS = [
   ...LEGACY_BLOG_POSTS,
+  seafarerShortage2026OperatorImpact,
   singaporeEmergencyRepairSalvage,
   singaporePortCallCostGuide,
   singaporeUltimatePillar,
