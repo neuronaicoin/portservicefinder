@@ -86,6 +86,9 @@ import { losingBidsToCompetitors } from './why-losing-bids-to-companies-never-he
 import { firstCallToRepeatBusiness } from './first-inquiry-to-repeat-business-ship-agents-chandlers-marine-services-2026';
 import { eleventhHourProvisioning } from './eleventh-hour-provisioning-shipchandlers-missing-most-profitable-orders-2026';
 import { singaporeScaleOpportunity } from './singapore-130000-vessel-calls-ship-agents-chandlers-marine-services-2026';
+import { howOperatorsSearchSingapore } from './how-vessel-operators-search-for-providers-singapore-2026';
+import { singaporeShipAgentsCompetition } from './singapore-ship-agent-competition-visibility-wins-2026';
+import { singaporeShipyardsMarineService } from './singapore-shipyards-marine-service-provider-demand-2026';
 import { singaporeDrydockRepairGuide } from './singapore-drydock-ship-repair-welding-painting-2026-complete-guide';
 import { singaporeSuppliesWasteGuide } from './singapore-vessel-supplies-waste-management-2026-complete-guide';
 import { singaporeSafetySolasGuide } from './singapore-safety-solas-services-2026-complete-guide';
@@ -184,6 +187,9 @@ export const BLOG_POSTS = [
   firstCallToRepeatBusiness,
   eleventhHourProvisioning,
   singaporeScaleOpportunity,
+  howOperatorsSearchSingapore,
+  singaporeShipAgentsCompetition,
+  singaporeShipyardsMarineService,
 ];
 export function getAllBlogSlugs(): string[] {
   return BLOG_POSTS.map((p) => p.slug);
