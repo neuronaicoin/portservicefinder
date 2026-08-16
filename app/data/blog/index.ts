@@ -91,6 +91,7 @@ import { singaporeShipAgentsCompetition } from './singapore-ship-agent-competiti
 import { singaporeShipyardsMarineService } from './singapore-shipyards-marine-service-provider-demand-2026';
 import { singaporeShipchandlersScale } from './singapore-shipchandler-provisioning-demand-visibility-2026';
 import { amsterdam } from './amsterdam-port-netherlands-complete-guide-2026';
+import { howToVetProviders } from './how-vessel-operators-vet-choose-ship-agents-shipchandlers-marine-services-2026';
 import { singaporeDrydockRepairGuide } from './singapore-drydock-ship-repair-welding-painting-2026-complete-guide';
 import { singaporeSuppliesWasteGuide } from './singapore-vessel-supplies-waste-management-2026-complete-guide';
 import { singaporeSafetySolasGuide } from './singapore-safety-solas-services-2026-complete-guide';
@@ -194,6 +195,7 @@ export const BLOG_POSTS = [
   singaporeShipyardsMarineService,
   singaporeShipchandlersScale,
   amsterdam,
+  howToVetProviders,
 ];
 export function getAllBlogSlugs(): string[] {
   return BLOG_POSTS.map((p) => p.slug);
