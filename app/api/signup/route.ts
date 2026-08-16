@@ -71,6 +71,43 @@ export async function POST(request: Request) {
       );
     }
 
+    // Odeme bilgisi maili gonder (Monthly / Annual icin) - hata olsa bile kaydi bozmaz
+    if ((plan === 'monthly' || plan === 'annual') && process.env.RESEND_API_KEY) {
+      try {
+        const planLabel = plan === 'monthly' ? 'Monthly ($49.90/month)' : 'Annual ($499.90/year)';
+        const firstName = (contact_person || company_name || 'there').split(' ')[0];
+        const emailHtml =
+          '<div style="font-family:Arial,sans-serif;max-width:560px">' +
+          '<h2 style="color:#0d1030">Your PortServiceFinder listing is live</h2>' +
+          '<p>Hi ' + firstName + ',</p>' +
+          '<p>Your listing for <b>' + company_name + '</b> is now active and visible to vessel operators searching your ports.</p>' +
+          '<p>You selected the <b>' + planLabel + '</b> plan. To keep your listing active, please complete payment:</p>' +
+          '<p style="background:#f4f4f4;padding:12px;border-radius:8px;font-size:13px;">' +
+          'We will follow up shortly with payment details for your ' + planLabel + ' subscription. If you have questions in the meantime, just reply to this email.' +
+          '</p>' +
+          '<p style="color:#888;font-size:12px;margin-top:18px">You are receiving this because you listed your business on portservicefinder.com.</p>' +
+          '</div>';
+
+        await fetch('https://api.resend.com/emails', {
+          method: 'POST',
+          headers: {
+            Authorization: 'Bearer ' + process.env.RESEND_API_KEY,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            from: 'PortServiceFinder <hello@portservicefinder.com>',
+            to: [email],
+            subject: 'Your PortServiceFinder listing is live — payment details',
+            html: emailHtml,
+            text: 'Your listing for ' + company_name + ' is active. You selected the ' + planLabel + ' plan. We will follow up shortly with payment details.',
+          }),
+        });
+      } catch (emailErr) {
+        console.error('Payment email send error:', emailErr);
+        // Mail hatasi kaydi asla bozmaz
+      }
+    }
+
     return NextResponse.json({ success: true, data });
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : 'Server error';
