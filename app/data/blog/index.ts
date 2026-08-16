@@ -82,6 +82,7 @@ import { shipchandlersIstanbul } from './shipchandlers-istanbul-bosphorus-2026-o
 import { howOperatorsSearchForProviders } from './how-vessel-operators-search-for-providers-online-2026';
 import { howToStartMarineElectrical } from './how-to-start-marine-electrical-services-business-complete-guide-2026';
 import { hiddenCostOfBeingInvisible } from './hidden-cost-invisible-online-ship-agents-chandlers-marine-services-2026';
+import { losingBidsToCompetitors } from './why-losing-bids-to-companies-never-heard-of-2026';
 import { singaporeDrydockRepairGuide } from './singapore-drydock-ship-repair-welding-painting-2026-complete-guide';
 import { singaporeSuppliesWasteGuide } from './singapore-vessel-supplies-waste-management-2026-complete-guide';
 import { singaporeSafetySolasGuide } from './singapore-safety-solas-services-2026-complete-guide';
@@ -176,6 +177,7 @@ export const BLOG_POSTS = [
   howOperatorsSearchForProviders,
   howToStartMarineElectrical,
   hiddenCostOfBeingInvisible,
+  losingBidsToCompetitors,
 ];
 export function getAllBlogSlugs(): string[] {
   return BLOG_POSTS.map((p) => p.slug);
