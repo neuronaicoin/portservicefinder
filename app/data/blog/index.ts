@@ -95,6 +95,7 @@ import { howToVetProviders } from './how-vessel-operators-vet-choose-ship-agents
 import { panama } from './panama-canal-ports-complete-guide-2026';
 import { regulationsProviderOpportunity } from './how-2026-maritime-regulations-create-business-ship-agents-chandlers-marine-services';
 import { whatIsMarineServiceProvider } from './what-is-a-marine-service-provider-complete-guide-2026';
+import { marineServicesCompleteDirectory } from './marine-service-categories-complete-directory-singapore-worldwide-2026';
 import { singaporeDrydockRepairGuide } from './singapore-drydock-ship-repair-welding-painting-2026-complete-guide';
 import { singaporeSuppliesWasteGuide } from './singapore-vessel-supplies-waste-management-2026-complete-guide';
 import { singaporeSafetySolasGuide } from './singapore-safety-solas-services-2026-complete-guide';
@@ -202,6 +203,7 @@ export const BLOG_POSTS = [
   panama,
   regulationsProviderOpportunity,
   whatIsMarineServiceProvider,
+  marineServicesCompleteDirectory,
 ];
 export function getAllBlogSlugs(): string[] {
   return BLOG_POSTS.map((p) => p.slug);
