@@ -1127,15 +1127,11 @@ export default function Home() {
         <section id="pricing" className="sec-pad" style={{padding:'80px 48px'}}>
           <div style={{fontFamily:rj,fontSize:10,letterSpacing:'3px',textTransform:'uppercase',color:'#c8a84b',marginBottom:12,fontWeight:700}}>Pricing</div>
           <h2 style={{fontFamily:lb,fontSize:'clamp(24px,3vw,38px)',fontWeight:700,lineHeight:1.05,marginBottom:14}}>Simple, <em style={g}>Transparent</em> Pricing</h2>
-          <p style={{color:'#b0c0a4',maxWidth:460,margin:'0 auto 14px',fontSize:13,lineHeight:1.7,textAlign:'center'}}>Start with <strong style={g}>3 months free</strong> — no payment required. Affordable subscription, no commission, cancel anytime.</p>
-          <div style={{textAlign:'center',marginBottom:32}}>
-            <span style={{display:'inline-block',padding:'5px 14px',background:'rgba(76,175,118,.1)',border:'1px solid rgba(76,175,118,.4)',color:'#4caf76',fontFamily:rj,fontSize:10,letterSpacing:'1.5px',textTransform:'uppercase',fontWeight:700}}>🎉 Launch Offer · All Plans Currently FREE</span>
-          </div>
-          <div className="tiers2" style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:14,maxWidth:1000,margin:'0 auto'}}>
+          <p style={{color:'#b0c0a4',maxWidth:460,margin:'0 auto 32px',fontSize:13,lineHeight:1.7,textAlign:'center'}}>Affordable subscription, no commission, cancel anytime. We&apos;ll email you payment instructions after signup.</p>
+          <div className="tiers2" style={{display:'grid',gridTemplateColumns:'repeat(2,1fr)',gap:14,maxWidth:700,margin:'0 auto'}}>
             {[
-              {name:'3 Months Free',amt:'FREE',per:'',yr:'No payment required · 3 months full access',badge:'START HERE',primary:false,items:['Listed at all your ports','Full company profile','Phone, email & WhatsApp','Verified provider badge','Active immediately','No credit card needed']},
-              {name:'Monthly',amt:'$49.90',per:'/ month',yr:'Billed monthly · Direct paid subscription',badge:null,primary:false,items:['Listed at all your ports','Full company profile','Phone, email & WhatsApp','Verified provider badge','Active immediately','Cancel anytime']},
-              {name:'Annual',amt:'$500',per:'/ year',yr:'$41.67/month equivalent — save $98.80 (~16%)',badge:'Save $98.80',primary:true,items:['Everything in Monthly','Priority placement in results','$98.80 saved vs monthly','Priority support','Best value','Active immediately']}
+              {name:'Monthly',amt:'$49.90',per:'/ month',yr:'Billed monthly · Cancel anytime',badge:null,primary:false,items:['Listed at all your ports','Full company profile','Phone, email & WhatsApp','Verified provider badge','Active immediately','Cancel anytime']},
+              {name:'Annual',amt:'$499.90',per:'/ year',yr:'$41.66/month equivalent — save $98.90 (~17%)',badge:'Save $98.90',primary:true,items:['Everything in Monthly','Priority placement in results','$98.90 saved vs monthly','Priority support','Best value','Active immediately']}
             ].map(tier=>(
               <div key={tier.name} className="tier" style={{background:tier.primary?'linear-gradient(180deg,rgba(200,168,75,.06),transparent)':'#111c13',border:`1px solid ${tier.primary?'#c8a84b':'rgba(200,168,75,.2)'}`,padding:'28px 22px',position:'relative',display:'flex',flexDirection:'column'}}>
                 {tier.badge&&<div style={{position:'absolute',top:-10,left:'50%',transform:'translateX(-50%)',background:tier.primary?'#c8a84b':'#4caf76',color:'#08100a',fontFamily:rj,fontSize:10,letterSpacing:'2px',fontWeight:700,padding:'4px 12px'}}>{tier.badge}</div>}
@@ -1380,6 +1376,9 @@ export default function Home() {
                     <div style={{marginBottom:16}}>
                       <label style={S.flbl}>Company Description / Bio *</label>
                       <textarea className="card-input" value={fBio} onChange={e=>setFBio(e.target.value)} placeholder="Describe your services in detail: history, certifications, fleet capacity, specialties, geographic coverage, languages spoken, response time, vessel types handled, key clients/references, awards or memberships, your unique value proposition." rows={8} style={{...S.inp,resize:'vertical',minHeight:160,fontFamily:"'Outfit',sans-serif",lineHeight:1.6}}/>
+                      <div style={{marginTop:8,padding:'10px 12px',background:bioOk?'rgba(76,175,118,.08)':'rgba(200,168,75,.08)',border:`1px solid ${bioOk?'rgba(76,175,118,.35)':'rgba(200,168,75,.25)'}`,fontFamily:rj,fontSize:11.5,color:bioOk?'#4caf76':'#e2c06a',lineHeight:1.5,fontWeight:700}}>
+                        {bioOk ? `✓ ${fBio.trim().length} characters — you're good to continue` : `⚠ ${bioRemaining} more character${bioRemaining===1?'':'s'} needed to continue (minimum ${MIN_BIO})`}
+                      </div>
                       <div style={{marginTop:8,padding:'10px 12px',background:'rgba(200,168,75,.08)',border:'1px solid rgba(200,168,75,.25)',fontFamily:rj,fontSize:11.5,color:'#e2c06a',lineHeight:1.5}}>
                         💡 <strong>Tip:</strong> Write your bio as long and detailed as possible — vessel operators are more likely to find and contact providers with comprehensive descriptions. Include services, certifications, experience, and what makes you different.
                       </div>
@@ -1504,7 +1503,7 @@ export default function Home() {
                           Your profile is now <strong style={{color:'#4caf76'}}>active</strong> on PortServiceFinder.
                         </p>
                         <p style={{fontSize:12.5,color:'#b0c0a4',lineHeight:1.65,marginBottom:18,maxWidth:480,margin:'0 auto 18px'}}>
-                          Vessel operators can now find and contact you directly. We&apos;ll be in touch by email in 3 months when your free period ends.
+                          Vessel operators can now find and contact you directly. Check your email — we&apos;ve sent payment instructions to complete your subscription.
                         </p>
                         <button onClick={closeFlow} className="btn-gold" style={{background:'#c8a84b',color:'#08100a',border:'none',padding:'12px 32px',fontFamily:rj,fontSize:12,letterSpacing:'1.5px',textTransform:'uppercase',fontWeight:700,cursor:'pointer'}}>Close</button>
                       </div>
@@ -1518,36 +1517,19 @@ export default function Home() {
                       <div style={{fontSize:11,color:'#7a8a72',lineHeight:1.5,marginTop:4}}>{fEmail} · {fPhone}</div>
                     </div>
 
-                    <div style={{padding:'12px 14px',background:'rgba(76,175,118,.06)',border:'1px solid rgba(76,175,118,.25)',marginBottom:14,fontFamily:rj,fontSize:12,color:'#4caf76',fontWeight:700,textAlign:'center'}}>
-                      🎉 All plans are currently FREE — choose one to activate your listing
+                    <div style={{padding:'12px 14px',background:'rgba(200,168,75,.06)',border:'1px solid rgba(200,168,75,.3)',marginBottom:14,fontFamily:rj,fontSize:12,color:'#e2c06a',fontWeight:700,textAlign:'center'}}>
+                      Choose a plan — we&apos;ll email you payment instructions to activate
                     </div>
 
-                    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:10,marginBottom:18}} className="tiers2">
-
-                      <div style={{background:'#111c13',border:'1px solid rgba(200,168,75,.2)',padding:'20px 16px',display:'flex',flexDirection:'column'}}>
-                        <div style={{fontFamily:rj,fontSize:10,letterSpacing:'1.5px',textTransform:'uppercase',color:'#c8a84b',marginBottom:8,fontWeight:700}}>3 Months Free</div>
-                        <div style={{display:'flex',alignItems:'baseline',gap:4,marginBottom:4}}>
-                          <span style={{fontFamily:lb,fontSize:28,fontWeight:700,lineHeight:1}}>FREE</span>
-                        </div>
-                        <div style={{fontSize:11,color:'#b0c0a4',marginBottom:12,fontFamily:rj,lineHeight:1.4}}>3 months trial · No payment</div>
-                        <ul style={{listStyle:'none',flex:1,marginBottom:12,display:'flex',flexDirection:'column',gap:5}}>
-                          <li style={{fontSize:11,color:'#b0c0a4',display:'flex',alignItems:'flex-start',gap:5,lineHeight:1.4}}><span style={{color:'#c8a84b',fontWeight:700,flexShrink:0}}>✓</span>All ports listed</li>
-                          <li style={{fontSize:11,color:'#b0c0a4',display:'flex',alignItems:'flex-start',gap:5,lineHeight:1.4}}><span style={{color:'#c8a84b',fontWeight:700,flexShrink:0}}>✓</span>Full profile</li>
-                          <li style={{fontSize:11,color:'#b0c0a4',display:'flex',alignItems:'flex-start',gap:5,lineHeight:1.4}}><span style={{color:'#c8a84b',fontWeight:700,flexShrink:0}}>✓</span>Verified badge</li>
-                          <li style={{fontSize:11,color:'#b0c0a4',display:'flex',alignItems:'flex-start',gap:5,lineHeight:1.4}}><span style={{color:'#c8a84b',fontWeight:700,flexShrink:0}}>✓</span>Active immediately</li>
-                        </ul>
-                        <button onClick={()=>handleSignup('free_trial')} disabled={signupLoading} className="btn-gold" style={{padding:11,background:'#c8a84b',color:'#08100a',border:'none',fontFamily:rj,fontSize:10.5,letterSpacing:'1px',textTransform:'uppercase',fontWeight:700,cursor:signupLoading?'not-allowed':'pointer',width:'100%',opacity:signupLoading?.6:1}}>
-                          {signupLoading && selectedPlan==='free_trial' ? <span className="spinner"/> : 'Start Free Trial'}
-                        </button>
-                      </div>
+                    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12,marginBottom:18}} className="tiers2">
 
                       <div style={{background:'#111c13',border:'1px solid rgba(200,168,75,.2)',padding:'20px 16px',display:'flex',flexDirection:'column'}}>
                         <div style={{fontFamily:rj,fontSize:10,letterSpacing:'1.5px',textTransform:'uppercase',color:'#c8a84b',marginBottom:8,fontWeight:700}}>Monthly</div>
                         <div style={{display:'flex',alignItems:'baseline',gap:4,marginBottom:4}}>
-                          <span style={{fontFamily:lb,fontSize:28,fontWeight:700,lineHeight:1,textDecoration:'line-through',color:'#7a8a72'}}>$49.90</span>
-                          <span style={{fontFamily:rj,fontSize:11,color:'#4caf76',fontWeight:700}}>FREE</span>
+                          <span style={{fontFamily:lb,fontSize:28,fontWeight:700,lineHeight:1}}>$49.90</span>
+                          <span style={{fontFamily:rj,fontSize:11,color:'#7a8a72',fontWeight:600}}>/ month</span>
                         </div>
-                        <div style={{fontSize:11,color:'#b0c0a4',marginBottom:12,fontFamily:rj,lineHeight:1.4}}>Will be $49.90/mo later</div>
+                        <div style={{fontSize:11,color:'#b0c0a4',marginBottom:12,fontFamily:rj,lineHeight:1.4}}>Billed monthly · Cancel anytime</div>
                         <ul style={{listStyle:'none',flex:1,marginBottom:12,display:'flex',flexDirection:'column',gap:5}}>
                           <li style={{fontSize:11,color:'#b0c0a4',display:'flex',alignItems:'flex-start',gap:5,lineHeight:1.4}}><span style={{color:'#c8a84b',fontWeight:700,flexShrink:0}}>✓</span>All ports listed</li>
                           <li style={{fontSize:11,color:'#b0c0a4',display:'flex',alignItems:'flex-start',gap:5,lineHeight:1.4}}><span style={{color:'#c8a84b',fontWeight:700,flexShrink:0}}>✓</span>Full profile</li>
@@ -1563,15 +1545,15 @@ export default function Home() {
                         <div style={{position:'absolute',top:-10,left:'50%',transform:'translateX(-50%)',background:'#c8a84b',color:'#08100a',fontFamily:rj,fontSize:8.5,letterSpacing:'1px',fontWeight:700,padding:'3px 8px'}}>BEST VALUE</div>
                         <div style={{fontFamily:rj,fontSize:10,letterSpacing:'1.5px',textTransform:'uppercase',color:'#c8a84b',marginBottom:8,fontWeight:700}}>Annual</div>
                         <div style={{display:'flex',alignItems:'baseline',gap:4,marginBottom:4}}>
-                          <span style={{fontFamily:lb,fontSize:28,fontWeight:700,lineHeight:1,textDecoration:'line-through',color:'#7a8a72'}}>$500</span>
-                          <span style={{fontFamily:rj,fontSize:11,color:'#4caf76',fontWeight:700}}>FREE</span>
+                          <span style={{fontFamily:lb,fontSize:28,fontWeight:700,lineHeight:1}}>$499.90</span>
+                          <span style={{fontFamily:rj,fontSize:11,color:'#7a8a72',fontWeight:600}}>/ year</span>
                         </div>
-                        <div style={{fontSize:11,color:'#b0c0a4',marginBottom:12,fontFamily:rj,lineHeight:1.4}}>Will be $500/year later</div>
+                        <div style={{fontSize:11,color:'#b0c0a4',marginBottom:12,fontFamily:rj,lineHeight:1.4}}>$41.66/mo equivalent · Save $98.90</div>
                         <ul style={{listStyle:'none',flex:1,marginBottom:12,display:'flex',flexDirection:'column',gap:5}}>
                           <li style={{fontSize:11,color:'#b0c0a4',display:'flex',alignItems:'flex-start',gap:5,lineHeight:1.4}}><span style={{color:'#c8a84b',fontWeight:700,flexShrink:0}}>✓</span>Everything in Monthly</li>
                           <li style={{fontSize:11,color:'#b0c0a4',display:'flex',alignItems:'flex-start',gap:5,lineHeight:1.4}}><span style={{color:'#c8a84b',fontWeight:700,flexShrink:0}}>✓</span>Priority placement</li>
                           <li style={{fontSize:11,color:'#b0c0a4',display:'flex',alignItems:'flex-start',gap:5,lineHeight:1.4}}><span style={{color:'#c8a84b',fontWeight:700,flexShrink:0}}>✓</span>Priority support</li>
-                          <li style={{fontSize:11,color:'#b0c0a4',display:'flex',alignItems:'flex-start',gap:5,lineHeight:1.4}}><span style={{color:'#c8a84b',fontWeight:700,flexShrink:0}}>✓</span>Save $98.80</li>
+                          <li style={{fontSize:11,color:'#b0c0a4',display:'flex',alignItems:'flex-start',gap:5,lineHeight:1.4}}><span style={{color:'#c8a84b',fontWeight:700,flexShrink:0}}>✓</span>Save $98.90</li>
                         </ul>
                         <button onClick={()=>handleSignup('annual')} disabled={signupLoading} className="btn-gold" style={{padding:11,background:'#c8a84b',color:'#08100a',border:'none',fontFamily:rj,fontSize:10.5,letterSpacing:'1px',textTransform:'uppercase',fontWeight:700,cursor:signupLoading?'not-allowed':'pointer',width:'100%',opacity:signupLoading?.6:1}}>
                           {signupLoading && selectedPlan==='annual' ? <span className="spinner"/> : 'Subscribe Annual'}
@@ -1592,8 +1574,8 @@ export default function Home() {
                     <div style={{padding:'12px 14px',background:'rgba(200,168,75,.04)',border:'1px solid rgba(200,168,75,.15)',display:'flex',alignItems:'flex-start',gap:10,marginBottom:14}}>
                       <span style={{color:'#c8a84b',fontSize:16,flexShrink:0}}>ℹ️</span>
                       <div>
-                        <div style={{fontFamily:rj,fontSize:11,fontWeight:700,color:'#c8a84b',marginBottom:3,letterSpacing:'.5px'}}>No Payment Required</div>
-                        <div style={{fontSize:11,color:'#b0c0a4',lineHeight:1.5}}>Your listing will activate immediately. All plans are currently free during our launch period.</div>
+                        <div style={{fontFamily:rj,fontSize:11,fontWeight:700,color:'#c8a84b',marginBottom:3,letterSpacing:'.5px'}}>Payment by email</div>
+                        <div style={{fontSize:11,color:'#b0c0a4',lineHeight:1.5}}>Your listing activates immediately. We&apos;ll send payment instructions to your email — no card required right now.</div>
                       </div>
                     </div>
 
