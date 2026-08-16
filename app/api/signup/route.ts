@@ -79,14 +79,21 @@ export async function POST(request: Request) {
 
     // Odeme bilgisi maili gonder (Monthly / Annual icin) - hata olsa bile kaydi bozmaz
     // Resend anahtari Supabase'deki app_secrets tablosundan okunur (env var gerekmez)
+    await supabaseAdmin.from('debug_logs').insert({ step: '1_email_block_entered', detail: 'plan=' + plan });
+
     if (plan === 'monthly' || plan === 'annual') {
       try {
-        const { data: secretRow } = await supabaseAdmin
+        const { data: secretRow, error: secretErr } = await supabaseAdmin
           .from('app_secrets')
           .select('value')
           .eq('key', 'resend_api_key')
           .single();
         const resendKey = secretRow?.value as string | undefined;
+
+        await supabaseAdmin.from('debug_logs').insert({
+          step: '2_secret_fetched',
+          detail: 'found=' + (!!resendKey) + ' err=' + (secretErr ? JSON.stringify(secretErr) : 'none') + ' keyLen=' + (resendKey ? resendKey.length : 0),
+        });
 
         if (!resendKey) {
           console.error('resend_api_key not found in app_secrets table');
@@ -106,7 +113,7 @@ export async function POST(request: Request) {
           '<p style="color:#888;font-size:12px;margin-top:18px">You are receiving this because you signed up your business on portservicefinder.com.</p>' +
           '</div>';
 
-        await fetch('https://api.resend.com/emails', {
+        const customerResp = await fetch('https://api.resend.com/emails', {
           method: 'POST',
           headers: {
             Authorization: 'Bearer ' + resendKey,
@@ -120,6 +127,11 @@ export async function POST(request: Request) {
             html: emailHtml,
             text: 'Thanks for signing up ' + company_name + '. You selected the ' + planLabel + ' plan. We will follow up shortly with payment instructions — your listing goes live once payment is confirmed.',
           }),
+        });
+        const customerRespBody = await customerResp.text();
+        await supabaseAdmin.from('debug_logs').insert({
+          step: '3_customer_email_sent',
+          detail: 'status=' + customerResp.status + ' body=' + customerRespBody.slice(0, 500),
         });
         // Adminin (portservicefinder@gmail.com) haberi olsun diye ayrica bir bildirim maili
         try {
@@ -138,7 +150,7 @@ export async function POST(request: Request) {
             '<p>Once you receive payment, set their <code>status</code> to <code>active</code> in the Supabase providers table to make them go live.</p>' +
             '</div>';
 
-          await fetch('https://api.resend.com/emails', {
+          const adminResp = await fetch('https://api.resend.com/emails', {
             method: 'POST',
             headers: {
               Authorization: 'Bearer ' + resendKey,
@@ -153,13 +165,26 @@ export async function POST(request: Request) {
               text: company_name + ' signed up for ' + planLabel + '. Contact: ' + contact_person + ' / ' + email + ' / ' + phone,
             }),
           });
+          const adminRespBody = await adminResp.text();
+          await supabaseAdmin.from('debug_logs').insert({
+            step: '4_admin_email_sent',
+            detail: 'status=' + adminResp.status + ' body=' + adminRespBody.slice(0, 500),
+          });
         } catch (adminEmailErr) {
           console.error('Admin notification email error:', adminEmailErr);
+          await supabaseAdmin.from('debug_logs').insert({
+            step: '4_admin_email_EXCEPTION',
+            detail: String(adminEmailErr),
+          });
         }
 
         } // resendKey varsa bloğu kapat
       } catch (emailErr) {
         console.error('Payment email send error:', emailErr);
+        await supabaseAdmin.from('debug_logs').insert({
+          step: '5_outer_EXCEPTION',
+          detail: String(emailErr),
+        });
         // Mail hatasi kaydi asla bozmaz
       }
     }
