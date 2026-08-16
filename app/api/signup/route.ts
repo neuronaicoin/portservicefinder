@@ -35,10 +35,11 @@ export async function POST(request: Request) {
 
     const ico = provider_type === 'agent' ? '🏢' : provider_type === 'chandler' ? '⚓' : '🔧';
 
-    // Ucretli planlar (monthly/annual) odeme onaylanana kadar "pending_payment" —
+    // Ucretli planlar (monthly/annual) odeme onaylanana kadar "pending" —
     // /api/providers sadece status='active' dondurdugu icin listede GORUNMEZ.
     // Odeme alindiginda status elle (Supabase tablosundan) 'active' yapilir.
-    const initialStatus = plan === 'monthly' || plan === 'annual' ? 'pending_payment' : 'active';
+    // Tablodaki gecerli degerler: pending, active, cancelled, expired
+    const initialStatus = plan === 'monthly' || plan === 'annual' ? 'pending' : 'active';
 
     // Supabase column mapping
     const newProvider = {
