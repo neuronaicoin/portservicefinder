@@ -475,8 +475,6 @@ export default function Home() {
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(fEmail.trim())) return 'Please enter a valid email address.';
     if (!fPhone.trim()) return 'Phone number is required.';
     if (!fContactPerson.trim()) return 'Contact person name is required.';
-    if (!fBio.trim()) return 'Company description is required.';
-    if (fBio.trim().length < MIN_BIO) return `Please write a more detailed company description (at least ${MIN_BIO} characters).`;
     if (fProviderType === 'service' && fSvc.size === 0) return 'Please select at least one service category.';
     return '';
   }
@@ -541,27 +539,9 @@ export default function Home() {
         throw new Error(data.error || 'Failed to create listing. Please try again.');
       }
 
-      // Yeni provider'ı listeye ekle (refresh'siz arama yapılabilsin)
-      if (data.data && data.data[0]) {
-        const row = data.data[0];
-        const newProv: Provider = {
-          id: row.id,
-          type: row.type,
-          ico: row.display_icon || (row.type === 'agent' ? '🏢' : row.type === 'chandler' ? '⚓' : '🔧'),
-          name: row.name,
-          bio: row.bio,
-          ports: row.ports || [],
-          country: row.country,
-          svc: row.svc || [],
-          phone: row.phone || '',
-          email: row.email || '',
-          wa: row.whatsapp || row.phone || '',
-          web: row.website || '',
-          addr: row.address || '',
-          person: row.contact_person || '',
-        };
-        setDbProviders(prev => [newProv, ...prev]);
-      }
+      // NOT: Yeni kayıt burada arama sonuçlarına EKLENMEZ.
+      // Sunucu status'u "pending_payment" olarak kaydediyor — ödeme onaylanana kadar
+      // /api/providers bu kaydı döndürmez, dolayısıyla listede görünmemesi doğrudur.
 
       setSignupSuccess(true);
       setSignupLoading(false);
@@ -1130,8 +1110,8 @@ export default function Home() {
           <p style={{color:'#b0c0a4',maxWidth:460,margin:'0 auto 32px',fontSize:13,lineHeight:1.7,textAlign:'center'}}>Affordable subscription, no commission, cancel anytime. We&apos;ll email you payment instructions after signup.</p>
           <div className="tiers2" style={{display:'grid',gridTemplateColumns:'repeat(2,1fr)',gap:14,maxWidth:700,margin:'0 auto'}}>
             {[
-              {name:'Monthly',amt:'$49.90',per:'/ month',yr:'Billed monthly · Cancel anytime',badge:null,primary:false,items:['Listed at all your ports','Full company profile','Phone, email & WhatsApp','Verified provider badge','Active immediately','Cancel anytime']},
-              {name:'Annual',amt:'$499.90',per:'/ year',yr:'$41.66/month equivalent — save $98.90 (~17%)',badge:'Save $98.90',primary:true,items:['Everything in Monthly','Priority placement in results','$98.90 saved vs monthly','Priority support','Best value','Active immediately']}
+              {name:'Monthly',amt:'$49.90',per:'/ month',yr:'Billed monthly · Cancel anytime',badge:null,primary:false,items:['Listed at all your ports','Full company profile','Phone, email & WhatsApp','Verified provider badge','Live once payment confirmed','Cancel anytime']},
+              {name:'Annual',amt:'$499.90',per:'/ year',yr:'$41.66/month equivalent — save $98.90 (~17%)',badge:'Save $98.90',primary:true,items:['Listed at all your ports','Full company profile','Phone, email & WhatsApp','Verified provider badge','Priority placement in results','Priority email support']}
             ].map(tier=>(
               <div key={tier.name} className="tier" style={{background:tier.primary?'linear-gradient(180deg,rgba(200,168,75,.06),transparent)':'#111c13',border:`1px solid ${tier.primary?'#c8a84b':'rgba(200,168,75,.2)'}`,padding:'28px 22px',position:'relative',display:'flex',flexDirection:'column'}}>
                 {tier.badge&&<div style={{position:'absolute',top:-10,left:'50%',transform:'translateX(-50%)',background:tier.primary?'#c8a84b':'#4caf76',color:'#08100a',fontFamily:rj,fontSize:10,letterSpacing:'2px',fontWeight:700,padding:'4px 12px'}}>{tier.badge}</div>}
@@ -1376,8 +1356,8 @@ export default function Home() {
                     <div style={{marginBottom:16}}>
                       <label style={S.flbl}>Company Description / Bio *</label>
                       <textarea className="card-input" value={fBio} onChange={e=>setFBio(e.target.value)} placeholder="Describe your services in detail: history, certifications, fleet capacity, specialties, geographic coverage, languages spoken, response time, vessel types handled, key clients/references, awards or memberships, your unique value proposition." rows={8} style={{...S.inp,resize:'vertical',minHeight:160,fontFamily:"'Outfit',sans-serif",lineHeight:1.6}}/>
-                      <div style={{marginTop:8,padding:'10px 12px',background:bioOk?'rgba(76,175,118,.08)':'rgba(200,168,75,.08)',border:`1px solid ${bioOk?'rgba(76,175,118,.35)':'rgba(200,168,75,.25)'}`,fontFamily:rj,fontSize:11.5,color:bioOk?'#4caf76':'#e2c06a',lineHeight:1.5,fontWeight:700}}>
-                        {bioOk ? `✓ ${fBio.trim().length} characters — you're good to continue` : `⚠ ${bioRemaining} more character${bioRemaining===1?'':'s'} needed to continue (minimum ${MIN_BIO})`}
+                      <div style={{marginTop:8,padding:'10px 12px',background:bioOk?'rgba(76,175,118,.08)':'rgba(200,168,75,.06)',border:`1px solid ${bioOk?'rgba(76,175,118,.35)':'rgba(200,168,75,.2)'}`,fontFamily:rj,fontSize:11.5,color:bioOk?'#4caf76':'#b0c0a4',lineHeight:1.5,fontWeight:700}}>
+                        {bioOk ? `✓ ${fBio.trim().length} characters — nice and detailed` : `Optional — but providers with a detailed bio get more contacts. ${fBio.trim().length}/${MIN_BIO} characters.`}
                       </div>
                       <div style={{marginTop:8,padding:'10px 12px',background:'rgba(200,168,75,.08)',border:'1px solid rgba(200,168,75,.25)',fontFamily:rj,fontSize:11.5,color:'#e2c06a',lineHeight:1.5}}>
                         💡 <strong>Tip:</strong> Write your bio as long and detailed as possible — vessel operators are more likely to find and contact providers with comprehensive descriptions. Include services, certifications, experience, and what makes you different.
@@ -1487,7 +1467,7 @@ export default function Home() {
 
                     <div style={{display:'flex',gap:10,justifyContent:'space-between',marginTop:18,flexWrap:'wrap'}}>
                       <button onClick={()=>{setFlowStep(1);setFFormError('');}} className="btn-ghost" style={{background:'transparent',border:'1px solid rgba(200,168,75,.3)',color:'#c8a84b',padding:'12px 22px',fontFamily:rj,fontSize:12,letterSpacing:'1.5px',textTransform:'uppercase',fontWeight:700,cursor:'pointer'}}>← Back</button>
-                      <button onClick={handleStep2Next} disabled={!bioOk} className="btn-gold" style={{background:!bioOk?'rgba(200,168,75,.3)':'#c8a84b',color:'#08100a',border:'none',padding:'12px 28px',fontFamily:rj,fontSize:12,letterSpacing:'1.5px',textTransform:'uppercase',fontWeight:700,cursor:!bioOk?'not-allowed':'pointer'}}>Continue to Plan →</button>
+                      <button onClick={handleStep2Next} className="btn-gold" style={{background:'#c8a84b',color:'#08100a',border:'none',padding:'12px 28px',fontFamily:rj,fontSize:12,letterSpacing:'1.5px',textTransform:'uppercase',fontWeight:700,cursor:'pointer'}}>Continue to Plan →</button>
                     </div>
                   </div>
                 )}
@@ -1498,12 +1478,12 @@ export default function Home() {
                     {signupSuccess ? (
                       <div style={{padding:'30px 24px',textAlign:'center',background:'rgba(76,175,118,.08)',border:'1px solid rgba(76,175,118,.4)'}}>
                         <div style={{fontSize:54,marginBottom:14}}>✅</div>
-                        <h3 style={{fontFamily:lb,fontSize:22,fontWeight:700,marginBottom:10,color:'#f5f0e8'}}>Your information has been received!</h3>
+                        <h3 style={{fontFamily:lb,fontSize:22,fontWeight:700,marginBottom:10,color:'#f5f0e8'}}>Almost there!</h3>
                         <p style={{fontSize:14,color:'#d4dcc8',lineHeight:1.7,marginBottom:8,maxWidth:480,margin:'0 auto 8px'}}>
-                          Your profile is now <strong style={{color:'#4caf76'}}>active</strong> on PortServiceFinder.
+                          Your listing is saved and will go <strong style={{color:'#4caf76'}}>live as soon as payment is confirmed</strong>.
                         </p>
                         <p style={{fontSize:12.5,color:'#b0c0a4',lineHeight:1.65,marginBottom:18,maxWidth:480,margin:'0 auto 18px'}}>
-                          Vessel operators can now find and contact you directly. Check your email — we&apos;ve sent payment instructions to complete your subscription.
+                          Check your email — we&apos;ve sent payment instructions. Once payment is received, vessel operators can find and contact you directly.
                         </p>
                         <button onClick={closeFlow} className="btn-gold" style={{background:'#c8a84b',color:'#08100a',border:'none',padding:'12px 32px',fontFamily:rj,fontSize:12,letterSpacing:'1.5px',textTransform:'uppercase',fontWeight:700,cursor:'pointer'}}>Close</button>
                       </div>
@@ -1550,10 +1530,10 @@ export default function Home() {
                         </div>
                         <div style={{fontSize:11,color:'#b0c0a4',marginBottom:12,fontFamily:rj,lineHeight:1.4}}>$41.66/mo equivalent · Save $98.90</div>
                         <ul style={{listStyle:'none',flex:1,marginBottom:12,display:'flex',flexDirection:'column',gap:5}}>
-                          <li style={{fontSize:11,color:'#b0c0a4',display:'flex',alignItems:'flex-start',gap:5,lineHeight:1.4}}><span style={{color:'#c8a84b',fontWeight:700,flexShrink:0}}>✓</span>Everything in Monthly</li>
-                          <li style={{fontSize:11,color:'#b0c0a4',display:'flex',alignItems:'flex-start',gap:5,lineHeight:1.4}}><span style={{color:'#c8a84b',fontWeight:700,flexShrink:0}}>✓</span>Priority placement</li>
-                          <li style={{fontSize:11,color:'#b0c0a4',display:'flex',alignItems:'flex-start',gap:5,lineHeight:1.4}}><span style={{color:'#c8a84b',fontWeight:700,flexShrink:0}}>✓</span>Priority support</li>
-                          <li style={{fontSize:11,color:'#b0c0a4',display:'flex',alignItems:'flex-start',gap:5,lineHeight:1.4}}><span style={{color:'#c8a84b',fontWeight:700,flexShrink:0}}>✓</span>Save $98.90</li>
+                          <li style={{fontSize:11,color:'#b0c0a4',display:'flex',alignItems:'flex-start',gap:5,lineHeight:1.4}}><span style={{color:'#c8a84b',fontWeight:700,flexShrink:0}}>✓</span>Listed at all your ports</li>
+                          <li style={{fontSize:11,color:'#b0c0a4',display:'flex',alignItems:'flex-start',gap:5,lineHeight:1.4}}><span style={{color:'#c8a84b',fontWeight:700,flexShrink:0}}>✓</span>Full profile + Verified badge</li>
+                          <li style={{fontSize:11,color:'#b0c0a4',display:'flex',alignItems:'flex-start',gap:5,lineHeight:1.4}}><span style={{color:'#c8a84b',fontWeight:700,flexShrink:0}}>✓</span>Priority placement in results</li>
+                          <li style={{fontSize:11,color:'#b0c0a4',display:'flex',alignItems:'flex-start',gap:5,lineHeight:1.4}}><span style={{color:'#c8a84b',fontWeight:700,flexShrink:0}}>✓</span>Save $98.90 vs monthly</li>
                         </ul>
                         <button onClick={()=>handleSignup('annual')} disabled={signupLoading} className="btn-gold" style={{padding:11,background:'#c8a84b',color:'#08100a',border:'none',fontFamily:rj,fontSize:10.5,letterSpacing:'1px',textTransform:'uppercase',fontWeight:700,cursor:signupLoading?'not-allowed':'pointer',width:'100%',opacity:signupLoading?.6:1}}>
                           {signupLoading && selectedPlan==='annual' ? <span className="spinner"/> : 'Subscribe Annual'}
@@ -1575,7 +1555,7 @@ export default function Home() {
                       <span style={{color:'#c8a84b',fontSize:16,flexShrink:0}}>ℹ️</span>
                       <div>
                         <div style={{fontFamily:rj,fontSize:11,fontWeight:700,color:'#c8a84b',marginBottom:3,letterSpacing:'.5px'}}>Payment by email</div>
-                        <div style={{fontSize:11,color:'#b0c0a4',lineHeight:1.5}}>Your listing activates immediately. We&apos;ll send payment instructions to your email — no card required right now.</div>
+                        <div style={{fontSize:11,color:'#b0c0a4',lineHeight:1.5}}>We&apos;ll send payment instructions to your email. Your listing goes live as soon as payment is confirmed — no card required right now.</div>
                       </div>
                     </div>
 
