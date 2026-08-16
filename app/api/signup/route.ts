@@ -78,8 +78,20 @@ export async function POST(request: Request) {
     }
 
     // Odeme bilgisi maili gonder (Monthly / Annual icin) - hata olsa bile kaydi bozmaz
-    if ((plan === 'monthly' || plan === 'annual') && process.env.RESEND_API_KEY) {
+    // Resend anahtari Supabase'deki app_secrets tablosundan okunur (env var gerekmez)
+    if (plan === 'monthly' || plan === 'annual') {
       try {
+        const { data: secretRow } = await supabaseAdmin
+          .from('app_secrets')
+          .select('value')
+          .eq('key', 'resend_api_key')
+          .single();
+        const resendKey = secretRow?.value as string | undefined;
+
+        if (!resendKey) {
+          console.error('resend_api_key not found in app_secrets table');
+        } else {
+
         const planLabel = plan === 'monthly' ? 'Monthly ($49.90/month)' : 'Annual ($499.90/year)';
         const firstName = (contact_person || company_name || 'there').split(' ')[0];
         const emailHtml =
@@ -97,17 +109,55 @@ export async function POST(request: Request) {
         await fetch('https://api.resend.com/emails', {
           method: 'POST',
           headers: {
-            Authorization: 'Bearer ' + process.env.RESEND_API_KEY,
+            Authorization: 'Bearer ' + resendKey,
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            from: 'PortServiceFinder <hello@portservicefinder.com>',
+            from: 'PortServiceFinder <notifications@shipcrewfinder.com>', // GECICI: portservicefinder.com Resend'de dogrulanana kadar
+            reply_to: 'portservicefinder@gmail.com', // Uye "Yanitla" derse gercek gelen kutusuna gider
             to: [email],
             subject: 'Complete your payment to activate your PortServiceFinder listing',
             html: emailHtml,
             text: 'Thanks for signing up ' + company_name + '. You selected the ' + planLabel + ' plan. We will follow up shortly with payment instructions — your listing goes live once payment is confirmed.',
           }),
         });
+        // Adminin (portservicefinder@gmail.com) haberi olsun diye ayrica bir bildirim maili
+        try {
+          const adminHtml =
+            '<div style="font-family:Arial,sans-serif;max-width:560px">' +
+            '<h2 style="color:#0d1030">New signup — payment pending</h2>' +
+            '<p><b>' + company_name + '</b> just signed up for the <b>' + planLabel + '</b> plan.</p>' +
+            '<ul>' +
+            '<li>Type: ' + provider_type + '</li>' +
+            '<li>Country: ' + country + '</li>' +
+            '<li>Ports: ' + (Array.isArray(ports) ? ports.join(', ') : '') + '</li>' +
+            '<li>Contact: ' + contact_person + '</li>' +
+            '<li>Email: ' + email + '</li>' +
+            '<li>Phone: ' + phone + '</li>' +
+            '</ul>' +
+            '<p>Once you receive payment, set their <code>status</code> to <code>active</code> in the Supabase providers table to make them go live.</p>' +
+            '</div>';
+
+          await fetch('https://api.resend.com/emails', {
+            method: 'POST',
+            headers: {
+              Authorization: 'Bearer ' + resendKey,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              from: 'PortServiceFinder <notifications@shipcrewfinder.com>',
+              reply_to: email,
+              to: ['portservicefinder@gmail.com'],
+              subject: 'New signup: ' + company_name + ' (' + planLabel + ')',
+              html: adminHtml,
+              text: company_name + ' signed up for ' + planLabel + '. Contact: ' + contact_person + ' / ' + email + ' / ' + phone,
+            }),
+          });
+        } catch (adminEmailErr) {
+          console.error('Admin notification email error:', adminEmailErr);
+        }
+
+        } // resendKey varsa bloğu kapat
       } catch (emailErr) {
         console.error('Payment email send error:', emailErr);
         // Mail hatasi kaydi asla bozmaz
