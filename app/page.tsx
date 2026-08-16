@@ -1,4 +1,5 @@
 'use client';
+import LiveSearchFeed from '@/components/LiveSearchFeed';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 
@@ -385,6 +386,13 @@ export default function Home() {
       results_count: res.r.length,
       fallback: res.fb,
     });
+
+    // Gercek arama kaydi — ana sayfadaki canli akis widget'i icin
+    fetch('/api/track-search', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ country: c, port: p, service_type: s }),
+    }).catch(() => {});
   }
 
   function toggleMs(key: string) {
@@ -816,6 +824,7 @@ export default function Home() {
             <h1 className="a2 hero-h1" style={{fontFamily:lb,fontSize:'clamp(32px,4vw,58px)',fontWeight:700,lineHeight:1.05,letterSpacing:-1.5,maxWidth:820,textShadow:'0 2px 14px rgba(0,0,0,.6)'}}>
               Every Port. Every <em style={g}>Service.</em><br/>One Platform.
             </h1>
+            <LiveSearchFeed />
             <p className="a3" style={{fontSize:15,lineHeight:1.8,color:'#d4dcc8',maxWidth:460,textShadow:'0 1px 6px rgba(0,0,0,.6)'}}>
               Find verified ship agents, shipchandlers and marine service companies at any port worldwide. Free to search.
             </p>
