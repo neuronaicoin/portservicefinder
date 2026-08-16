@@ -80,6 +80,7 @@ import { singaporeOperationsMegaGuide } from './singapore-maritime-operations-bu
 import { singaporeTechnicalServicesGuide } from './singapore-technical-services-electrical-hydraulics-refrigeration-ndt-2026-complete-guide';
 import { shipchandlersIstanbul } from './shipchandlers-istanbul-bosphorus-2026-operator-buyer-guide';
 import { howOperatorsSearchForProviders } from './how-vessel-operators-search-for-providers-online-2026';
+import { howToStartMarineElectrical } from './how-to-start-marine-electrical-services-business-complete-guide-2026';
 import { singaporeDrydockRepairGuide } from './singapore-drydock-ship-repair-welding-painting-2026-complete-guide';
 import { singaporeSuppliesWasteGuide } from './singapore-vessel-supplies-waste-management-2026-complete-guide';
 import { singaporeSafetySolasGuide } from './singapore-safety-solas-services-2026-complete-guide';
@@ -172,6 +173,7 @@ export const BLOG_POSTS = [
   jebelAliPortGuide,
   shipchandlersIstanbul,
   howOperatorsSearchForProviders,
+  howToStartMarineElectrical,
 ];
 export function getAllBlogSlugs(): string[] {
   return BLOG_POSTS.map((p) => p.slug);
