@@ -35,6 +35,11 @@ export async function POST(request: Request) {
 
     const ico = provider_type === 'agent' ? '🏢' : provider_type === 'chandler' ? '⚓' : '🔧';
 
+    // Ucretli planlar (monthly/annual) odeme onaylanana kadar "pending_payment" —
+    // /api/providers sadece status='active' dondurdugu icin listede GORUNMEZ.
+    // Odeme alindiginda status elle (Supabase tablosundan) 'active' yapilir.
+    const initialStatus = plan === 'monthly' || plan === 'annual' ? 'pending_payment' : 'active';
+
     // Supabase column mapping
     const newProvider = {
       type: provider_type,
@@ -51,7 +56,7 @@ export async function POST(request: Request) {
       contact_person: contact_person,
       plan: plan,
       plan_type: plan,
-      status: 'active',
+      status: initialStatus,
       verified: true,
       verified_at: new Date().toISOString(),
       display_icon: ico,
@@ -78,14 +83,14 @@ export async function POST(request: Request) {
         const firstName = (contact_person || company_name || 'there').split(' ')[0];
         const emailHtml =
           '<div style="font-family:Arial,sans-serif;max-width:560px">' +
-          '<h2 style="color:#0d1030">Your PortServiceFinder listing is live</h2>' +
+          '<h2 style="color:#0d1030">Almost there — complete your payment</h2>' +
           '<p>Hi ' + firstName + ',</p>' +
-          '<p>Your listing for <b>' + company_name + '</b> is now active and visible to vessel operators searching your ports.</p>' +
-          '<p>You selected the <b>' + planLabel + '</b> plan. To keep your listing active, please complete payment:</p>' +
+          '<p>Thanks for signing up <b>' + company_name + '</b> on PortServiceFinder. Your listing is saved and will go <b>live as soon as payment is confirmed</b>.</p>' +
+          '<p>You selected the <b>' + planLabel + '</b> plan.</p>' +
           '<p style="background:#f4f4f4;padding:12px;border-radius:8px;font-size:13px;">' +
-          'We will follow up shortly with payment details for your ' + planLabel + ' subscription. If you have questions in the meantime, just reply to this email.' +
+          'We will follow up shortly with payment instructions for your ' + planLabel + ' subscription. Once payment is received, your listing goes live immediately. If you have questions in the meantime, just reply to this email.' +
           '</p>' +
-          '<p style="color:#888;font-size:12px;margin-top:18px">You are receiving this because you listed your business on portservicefinder.com.</p>' +
+          '<p style="color:#888;font-size:12px;margin-top:18px">You are receiving this because you signed up your business on portservicefinder.com.</p>' +
           '</div>';
 
         await fetch('https://api.resend.com/emails', {
@@ -97,9 +102,9 @@ export async function POST(request: Request) {
           body: JSON.stringify({
             from: 'PortServiceFinder <hello@portservicefinder.com>',
             to: [email],
-            subject: 'Your PortServiceFinder listing is live — payment details',
+            subject: 'Complete your payment to activate your PortServiceFinder listing',
             html: emailHtml,
-            text: 'Your listing for ' + company_name + ' is active. You selected the ' + planLabel + ' plan. We will follow up shortly with payment details.',
+            text: 'Thanks for signing up ' + company_name + '. You selected the ' + planLabel + ' plan. We will follow up shortly with payment instructions — your listing goes live once payment is confirmed.',
           }),
         });
       } catch (emailErr) {
