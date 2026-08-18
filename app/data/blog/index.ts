@@ -108,11 +108,13 @@ import { panamaProviderOpportunity } from './panama-canal-ship-agents-chandlers-
 import { amsterdamProviderOpportunity } from './amsterdam-ship-agents-chandlers-marine-services-specialist-opportunity-2026';
 import { rotterdamProviderOpportunity } from './rotterdam-europe-largest-port-ship-agents-chandlers-marine-services-2026';
 import { dubaiProviderOpportunity } from './dubai-jebel-ali-ship-agents-chandlers-marine-services-gateway-opportunity-2026';
+import { suezProviderOpportunity } from './suez-canal-ship-agents-chandlers-marine-services-opportunity-2026';
 export const BLOG_POSTS = [
   panamaProviderOpportunity,
   amsterdamProviderOpportunity,
   rotterdamProviderOpportunity,
   dubaiProviderOpportunity,
+  suezProviderOpportunity,
   ...LEGACY_BLOG_POSTS,
   imoNetZeroFramework2026,
   seafarerShortage2026OperatorImpact,
