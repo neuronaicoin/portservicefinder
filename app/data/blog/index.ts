@@ -111,6 +111,7 @@ import { dubaiProviderOpportunity } from './dubai-jebel-ali-ship-agents-chandler
 import { suezProviderOpportunity } from './suez-canal-ship-agents-chandlers-marine-services-opportunity-2026';
 import { hamburgProviderOpportunity } from './hamburg-ship-agents-chandlers-marine-services-central-europe-gateway-2026';
 import { indiaProviderOpportunity } from './india-ports-ship-agents-chandlers-marine-services-opportunity-2026';
+import { chinaProviderOpportunity } from './china-ports-ship-agents-chandlers-marine-services-opportunity-2026';
 export const BLOG_POSTS = [
   panamaProviderOpportunity,
   amsterdamProviderOpportunity,
@@ -119,6 +120,7 @@ export const BLOG_POSTS = [
   suezProviderOpportunity,
   hamburgProviderOpportunity,
   indiaProviderOpportunity,
+  chinaProviderOpportunity,
   ...LEGACY_BLOG_POSTS,
   imoNetZeroFramework2026,
   seafarerShortage2026OperatorImpact,
