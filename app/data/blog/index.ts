@@ -106,9 +106,13 @@ import { seafarerShortage2026OperatorImpact } from './seafarer-shortage-2026-ope
 import { imoNetZeroFramework2026 } from './imo-net-zero-framework-2026-operator-guide';
 import { panamaProviderOpportunity } from './panama-canal-ship-agents-chandlers-marine-services-opportunity-2026';
 import { amsterdamProviderOpportunity } from './amsterdam-ship-agents-chandlers-marine-services-specialist-opportunity-2026';
+import { rotterdamProviderOpportunity } from './rotterdam-europe-largest-port-ship-agents-chandlers-marine-services-2026';
+import { dubaiProviderOpportunity } from './dubai-jebel-ali-ship-agents-chandlers-marine-services-gateway-opportunity-2026';
 export const BLOG_POSTS = [
   panamaProviderOpportunity,
   amsterdamProviderOpportunity,
+  rotterdamProviderOpportunity,
+  dubaiProviderOpportunity,
   ...LEGACY_BLOG_POSTS,
   imoNetZeroFramework2026,
   seafarerShortage2026OperatorImpact,
