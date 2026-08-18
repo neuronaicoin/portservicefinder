@@ -170,14 +170,13 @@ export default function ContactPage() {
               <div className="info-card" style={{background:'#0c1610',border:'1px solid rgba(200,168,75,.2)',padding:'22px 22px'}}>
                 <div style={{fontSize:22,marginBottom:10}}>📧</div>
                 <h3 style={{fontFamily:rj,fontSize:11,letterSpacing:'2px',textTransform:'uppercase',color:'#c8a84b',marginBottom:8,fontWeight:700}}>Email</h3>
-                <a href="mailto:contact@portservicefinder.com" style={{fontSize:14,color:'#f5f0e8',textDecoration:'none',wordBreak:'break-all'}}>contact@portservicefinder.com</a>
+                <a href="mailto:portservicefinder@gmail.com" style={{fontSize:14,color:'#f5f0e8',textDecoration:'none',wordBreak:'break-all'}}>portservicefinder@gmail.com</a>
               </div>
 
               <div className="info-card" style={{background:'#0c1610',border:'1px solid rgba(200,168,75,.2)',padding:'22px 22px'}}>
                 <div style={{fontSize:22,marginBottom:10}}>📍</div>
-                <h3 style={{fontFamily:rj,fontSize:11,letterSpacing:'2px',textTransform:'uppercase',color:'#c8a84b',marginBottom:8,fontWeight:700}}>Based In</h3>
-                <div style={{fontSize:14,color:'#f5f0e8'}}>Istanbul, Turkey</div>
-                <div style={{fontSize:11,color:'#7a8a72',marginTop:3,fontFamily:rj}}>Serving global ports worldwide</div>
+                <h3 style={{fontFamily:rj,fontSize:11,letterSpacing:'2px',textTransform:'uppercase',color:'#c8a84b',marginBottom:8,fontWeight:700}}>Coverage</h3>
+                <div style={{fontSize:14,color:'#f5f0e8',fontWeight:700,letterSpacing:'.5px'}}>SERVING GLOBAL WORLDWIDE</div>
               </div>
 
               <div className="info-card" style={{background:'#0c1610',border:'1px solid rgba(200,168,75,.2)',padding:'22px 22px'}}>
@@ -220,7 +219,7 @@ export default function ContactPage() {
                 <div style={{fontFamily:lb,fontSize:18,fontWeight:700,letterSpacing:1}}>PortService<span style={g}>Finder</span></div>
               </div>
               <p style={{fontSize:12,color:'#7a8a72',lineHeight:1.75,maxWidth:240,marginBottom:14}}>The global maritime services directory. Free for vessel operators. No commission, ever.</p>
-              <a href="mailto:contact@portservicefinder.com" className="footer-link" style={{fontSize:12,color:'rgba(200,168,75,.6)',textDecoration:'none'}}>contact@portservicefinder.com</a>
+              <a href="mailto:portservicefinder@gmail.com" className="footer-link" style={{fontSize:12,color:'rgba(200,168,75,.6)',textDecoration:'none'}}>portservicefinder@gmail.com</a>
             </div>
             <div>
               <h4 style={{fontFamily:rj,fontSize:10,letterSpacing:'2px',textTransform:'uppercase',color:'#c8a84b',marginBottom:12,fontWeight:700}}>Directory</h4>
