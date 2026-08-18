@@ -112,6 +112,7 @@ import { suezProviderOpportunity } from './suez-canal-ship-agents-chandlers-mari
 import { hamburgProviderOpportunity } from './hamburg-ship-agents-chandlers-marine-services-central-europe-gateway-2026';
 import { indiaProviderOpportunity } from './india-ports-ship-agents-chandlers-marine-services-opportunity-2026';
 import { chinaProviderOpportunity } from './china-ports-ship-agents-chandlers-marine-services-opportunity-2026';
+import { indonesiaProviderListicle } from './indonesia-ship-agents-shipchandlers-marine-services-7-reasons-invisible-2026';
 export const BLOG_POSTS = [
   panamaProviderOpportunity,
   amsterdamProviderOpportunity,
@@ -121,6 +122,7 @@ export const BLOG_POSTS = [
   hamburgProviderOpportunity,
   indiaProviderOpportunity,
   chinaProviderOpportunity,
+  indonesiaProviderListicle,
   ...LEGACY_BLOG_POSTS,
   imoNetZeroFramework2026,
   seafarerShortage2026OperatorImpact,
