@@ -104,7 +104,11 @@ import { singaporePortCallCostGuide } from './singapore-port-call-cost-guide-202
 import { singaporeEmergencyRepairSalvage } from './singapore-emergency-repair-salvage-2026';
 import { seafarerShortage2026OperatorImpact } from './seafarer-shortage-2026-operator-impact';
 import { imoNetZeroFramework2026 } from './imo-net-zero-framework-2026-operator-guide';
+import { panamaProviderOpportunity } from './panama-canal-ship-agents-chandlers-marine-services-opportunity-2026';
+import { amsterdamProviderOpportunity } from './amsterdam-ship-agents-chandlers-marine-services-specialist-opportunity-2026';
 export const BLOG_POSTS = [
+  panamaProviderOpportunity,
+  amsterdamProviderOpportunity,
   ...LEGACY_BLOG_POSTS,
   imoNetZeroFramework2026,
   seafarerShortage2026OperatorImpact,
