@@ -22,15 +22,14 @@ export default function ContactPage() {
 
     setSubmitting(true);
     try {
-      const response = await fetch('https://formspree.io/f/xqejbadb', {
+      const response = await fetch('/api/contact', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           name: form.name,
           email: form.email,
           subject: form.subject,
           message: form.message,
-          _subject: `Contact Form: ${form.subject}`,
         }),
       });
       if (!response.ok) {
