@@ -227,12 +227,12 @@ const MARINE_SERVICES = [
 ];
 
 const FEATURED_BLOGS = [
-  {slug:'singapore-port-complete-guide-2026',flag:'🇸🇬',title:'Singapore Port Complete Guide',excerpt:'130,000+ annual vessel calls. The world\u2019s busiest port — terminals, anchorages, bunkering, agency.',time:'14 min'},
-  {slug:'suez-canal-transit-complete-guide-2026',flag:'🇪🇬',title:'Suez Canal Transit Guide',excerpt:'Everything about Suez Canal transit — booking, tolls, convoy system, agents at Port Said and Suez.',time:'13 min'},
-  {slug:'rotterdam-port-complete-guide-2026',flag:'🇳🇱',title:'Rotterdam Port Guide',excerpt:'Europe\u2019s largest port — terminals, pilotage, bunkering, and operational efficiency benchmark.',time:'13 min'},
-  {slug:'panama-canal-transit-complete-guide-2026',flag:'🇵🇦',title:'Panama Canal Transit Guide',excerpt:'Booking, locks, tolls, agency at Balboa and Crist\u00f3bal. Navigate the world\u2019s most complex canal.',time:'13 min'},
-  {slug:'dubai-jebel-ali-port-complete-guide-2026',flag:'🇦🇪',title:'Dubai & Jebel Ali Port Guide',excerpt:'Middle East\u2019s largest port + Fujairah bunkering hub. UAE port system explained.',time:'12 min'},
-  {slug:'istanbul-turkish-straits-complete-guide-2026',flag:'🇹🇷',title:'Istanbul & Turkish Straits',excerpt:'Bosphorus and Dardanelles transit — procedures, TSVTS, Istanbul agency, Ambarli port.',time:'12 min'},
+  {slug:'singapore-maritime-services-2026-ultimate-pillar-guide',flag:'🇸🇬',title:'Singapore Port Complete Guide',excerpt:'130,000+ annual vessel calls. The world\u2019s busiest port — terminals, anchorages, bunkering, agency.',time:'14 min'},
+  {slug:'suez-vs-panama',flag:'🇪🇬',title:'Suez vs Panama Canal',excerpt:'Comparing the world\u2019s two great shipping canals — transit costs, booking, and route economics.',time:'13 min'},
+  {slug:'ship-repair-services-rotterdam-2026-operator-buyer-guide',flag:'🇳🇱',title:'Rotterdam Ship Repair Guide',excerpt:'Europe\u2019s largest port — ship repair services, yards, and technical support in Rotterdam.',time:'13 min'},
+  {slug:'panama-canal-ports-complete-guide-2026',flag:'🇵🇦',title:'Panama Canal & Ports Guide',excerpt:'Booking, locks, tolls, agency at Balboa and Crist\u00f3bal. Navigate the world\u2019s most complex canal.',time:'13 min'},
+  {slug:'jebel-ali-port-dubai-complete-guide-2026',flag:'🇦🇪',title:'Dubai & Jebel Ali Port Guide',excerpt:'Middle East\u2019s largest port + Fujairah bunkering hub. UAE port system explained.',time:'12 min'},
+  {slug:'ship-agents-istanbul-bosphorus-2026-operator-buyer-guide',flag:'🇹🇷',title:'Istanbul & Bosphorus Agents',excerpt:'Ship agency services through the Bosphorus — procedures, agents, and Istanbul port operations.',time:'12 min'},
 ];
 
 const TESTIMONIALS = [
@@ -739,7 +739,14 @@ export default function Home() {
           .stats4{grid-template-columns:repeat(2,1fr)!important;}
           .sec-pad{padding:50px 16px!important;}
           .steps3{grid-template-columns:1fr!important;}
-          .blogs-grid{grid-template-columns:1fr!important;}
+          .blogs-grid{grid-template-columns:repeat(2,1fr)!important;gap:8px!important;}
+          .blog-card{padding:14px 12px!important;}
+          .blog-card h3{font-size:13px!important;margin-bottom:6px!important;}
+          .blog-card p{display:none!important;}
+          .blog-card > div:first-child span:first-child{font-size:20px!important;}
+          .blog-card > div:first-child span:last-child{font-size:8.5px!important;padding:2px 6px!important;}
+          .blog-card > div:last-child{font-size:9px!important;padding-top:6px!important;}
+          .blog-card:nth-child(n+5){display:none!important;}
           .testi-grid{grid-template-columns:1fr!important;}
           .tiers2{grid-template-columns:1fr!important;}
           .voyage-tools-grid{grid-template-columns:repeat(2,1fr)!important;gap:10px!important;}
