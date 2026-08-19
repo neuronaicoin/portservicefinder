@@ -145,6 +145,11 @@ import { saudiProviderOpportunity } from './saudi-arabia-jeddah-ship-agents-chan
 import { australiaProviderOpportunity } from './australia-ports-ship-agents-chandlers-marine-services-bulk-export-2026';
 import { mexicoProviderOpportunity } from './mexico-ports-ship-agents-chandlers-marine-services-nearshoring-2026';
 import { nigeriaProviderOpportunity } from './nigeria-lagos-apapa-ship-agents-chandlers-marine-services-2026';
+import { qatarProviderOpportunity } from './qatar-ship-agents-chandlers-marine-services-lng-export-2026';
+import { chileProviderOpportunity } from './chile-ports-ship-agents-chandlers-marine-services-copper-export-2026';
+import { thailandProviderOpportunity } from './thailand-laem-chabang-ship-agents-chandlers-marine-services-automotive-2026';
+import { portugalProviderOpportunity } from './portugal-sines-ship-agents-chandlers-marine-services-deepwater-gateway-2026';
+import { finlandProviderOpportunity } from './finland-ship-agents-chandlers-marine-services-ice-class-expertise-2026';
 export const BLOG_POSTS = [
   howProvidersGetFoundPillarGuide,
   ukMegaGuide,
@@ -161,6 +166,11 @@ export const BLOG_POSTS = [
   australiaProviderOpportunity,
   mexicoProviderOpportunity,
   nigeriaProviderOpportunity,
+  qatarProviderOpportunity,
+  chileProviderOpportunity,
+  thailandProviderOpportunity,
+  portugalProviderOpportunity,
+  finlandProviderOpportunity,
   southAfricaProviderOpportunity,
   philippinesProviderOpportunity,
   malaysiaProviderOpportunity,
