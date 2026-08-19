@@ -131,8 +131,10 @@ import { southAfricaProviderOpportunity } from './south-africa-durban-cape-town-
 import { sriLankaProviderOpportunity } from './sri-lanka-colombo-ship-agents-chandlers-marine-services-transshipment-2026';
 import { buenosAiresProviderOpportunity } from './buenos-aires-argentina-ship-agents-chandlers-marine-services-grain-export-2026';
 import { gdanskProviderOpportunity } from './gdansk-poland-ship-agents-chandlers-marine-services-baltic-growth-2026';
+import { ukMegaGuide } from './uk-britain-ship-agents-shipchandlers-marine-services-complete-guide-2026';
 export const BLOG_POSTS = [
   howProvidersGetFoundPillarGuide,
+  ukMegaGuide,
   southAfricaProviderOpportunity,
   philippinesProviderOpportunity,
   malaysiaProviderOpportunity,
