@@ -125,8 +125,10 @@ import { southKoreaProviderOpportunity } from './south-korea-busan-ship-agents-c
 import { germanyProviderOpportunity } from './germany-bremerhaven-ship-agents-chandlers-marine-services-export-engine-2026';
 import { ukProviderOpportunity } from './uk-london-ship-agents-chandlers-marine-services-legal-insurance-hub-2026';
 import { howProvidersGetFoundPillarGuide } from './how-ship-agents-shipchandlers-marine-services-get-found-by-operators-2026';
+import { philippinesProviderOpportunity } from './philippines-ship-agents-shipchandlers-marine-services-seafarer-nation-2026';
 export const BLOG_POSTS = [
   howProvidersGetFoundPillarGuide,
+  philippinesProviderOpportunity,
   panamaProviderOpportunity,
   amsterdamProviderOpportunity,
   rotterdamProviderOpportunity,
