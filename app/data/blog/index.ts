@@ -132,9 +132,13 @@ import { sriLankaProviderOpportunity } from './sri-lanka-colombo-ship-agents-cha
 import { buenosAiresProviderOpportunity } from './buenos-aires-argentina-ship-agents-chandlers-marine-services-grain-export-2026';
 import { gdanskProviderOpportunity } from './gdansk-poland-ship-agents-chandlers-marine-services-baltic-growth-2026';
 import { ukMegaGuide } from './uk-britain-ship-agents-shipchandlers-marine-services-complete-guide-2026';
+import { usaProviderOpportunity } from './usa-united-states-ports-ship-agents-chandlers-marine-services-2026';
+import { canadaProviderOpportunity } from './canada-vancouver-montreal-halifax-ship-agents-chandlers-marine-services-2026';
 export const BLOG_POSTS = [
   howProvidersGetFoundPillarGuide,
   ukMegaGuide,
+  usaProviderOpportunity,
+  canadaProviderOpportunity,
   southAfricaProviderOpportunity,
   philippinesProviderOpportunity,
   malaysiaProviderOpportunity,
