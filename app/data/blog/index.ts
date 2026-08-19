@@ -122,6 +122,8 @@ import { aiSearchVisibilityGuide } from './ai-search-visibility-maritime-service
 import { denmarkProviderOpportunity } from './denmark-danish-straits-ship-agents-chandlers-marine-services-2026';
 import { greeceProviderOpportunity } from './greece-piraeus-ship-agents-chandlers-marine-services-shipowning-nation-2026';
 import { southKoreaProviderOpportunity } from './south-korea-busan-ship-agents-chandlers-marine-services-shipbuilding-2026';
+import { germanyProviderOpportunity } from './germany-bremerhaven-ship-agents-chandlers-marine-services-export-engine-2026';
+import { ukProviderOpportunity } from './uk-london-ship-agents-chandlers-marine-services-legal-insurance-hub-2026';
 export const BLOG_POSTS = [
   panamaProviderOpportunity,
   amsterdamProviderOpportunity,
@@ -141,6 +143,8 @@ export const BLOG_POSTS = [
   denmarkProviderOpportunity,
   greeceProviderOpportunity,
   southKoreaProviderOpportunity,
+  germanyProviderOpportunity,
+  ukProviderOpportunity,
   ...LEGACY_BLOG_POSTS,
   imoNetZeroFramework2026,
   seafarerShortage2026OperatorImpact,
