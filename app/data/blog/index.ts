@@ -118,6 +118,7 @@ import { turkeyProviderOpportunity } from './turkey-turkish-straits-ship-agents-
 import { lasPalmasProviderOpportunity } from './las-palmas-canary-islands-ship-agents-chandlers-marine-services-bunkering-2026';
 import { shipHusbandryGuide } from './what-is-ship-husbandry-complete-guide-2026';
 import { marineSurveyorGuide } from './what-is-marine-surveyor-when-you-need-one-2026';
+import { aiSearchVisibilityGuide } from './ai-search-visibility-maritime-service-providers-chatgpt-2026';
 export const BLOG_POSTS = [
   panamaProviderOpportunity,
   amsterdamProviderOpportunity,
@@ -133,6 +134,7 @@ export const BLOG_POSTS = [
   lasPalmasProviderOpportunity,
   shipHusbandryGuide,
   marineSurveyorGuide,
+  aiSearchVisibilityGuide,
   ...LEGACY_BLOG_POSTS,
   imoNetZeroFramework2026,
   seafarerShortage2026OperatorImpact,
