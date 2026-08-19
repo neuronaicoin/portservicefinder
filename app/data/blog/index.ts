@@ -134,11 +134,15 @@ import { gdanskProviderOpportunity } from './gdansk-poland-ship-agents-chandlers
 import { ukMegaGuide } from './uk-britain-ship-agents-shipchandlers-marine-services-complete-guide-2026';
 import { usaProviderOpportunity } from './usa-united-states-ports-ship-agents-chandlers-marine-services-2026';
 import { canadaProviderOpportunity } from './canada-vancouver-montreal-halifax-ship-agents-chandlers-marine-services-2026';
+import { japanProviderOpportunity } from './japan-ship-agents-chandlers-marine-services-precision-reputation-2026';
+import { norwayProviderOpportunity } from './norway-ship-agents-chandlers-marine-services-offshore-technology-2026';
 export const BLOG_POSTS = [
   howProvidersGetFoundPillarGuide,
   ukMegaGuide,
   usaProviderOpportunity,
   canadaProviderOpportunity,
+  japanProviderOpportunity,
+  norwayProviderOpportunity,
   southAfricaProviderOpportunity,
   philippinesProviderOpportunity,
   malaysiaProviderOpportunity,
