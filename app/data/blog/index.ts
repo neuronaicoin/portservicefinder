@@ -138,6 +138,8 @@ import { japanProviderOpportunity } from './japan-ship-agents-chandlers-marine-s
 import { norwayProviderOpportunity } from './norway-ship-agents-chandlers-marine-services-offshore-technology-2026';
 import { italyProviderOpportunity } from './italy-genoa-gioia-tauro-ship-agents-chandlers-marine-services-2026';
 import { spainProviderOpportunity } from './spain-algeciras-valencia-ship-agents-chandlers-marine-services-2026';
+import { moroccoProviderOpportunity } from './morocco-tanger-med-ship-agents-chandlers-marine-services-growth-2026';
+import { belgiumProviderOpportunity } from './belgium-antwerp-ship-agents-chandlers-marine-services-chemical-cluster-2026';
 export const BLOG_POSTS = [
   howProvidersGetFoundPillarGuide,
   ukMegaGuide,
@@ -147,6 +149,8 @@ export const BLOG_POSTS = [
   norwayProviderOpportunity,
   italyProviderOpportunity,
   spainProviderOpportunity,
+  moroccoProviderOpportunity,
+  belgiumProviderOpportunity,
   southAfricaProviderOpportunity,
   philippinesProviderOpportunity,
   malaysiaProviderOpportunity,
