@@ -121,6 +121,7 @@ import { marineSurveyorGuide } from './what-is-marine-surveyor-when-you-need-one
 import { aiSearchVisibilityGuide } from './ai-search-visibility-maritime-service-providers-chatgpt-2026';
 import { denmarkProviderOpportunity } from './denmark-danish-straits-ship-agents-chandlers-marine-services-2026';
 import { greeceProviderOpportunity } from './greece-piraeus-ship-agents-chandlers-marine-services-shipowning-nation-2026';
+import { southKoreaProviderOpportunity } from './south-korea-busan-ship-agents-chandlers-marine-services-shipbuilding-2026';
 export const BLOG_POSTS = [
   panamaProviderOpportunity,
   amsterdamProviderOpportunity,
@@ -139,6 +140,7 @@ export const BLOG_POSTS = [
   aiSearchVisibilityGuide,
   denmarkProviderOpportunity,
   greeceProviderOpportunity,
+  southKoreaProviderOpportunity,
   ...LEGACY_BLOG_POSTS,
   imoNetZeroFramework2026,
   seafarerShortage2026OperatorImpact,
