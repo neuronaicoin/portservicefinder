@@ -129,12 +129,16 @@ import { philippinesProviderOpportunity } from './philippines-ship-agents-shipch
 import { malaysiaProviderOpportunity } from './malaysia-strait-malacca-ship-agents-chandlers-marine-services-2026';
 import { southAfricaProviderOpportunity } from './south-africa-durban-cape-town-ship-agents-chandlers-marine-services-cape-route-2026';
 import { sriLankaProviderOpportunity } from './sri-lanka-colombo-ship-agents-chandlers-marine-services-transshipment-2026';
+import { buenosAiresProviderOpportunity } from './buenos-aires-argentina-ship-agents-chandlers-marine-services-grain-export-2026';
+import { gdanskProviderOpportunity } from './gdansk-poland-ship-agents-chandlers-marine-services-baltic-growth-2026';
 export const BLOG_POSTS = [
   howProvidersGetFoundPillarGuide,
   southAfricaProviderOpportunity,
   philippinesProviderOpportunity,
   malaysiaProviderOpportunity,
   sriLankaProviderOpportunity,
+  buenosAiresProviderOpportunity,
+  gdanskProviderOpportunity,
   panamaProviderOpportunity,
   amsterdamProviderOpportunity,
   rotterdamProviderOpportunity,
