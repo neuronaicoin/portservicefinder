@@ -136,6 +136,8 @@ import { usaProviderOpportunity } from './usa-united-states-ports-ship-agents-ch
 import { canadaProviderOpportunity } from './canada-vancouver-montreal-halifax-ship-agents-chandlers-marine-services-2026';
 import { japanProviderOpportunity } from './japan-ship-agents-chandlers-marine-services-precision-reputation-2026';
 import { norwayProviderOpportunity } from './norway-ship-agents-chandlers-marine-services-offshore-technology-2026';
+import { italyProviderOpportunity } from './italy-genoa-gioia-tauro-ship-agents-chandlers-marine-services-2026';
+import { spainProviderOpportunity } from './spain-algeciras-valencia-ship-agents-chandlers-marine-services-2026';
 export const BLOG_POSTS = [
   howProvidersGetFoundPillarGuide,
   ukMegaGuide,
@@ -143,6 +145,8 @@ export const BLOG_POSTS = [
   canadaProviderOpportunity,
   japanProviderOpportunity,
   norwayProviderOpportunity,
+  italyProviderOpportunity,
+  spainProviderOpportunity,
   southAfricaProviderOpportunity,
   philippinesProviderOpportunity,
   malaysiaProviderOpportunity,
