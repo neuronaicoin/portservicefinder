@@ -126,9 +126,11 @@ import { germanyProviderOpportunity } from './germany-bremerhaven-ship-agents-ch
 import { ukProviderOpportunity } from './uk-london-ship-agents-chandlers-marine-services-legal-insurance-hub-2026';
 import { howProvidersGetFoundPillarGuide } from './how-ship-agents-shipchandlers-marine-services-get-found-by-operators-2026';
 import { philippinesProviderOpportunity } from './philippines-ship-agents-shipchandlers-marine-services-seafarer-nation-2026';
+import { malaysiaProviderOpportunity } from './malaysia-strait-malacca-ship-agents-chandlers-marine-services-2026';
 export const BLOG_POSTS = [
   howProvidersGetFoundPillarGuide,
   philippinesProviderOpportunity,
+  malaysiaProviderOpportunity,
   panamaProviderOpportunity,
   amsterdamProviderOpportunity,
   rotterdamProviderOpportunity,
