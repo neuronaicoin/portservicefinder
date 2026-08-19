@@ -140,6 +140,11 @@ import { italyProviderOpportunity } from './italy-genoa-gioia-tauro-ship-agents-
 import { spainProviderOpportunity } from './spain-algeciras-valencia-ship-agents-chandlers-marine-services-2026';
 import { moroccoProviderOpportunity } from './morocco-tanger-med-ship-agents-chandlers-marine-services-growth-2026';
 import { belgiumProviderOpportunity } from './belgium-antwerp-ship-agents-chandlers-marine-services-chemical-cluster-2026';
+import { franceProviderOpportunity } from './france-marseille-le-havre-ship-agents-chandlers-marine-services-2026';
+import { saudiProviderOpportunity } from './saudi-arabia-jeddah-ship-agents-chandlers-marine-services-2026';
+import { australiaProviderOpportunity } from './australia-ports-ship-agents-chandlers-marine-services-bulk-export-2026';
+import { mexicoProviderOpportunity } from './mexico-ports-ship-agents-chandlers-marine-services-nearshoring-2026';
+import { nigeriaProviderOpportunity } from './nigeria-lagos-apapa-ship-agents-chandlers-marine-services-2026';
 export const BLOG_POSTS = [
   howProvidersGetFoundPillarGuide,
   ukMegaGuide,
@@ -151,6 +156,11 @@ export const BLOG_POSTS = [
   spainProviderOpportunity,
   moroccoProviderOpportunity,
   belgiumProviderOpportunity,
+  franceProviderOpportunity,
+  saudiProviderOpportunity,
+  australiaProviderOpportunity,
+  mexicoProviderOpportunity,
+  nigeriaProviderOpportunity,
   southAfricaProviderOpportunity,
   philippinesProviderOpportunity,
   malaysiaProviderOpportunity,
