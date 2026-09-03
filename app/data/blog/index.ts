@@ -96,6 +96,11 @@ import { panama } from './panama-canal-ports-complete-guide-2026';
 import { regulationsProviderOpportunity } from './how-2026-maritime-regulations-create-business-ship-agents-chandlers-marine-services';
 import { whatIsMarineServiceProvider } from './what-is-a-marine-service-provider-complete-guide-2026';
 import { marineServicesCompleteDirectory } from './marine-service-categories-complete-directory-singapore-worldwide-2026';
+import { howToStartUnderwaterDiving } from './how-to-start-underwater-diving-hull-inspection-service-2026';
+import { redFlagsChoosingShipAgent } from './red-flags-choosing-ship-agent-2026';
+import { ballastWaterTreatmentOpportunity } from './ballast-water-treatment-service-business-opportunity-2026';
+import { colomboSriLankaGuide } from './colombo-sri-lanka-ship-agents-chandlers-marine-services-2026';
+import { howToPriceMarineServices } from './how-to-price-marine-services-competing-with-cheaper-providers-2026';
 import { singaporeDrydockRepairGuide } from './singapore-drydock-ship-repair-welding-painting-2026-complete-guide';
 import { singaporeSuppliesWasteGuide } from './singapore-vessel-supplies-waste-management-2026-complete-guide';
 import { singaporeSafetySolasGuide } from './singapore-safety-solas-services-2026-complete-guide';
@@ -296,6 +301,11 @@ export const BLOG_POSTS = [
   regulationsProviderOpportunity,
   whatIsMarineServiceProvider,
   marineServicesCompleteDirectory,
+  howToStartUnderwaterDiving,
+  redFlagsChoosingShipAgent,
+  ballastWaterTreatmentOpportunity,
+  colomboSriLankaGuide,
+  howToPriceMarineServices,
 ];
 export function getAllBlogSlugs(): string[] {
   return BLOG_POSTS.map((p) => p.slug);
