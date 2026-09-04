@@ -67,6 +67,9 @@ import { vesselTechnicalServiceVisits } from './vessel-technical-service-visits-
 import { singaporeEngineService } from './ship-engine-service-companies-singapore-2026-operator-buyer-guide';
 import { singaporeHullCleaning } from './hull-cleaning-services-singapore-2026-operator-buyer-guide';
 import { singaporeLiferaftLsaFirefighting } from './liferaft-lsa-firefighting-equipment-servicing-singapore-2026';
+import { singaporeDeckCargoHandlingHardware } from './crane-mooring-lashing-anchor-chain-services-singapore-2026';
+import { singaporeSafetyComplianceInspections } from './pilot-ladder-gas-free-classification-survey-flag-documentation-singapore-2026';
+import { singaporeCargoEnvironmentalCompliance } from './cargo-hold-cleaning-sewage-marpol-slop-bilge-pest-control-singapore-2026';
 import { tuzlaShipRepair } from './ship-repair-services-tuzla-istanbul-2026-operator-buyer-guide';
 import { bosphorusShipAgents } from './ship-agents-istanbul-bosphorus-2026-operator-buyer-guide';
 import { istanbulBunkerSuppliers } from './bunker-suppliers-istanbul-2026-operator-buyer-guide';
@@ -226,6 +229,9 @@ export const BLOG_POSTS = [
   tuzlaShipRepair,
   singaporeHullCleaning,
   singaporeLiferaftLsaFirefighting,
+  singaporeDeckCargoHandlingHardware,
+  singaporeSafetyComplianceInspections,
+  singaporeCargoEnvironmentalCompliance,
   singaporeEngineService,
   vesselTechnicalServiceVisits,
   crewChangePortCall,
