@@ -66,6 +66,7 @@ import { crewChangePortCall } from './crew-change-port-call-operational-checklis
 import { vesselTechnicalServiceVisits } from './vessel-technical-service-visits-port-coordination-guide-2026';
 import { singaporeEngineService } from './ship-engine-service-companies-singapore-2026-operator-buyer-guide';
 import { singaporeHullCleaning } from './hull-cleaning-services-singapore-2026-operator-buyer-guide';
+import { singaporeLiferaftLsaFirefighting } from './liferaft-lsa-firefighting-equipment-servicing-singapore-2026';
 import { tuzlaShipRepair } from './ship-repair-services-tuzla-istanbul-2026-operator-buyer-guide';
 import { bosphorusShipAgents } from './ship-agents-istanbul-bosphorus-2026-operator-buyer-guide';
 import { istanbulBunkerSuppliers } from './bunker-suppliers-istanbul-2026-operator-buyer-guide';
@@ -224,6 +225,7 @@ export const BLOG_POSTS = [
   bosphorusShipAgents,
   tuzlaShipRepair,
   singaporeHullCleaning,
+  singaporeLiferaftLsaFirefighting,
   singaporeEngineService,
   vesselTechnicalServiceVisits,
   crewChangePortCall,
