@@ -72,6 +72,7 @@ import { singaporeSafetyComplianceInspections } from './pilot-ladder-gas-free-cl
 import { singaporeCargoEnvironmentalCompliance } from './cargo-hold-cleaning-sewage-marpol-slop-bilge-pest-control-singapore-2026';
 import { globalShipchandlerIndustryTrends2026 } from './global-shipchandler-industry-2026-provisioning-sourcing-trends';
 import { globalShipAgencyIndustryTrends2026 } from './global-ship-agency-industry-2026-appointment-sourcing-trends';
+import { globalMarineTechnicalServicesTrends2026 } from './global-marine-technical-services-industry-2026-sourcing-trends';
 import { tuzlaShipRepair } from './ship-repair-services-tuzla-istanbul-2026-operator-buyer-guide';
 import { bosphorusShipAgents } from './ship-agents-istanbul-bosphorus-2026-operator-buyer-guide';
 import { istanbulBunkerSuppliers } from './bunker-suppliers-istanbul-2026-operator-buyer-guide';
@@ -236,6 +237,7 @@ export const BLOG_POSTS = [
   singaporeCargoEnvironmentalCompliance,
   globalShipchandlerIndustryTrends2026,
   globalShipAgencyIndustryTrends2026,
+  globalMarineTechnicalServicesTrends2026,
   singaporeEngineService,
   vesselTechnicalServiceVisits,
   crewChangePortCall,
