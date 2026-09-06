@@ -93,6 +93,7 @@ import { nhavaShevaJnptBunkerCrewChangeTankCleaning } from './bunker-supply-crew
 import { tokyoBunkerCrewChangeTankCleaning } from './bunker-supply-crew-change-tank-cleaning-tokyo-2026';
 import { southamptonBunkerCrewChangeTankCleaning } from './bunker-supply-crew-change-tank-cleaning-southampton-2026';
 import { abuDhabiBunkerCrewChangeTankCleaning } from './bunker-supply-crew-change-tank-cleaning-abu-dhabi-2026';
+import { majorWorldPortsTimeZonesScaleFacts } from './major-world-ports-time-zones-scale-operating-facts-2026';
 import { hongKongEngineRefrigerationElectrical } from './main-auxiliary-engine-refrigeration-electrical-automation-services-hong-kong-2026';
 import { tuzlaShipRepair } from './ship-repair-services-tuzla-istanbul-2026-operator-buyer-guide';
 import { bosphorusShipAgents } from './ship-agents-istanbul-bosphorus-2026-operator-buyer-guide';
@@ -279,6 +280,7 @@ export const BLOG_POSTS = [
   tokyoBunkerCrewChangeTankCleaning,
   southamptonBunkerCrewChangeTankCleaning,
   abuDhabiBunkerCrewChangeTankCleaning,
+  majorWorldPortsTimeZonesScaleFacts,
   hongKongEngineRefrigerationElectrical,
   singaporeEngineService,
   vesselTechnicalServiceVisits,
