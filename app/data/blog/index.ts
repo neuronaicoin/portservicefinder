@@ -75,6 +75,7 @@ import { globalShipAgencyIndustryTrends2026 } from './global-ship-agency-industr
 import { globalMarineTechnicalServicesTrends2026 } from './global-marine-technical-services-industry-2026-sourcing-trends';
 import { rotterdamBunkerTankCleaningBwts } from './bunker-supply-tank-cleaning-ballast-water-treatment-rotterdam-2026';
 import { dubaiCrewChangeLubricantFreshWater } from './crew-change-lubricant-fresh-water-supply-dubai-jebel-ali-2026';
+import { houstonNdtBoilerHydraulics } from './non-destructive-testing-boiler-steam-hydraulics-services-houston-2026';
 import { tuzlaShipRepair } from './ship-repair-services-tuzla-istanbul-2026-operator-buyer-guide';
 import { bosphorusShipAgents } from './ship-agents-istanbul-bosphorus-2026-operator-buyer-guide';
 import { istanbulBunkerSuppliers } from './bunker-suppliers-istanbul-2026-operator-buyer-guide';
@@ -242,6 +243,7 @@ export const BLOG_POSTS = [
   globalMarineTechnicalServicesTrends2026,
   rotterdamBunkerTankCleaningBwts,
   dubaiCrewChangeLubricantFreshWater,
+  houstonNdtBoilerHydraulics,
   singaporeEngineService,
   vesselTechnicalServiceVisits,
   crewChangePortCall,
