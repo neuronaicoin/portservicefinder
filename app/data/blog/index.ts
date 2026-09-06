@@ -77,6 +77,8 @@ import { rotterdamBunkerTankCleaningBwts } from './bunker-supply-tank-cleaning-b
 import { dubaiCrewChangeLubricantFreshWater } from './crew-change-lubricant-fresh-water-supply-dubai-jebel-ali-2026';
 import { houstonNdtBoilerHydraulics } from './non-destructive-testing-boiler-steam-hydraulics-services-houston-2026';
 import { piraeusNavigationWeldingGarbage } from './navigation-communication-welding-fabrication-garbage-disposal-piraeus-2026';
+import { hongKongBunkerCrewChangeTankCleaning } from './bunker-supply-crew-change-tank-cleaning-hong-kong-2026';
+import { hongKongEngineRefrigerationElectrical } from './main-auxiliary-engine-refrigeration-electrical-automation-services-hong-kong-2026';
 import { tuzlaShipRepair } from './ship-repair-services-tuzla-istanbul-2026-operator-buyer-guide';
 import { bosphorusShipAgents } from './ship-agents-istanbul-bosphorus-2026-operator-buyer-guide';
 import { istanbulBunkerSuppliers } from './bunker-suppliers-istanbul-2026-operator-buyer-guide';
@@ -246,6 +248,8 @@ export const BLOG_POSTS = [
   dubaiCrewChangeLubricantFreshWater,
   houstonNdtBoilerHydraulics,
   piraeusNavigationWeldingGarbage,
+  hongKongBunkerCrewChangeTankCleaning,
+  hongKongEngineRefrigerationElectrical,
   singaporeEngineService,
   vesselTechnicalServiceVisits,
   crewChangePortCall,
