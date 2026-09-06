@@ -79,6 +79,7 @@ import { houstonNdtBoilerHydraulics } from './non-destructive-testing-boiler-ste
 import { piraeusNavigationWeldingGarbage } from './navigation-communication-welding-fabrication-garbage-disposal-piraeus-2026';
 import { hongKongBunkerCrewChangeTankCleaning } from './bunker-supply-crew-change-tank-cleaning-hong-kong-2026';
 import { shanghaiBunkerCrewChangeTankCleaning } from './bunker-supply-crew-change-tank-cleaning-shanghai-2026';
+import { santosBunkerCrewChangeTankCleaning } from './bunker-supply-crew-change-tank-cleaning-santos-2026';
 import { hongKongEngineRefrigerationElectrical } from './main-auxiliary-engine-refrigeration-electrical-automation-services-hong-kong-2026';
 import { tuzlaShipRepair } from './ship-repair-services-tuzla-istanbul-2026-operator-buyer-guide';
 import { bosphorusShipAgents } from './ship-agents-istanbul-bosphorus-2026-operator-buyer-guide';
@@ -251,6 +252,7 @@ export const BLOG_POSTS = [
   piraeusNavigationWeldingGarbage,
   hongKongBunkerCrewChangeTankCleaning,
   shanghaiBunkerCrewChangeTankCleaning,
+  santosBunkerCrewChangeTankCleaning,
   hongKongEngineRefrigerationElectrical,
   singaporeEngineService,
   vesselTechnicalServiceVisits,
