@@ -97,6 +97,7 @@ import { majorWorldPortsTimeZonesScaleFacts } from './major-world-ports-time-zon
 import { majorShippingCanalsChokepoints } from './major-shipping-canals-chokepoints-operator-guide-2026';
 import { publicHolidaysBusinessCultureByPortCountry } from './public-holidays-business-culture-major-port-countries-2026';
 import { singaporeRegistryOfShipsGuide } from './singapore-registry-of-ships-guide-ship-managers-2026';
+import { whySingaporeBusiestPortProviders } from './why-singapore-busiest-port-what-it-means-providers-2026';
 import { hongKongEngineRefrigerationElectrical } from './main-auxiliary-engine-refrigeration-electrical-automation-services-hong-kong-2026';
 import { tuzlaShipRepair } from './ship-repair-services-tuzla-istanbul-2026-operator-buyer-guide';
 import { bosphorusShipAgents } from './ship-agents-istanbul-bosphorus-2026-operator-buyer-guide';
@@ -287,6 +288,7 @@ export const BLOG_POSTS = [
   majorShippingCanalsChokepoints,
   publicHolidaysBusinessCultureByPortCountry,
   singaporeRegistryOfShipsGuide,
+  whySingaporeBusiestPortProviders,
   hongKongEngineRefrigerationElectrical,
   singaporeEngineService,
   vesselTechnicalServiceVisits,
