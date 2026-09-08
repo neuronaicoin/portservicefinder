@@ -101,7 +101,7 @@ export default function ForProvidersPage() {
           }}>
             PortService<span style={g}>Finder</span>
           </Link>
-          <Link href="/" className="btn-gold nav-cta" style={{
+          <Link href="/?list=1" className="btn-gold nav-cta" style={{
             background:'#c8a84b',
             color:'#08100a',
             border:'none',
@@ -201,7 +201,7 @@ export default function ForProvidersPage() {
             flexWrap:'wrap',
             marginBottom:24,
           }}>
-            <Link href="/" className="btn-gold" style={{
+            <Link href="/?list=1" className="btn-gold" style={{
               background:'#c8a84b',
               color:'#08100a',
               border:'none',
@@ -617,7 +617,7 @@ export default function ForProvidersPage() {
                       </li>
                     ))}
                   </ul>
-                  <Link href="/" className="btn-gold" style={{
+                  <Link href="/?list=1" className="btn-gold" style={{
                     padding:12,
                     background:tier.badge?'#c8a84b':'transparent',
                     border:'1px solid rgba(200,168,75,.4)',
@@ -723,7 +723,7 @@ export default function ForProvidersPage() {
             }}>
               Join the providers already growing through PortServiceFinder. Start your 1-month free trial today — no credit card required, cancel anytime.
             </p>
-            <Link href="/" className="btn-gold" style={{
+            <Link href="/?list=1" className="btn-gold" style={{
               display:'inline-block',
               background:'#c8a84b',
               color:'#08100a',
