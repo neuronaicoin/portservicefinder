@@ -414,14 +414,18 @@ export default function Home() {
   }
 
   // Auto-open the "List Your Business" flow when arriving via a direct link,
-  // e.g. /?list=1 — used by /for-providers and blog CTAs so a visitor lands
-  // straight in the signup flow instead of having to find the button themselves.
+  // e.g. /?list=1 — used by /for-providers and blog CTAs. A short delay lets
+  // the page itself render first, so the form doesn't feel like an intrusive
+  // pop-up appearing before the visitor has seen anything about the site.
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const params = new URLSearchParams(window.location.search);
     if (params.get('list') === '1') {
-      openListBusiness();
-      trackEvent('list_business_click', { source: 'direct_link' });
+      const timer = setTimeout(() => {
+        openListBusiness();
+        trackEvent('list_business_click', { source: 'direct_link' });
+      }, 900);
+      return () => clearTimeout(timer);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -1238,6 +1242,9 @@ export default function Home() {
 
                 {flowStep === 1 && (
                   <div>
+                    <div style={{marginBottom:16,padding:'10px 14px',background:'rgba(200,168,75,.06)',border:'1px solid rgba(200,168,75,.2)',fontFamily:rj,fontSize:11.5,color:'#e2c06a',lineHeight:1.5}}>
+                      ⚓ List your business — ship owners & charterers worldwide can find and contact you directly.
+                    </div>
                     <div style={{marginBottom:18}}>
                       <label style={{...S.flbl,fontSize:12,marginBottom:12,display:'block'}}>What type of provider are you?</label>
                       <div className="ptype-grid" style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:10}}>
