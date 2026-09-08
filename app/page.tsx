@@ -413,6 +413,19 @@ export default function Home() {
     });
   }
 
+  // Auto-open the "List Your Business" flow when arriving via a direct link,
+  // e.g. /?list=1 — used by /for-providers and blog CTAs so a visitor lands
+  // straight in the signup flow instead of having to find the button themselves.
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('list') === '1') {
+      openListBusiness();
+      trackEvent('list_business_click', { source: 'direct_link' });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   function resetForm() {
     setFProviderType('');
     setFCompanyName('');
