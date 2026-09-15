@@ -3,7 +3,7 @@ import type { BlogPost } from '../blog-posts';
 export const shipAgentFeesPdaExplained: BlogPost = {
   slug: 'ship-agent-fees-pda-disbursement-account-explained-2026',
   title: 'How Much Does a Ship Agent Cost? Agency Fees and the Disbursement Account Explained (2026)',
-  excerpt: 'A detailed breakdown of ship agent fee structures in 2026 — how the Proforma Disbursement Account works, the difference between agency fees and pass-through port costs, common hidden charges, and how to negotiate and audit an agent\\'s invoice.',
+  excerpt: 'A detailed breakdown of ship agent fee structures in 2026 — how the Proforma Disbursement Account works, the difference between agency fees and pass-through port costs, common hidden charges, and how to negotiate and audit an agent\'s invoice.',
   author: 'PortServiceFinder Editorial Team',
   authorRole: 'Maritime Industry Experts',
   publishedDate: '2026-09-15',
