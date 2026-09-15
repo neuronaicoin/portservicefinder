@@ -157,6 +157,11 @@ import { whyCrewChangeAgentsRegisterPortServiceFinder } from './why-crew-change-
 import { whyRepairYardsRegisterPortServiceFinder } from './why-ship-repair-yards-should-register-portservicefinder-2026';
 import { whyMarineSurveyorsRegisterPortServiceFinder } from './why-marine-surveyors-should-register-portservicefinder-2026';
 import { whySingleClientDependentProvidersRegisterPortServiceFinder } from './why-providers-dependent-on-one-client-should-register-portservicefinder-2026';
+import { howToStartMaritimeSecurity } from './how-to-start-maritime-security-armed-guard-business-complete-guide-2026';
+import { howToStartWeatherRouting } from './how-to-start-weather-routing-services-business-complete-guide-2026';
+import { howToStartSalvageTowing } from './how-to-start-marine-salvage-towing-business-complete-guide-2026';
+import { howToStartBwtsServices } from './how-to-start-ballast-water-treatment-system-installation-business-complete-guide-2026';
+import { howToStartMaritimeCybersecurity } from './how-to-start-maritime-cybersecurity-services-business-complete-guide-2026';
 import { redFlagsChoosingShipAgent } from './red-flags-choosing-ship-agent-2026';
 import { ballastWaterTreatmentOpportunity } from './ballast-water-treatment-service-business-opportunity-2026';
 import { colomboSriLankaGuide } from './colombo-sri-lanka-ship-agents-chandlers-marine-services-2026';
@@ -217,6 +222,11 @@ import { thailandProviderOpportunity } from './thailand-laem-chabang-ship-agents
 import { portugalProviderOpportunity } from './portugal-sines-ship-agents-chandlers-marine-services-deepwater-gateway-2026';
 import { finlandProviderOpportunity } from './finland-ship-agents-chandlers-marine-services-ice-class-expertise-2026';
 export const BLOG_POSTS = [
+  howToStartMaritimeSecurity,
+  howToStartWeatherRouting,
+  howToStartSalvageTowing,
+  howToStartBwtsServices,
+  howToStartMaritimeCybersecurity,
   whyBunkerSuppliersRegisterPortServiceFinder,
   whyCrewChangeAgentsRegisterPortServiceFinder,
   whyRepairYardsRegisterPortServiceFinder,
