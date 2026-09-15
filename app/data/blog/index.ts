@@ -140,6 +140,7 @@ import { singaporeBunkerSurveyCompleteGuide } from './bunker-fuel-quantity-surve
 import { singaporeCrewChangeCompleteGuide } from './crew-change-singapore-complete-guide-operators-agents-2026';
 import { suezShipAgentsChandlersCompleteGuide } from './suez-canal-ship-agents-shipchandlers-complete-guide-operators-providers-2026';
 import { whyProvidersRegisterPortServiceFinder } from './why-ship-agents-shipchandlers-marine-services-register-portservicefinder-2026';
+import { professionalLiabilityInsuranceMarineProviders } from './professional-liability-insurance-ship-agents-shipchandlers-marine-services-2026';
 import { redFlagsChoosingShipAgent } from './red-flags-choosing-ship-agent-2026';
 import { ballastWaterTreatmentOpportunity } from './ballast-water-treatment-service-business-opportunity-2026';
 import { colomboSriLankaGuide } from './colombo-sri-lanka-ship-agents-chandlers-marine-services-2026';
@@ -200,6 +201,7 @@ import { thailandProviderOpportunity } from './thailand-laem-chabang-ship-agents
 import { portugalProviderOpportunity } from './portugal-sines-ship-agents-chandlers-marine-services-deepwater-gateway-2026';
 import { finlandProviderOpportunity } from './finland-ship-agents-chandlers-marine-services-ice-class-expertise-2026';
 export const BLOG_POSTS = [
+  professionalLiabilityInsuranceMarineProviders,
   whyProvidersRegisterPortServiceFinder,
   suezShipAgentsChandlersCompleteGuide,
   singaporeCrewChangeCompleteGuide,
