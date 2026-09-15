@@ -152,6 +152,11 @@ import { whyShipchandlersRegisterPortServiceFinder } from './why-shipchandlers-s
 import { whyTechnicalServicesRegisterPortServiceFinder } from './why-marine-technical-inspection-services-should-register-portservicefinder-2026';
 import { whyNewSmallProvidersRegisterPortServiceFinder } from './why-new-small-marine-service-companies-should-register-portservicefinder-2026';
 import { whyMultiPortProvidersRegisterPortServiceFinder } from './why-multi-port-marine-service-companies-should-register-portservicefinder-2026';
+import { whyBunkerSuppliersRegisterPortServiceFinder } from './why-bunker-suppliers-should-register-portservicefinder-2026';
+import { whyCrewChangeAgentsRegisterPortServiceFinder } from './why-crew-change-agents-should-register-portservicefinder-2026';
+import { whyRepairYardsRegisterPortServiceFinder } from './why-ship-repair-yards-should-register-portservicefinder-2026';
+import { whyMarineSurveyorsRegisterPortServiceFinder } from './why-marine-surveyors-should-register-portservicefinder-2026';
+import { whySingleClientDependentProvidersRegisterPortServiceFinder } from './why-providers-dependent-on-one-client-should-register-portservicefinder-2026';
 import { redFlagsChoosingShipAgent } from './red-flags-choosing-ship-agent-2026';
 import { ballastWaterTreatmentOpportunity } from './ballast-water-treatment-service-business-opportunity-2026';
 import { colomboSriLankaGuide } from './colombo-sri-lanka-ship-agents-chandlers-marine-services-2026';
@@ -212,6 +217,11 @@ import { thailandProviderOpportunity } from './thailand-laem-chabang-ship-agents
 import { portugalProviderOpportunity } from './portugal-sines-ship-agents-chandlers-marine-services-deepwater-gateway-2026';
 import { finlandProviderOpportunity } from './finland-ship-agents-chandlers-marine-services-ice-class-expertise-2026';
 export const BLOG_POSTS = [
+  whyBunkerSuppliersRegisterPortServiceFinder,
+  whyCrewChangeAgentsRegisterPortServiceFinder,
+  whyRepairYardsRegisterPortServiceFinder,
+  whyMarineSurveyorsRegisterPortServiceFinder,
+  whySingleClientDependentProvidersRegisterPortServiceFinder,
   whyShipAgentsRegisterPortServiceFinder,
   whyShipchandlersRegisterPortServiceFinder,
   whyTechnicalServicesRegisterPortServiceFinder,
