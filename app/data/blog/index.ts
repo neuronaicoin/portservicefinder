@@ -162,6 +162,11 @@ import { howToStartWeatherRouting } from './how-to-start-weather-routing-service
 import { howToStartSalvageTowing } from './how-to-start-marine-salvage-towing-business-complete-guide-2026';
 import { howToStartBwtsServices } from './how-to-start-ballast-water-treatment-system-installation-business-complete-guide-2026';
 import { howToStartMaritimeCybersecurity } from './how-to-start-maritime-cybersecurity-services-business-complete-guide-2026';
+import { howToRespondRfqWinMoreContracts } from './how-to-respond-to-rfq-win-more-maritime-service-contracts-2026';
+import { buildingReferralNetworkMarineServices } from './building-referral-network-ship-agents-chandlers-marine-services-2026';
+import { usingAisVesselTrackingBusinessDevelopment } from './using-ais-vessel-tracking-data-proactive-business-development-marine-services-2026';
+import { multiCurrencyPaymentRiskMarineProviders } from './multi-currency-international-payment-risk-marine-service-providers-2026';
+import { buildingCaseStudyPortfolioMarineServices } from './building-case-study-portfolio-win-larger-marine-service-contracts-2026';
 import { redFlagsChoosingShipAgent } from './red-flags-choosing-ship-agent-2026';
 import { ballastWaterTreatmentOpportunity } from './ballast-water-treatment-service-business-opportunity-2026';
 import { colomboSriLankaGuide } from './colombo-sri-lanka-ship-agents-chandlers-marine-services-2026';
@@ -222,6 +227,11 @@ import { thailandProviderOpportunity } from './thailand-laem-chabang-ship-agents
 import { portugalProviderOpportunity } from './portugal-sines-ship-agents-chandlers-marine-services-deepwater-gateway-2026';
 import { finlandProviderOpportunity } from './finland-ship-agents-chandlers-marine-services-ice-class-expertise-2026';
 export const BLOG_POSTS = [
+  howToRespondRfqWinMoreContracts,
+  buildingReferralNetworkMarineServices,
+  usingAisVesselTrackingBusinessDevelopment,
+  multiCurrencyPaymentRiskMarineProviders,
+  buildingCaseStudyPortfolioMarineServices,
   howToStartMaritimeSecurity,
   howToStartWeatherRouting,
   howToStartSalvageTowing,
