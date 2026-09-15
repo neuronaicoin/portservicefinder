@@ -142,6 +142,11 @@ import { suezShipAgentsChandlersCompleteGuide } from './suez-canal-ship-agents-s
 import { whyProvidersRegisterPortServiceFinder } from './why-ship-agents-shipchandlers-marine-services-register-portservicefinder-2026';
 import { professionalLiabilityInsuranceMarineProviders } from './professional-liability-insurance-ship-agents-shipchandlers-marine-services-2026';
 import { panamaCanalShipAgentsChandlersCompleteGuide } from './panama-canal-ship-agents-shipchandlers-complete-guide-operators-providers-2026';
+import { malaccaStraitShipAgentsChandlersGuide } from './strait-of-malacca-ship-agents-shipchandlers-complete-guide-operators-providers-2026';
+import { hormuzStraitShipAgentsChandlersGuide } from './strait-of-hormuz-ship-agents-shipchandlers-complete-guide-operators-providers-2026';
+import { gibraltarStraitShipAgentsChandlersGuide } from './strait-of-gibraltar-ship-agents-shipchandlers-complete-guide-operators-providers-2026';
+import { danishStraitsShipAgentsChandlersGuide } from './danish-straits-great-belt-oresund-ship-agents-shipchandlers-complete-guide-2026';
+import { doverStraitShipAgentsChandlersGuide } from './strait-of-dover-english-channel-ship-agents-shipchandlers-complete-guide-2026';
 import { redFlagsChoosingShipAgent } from './red-flags-choosing-ship-agent-2026';
 import { ballastWaterTreatmentOpportunity } from './ballast-water-treatment-service-business-opportunity-2026';
 import { colomboSriLankaGuide } from './colombo-sri-lanka-ship-agents-chandlers-marine-services-2026';
@@ -202,6 +207,11 @@ import { thailandProviderOpportunity } from './thailand-laem-chabang-ship-agents
 import { portugalProviderOpportunity } from './portugal-sines-ship-agents-chandlers-marine-services-deepwater-gateway-2026';
 import { finlandProviderOpportunity } from './finland-ship-agents-chandlers-marine-services-ice-class-expertise-2026';
 export const BLOG_POSTS = [
+  malaccaStraitShipAgentsChandlersGuide,
+  hormuzStraitShipAgentsChandlersGuide,
+  gibraltarStraitShipAgentsChandlersGuide,
+  danishStraitsShipAgentsChandlersGuide,
+  doverStraitShipAgentsChandlersGuide,
   panamaCanalShipAgentsChandlersCompleteGuide,
   professionalLiabilityInsuranceMarineProviders,
   whyProvidersRegisterPortServiceFinder,
