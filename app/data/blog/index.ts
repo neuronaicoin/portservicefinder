@@ -130,6 +130,7 @@ import { regulationsProviderOpportunity } from './how-2026-maritime-regulations-
 import { whatIsMarineServiceProvider } from './what-is-a-marine-service-provider-complete-guide-2026';
 import { marineServicesCompleteDirectory } from './marine-service-categories-complete-directory-singapore-worldwide-2026';
 import { howToStartUnderwaterDiving } from './how-to-start-underwater-diving-hull-inspection-service-2026';
+import { howToStartTankCleaning } from './how-to-start-tank-cleaning-business-complete-guide-2026';
 import { redFlagsChoosingShipAgent } from './red-flags-choosing-ship-agent-2026';
 import { ballastWaterTreatmentOpportunity } from './ballast-water-treatment-service-business-opportunity-2026';
 import { colomboSriLankaGuide } from './colombo-sri-lanka-ship-agents-chandlers-marine-services-2026';
@@ -190,6 +191,7 @@ import { thailandProviderOpportunity } from './thailand-laem-chabang-ship-agents
 import { portugalProviderOpportunity } from './portugal-sines-ship-agents-chandlers-marine-services-deepwater-gateway-2026';
 import { finlandProviderOpportunity } from './finland-ship-agents-chandlers-marine-services-ice-class-expertise-2026';
 export const BLOG_POSTS = [
+  howToStartTankCleaning,
   reviewsTrustSignalsMarineServices,
   howProvidersGetFoundPillarGuide,
   ukMegaGuide,
