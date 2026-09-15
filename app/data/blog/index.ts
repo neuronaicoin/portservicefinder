@@ -134,6 +134,7 @@ import { redFlagsChoosingShipAgent } from './red-flags-choosing-ship-agent-2026'
 import { ballastWaterTreatmentOpportunity } from './ballast-water-treatment-service-business-opportunity-2026';
 import { colomboSriLankaGuide } from './colombo-sri-lanka-ship-agents-chandlers-marine-services-2026';
 import { howToPriceMarineServices } from './how-to-price-marine-services-competing-with-cheaper-providers-2026';
+import { reviewsTrustSignalsMarineServices } from './how-to-collect-reviews-build-trust-ship-agents-chandlers-2026';
 import { singaporeDrydockRepairGuide } from './singapore-drydock-ship-repair-welding-painting-2026-complete-guide';
 import { singaporeSuppliesWasteGuide } from './singapore-vessel-supplies-waste-management-2026-complete-guide';
 import { singaporeSafetySolasGuide } from './singapore-safety-solas-services-2026-complete-guide';
@@ -189,6 +190,7 @@ import { thailandProviderOpportunity } from './thailand-laem-chabang-ship-agents
 import { portugalProviderOpportunity } from './portugal-sines-ship-agents-chandlers-marine-services-deepwater-gateway-2026';
 import { finlandProviderOpportunity } from './finland-ship-agents-chandlers-marine-services-ice-class-expertise-2026';
 export const BLOG_POSTS = [
+  reviewsTrustSignalsMarineServices,
   howProvidersGetFoundPillarGuide,
   ukMegaGuide,
   usaProviderOpportunity,
