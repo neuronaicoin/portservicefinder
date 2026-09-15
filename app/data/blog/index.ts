@@ -135,6 +135,7 @@ import { howToStartWasteManagement } from './how-to-start-ship-waste-management-
 import { howToStartFumigation } from './how-to-start-marine-fumigation-business-complete-guide-2026';
 import { shipAgentFeesPdaExplained } from './ship-agent-fees-pda-disbursement-account-explained-2026';
 import { bundlingMarineServicesOperatorGuide } from './bundling-marine-services-one-provider-vs-specialists-operator-guide-2026';
+import { howToStartNdtServices } from './how-to-start-marine-ndt-inspection-business-complete-guide-2026';
 import { redFlagsChoosingShipAgent } from './red-flags-choosing-ship-agent-2026';
 import { ballastWaterTreatmentOpportunity } from './ballast-water-treatment-service-business-opportunity-2026';
 import { colomboSriLankaGuide } from './colombo-sri-lanka-ship-agents-chandlers-marine-services-2026';
@@ -195,6 +196,7 @@ import { thailandProviderOpportunity } from './thailand-laem-chabang-ship-agents
 import { portugalProviderOpportunity } from './portugal-sines-ship-agents-chandlers-marine-services-deepwater-gateway-2026';
 import { finlandProviderOpportunity } from './finland-ship-agents-chandlers-marine-services-ice-class-expertise-2026';
 export const BLOG_POSTS = [
+  howToStartNdtServices,
   bundlingMarineServicesOperatorGuide,
   shipAgentFeesPdaExplained,
   howToStartFumigation,
