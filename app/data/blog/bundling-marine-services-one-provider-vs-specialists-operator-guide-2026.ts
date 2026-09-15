@@ -2,7 +2,7 @@ import type { BlogPost } from '../blog-posts';
 
 export const bundlingMarineServicesOperatorGuide: BlogPost = {
   slug: 'bundling-marine-services-one-provider-vs-specialists-operator-guide-2026',
-  title: 'One Provider or Several? A Vessel Operator\\'s Guide to Bundling Marine Services in 2026',
+  title: 'One Provider or Several? A Vessel Operator\'s Guide to Bundling Marine Services in 2026',
   excerpt: 'When does it make sense to source bunker supply, provisions, technical services, and crew change through one coordinating provider instead of separately, and when is specialization still worth the extra coordination — a practical framework for vessel operators.',
   author: 'PortServiceFinder Editorial Team',
   authorRole: 'Maritime Industry Experts',
