@@ -779,6 +779,7 @@ export default function Home() {
           .radar-label{font-size:9px!important;}
           .hero-stats{gap:10px!important;}
           .blog-hero-title{font-size:22px!important;}
+          .search-label{color:#ffffff!important;font-size:15px!important;}
         }
         @media(min-width:769px) and (max-width:1024px){
           .blogs-grid{grid-template-columns:repeat(2,1fr)!important;}
@@ -854,28 +855,29 @@ export default function Home() {
             </p>
             <div className="a3 hero-stats" style={{display:'flex',gap:18,flexWrap:'wrap',justifyContent:'center'}}>
               {[['150+','Countries'],['1,200+','Ports'],['34','Categories']].map(([n,l])=>(
-                <span key={l} style={{fontFamily:rj,fontSize:12,color:'#b5bfa8',fontWeight:600}}><strong style={g}>{n}</strong> {l}</span>
+                <span key={l} style={{fontFamily:rj,fontSize:16,color:'#b5bfa8',fontWeight:600}}><strong style={g}>{n}</strong> {l}</span>
               ))}
             </div>
+            <button onClick={openListBusiness} className="btn-gold hero-list-btn" style={{background:'#c8a84b',color:'#08100a',border:'none',padding:'14px 32px',fontFamily:rj,fontSize:14,letterSpacing:'1.5px',textTransform:'uppercase',fontWeight:700,cursor:'pointer',textAlign:'center'}}>List Your Business</button>
 
             <div className="a4 search-wrap" style={{width:'100%',maxWidth:1080,background:'rgba(10,20,14,.92)',border:'1px solid rgba(200,168,75,.35)',backdropFilter:'blur(22px)',padding:'34px 38px',marginTop:4,boxShadow:'0 18px 48px rgba(0,0,0,.45)'}}>
               <div className="sgrid" style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr auto',gap:14,alignItems:'flex-end'}}>
                 <div>
-                  <label style={S.lbl}>Country</label>
+                  <label className="search-label" style={S.lbl}>Country</label>
                   <select className="sel-focus" style={S.sel} value={country} onChange={e=>{setCountry(e.target.value);setPort('');setDone(false);}}>
                     <option value="">Select country...</option>
                     {countries.map(c=><option key={c}>{c}</option>)}
                   </select>
                 </div>
                 <div>
-                  <label style={S.lbl}>Port</label>
+                  <label className="search-label" style={S.lbl}>Port</label>
                   <select className="sel-focus" style={S.sel} value={port} onChange={e=>{setPort(e.target.value);doSearch(country,e.target.value,svcType,ms);}} disabled={!country}>
                     <option value="">Select port...</option>
                     {ports.map(p=><option key={p}>{p}</option>)}
                   </select>
                 </div>
                 <div>
-                  <label style={S.lbl}>Service Type</label>
+                  <label className="search-label" style={S.lbl}>Service Type</label>
                   <select className="sel-focus" style={S.sel} value={svcType} onChange={e=>{setSvcType(e.target.value);setMs(new Set());doSearch(country,port,e.target.value,new Set());}}>
                     <option value="all">All Services</option>
                     <option value="agent">Ship Agent</option>
