@@ -641,7 +641,7 @@ export default function Home() {
   }
 
   const S = {
-    sel: {background:'rgba(8,16,10,.9)',border:'1px solid rgba(200,168,75,.3)',color:'#f5f0e8',padding:'15px 16px',fontSize:16,width:'100%',outline:'none',transition:'border-color .25s'} as React.CSSProperties,
+    sel: {background:'rgba(8,16,10,.9)',border:'1px solid rgba(200,168,75,.3)',color:'#f5f0e8',padding:'15px 16px',fontSize:18,width:'100%',outline:'none',transition:'border-color .25s'} as React.CSSProperties,
     lbl: {display:'block',fontFamily:rj,fontSize:13,fontWeight:700,letterSpacing:'1.8px',textTransform:'uppercase' as const,color:'#c8a84b',marginBottom:7},
     inp: {background:'rgba(8,16,10,.9)',border:'1px solid rgba(200,168,75,.3)',color:'#f5f0e8',padding:'12px 14px',fontSize:14,width:'100%',outline:'none',fontFamily:"'Outfit',sans-serif"} as React.CSSProperties,
     flbl: {display:'block',fontFamily:rj,fontSize:11,fontWeight:700,letterSpacing:'1.5px',textTransform:'uppercase' as const,color:'#c8a84b',marginBottom:6} as React.CSSProperties,
@@ -851,7 +851,7 @@ export default function Home() {
             </h1>
             <LiveSearchFeed />
             <p className="a3" style={{fontSize:15,lineHeight:1.8,color:'#d4dcc8',maxWidth:460,textShadow:'0 1px 6px rgba(0,0,0,.6)'}}>
-              Find verified ship agents, shipchandlers and marine service companies at any port worldwide. Free to search.
+              Find verified <span style={{color:'#c8a84b'}}>ship agents, shipchandlers and marine service</span> companies at any port worldwide. Free to search.
             </p>
             <div className="a3 hero-stats" style={{display:'flex',gap:18,flexWrap:'wrap',justifyContent:'center'}}>
               {[['150+','Countries'],['1,200+','Ports'],['34','Categories']].map(([n,l])=>(
