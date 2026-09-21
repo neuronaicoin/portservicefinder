@@ -228,7 +228,9 @@ import { portugalProviderOpportunity } from './portugal-sines-ship-agents-chandl
 import { finlandProviderOpportunity } from './finland-ship-agents-chandlers-marine-services-ice-class-expertise-2026';
 import { alternativeFuelBunkeringOpportunity } from './alternative-fuel-bunkering-support-business-opportunity-2026';
 import { shipAgencyGlossary2026 } from './ship-agent-shipchandler-marine-services-glossary-2026';
+import { shipAgentVsFreightForwarderVsBroker } from './ship-agent-vs-freight-forwarder-vs-ship-broker-difference-explained-2026';
 export const BLOG_POSTS = [
+  shipAgentVsFreightForwarderVsBroker,
   shipAgencyGlossary2026,
   howToRespondRfqWinMoreContracts,
   alternativeFuelBunkeringOpportunity,
