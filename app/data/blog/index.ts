@@ -229,7 +229,9 @@ import { finlandProviderOpportunity } from './finland-ship-agents-chandlers-mari
 import { alternativeFuelBunkeringOpportunity } from './alternative-fuel-bunkering-support-business-opportunity-2026';
 import { shipAgencyGlossary2026 } from './ship-agent-shipchandler-marine-services-glossary-2026';
 import { shipAgentVsFreightForwarderVsBroker } from './ship-agent-vs-freight-forwarder-vs-ship-broker-difference-explained-2026';
+import { vesselPreArrivalInformationChecklist2026 } from './vessel-pre-arrival-information-checklist-ship-agents-2026';
 export const BLOG_POSTS = [
+  vesselPreArrivalInformationChecklist2026,
   shipAgentVsFreightForwarderVsBroker,
   shipAgencyGlossary2026,
   howToRespondRfqWinMoreContracts,
