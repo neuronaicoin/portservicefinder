@@ -227,7 +227,9 @@ import { thailandProviderOpportunity } from './thailand-laem-chabang-ship-agents
 import { portugalProviderOpportunity } from './portugal-sines-ship-agents-chandlers-marine-services-deepwater-gateway-2026';
 import { finlandProviderOpportunity } from './finland-ship-agents-chandlers-marine-services-ice-class-expertise-2026';
 import { alternativeFuelBunkeringOpportunity } from './alternative-fuel-bunkering-support-business-opportunity-2026';
+import { shipAgencyGlossary2026 } from './ship-agent-shipchandler-marine-services-glossary-2026';
 export const BLOG_POSTS = [
+  shipAgencyGlossary2026,
   howToRespondRfqWinMoreContracts,
   alternativeFuelBunkeringOpportunity,
   buildingReferralNetworkMarineServices,
