@@ -226,8 +226,10 @@ import { chileProviderOpportunity } from './chile-ports-ship-agents-chandlers-ma
 import { thailandProviderOpportunity } from './thailand-laem-chabang-ship-agents-chandlers-marine-services-automotive-2026';
 import { portugalProviderOpportunity } from './portugal-sines-ship-agents-chandlers-marine-services-deepwater-gateway-2026';
 import { finlandProviderOpportunity } from './finland-ship-agents-chandlers-marine-services-ice-class-expertise-2026';
+import { alternativeFuelBunkeringOpportunity } from './alternative-fuel-bunkering-support-business-opportunity-2026';
 export const BLOG_POSTS = [
   howToRespondRfqWinMoreContracts,
+  alternativeFuelBunkeringOpportunity,
   buildingReferralNetworkMarineServices,
   usingAisVesselTrackingBusinessDevelopment,
   multiCurrencyPaymentRiskMarineProviders,
