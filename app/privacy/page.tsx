@@ -315,7 +315,7 @@ export default function PrivacyPolicy() {
 
             <div className="summary-box"><strong>In Short:</strong> We may transfer, store, and process your information in countries other than your own.</div>
 
-            <p>Our servers are located in Turkey and other locations depending on third-party providers (Cloudflare, Railway). If you are accessing our Services from outside Turkey, please be aware that your information may be transferred to, stored by, and processed by us in our facilities and in the facilities of the third parties with whom we may share your personal information.</p>
+            <p>Our servers are located in the United Kingdom and other locations depending on third-party providers (Cloudflare, Railway). If you are accessing our Services from outside the United Kingdom, please be aware that your information may be transferred to, stored by, and processed by us in our facilities and in the facilities of the third parties with whom we may share your personal information.</p>
 
             <p>If you are a resident in the European Economic Area (EEA), United Kingdom (UK), or Switzerland, then these countries may not necessarily have data protection laws or other similar laws as comprehensive as those in your country. However, we will take all necessary measures to protect your personal information in accordance with this Privacy Notice and applicable law.</p>
 
@@ -399,7 +399,7 @@ export default function PrivacyPolicy() {
 
             <div style={{background:'rgba(200,168,75,.06)',border:'1px solid rgba(200,168,75,.2)',padding:'18px 22px',margin:'16px 0',fontFamily:rj,fontSize:14,lineHeight:1.8,color:'#d4dcc8'}}>
               <strong style={{color:'#c8a84b',display:'block',marginBottom:6,letterSpacing:1}}>PortServiceFinder</strong>
-              Istanbul, Turkey<br/>
+              London, England<br/>
               <a href="mailto:contact@portservicefinder.com" style={{color:'#c8a84b'}}>contact@portservicefinder.com</a>
             </div>
 
