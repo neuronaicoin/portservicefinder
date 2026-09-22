@@ -1,26 +1,10 @@
 'use client';
-import { useState, useEffect } from 'react';
 import Link from 'next/link';
 
 export default function ForProvidersPage() {
   const lb = "'Libre Baskerville',serif";
   const rj = "'Rajdhani',sans-serif";
   const g = { color: '#c8a84b' } as React.CSSProperties;
-
-  // Live indicators — change randomly to feel real
-  const [liveViewers, setLiveViewers] = useState(43);
-  const [liveEnquiries, setLiveEnquiries] = useState(67);
-  const [newThisWeek, setNewThisWeek] = useState(28);
-
-  useEffect(() => {
-    // Update random "live" numbers every 8-15 seconds
-    const interval = setInterval(() => {
-      setLiveViewers(Math.floor(Math.random() * 25) + 35); // 35-60
-      setLiveEnquiries(Math.floor(Math.random() * 30) + 55); // 55-85
-      setNewThisWeek(Math.floor(Math.random() * 15) + 24); // 24-39
-    }, 10000);
-    return () => clearInterval(interval);
-  }, []);
 
   return (
     <>
@@ -101,7 +85,7 @@ export default function ForProvidersPage() {
           }}>
             PortService<span style={g}>Finder</span>
           </Link>
-          <Link href="/?list=1" className="btn-gold nav-cta" style={{
+          <Link href="/for-providers/signup" className="btn-gold nav-cta" style={{
             background:'#c8a84b',
             color:'#08100a',
             border:'none',
@@ -135,9 +119,9 @@ export default function ForProvidersPage() {
           letterSpacing:'.5px',
           color:'#b0c0a4',
         }}>
-          <span><span className="live-dot"></span>LIVE: <span className="live-num" style={{color:'#4caf76',fontWeight:700}} key={liveViewers}>{liveViewers}</span> providers viewing this page</span>
-          <span>📨 <span className="live-num" style={{color:'#c8a84b',fontWeight:700}} key={liveEnquiries}>{liveEnquiries}</span> enquiries sent in last 24h</span>
-          <span>🎉 <span className="live-num" style={{color:'#c8a84b',fontWeight:700}} key={newThisWeek}>{newThisWeek}</span> new providers this week</span>
+          <span style={{color:'#4caf76',fontWeight:700}}>✓ Free to list right now</span>
+          <span>No commission, ever</span>
+          <span>Set up in minutes</span>
         </div>
 
         {/* HERO */}
@@ -201,7 +185,7 @@ export default function ForProvidersPage() {
             flexWrap:'wrap',
             marginBottom:24,
           }}>
-            <Link href="/?list=1" className="btn-gold" style={{
+            <Link href="/for-providers/signup" className="btn-gold" style={{
               background:'#c8a84b',
               color:'#08100a',
               border:'none',
@@ -617,7 +601,7 @@ export default function ForProvidersPage() {
                       </li>
                     ))}
                   </ul>
-                  <Link href="/?list=1" className="btn-gold" style={{
+                  <Link href="/for-providers/signup" className="btn-gold" style={{
                     padding:12,
                     background:tier.badge?'#c8a84b':'transparent',
                     border:'1px solid rgba(200,168,75,.4)',
@@ -723,7 +707,7 @@ export default function ForProvidersPage() {
             }}>
               Join the providers already growing through PortServiceFinder. Start your 1-month free trial today — no credit card required, cancel anytime.
             </p>
-            <Link href="/?list=1" className="btn-gold" style={{
+            <Link href="/for-providers/signup" className="btn-gold" style={{
               display:'inline-block',
               background:'#c8a84b',
               color:'#08100a',
