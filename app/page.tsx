@@ -402,15 +402,16 @@ export default function Home() {
   }
 
   function openListBusiness() {
-    resetForm();
-    setShowFlowModal(true);
-    setFlowStep(1);
     setMobileMenu(false);
 
-    // 🎯 GA4 EVENT: List business modal opened
+    // 🎯 GA4 EVENT: List business CTA clicked
     trackEvent('list_business_click', {
       source: 'cta_button',
     });
+
+    // Eski coklu adimli modal yerine artik gercek hesap olusturan
+    // yeni kayit sayfasina yonlendiriyoruz (email+sifre, SCF crew gibi).
+    window.location.href = '/for-providers/signup';
   }
 
   // Auto-open the "List Your Business" flow when arriving via a direct link,
@@ -852,6 +853,9 @@ export default function Home() {
             <LiveSearchFeed />
             <p className="a3" style={{fontSize:15,lineHeight:1.8,color:'#d4dcc8',maxWidth:460,textShadow:'0 1px 6px rgba(0,0,0,.6)'}}>
               Find verified <span style={{color:'#c8a84b'}}>ship agents, shipchandlers and marine service</span> companies at any port worldwide. Free to search.
+            </p>
+            <p className="a3" style={{fontFamily:rj,fontSize:13,letterSpacing:'.5px',color:'#4caf76',fontWeight:700,textTransform:'uppercase',background:'rgba(76,175,118,.1)',border:'1px solid rgba(76,175,118,.35)',borderRadius:8,padding:'8px 16px',display:'inline-block'}}>
+              ✓ Free of charge to list your business — ship agents, shipchandlers &amp; marine services
             </p>
             <div className="a3 hero-stats" style={{display:'flex',gap:18,flexWrap:'wrap',justifyContent:'center'}}>
               {[['150+','Countries'],['1,200+','Ports'],['34','Categories']].map(([n,l])=>(
