@@ -65,7 +65,7 @@ export default function ProviderDashboardPage() {
     );
   }
 
-  const isIncomplete = provider.status === "incomplete";
+  const isIncomplete = provider.status === "pending";
 
   return (
     <main className="min-h-screen px-4 py-10" style={{ background: "#08100a" }}>
