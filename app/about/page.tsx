@@ -169,10 +169,10 @@ export default function AboutPage() {
           <div style={{maxWidth:680,margin:'0 auto'}}>
             <div style={{fontSize:36,marginBottom:14}}>🌍</div>
             <h2 style={{fontFamily:lb,fontSize:'clamp(22px,2.5vw,30px)',fontWeight:700,lineHeight:1.2,marginBottom:14}}>
-              Operating from <em style={g}>Istanbul, Turkey</em><br/>&mdash; Serving Global Ports
+              Operating from <em style={g}>London, England</em><br/>&mdash; Serving Global Ports
             </h2>
             <p style={{fontSize:14,color:'#b0c0a4',lineHeight:1.75}}>
-              Our base is Istanbul, one of the world&apos;s most strategic maritime crossroads. From here, we serve vessel operators, ship agents, and service providers across 150+ countries and 1,200+ ports worldwide.
+              Our base is London, one of the world&apos;s most established maritime and shipping hubs. From here, we serve vessel operators, ship agents, and service providers across 150+ countries and 1,200+ ports worldwide.
             </p>
           </div>
         </section>
