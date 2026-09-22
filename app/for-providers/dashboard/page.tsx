@@ -52,7 +52,7 @@ export default function ProviderDashboardPage() {
   if (loading) {
     return (
       <main className="min-h-screen flex items-center justify-center" style={{ background: "#08100a" }}>
-        <span style={{ color: "#b0c0a4" }}>Loading...</span>
+        <span style={{ color: "#d4dcc8" }}>Loading...</span>
       </main>
     );
   }
@@ -60,7 +60,7 @@ export default function ProviderDashboardPage() {
   if (!provider) {
     return (
       <main className="min-h-screen flex items-center justify-center" style={{ background: "#08100a" }}>
-        <span style={{ color: "#b0c0a4" }}>We couldn&apos;t find your listing. Please contact support.</span>
+        <span style={{ color: "#d4dcc8" }}>We couldn&apos;t find your listing. Please contact support.</span>
       </main>
     );
   }
@@ -76,7 +76,7 @@ export default function ProviderDashboardPage() {
           </Link>
           <button
             onClick={handleLogout}
-            style={{ color: "#b0c0a4", fontSize: 12, border: "1px solid rgba(255,255,255,.15)", borderRadius: 8, padding: "8px 14px" }}
+            style={{ color: "#d4dcc8", fontSize: 12, border: "1px solid rgba(255,255,255,.15)", borderRadius: 8, padding: "8px 14px" }}
           >
             Log out
           </button>
@@ -85,7 +85,7 @@ export default function ProviderDashboardPage() {
         {showWelcome && (
           <div className="rounded-xl p-4 mb-6" style={{ background: "rgba(76,175,118,.12)", border: "1px solid rgba(76,175,118,.35)" }}>
             <span style={{ color: "#4caf76", fontWeight: 700, fontSize: 14 }}>🎉 Your listing is live!</span>
-            <p style={{ color: "#b0c0a4", fontSize: 13, marginTop: 4 }}>
+            <p style={{ color: "#d4dcc8", fontSize: 13, marginTop: 4 }}>
               Vessel operators searching your ports can now find and contact you directly.
             </p>
           </div>
@@ -94,7 +94,7 @@ export default function ProviderDashboardPage() {
         {isIncomplete && (
           <div className="rounded-xl p-4 mb-6" style={{ background: "rgba(200,168,75,.12)", border: "1px solid rgba(200,168,75,.35)" }}>
             <span style={{ color: "#c8a84b", fontWeight: 700, fontSize: 14 }}>Your listing isn&apos;t published yet</span>
-            <p style={{ color: "#b0c0a4", fontSize: 13, marginTop: 4, marginBottom: 10 }}>
+            <p style={{ color: "#d4dcc8", fontSize: 13, marginTop: 4, marginBottom: 10 }}>
               Complete your profile so vessel operators can find you.
             </p>
             <Link
@@ -108,7 +108,7 @@ export default function ProviderDashboardPage() {
 
         <div className="rounded-2xl p-6" style={{ background: "#111c13", border: "1px solid rgba(200,168,75,.15)" }}>
           <h1 style={{ color: "#f5f0e8", fontSize: 22, fontWeight: 700, marginBottom: 4 }}>{provider.name}</h1>
-          <p style={{ color: "#b0c0a4", fontSize: 13, marginBottom: 20 }}>{provider.email}</p>
+          <p style={{ color: "#d4dcc8", fontSize: 13, marginBottom: 20 }}>{provider.email}</p>
 
           <div className="grid grid-cols-2 gap-3 mb-6">
             <div className="rounded-lg p-3" style={{ background: "#08100a", border: "1px solid rgba(200,168,75,.2)" }}>
@@ -124,12 +124,12 @@ export default function ProviderDashboardPage() {
           </div>
 
           {provider.country && (
-            <p style={{ color: "#b0c0a4", fontSize: 13, marginBottom: 4 }}>
+            <p style={{ color: "#d4dcc8", fontSize: 13, marginBottom: 4 }}>
               <b style={{ color: "#f5f0e8" }}>Country:</b> {provider.country}
             </p>
           )}
           {provider.ports && provider.ports.length > 0 && (
-            <p style={{ color: "#b0c0a4", fontSize: 13, marginBottom: 12 }}>
+            <p style={{ color: "#d4dcc8", fontSize: 13, marginBottom: 12 }}>
               <b style={{ color: "#f5f0e8" }}>Ports:</b> {provider.ports.join(", ")}
             </p>
           )}
