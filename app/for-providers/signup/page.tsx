@@ -123,7 +123,7 @@ export default function ProviderSignupPage() {
           <h1 style={{ color: "#f5f0e8", fontSize: 30, fontWeight: 700, letterSpacing: "-0.02em", marginBottom: 8 }}>
             List your business
           </h1>
-          <p style={{ color: "#b0c0a4", fontSize: 14 }}>
+          <p style={{ color: "#d4dcc8", fontSize: 14 }}>
             Free to list right now — no card required
           </p>
         </div>
@@ -134,7 +134,7 @@ export default function ProviderSignupPage() {
           style={{ background: "#111c13", border: "1px solid rgba(200,168,75,.15)" }}
         >
           <div className="mb-4">
-            <label style={{ display: "block", color: "#b0c0a4", fontSize: 11, fontWeight: 700, letterSpacing: "1px", textTransform: "uppercase", marginBottom: 8 }}>
+            <label style={{ display: "block", color: "#d4dcc8", fontSize: 11, fontWeight: 700, letterSpacing: "1px", textTransform: "uppercase", marginBottom: 8 }}>
               Provider Type
             </label>
             <div className="grid grid-cols-3 gap-2">
@@ -151,7 +151,7 @@ export default function ProviderSignupPage() {
                     textAlign: "center",
                     border: providerType === t.value ? "1.5px solid #c8a84b" : "1px solid rgba(255,255,255,.1)",
                     background: providerType === t.value ? "rgba(200,168,75,.15)" : "#08100a",
-                    color: providerType === t.value ? "#c8a84b" : "#b0c0a4",
+                    color: providerType === t.value ? "#c8a84b" : "#d4dcc8",
                   }}
                 >
                   {t.label}
@@ -161,7 +161,7 @@ export default function ProviderSignupPage() {
           </div>
 
           <div className="mb-4">
-            <label htmlFor="companyName" style={{ display: "block", color: "#b0c0a4", fontSize: 11, fontWeight: 700, letterSpacing: "1px", textTransform: "uppercase", marginBottom: 8 }}>
+            <label htmlFor="companyName" style={{ display: "block", color: "#d4dcc8", fontSize: 11, fontWeight: 700, letterSpacing: "1px", textTransform: "uppercase", marginBottom: 8 }}>
               Company Name
             </label>
             <input
@@ -177,7 +177,7 @@ export default function ProviderSignupPage() {
           </div>
 
           <div className="mb-4">
-            <label htmlFor="email" style={{ display: "block", color: "#b0c0a4", fontSize: 11, fontWeight: 700, letterSpacing: "1px", textTransform: "uppercase", marginBottom: 8 }}>
+            <label htmlFor="email" style={{ display: "block", color: "#d4dcc8", fontSize: 11, fontWeight: 700, letterSpacing: "1px", textTransform: "uppercase", marginBottom: 8 }}>
               Email
             </label>
             <input
@@ -194,7 +194,7 @@ export default function ProviderSignupPage() {
           </div>
 
           <div className="mb-4">
-            <label htmlFor="password" style={{ display: "block", color: "#b0c0a4", fontSize: 11, fontWeight: 700, letterSpacing: "1px", textTransform: "uppercase", marginBottom: 8 }}>
+            <label htmlFor="password" style={{ display: "block", color: "#d4dcc8", fontSize: 11, fontWeight: 700, letterSpacing: "1px", textTransform: "uppercase", marginBottom: 8 }}>
               Password
             </label>
             <input
@@ -233,14 +233,14 @@ export default function ProviderSignupPage() {
             {loading ? "Creating account..." : "Create Free Account →"}
           </button>
 
-          <p style={{ color: "rgba(176,192,164,.6)", fontSize: 11, textAlign: "center", marginTop: 14, lineHeight: 1.5 }}>
+          <p style={{ color: "rgba(212,220,200,.85)", fontSize: 11, textAlign: "center", marginTop: 14, lineHeight: 1.5 }}>
             By signing up, you agree to our{" "}
             <Link href="/terms" style={{ color: "#c8a84b" }}>Terms</Link> and{" "}
             <Link href="/privacy" style={{ color: "#c8a84b" }}>Privacy Policy</Link>
           </p>
         </form>
 
-        <p style={{ textAlign: "center", color: "#b0c0a4", fontSize: 13, marginTop: 24 }}>
+        <p style={{ textAlign: "center", color: "#d4dcc8", fontSize: 13, marginTop: 24 }}>
           Already have an account?{" "}
           <Link href="/for-providers/login" style={{ color: "#c8a84b", fontWeight: 700 }}>
             Log in
