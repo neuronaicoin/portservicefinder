@@ -67,7 +67,7 @@ export default function ProviderSignupPage() {
         type: providerType,
         name: companyName,
         email,
-        status: "incomplete", // profil tamamlanana kadar listede gorunmez
+        status: "pending", // profil tamamlanana kadar listede gorunmez (mevcut check constraint: pending/active/cancelled/expired)
         plan: "free_trial",
         plan_type: "free_trial",
         verified: false,
