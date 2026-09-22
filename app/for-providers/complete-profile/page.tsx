@@ -135,7 +135,7 @@ export default function CompleteProfilePage() {
   if (loadingUser) {
     return (
       <main className="min-h-screen flex items-center justify-center" style={{ background: "#08100a" }}>
-        <span style={{ color: "#b0c0a4" }}>Loading...</span>
+        <span style={{ color: "#d4dcc8" }}>Loading...</span>
       </main>
     );
   }
@@ -150,7 +150,7 @@ export default function CompleteProfilePage() {
         <h1 style={{ color: "#f5f0e8", fontSize: 26, fontWeight: 700, marginBottom: 6 }}>
           Almost there — complete your listing
         </h1>
-        <p style={{ color: "#b0c0a4", fontSize: 14, marginBottom: 28 }}>
+        <p style={{ color: "#d4dcc8", fontSize: 14, marginBottom: 28 }}>
           This is what vessel operators will see. All fields marked * are required.
         </p>
 
@@ -160,7 +160,7 @@ export default function CompleteProfilePage() {
           style={{ background: "#111c13", border: "1px solid rgba(200,168,75,.15)" }}
         >
           <div>
-            <label style={{ display: "block", color: "#b0c0a4", fontSize: 11, fontWeight: 700, letterSpacing: "1px", textTransform: "uppercase", marginBottom: 8 }}>
+            <label style={{ display: "block", color: "#d4dcc8", fontSize: 11, fontWeight: 700, letterSpacing: "1px", textTransform: "uppercase", marginBottom: 8 }}>
               About your company
             </label>
             <textarea
@@ -174,7 +174,7 @@ export default function CompleteProfilePage() {
           </div>
 
           <div>
-            <label style={{ display: "block", color: "#b0c0a4", fontSize: 11, fontWeight: 700, letterSpacing: "1px", textTransform: "uppercase", marginBottom: 8 }}>
+            <label style={{ display: "block", color: "#d4dcc8", fontSize: 11, fontWeight: 700, letterSpacing: "1px", textTransform: "uppercase", marginBottom: 8 }}>
               Country *
             </label>
             <select
@@ -190,7 +190,7 @@ export default function CompleteProfilePage() {
 
           {country && (
             <div>
-              <label style={{ display: "block", color: "#b0c0a4", fontSize: 11, fontWeight: 700, letterSpacing: "1px", textTransform: "uppercase", marginBottom: 8 }}>
+              <label style={{ display: "block", color: "#d4dcc8", fontSize: 11, fontWeight: 700, letterSpacing: "1px", textTransform: "uppercase", marginBottom: 8 }}>
                 Ports you operate at * (max {MAX_PORTS}, {ports.length} selected)
               </label>
               <div className="flex flex-wrap gap-2">
@@ -207,7 +207,7 @@ export default function CompleteProfilePage() {
                         fontSize: 12.5,
                         border: selected ? "1px solid #c8a84b" : "1px solid rgba(255,255,255,.15)",
                         background: selected ? "rgba(200,168,75,.15)" : "transparent",
-                        color: selected ? "#c8a84b" : "#b0c0a4",
+                        color: selected ? "#c8a84b" : "#d4dcc8",
                       }}
                     >
                       {p}
@@ -221,7 +221,7 @@ export default function CompleteProfilePage() {
 
           {providerType === "service" && (
             <div>
-              <label style={{ display: "block", color: "#b0c0a4", fontSize: 11, fontWeight: 700, letterSpacing: "1px", textTransform: "uppercase", marginBottom: 8 }}>
+              <label style={{ display: "block", color: "#d4dcc8", fontSize: 11, fontWeight: 700, letterSpacing: "1px", textTransform: "uppercase", marginBottom: 8 }}>
                 Services you offer *
               </label>
               <div className="flex flex-wrap gap-2">
@@ -238,7 +238,7 @@ export default function CompleteProfilePage() {
                         fontSize: 12.5,
                         border: selected ? "1px solid #c8a84b" : "1px solid rgba(255,255,255,.15)",
                         background: selected ? "rgba(200,168,75,.15)" : "transparent",
-                        color: selected ? "#c8a84b" : "#b0c0a4",
+                        color: selected ? "#c8a84b" : "#d4dcc8",
                       }}
                     >
                       {s.label}
@@ -251,7 +251,7 @@ export default function CompleteProfilePage() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label style={{ display: "block", color: "#b0c0a4", fontSize: 11, fontWeight: 700, letterSpacing: "1px", textTransform: "uppercase", marginBottom: 8 }}>
+              <label style={{ display: "block", color: "#d4dcc8", fontSize: 11, fontWeight: 700, letterSpacing: "1px", textTransform: "uppercase", marginBottom: 8 }}>
                 Contact Person *
               </label>
               <input
@@ -262,7 +262,7 @@ export default function CompleteProfilePage() {
               />
             </div>
             <div>
-              <label style={{ display: "block", color: "#b0c0a4", fontSize: 11, fontWeight: 700, letterSpacing: "1px", textTransform: "uppercase", marginBottom: 8 }}>
+              <label style={{ display: "block", color: "#d4dcc8", fontSize: 11, fontWeight: 700, letterSpacing: "1px", textTransform: "uppercase", marginBottom: 8 }}>
                 Phone *
               </label>
               <input
@@ -273,7 +273,7 @@ export default function CompleteProfilePage() {
               />
             </div>
             <div>
-              <label style={{ display: "block", color: "#b0c0a4", fontSize: 11, fontWeight: 700, letterSpacing: "1px", textTransform: "uppercase", marginBottom: 8 }}>
+              <label style={{ display: "block", color: "#d4dcc8", fontSize: 11, fontWeight: 700, letterSpacing: "1px", textTransform: "uppercase", marginBottom: 8 }}>
                 WhatsApp (if different)
               </label>
               <input
@@ -284,7 +284,7 @@ export default function CompleteProfilePage() {
               />
             </div>
             <div>
-              <label style={{ display: "block", color: "#b0c0a4", fontSize: 11, fontWeight: 700, letterSpacing: "1px", textTransform: "uppercase", marginBottom: 8 }}>
+              <label style={{ display: "block", color: "#d4dcc8", fontSize: 11, fontWeight: 700, letterSpacing: "1px", textTransform: "uppercase", marginBottom: 8 }}>
                 Website
               </label>
               <input
@@ -297,7 +297,7 @@ export default function CompleteProfilePage() {
           </div>
 
           <div>
-            <label style={{ display: "block", color: "#b0c0a4", fontSize: 11, fontWeight: 700, letterSpacing: "1px", textTransform: "uppercase", marginBottom: 8 }}>
+            <label style={{ display: "block", color: "#d4dcc8", fontSize: 11, fontWeight: 700, letterSpacing: "1px", textTransform: "uppercase", marginBottom: 8 }}>
               Address
             </label>
             <input
