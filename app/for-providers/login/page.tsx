@@ -70,7 +70,7 @@ export default function ProviderLoginPage() {
           <h1 style={{ color: "#f5f0e8", fontSize: 30, fontWeight: 700, letterSpacing: "-0.02em", marginBottom: 8 }}>
             Welcome back
           </h1>
-          <p style={{ color: "#b0c0a4", fontSize: 14 }}>Log in to manage your listing</p>
+          <p style={{ color: "#d4dcc8", fontSize: 14 }}>Log in to manage your listing</p>
         </div>
 
         <form
@@ -79,7 +79,7 @@ export default function ProviderLoginPage() {
           style={{ background: "#111c13", border: "1px solid rgba(200,168,75,.15)" }}
         >
           <div className="mb-4">
-            <label htmlFor="email" style={{ display: "block", color: "#b0c0a4", fontSize: 11, fontWeight: 700, letterSpacing: "1px", textTransform: "uppercase", marginBottom: 8 }}>
+            <label htmlFor="email" style={{ display: "block", color: "#d4dcc8", fontSize: 11, fontWeight: 700, letterSpacing: "1px", textTransform: "uppercase", marginBottom: 8 }}>
               Email
             </label>
             <input
@@ -96,7 +96,7 @@ export default function ProviderLoginPage() {
           </div>
 
           <div className="mb-4">
-            <label htmlFor="password" style={{ display: "block", color: "#b0c0a4", fontSize: 11, fontWeight: 700, letterSpacing: "1px", textTransform: "uppercase", marginBottom: 8 }}>
+            <label htmlFor="password" style={{ display: "block", color: "#d4dcc8", fontSize: 11, fontWeight: 700, letterSpacing: "1px", textTransform: "uppercase", marginBottom: 8 }}>
               Password
             </label>
             <input
@@ -135,7 +135,7 @@ export default function ProviderLoginPage() {
           </button>
         </form>
 
-        <p style={{ textAlign: "center", color: "#b0c0a4", fontSize: 13, marginTop: 24 }}>
+        <p style={{ textAlign: "center", color: "#d4dcc8", fontSize: 13, marginTop: 24 }}>
           Don&apos;t have an account?{" "}
           <Link href="/for-providers/signup" style={{ color: "#c8a84b", fontWeight: 700 }}>
             List your business
