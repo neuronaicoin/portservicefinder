@@ -343,7 +343,7 @@ function ProviderCard({ provider, flag }: { provider: typeof PROVIDERS[0]; flag:
         <a href={`tel:${provider.phone.replace(/\s/g,'')}`} style={{padding:'8px 10px',background:'#c8a84b',color:'#08100a',textDecoration:'none',fontFamily:rj,fontSize:10,letterSpacing:'1px',textTransform:'uppercase',fontWeight:700,textAlign:'center'}}>
           Call
         </a>
-        <a href={`mailto:${provider.email}`} style={{padding:'8px 10px',background:'transparent',border:'1px solid rgba(200,168,75,.4)',color:'#c8a84b',textDecoration:'none',fontFamily:rj,fontSize:10,letterSpacing:'1px',textTransform:'uppercase',fontWeight:700,textAlign:'center'}}>
+        <a href={`mailto:${provider.email}?subject=${encodeURIComponent('Inquiry via PortServiceFinder')}&body=${encodeURIComponent(`Hi, I found you on PortServiceFinder and I'm interested in your services.`)}`} style={{padding:'8px 10px',background:'transparent',border:'1px solid rgba(200,168,75,.4)',color:'#c8a84b',textDecoration:'none',fontFamily:rj,fontSize:10,letterSpacing:'1px',textTransform:'uppercase',fontWeight:700,textAlign:'center'}}>
           Email
         </a>
       </div>
