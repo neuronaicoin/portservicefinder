@@ -282,10 +282,10 @@ export default function TermsOfService() {
             <p>We cannot guarantee the Services will be available at all times. We may experience hardware, software, or other problems or need to perform maintenance related to the Services, resulting in interruptions, delays, or errors.</p>
 
             <h2 id="section18">18. Governing Law</h2>
-            <p>These Terms and your use of the Services are governed by and construed in accordance with the laws of the Republic of Turkey applicable to agreements made and to be entirely performed within Turkey, without regard to its conflict of law principles.</p>
+            <p>These Terms and your use of the Services are governed by and construed in accordance with the laws of England and Wales applicable to agreements made and to be entirely performed within England and Wales, without regard to its conflict of law principles.</p>
 
             <h2 id="section19">19. Dispute Resolution</h2>
-            <p>Any legal action of whatever nature brought by either you or us shall be commenced or prosecuted in the courts located in Istanbul, Turkey, and you hereby consent to, and waive all defenses of lack of personal jurisdiction and forum non conveniens with respect to venue and jurisdiction in such courts.</p>
+            <p>Any legal action of whatever nature brought by either you or us shall be commenced or prosecuted in the courts located in London, England, and you hereby consent to, and waive all defenses of lack of personal jurisdiction and forum non conveniens with respect to venue and jurisdiction in such courts.</p>
             <p>Before initiating any formal legal action, you agree to first contact us at <a href="mailto:contact@portservicefinder.com">contact@portservicefinder.com</a> and make a good faith effort to resolve the dispute informally.</p>
 
             <h2 id="section20">20. Disclaimer</h2>
@@ -311,7 +311,7 @@ export default function TermsOfService() {
 
             <div style={{background:'rgba(200,168,75,.06)',border:'1px solid rgba(200,168,75,.2)',padding:'18px 22px',margin:'16px 0',fontFamily:rj,fontSize:14,lineHeight:1.8,color:'#d4dcc8'}}>
               <strong style={{color:'#c8a84b',display:'block',marginBottom:6,letterSpacing:1}}>PortServiceFinder</strong>
-              Istanbul, Turkey<br/>
+              London, England<br/>
               <a href="mailto:contact@portservicefinder.com" style={{color:'#c8a84b'}}>contact@portservicefinder.com</a>
             </div>
 
