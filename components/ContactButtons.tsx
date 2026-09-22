@@ -1,29 +1,68 @@
-import { NextResponse } from 'next/server';
-import { supabaseAdmin } from '@/lib/supabase';
+"use client";
 
-// Bir kullanici Call ya da Email butonuna tikladiginda cagrilir.
-// Fire-and-forget - hicbir zaman kullanicinin tel:/mailto: gecisini
-// geciktirmemeli, bu yuzden hata olsa bile sessizce basarisiz olur.
-export async function POST(request: Request) {
-  try {
-    const { providerId, contactMethod } = await request.json();
+interface Props {
+  providerId: string;
+  phone: string;
+  email: string;
+}
 
-    if (!providerId || !['call', 'email'].includes(contactMethod)) {
-      return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
-    }
-
-    const { error } = await supabaseAdmin.from('leads').insert([
-      { provider_id: providerId, contact_method: contactMethod },
-    ]);
-
-    if (error) {
-      console.error('track-lead insert error:', error.message);
-      return NextResponse.json({ ok: false });
-    }
-
-    return NextResponse.json({ ok: true });
-  } catch (err) {
-    console.error('track-lead route error:', err);
-    return NextResponse.json({ ok: false }, { status: 500 });
+// Call/Email butonlarina tiklamayi 'lead' olarak kaydeder, sonra tel:/mailto:
+// baglantisina normal sekilde devam eder. Izleme cagrisi fire-and-forget'tir —
+// hicbir zaman kullanicinin gecisini geciktirmez ya da engellemez.
+export function ContactButtons({ providerId, phone, email }: Props) {
+  function trackLead(method: "call" | "email") {
+    fetch("/api/track-lead", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ providerId, contactMethod: method }),
+    }).catch(() => {
+      /* sessizce gec - izleme basarisiz olsa bile iletisimi engellemez */
+    });
   }
+
+  return (
+    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6, marginTop: "auto" }}>
+      <a
+        href={`tel:${phone.replace(/\s/g, "")}`}
+        onClick={() => trackLead("call")}
+        style={{
+          padding: "8px 10px",
+          background: "#c8a84b",
+          color: "#08100a",
+          textDecoration: "none",
+          fontFamily: "'Rajdhani',sans-serif",
+          fontSize: 10,
+          letterSpacing: "1px",
+          textTransform: "uppercase",
+          fontWeight: 700,
+          textAlign: "center",
+        }}
+      >
+        Call
+      </a>
+      <a
+        href={`mailto:${email}?subject=${encodeURIComponent(
+          "Inquiry via PortServiceFinder"
+        )}&body=${encodeURIComponent(
+          `Hi, I found you on PortServiceFinder and I'm interested in your services.`
+        )}`}
+        onClick={() => trackLead("email")}
+        style={{
+          padding: "8px 10px",
+          background: "transparent",
+          border: "1px solid rgba(200,168,75,.4)",
+          color: "#c8a84b",
+          textDecoration: "none",
+          fontFamily: "'Rajdhani',sans-serif",
+          fontSize: 10,
+          letterSpacing: "1px",
+          textTransform: "uppercase",
+          fontWeight: 700,
+          textAlign: "center",
+        }}
+      >
+        Email
+      </a>
+    </div>
+  );
 }
