@@ -1,6 +1,5 @@
 'use client';
 import Link from 'next/link';
-import { RecentDemand } from '@/components/RecentDemand';
 
 export default function ForProvidersPage() {
   const lb = "'Libre Baskerville',serif";
@@ -216,9 +215,6 @@ export default function ForProvidersPage() {
             }}>
               See How It Works ↓
             </a>
-          </div>
-          <div style={{marginBottom:24}}>
-            <RecentDemand />
           </div>
           <div className="hero-stats fade-up d4" style={{
             display:'flex',
