@@ -844,6 +844,19 @@ export default function Home() {
         <section className="hero-sec" style={{position:'relative',minHeight:'100vh',paddingTop:100,paddingBottom:60,paddingLeft:48,paddingRight:48,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',textAlign:'center',gap:28,overflow:'hidden'}}>
           <div className="hero-bg"></div>
           <div className="hero-content" style={{display:'flex',flexDirection:'column',alignItems:'center',gap:28,width:'100%'}}>
+
+            {/* Netlik icin: ziyaretci hemen kendini ayirsin - arayan mi, listelenecek mi */}
+            <div style={{display:'flex',flexDirection:'column',gap:10,width:'100%',maxWidth:380,marginBottom:4}}>
+              <a href="#search-box" style={{display:'flex',alignItems:'center',justifyContent:'center',gap:8,background:'#111c13',border:'1.5px solid rgba(200,168,75,.35)',borderRadius:10,padding:'13px 18px',textDecoration:'none'}}>
+                <span style={{fontSize:16}}>🔍</span>
+                <span style={{color:'#f5f0e8',fontFamily:rj,fontSize:13,fontWeight:700,letterSpacing:'.5px'}}>I&apos;m looking for a provider</span>
+              </a>
+              <button onClick={openListBusiness} style={{display:'flex',alignItems:'center',justifyContent:'center',gap:8,background:'#c8a84b',border:'none',borderRadius:10,padding:'13px 18px',cursor:'pointer'}}>
+                <span style={{fontSize:16}}>⚓</span>
+                <span style={{color:'#08100a',fontFamily:rj,fontSize:13,fontWeight:700,letterSpacing:'.5px'}}>I&apos;m a provider — list free</span>
+              </button>
+            </div>
+
             <h1 className="a2 hero-h1" style={{fontFamily:lb,fontSize:'clamp(32px,4vw,58px)',fontWeight:700,lineHeight:1.05,letterSpacing:-1.5,maxWidth:820,textShadow:'0 2px 14px rgba(0,0,0,.6)'}}>
               Every Port. Every <em style={g}>Service.</em><br/>One Platform.
             </h1>
@@ -861,7 +874,7 @@ export default function Home() {
             </div>
             <button onClick={openListBusiness} className="btn-gold hero-list-btn" style={{background:'#c8a84b',color:'#08100a',border:'none',padding:'14px 32px',fontFamily:rj,fontSize:14,letterSpacing:'1.5px',textTransform:'uppercase',fontWeight:700,cursor:'pointer',textAlign:'center'}}>List Your Business</button>
 
-            <div className="a4 search-wrap" style={{width:'100%',maxWidth:1080,background:'rgba(10,20,14,.92)',border:'1px solid rgba(200,168,75,.35)',backdropFilter:'blur(22px)',padding:'34px 38px',marginTop:4,boxShadow:'0 18px 48px rgba(0,0,0,.45)'}}>
+            <div id="search-box" className="a4 search-wrap" style={{width:'100%',maxWidth:1080,background:'rgba(10,20,14,.92)',border:'1px solid rgba(200,168,75,.35)',backdropFilter:'blur(22px)',padding:'34px 38px',marginTop:4,boxShadow:'0 18px 48px rgba(0,0,0,.45)'}}>
               <div className="sgrid" style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr auto',gap:14,alignItems:'flex-end'}}>
                 <div>
                   <label className="search-label" style={S.lbl}>Search Provider</label>
