@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabaseBrowser } from "@/lib/supabase-browser";
 import { getRecentLeads, getTotalLeadCount, getLeadsThisWeek, type Lead } from "@/lib/leads";
+import { getReceivedRfqs, getRfqCount, type ReceivedRfq } from "@/lib/rfq";
 import { NotificationBell } from "@/components/NotificationBell";
 
 interface ProviderRow {
@@ -47,6 +48,8 @@ export default function ProviderDashboardPage() {
   const [leads, setLeads] = useState<Lead[]>([]);
   const [totalLeads, setTotalLeads] = useState(0);
   const [leadsThisWeek, setLeadsThisWeek] = useState(0);
+  const [rfqs, setRfqs] = useState<ReceivedRfq[]>([]);
+  const [rfqCount, setRfqCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [showWelcome, setShowWelcome] = useState(false);
 
@@ -66,14 +69,18 @@ export default function ProviderDashboardPage() {
       if (data) {
         const p = data as ProviderRow;
         setProvider(p);
-        const [recentLeads, total, thisWeek] = await Promise.all([
+        const [recentLeads, total, thisWeek, receivedRfqs, rfqTotal] = await Promise.all([
           getRecentLeads(p.id),
           getTotalLeadCount(p.id),
           getLeadsThisWeek(p.id),
+          getReceivedRfqs(p.id),
+          getRfqCount(p.id),
         ]);
         setLeads(recentLeads);
         setTotalLeads(total);
         setLeadsThisWeek(thisWeek);
+        setRfqs(receivedRfqs);
+        setRfqCount(rfqTotal);
       }
 
       const params = new URLSearchParams(window.location.search);
@@ -166,7 +173,11 @@ export default function ProviderDashboardPage() {
         </div>
 
         {/* STATS ROW */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12, marginBottom: 24 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 12, marginBottom: 24 }}>
+          <div style={{ ...cardStyle, padding: "18px 16px" }}>
+            <div style={{ color: "#c8a84b", fontSize: 10, textTransform: "uppercase", fontWeight: 700, letterSpacing: 1, marginBottom: 8 }}>RFQs Received</div>
+            <div style={{ color: "#f5f0e8", fontSize: 26, fontWeight: 700 }}>{rfqCount}</div>
+          </div>
           <div style={{ ...cardStyle, padding: "18px 16px" }}>
             <div style={{ color: "#c8a84b", fontSize: 10, textTransform: "uppercase", fontWeight: 700, letterSpacing: 1, marginBottom: 8 }}>Total Leads</div>
             <div style={{ color: "#f5f0e8", fontSize: 26, fontWeight: 700 }}>{totalLeads}</div>
@@ -179,6 +190,51 @@ export default function ProviderDashboardPage() {
             <div style={{ color: isActive ? "#4caf76" : "#c8a84b", fontSize: 10, textTransform: "uppercase", fontWeight: 700, letterSpacing: 1, marginBottom: 8 }}>Status</div>
             <div style={{ color: "#f5f0e8", fontSize: 15, fontWeight: 700, marginTop: 4 }}>{isActive ? "Published" : "Pending"}</div>
           </div>
+        </div>
+
+        {/* RECEIVED RFQs - en yuksek deger, en ustte */}
+        <div style={{ ...cardStyle, padding: "22px 20px", marginBottom: 20 }}>
+          <h2 style={{ color: "#f5f0e8", fontSize: 16, fontWeight: 700, marginBottom: 4 }}>Quote Requests</h2>
+          <p style={{ color: "#d4dcc8", fontSize: 12, marginBottom: 16 }}>
+            Operators requesting a quote for your port and service appear here with full details — contact them
+            directly.
+          </p>
+
+          {rfqs.length === 0 ? (
+            <div style={{ textAlign: "center", padding: "30px 10px" }}>
+              <div style={{ fontSize: 28, marginBottom: 8 }}>📋</div>
+              <p style={{ color: "#d4dcc8", fontSize: 13 }}>No quote requests yet. When an operator requests a quote for your port, it shows up here.</p>
+            </div>
+          ) : (
+            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+              {rfqs.map((r) => (
+                <div
+                  key={r.distributionId}
+                  style={{ background: "#08100a", border: r.urgency === "urgent" ? "1px solid rgba(224,85,85,.4)" : "1px solid rgba(255,255,255,.08)", borderRadius: 10, padding: 14 }}
+                >
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8 }}>
+                    <div>
+                      <span style={{ color: "#f5f0e8", fontSize: 13.5, fontWeight: 700 }}>{r.port}, {r.country}</span>
+                      {r.urgency === "urgent" && (
+                        <span style={{ marginLeft: 8, background: "rgba(224,85,85,.15)", color: "#e88", fontSize: 9.5, fontWeight: 700, padding: "2px 7px", borderRadius: 999, textTransform: "uppercase" }}>
+                          ⚡ Urgent
+                        </span>
+                      )}
+                    </div>
+                    <span style={{ color: "#7a8a72", fontSize: 10.5, flexShrink: 0 }}>{timeAgo(r.createdAt)}</span>
+                  </div>
+                  {r.vesselType && <div style={{ color: "#d4dcc8", fontSize: 12, marginBottom: 3 }}><b style={{ color: "#c8a84b" }}>Vessel:</b> {r.vesselType}</div>}
+                  {r.eta && <div style={{ color: "#d4dcc8", fontSize: 12, marginBottom: 3 }}><b style={{ color: "#c8a84b" }}>ETA:</b> {r.eta}</div>}
+                  <div style={{ color: "#d4dcc8", fontSize: 12, marginBottom: 10 }}>{r.requirementDetails}</div>
+                  <div style={{ borderTop: "1px solid rgba(255,255,255,.08)", paddingTop: 10, display: "flex", flexDirection: "column", gap: 4 }}>
+                    <span style={{ color: "#f5f0e8", fontSize: 12.5, fontWeight: 700 }}>{r.operatorName}</span>
+                    <a href={`mailto:${r.operatorEmail}`} style={{ color: "#c8a84b", fontSize: 12 }}>{r.operatorEmail}</a>
+                    {r.operatorPhone && <a href={`tel:${r.operatorPhone}`} style={{ color: "#c8a84b", fontSize: 12 }}>{r.operatorPhone}</a>}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* RECENT LEADS */}
