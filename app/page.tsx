@@ -1,5 +1,6 @@
 'use client';
 import LiveSearchFeed from '@/components/LiveSearchFeed';
+import { RecentDemand } from '@/components/RecentDemand';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 
@@ -860,6 +861,10 @@ export default function Home() {
                 <span key={l} style={{fontFamily:rj,fontSize:16,color:'#b5bfa8',fontWeight:600}}><strong style={g}>{n}</strong> {l}</span>
               ))}
             </div>
+            <div style={{width:'100%',maxWidth:480}}>
+              <RecentDemand />
+            </div>
+
             <div id="search-box" className="a4 search-wrap" style={{width:'100%',maxWidth:1080,background:'rgba(10,20,14,.92)',border:'1px solid rgba(200,168,75,.35)',backdropFilter:'blur(22px)',padding:'34px 38px',marginTop:4,boxShadow:'0 18px 48px rgba(0,0,0,.45)'}}>
               <div className="sgrid" style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr auto',gap:14,alignItems:'flex-end'}}>
                 <div>
