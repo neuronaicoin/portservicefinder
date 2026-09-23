@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { supabaseBrowser } from "@/lib/supabase-browser";
 import { getRecentLeads, getTotalLeadCount, getLeadsThisWeek, type Lead } from "@/lib/leads";
 import { getReceivedRfqs, getRfqCount, type ReceivedRfq } from "@/lib/rfq";
+import { getSearchAppearances, getAppearancesByPort, type PortAppearance } from "@/lib/analytics";
 import { NotificationBell } from "@/components/NotificationBell";
 
 interface ProviderRow {
@@ -50,6 +51,8 @@ export default function ProviderDashboardPage() {
   const [leadsThisWeek, setLeadsThisWeek] = useState(0);
   const [rfqs, setRfqs] = useState<ReceivedRfq[]>([]);
   const [rfqCount, setRfqCount] = useState(0);
+  const [appearances, setAppearances] = useState(0);
+  const [portBreakdown, setPortBreakdown] = useState<PortAppearance[]>([]);
   const [loading, setLoading] = useState(true);
   const [showWelcome, setShowWelcome] = useState(false);
 
@@ -81,6 +84,15 @@ export default function ProviderDashboardPage() {
         setLeadsThisWeek(thisWeek);
         setRfqs(receivedRfqs);
         setRfqCount(rfqTotal);
+
+        if (p.country && p.ports && p.ports.length > 0) {
+          const [appear, breakdown] = await Promise.all([
+            getSearchAppearances(p.country, p.ports),
+            getAppearancesByPort(p.country, p.ports),
+          ]);
+          setAppearances(appear);
+          setPortBreakdown(breakdown);
+        }
       }
 
       const params = new URLSearchParams(window.location.search);
@@ -175,6 +187,11 @@ export default function ProviderDashboardPage() {
         {/* STATS ROW */}
         <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 12, marginBottom: 24 }}>
           <div style={{ ...cardStyle, padding: "18px 16px" }}>
+            <div style={{ color: "#c8a84b", fontSize: 10, textTransform: "uppercase", fontWeight: 700, letterSpacing: 1, marginBottom: 8 }}>Search Appearances</div>
+            <div style={{ color: "#f5f0e8", fontSize: 26, fontWeight: 700 }}>{appearances}</div>
+            <div style={{ color: "#7a8a72", fontSize: 10, marginTop: 2 }}>Last 30 days</div>
+          </div>
+          <div style={{ ...cardStyle, padding: "18px 16px" }}>
             <div style={{ color: "#c8a84b", fontSize: 10, textTransform: "uppercase", fontWeight: 700, letterSpacing: 1, marginBottom: 8 }}>RFQs Received</div>
             <div style={{ color: "#f5f0e8", fontSize: 26, fontWeight: 700 }}>{rfqCount}</div>
           </div>
@@ -191,6 +208,33 @@ export default function ProviderDashboardPage() {
             <div style={{ color: "#f5f0e8", fontSize: 15, fontWeight: 700, marginTop: 4 }}>{isActive ? "Published" : "Pending"}</div>
           </div>
         </div>
+
+        {/* VISIBILITY BY PORT - gercek search_events verisinden */}
+        {portBreakdown.length > 0 && (
+          <div style={{ ...cardStyle, padding: "22px 20px", marginBottom: 20 }}>
+            <h2 style={{ color: "#f5f0e8", fontSize: 16, fontWeight: 700, marginBottom: 4 }}>Your Visibility This Month</h2>
+            <p style={{ color: "#d4dcc8", fontSize: 12, marginBottom: 16 }}>
+              How many times each of your ports was searched in the last 30 days.
+            </p>
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              {portBreakdown.map((p) => {
+                const maxCount = portBreakdown[0].count;
+                const pct = Math.max(8, Math.round((p.count / maxCount) * 100));
+                return (
+                  <div key={p.port}>
+                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
+                      <span style={{ color: "#f5f0e8", fontSize: 12.5 }}>{p.port}</span>
+                      <span style={{ color: "#c8a84b", fontSize: 12.5, fontWeight: 700 }}>{p.count}</span>
+                    </div>
+                    <div style={{ height: 6, background: "#08100a", borderRadius: 3, overflow: "hidden" }}>
+                      <div style={{ height: "100%", width: `${pct}%`, background: "#c8a84b", borderRadius: 3 }} />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         {/* RECEIVED RFQs - en yuksek deger, en ustte */}
         <div style={{ ...cardStyle, padding: "22px 20px", marginBottom: 20 }}>
