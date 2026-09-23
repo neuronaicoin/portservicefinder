@@ -865,6 +865,10 @@ export default function Home() {
               <RecentDemand />
             </div>
 
+            <a href="/request-quote" style={{display:'flex',alignItems:'center',gap:8,color:'#c8a84b',fontFamily:rj,fontSize:12.5,fontWeight:700,letterSpacing:'.5px',textDecoration:'underline',textUnderlineOffset:3}}>
+              📋 Need multiple quotes? Request Quotes from verified providers →
+            </a>
+
             <div id="search-box" className="a4 search-wrap" style={{width:'100%',maxWidth:1080,background:'rgba(10,20,14,.92)',border:'1px solid rgba(200,168,75,.35)',backdropFilter:'blur(22px)',padding:'34px 38px',marginTop:4,boxShadow:'0 18px 48px rgba(0,0,0,.45)'}}>
               <div className="sgrid" style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr auto',gap:14,alignItems:'flex-end'}}>
                 <div>
