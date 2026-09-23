@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabaseBrowser } from "@/lib/supabase-browser";
-import { RecentDemand } from "@/components/RecentDemand";
 
 const anchorSvg = (
   <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#08100a" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
@@ -147,10 +146,6 @@ export default function ProviderSignupPage() {
               </div>
             ))}
           </div>
-        </div>
-
-        <div className="mb-4">
-          <RecentDemand />
         </div>
 
         <form
