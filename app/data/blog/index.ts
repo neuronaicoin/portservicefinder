@@ -235,7 +235,17 @@ import { mlc2006CrewWelfareChandlerRole2026 } from './mlc-2006-crew-welfare-requ
 import { piClubExplainedAgentRole2026 } from './pi-club-protection-indemnity-insurance-explained-ship-agent-role-2026';
 import { underwaterHullCleaningDivingBusiness2026 } from './how-to-start-underwater-hull-cleaning-diving-services-business-complete-guide-2026';
 import { marineEngineeringRepairServicesBusiness2026 } from './how-to-start-marine-engineering-mechanical-repair-services-business-complete-guide-2026';
+import { noticeOfReadinessExplained2026 } from './notice-of-readiness-nor-explained-ship-agent-role-2026';
+import { letterOfProtestExplained2026 } from './letter-of-protest-shipping-explained-when-how-2026';
+import { marineSurveyorTypesCompared2026 } from './marine-surveyor-types-compared-draft-bunker-condition-cargo-2026';
+import { ismCodeExplainedAgentRole2026 } from './ism-code-explained-safety-management-ship-agent-role-2026';
+import { stevedoringServicesBusinessGuide2026 } from './how-to-start-stevedoring-cargo-handling-services-business-complete-guide-2026';
 export const BLOG_POSTS = [
+  noticeOfReadinessExplained2026,
+  letterOfProtestExplained2026,
+  marineSurveyorTypesCompared2026,
+  ismCodeExplainedAgentRole2026,
+  stevedoringServicesBusinessGuide2026,
   marineEngineeringRepairServicesBusiness2026,
   underwaterHullCleaningDivingBusiness2026,
   piClubExplainedAgentRole2026,
