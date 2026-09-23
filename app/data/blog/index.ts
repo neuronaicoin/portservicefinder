@@ -234,7 +234,9 @@ import { laytimeDemurrageAgentDocumentation2026 } from './laytime-demurrage-expl
 import { mlc2006CrewWelfareChandlerRole2026 } from './mlc-2006-crew-welfare-requirements-ship-chandlers-agents-guide-2026';
 import { piClubExplainedAgentRole2026 } from './pi-club-protection-indemnity-insurance-explained-ship-agent-role-2026';
 import { underwaterHullCleaningDivingBusiness2026 } from './how-to-start-underwater-hull-cleaning-diving-services-business-complete-guide-2026';
+import { marineEngineeringRepairServicesBusiness2026 } from './how-to-start-marine-engineering-mechanical-repair-services-business-complete-guide-2026';
 export const BLOG_POSTS = [
+  marineEngineeringRepairServicesBusiness2026,
   underwaterHullCleaningDivingBusiness2026,
   piClubExplainedAgentRole2026,
   mlc2006CrewWelfareChandlerRole2026,
