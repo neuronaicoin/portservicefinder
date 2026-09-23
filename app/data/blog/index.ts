@@ -232,7 +232,9 @@ import { shipAgentVsFreightForwarderVsBroker } from './ship-agent-vs-freight-for
 import { vesselPreArrivalInformationChecklist2026 } from './vessel-pre-arrival-information-checklist-ship-agents-2026';
 import { laytimeDemurrageAgentDocumentation2026 } from './laytime-demurrage-explained-ship-agent-documentation-role-2026';
 import { mlc2006CrewWelfareChandlerRole2026 } from './mlc-2006-crew-welfare-requirements-ship-chandlers-agents-guide-2026';
+import { piClubExplainedAgentRole2026 } from './pi-club-protection-indemnity-insurance-explained-ship-agent-role-2026';
 export const BLOG_POSTS = [
+  piClubExplainedAgentRole2026,
   mlc2006CrewWelfareChandlerRole2026,
   laytimeDemurrageAgentDocumentation2026,
   vesselPreArrivalInformationChecklist2026,
