@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabaseBrowser } from "@/lib/supabase-browser";
+import { RecentDemand } from "@/components/RecentDemand";
 
 const anchorSvg = (
   <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#08100a" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
@@ -128,6 +129,30 @@ export default function ProviderSignupPage() {
           </p>
         </div>
 
+        {/* Gercek avantajlar - uydurma sayi yok, sadece platformun gercek ozellikleri */}
+        <div
+          className="rounded-2xl p-5 mb-4"
+          style={{ background: "#111c13", border: "1px solid rgba(200,168,75,.15)" }}
+        >
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            {[
+              "No commission on any inquiry",
+              "Direct phone, email & WhatsApp contact",
+              "Listed at every port you operate in",
+              "Verified provider badge",
+            ].map((item) => (
+              <div key={item} style={{ display: "flex", alignItems: "flex-start", gap: 7 }}>
+                <span style={{ color: "#4caf76", fontWeight: 700, flexShrink: 0, fontSize: 13 }}>✓</span>
+                <span style={{ color: "#d4dcc8", fontSize: 12.5, lineHeight: 1.4 }}>{item}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="mb-4">
+          <RecentDemand />
+        </div>
+
         <form
           onSubmit={handleSubmit}
           className="rounded-2xl p-6 md:p-8"
@@ -239,6 +264,31 @@ export default function ProviderSignupPage() {
             <Link href="/privacy" style={{ color: "#c8a84b" }}>Privacy Policy</Link>
           </p>
         </form>
+
+        {/* Uye olduktan sonra ne olacagi net olsun - gercek akisimiza uygun,
+            var olmayan bir "onay" adimi uydurmuyoruz. */}
+        <div className="mt-5 rounded-2xl p-5" style={{ background: "#111c13", border: "1px solid rgba(200,168,75,.15)" }}>
+          <div style={{ color: "#c8a84b", fontSize: 10, fontWeight: 700, letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 12, textAlign: "center" }}>
+            What happens next
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            {[
+              ["1", "Create your account", "Just email & password — takes 30 seconds"],
+              ["2", "Complete your profile", "Ports, services, and contact details"],
+              ["3", "Go live instantly", "No waiting — operators can find you right away"],
+            ].map(([n, title, desc]) => (
+              <div key={n} style={{ display: "flex", alignItems: "flex-start", gap: 10 }}>
+                <span style={{ width: 22, height: 22, borderRadius: "50%", background: "rgba(200,168,75,.15)", color: "#c8a84b", fontSize: 11, fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                  {n}
+                </span>
+                <div>
+                  <div style={{ color: "#f5f0e8", fontSize: 12.5, fontWeight: 700 }}>{title}</div>
+                  <div style={{ color: "#7a8a72", fontSize: 11.5 }}>{desc}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
 
         <p style={{ textAlign: "center", color: "#d4dcc8", fontSize: 13, marginTop: 24 }}>
           Already have an account?{" "}
