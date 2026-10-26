@@ -95,6 +95,20 @@ export default async function Home() {
           <p className="sub">
             Find providers at 1,200+ ports in 150+ countries and contact them directly. Free for ship operators, no commission on any job.
           </p>
+          <div className="hstats" aria-label="Coverage">
+            <div>
+              <b>1,200+</b>
+              <span>ports</span>
+            </div>
+            <div>
+              <b>150+</b>
+              <span>countries</span>
+            </div>
+            <div>
+              <b>34</b>
+              <span>service categories</span>
+            </div>
+          </div>
           <HomeSearch />
           {ports.length > 0 && (
           <p className="popular">
@@ -138,7 +152,7 @@ export default async function Home() {
         <div className="ticker" aria-label="Companies that joined recently">
           <span className="lab">Just joined</span>
           <div className="track-wrap">
-            <div className="track">
+            <div className="track" style={{ animationDuration: `${Math.max(90, ticker.length * 7)}s` }}>
               {[0, 1].map((k) => (
                 <span key={k} className="set" aria-hidden={k === 1}>
                   {ticker.map((p) => (
@@ -156,29 +170,6 @@ export default async function Home() {
           </div>
         </div>
       )}
-
-      <section className="wrap stats" aria-label="Coverage">
-        <div>
-          <b>1,200+</b>
-          <span>ports covered</span>
-        </div>
-        <div>
-          <b>150+</b>
-          <span>countries</span>
-        </div>
-        <div>
-          <b>34</b>
-          <span>service categories</span>
-        </div>
-        <div>
-          <b>{stats.total}</b>
-          <span>companies listed</span>
-        </div>
-        <div>
-          <b>41</b>
-          <span>free voyage tools</span>
-        </div>
-      </section>
 
       {ports.length > 0 && (
         <section className="wrap sec">
@@ -229,7 +220,7 @@ export default async function Home() {
             </p>
           </div>
           <div className="join-cta">
-            <Link href="/for-providers/signup" className="btn">
+            <Link href="/for-providers/signup" className="btn gold">
               List your company free
             </Link>
             <Link href="/for-providers" className="ghost">
@@ -314,12 +305,17 @@ const CSS = `
 .home .ticker{display:flex;align-items:center;border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--card);overflow:hidden}
 .home .ticker .lab{flex:none;background:var(--acc);color:var(--on-acc);font-weight:700;font-size:12.5px;padding:5px 11px;border-radius:7px;margin:10px 14px 10px 20px;position:relative;z-index:1}
 .home .track-wrap{overflow:hidden;flex:1;-webkit-mask-image:linear-gradient(90deg,transparent,#000 40px,#000 calc(100% - 40px),transparent);mask-image:linear-gradient(90deg,transparent,#000 40px,#000 calc(100% - 40px),transparent)}
-.home .track{display:flex;width:max-content;animation:psfTicker 70s linear infinite}
+.home .track{display:flex;width:max-content;animation:psfTicker 160s linear infinite}
 .home .ticker:hover .track{animation-play-state:paused}
 @keyframes psfTicker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 .home .set{display:flex;flex:none}
 .home .chip{display:inline-flex;align-items:center;gap:8px;margin-right:28px;white-space:nowrap;font-size:14px;color:var(--ink2);text-decoration:none;padding:12px 0}
 .home .chip b{color:var(--ink);font-weight:600}
+.home .hstats{display:flex;gap:28px;margin:0 0 22px;padding:14px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.home .hstats div{display:flex;flex-direction:column;line-height:1.2}
+.home .hstats b{font-size:26px;font-weight:800;letter-spacing:-0.03em;color:var(--ink)}
+.home .hstats span{font-size:13.5px;color:var(--ink3);margin-top:2px}
+@media (max-width:520px){.home .hstats{gap:0;justify-content:space-between}.home .hstats b{font-size:23px}.home .hstats span{font-size:12.5px}}
 .home .stats{display:flex;flex-wrap:wrap;gap:16px 44px;padding-top:30px;padding-bottom:10px}
 .home .stats div{display:flex;flex-direction:column}
 .home .stats b{font-size:28px;letter-spacing:-0.03em;font-weight:800}

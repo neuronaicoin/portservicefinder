@@ -41,7 +41,8 @@ export function SiteHeader() {
           .psf-header .sheet.open{display:block;border-top:1px solid var(--line);background:var(--card);padding:8px 16px 16px}
           .psf-header .sheet a{display:block;padding:13px 4px;border-bottom:1px solid var(--line);color:var(--ink);text-decoration:none;font-size:16px;font-weight:500}
         }
-        @media (max-width:420px){.psf-header .in{gap:8px;padding:0 12px}.psf-header .right{gap:6px}.psf-header .cta{padding:8px 10px;font-size:13.5px}.psf-header .cta .long{display:none}.psf-header .psf-logo{font-size:14px!important;gap:7px!important;letter-spacing:0!important}.psf-header .psf-logo svg{width:26px;height:26px}}
+        @media (max-width:620px){.psf-header .cta .long{display:none}}
+        @media (max-width:480px){.psf-header .in{gap:8px;padding:0 12px}.psf-header .right{gap:6px}.psf-header .cta{padding:8px 10px;font-size:13.5px}.psf-header .psf-logo{font-size:14px!important;gap:7px!important;letter-spacing:0!important}.psf-header .psf-logo svg{width:26px;height:26px}}
       `}</style>
       <div className="in">
         <Link href="/" aria-label="PortServiceFinder home" style={{ textDecoration: 'none' }}>
@@ -59,7 +60,7 @@ export function SiteHeader() {
           <Link href="/for-providers/login" className="login">
             Log in
           </Link>
-          <Link href="/for-providers/signup" className="cta">
+          <Link href="/for-providers/signup" className="cta gold">
             List<span className="long"> your company</span> free
           </Link>
           <button type="button" className="burger" aria-label="Menu" aria-expanded={open} onClick={() => setOpen((o) => !o)}>

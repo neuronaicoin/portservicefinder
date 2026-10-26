@@ -188,7 +188,7 @@ export default async function PortPage({ params }: { params: Promise<{ port: str
             <h2>{providers.length ? `Work in ${port.name}? Join ${providers.length === 1 ? 'the company' : `the ${providers.length} companies`} listed here.` : `Be the first company listed in ${port.name}.`}</h2>
             <p>Operators search by port. Your listing appears here and on its own company page you can share. Free during our launch period.</p>
           </div>
-          <Link href="/for-providers/signup" className="btn">
+          <Link href="/for-providers/signup" className="btn gold">
             List your company free
           </Link>
         </section>

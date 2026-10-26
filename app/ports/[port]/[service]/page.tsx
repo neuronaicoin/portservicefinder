@@ -143,7 +143,7 @@ export default async function PortServicePage({ params }: { params: Promise<{ po
             </h2>
             <p>List your company free during our launch period and appear on this page for operators searching {port.name}.</p>
           </div>
-          <Link href="/for-providers/signup" className="btn">
+          <Link href="/for-providers/signup" className="btn gold">
             List your company free
           </Link>
         </section>

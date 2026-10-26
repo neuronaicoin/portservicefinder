@@ -79,7 +79,7 @@ export function HomeSearch() {
           ))}
         </select>
       </label>
-      <button type="submit">Search</button>
+      <button type="submit" className="gold">Search</button>
     </form>
   );
 }

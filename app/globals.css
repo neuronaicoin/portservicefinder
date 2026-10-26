@@ -111,3 +111,7 @@ pre {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Brand gold from the logo, for the main calls to action */
+.gold{background:#c8a84b!important;color:#08100a!important;border-color:#c8a84b!important}
+.gold:hover{background:#b8953a!important;border-color:#b8953a!important}

@@ -157,7 +157,7 @@ export default function ForProvidersPage() {
           </li>
         </ul>
         <div className="actions">
-          <Link href="/for-providers/signup" className="btn primary">
+          <Link href="/for-providers/signup" className="btn primary gold">
             List your company free
           </Link>
           <a href="#how-it-works" className="btn ghost">
@@ -218,7 +218,7 @@ export default function ForProvidersPage() {
               </p>
             </div>
             <div>
-              <Link href="/for-providers/signup" className="btn primary" style={{ width: '100%' }}>
+              <Link href="/for-providers/signup" className="btn primary gold" style={{ width: '100%' }}>
                 Claim your free listing
               </Link>
               <p className="fine" style={{ textAlign: 'center' }}>
@@ -251,7 +251,7 @@ export default function ForProvidersPage() {
           <div className="final">
             <h2>Put your company on your port pages</h2>
             <p className="sub">Free during the launch period. No card, no commission.</p>
-            <Link href="/for-providers/signup" className="btn primary">
+            <Link href="/for-providers/signup" className="btn primary gold">
               List your company free
             </Link>
           </div>

@@ -76,7 +76,7 @@ export default function PricingPage() {
           ))}
         </ul>
 
-        <Link href="/for-providers/signup" className="btn">
+        <Link href="/for-providers/signup" className="btn gold">
           List your company free
         </Link>
 

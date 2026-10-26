@@ -86,7 +86,7 @@ export default async function ProvidersPage({ searchParams }: { searchParams: SP
         {list.length === 0 ? (
           <div className="empty">
             <p>No companies match these filters yet.</p>
-            <Link href="/for-providers/signup" className="btn">
+            <Link href="/for-providers/signup" className="btn gold">
               Be the first: list your company free
             </Link>
           </div>

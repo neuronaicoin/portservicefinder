@@ -218,7 +218,7 @@ export default async function ProviderPage({ params }: { params: Promise<{ slug:
             <section className="card cta">
               <h2>Run a marine service company?</h2>
               <p className="small">Get your own company page and appear on every port you serve. Free during our launch period.</p>
-              <Link href="/for-providers/signup" className="btn">
+              <Link href="/for-providers/signup" className="btn gold">
                 List your company free
               </Link>
             </section>

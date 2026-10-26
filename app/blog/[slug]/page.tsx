@@ -292,7 +292,7 @@ export default async function BlogPostPage({ params }: PageProps) {
                     Operators search PortServiceFinder by port and service and contact providers directly, with no commission.
                     Listing is free during our launch period. After the launch period, listings will cost $49.90/month or $499.90/year.
                   </p>
-                  <Link href="/for-providers/signup" className="bp-btn pri">List your company free</Link>
+                  <Link href="/for-providers/signup" className="bp-btn pri gold">List your company free</Link>
                 </div>
                 <div className="bp-box">
                   <h2>Need a provider yourself?</h2>
@@ -321,7 +321,7 @@ export default async function BlogPostPage({ params }: PageProps) {
                     List your company so operators can find you at the ports you serve. Listing is free during our launch period.
                     After the launch period, listings will cost $49.90/month or $499.90/year.
                   </p>
-                  <Link href="/for-providers/signup" className="bp-btn sec">List your company free</Link>
+                  <Link href="/for-providers/signup" className="bp-btn pri gold">List your company free</Link>
                 </div>
               </>
             )}
