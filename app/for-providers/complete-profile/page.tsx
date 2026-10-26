@@ -130,6 +130,18 @@ export default function CompleteProfilePage() {
       return;
     }
 
+    // "Your listing is live" email with the share buttons (sent once; never blocks the redirect)
+    try {
+      const { data: sess } = await supabaseBrowser.auth.getSession();
+      const token = sess.session?.access_token;
+      if (token) {
+        await Promise.race([
+          fetch("/api/provider/share-email", { method: "POST", headers: { Authorization: `Bearer ${token}` }, keepalive: true }),
+          new Promise((ok) => setTimeout(ok, 4000)),
+        ]);
+      }
+    } catch {}
+
     router.push("/for-providers/dashboard?welcome=1");
   }
 

@@ -10,6 +10,7 @@ import { getSearchAppearances, getAppearancesByPort, type PortAppearance } from 
 import { NotificationBell } from "@/components/NotificationBell";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
+import { DashboardShare } from "@/components/providers/DashboardShare";
 
 interface ProviderRow {
   id: string;
@@ -188,6 +189,8 @@ export default function ProviderDashboardPage() {
             </Link>
           </div>
         )}
+
+        {!isPending && <DashboardShare providerId={provider.id} hideLive={showWelcome} />}
 
         {/* PAGE TITLE */}
         <div style={{ marginBottom: 20 }}>

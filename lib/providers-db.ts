@@ -113,6 +113,12 @@ export async function getListedProviders(): Promise<ListedProvider[]> {
   }
 }
 
+/** The same list without the 5-minute cache, for a company that has just finished its profile. */
+export async function getListedProvidersFresh(): Promise<ListedProvider[]> {
+  memo = null;
+  return getListedProviders();
+}
+
 export async function getProviderBySlug(slug: string) {
   return (await getListedProviders()).find((p) => p.slug === slug) || null;
 }

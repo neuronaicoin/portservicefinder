@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
+import { sendShareEmail } from '@/lib/share-email';
 
 export async function POST(request: Request) {
   try {
@@ -186,6 +187,15 @@ export async function POST(request: Request) {
           detail: String(emailErr),
         });
         // Mail hatasi kaydi asla bozmaz
+      }
+    }
+
+    // A free listing is live straight away: send the "your listing is live, share it" email
+    if (initialStatus === 'active' && data?.[0]?.id) {
+      try {
+        await sendShareEmail(String(data[0].id));
+      } catch (shareErr) {
+        console.error('Share email error:', shareErr);
       }
     }
 
