@@ -1,9 +1,10 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabaseBrowser } from "@/lib/supabase-browser";
+import { SiteHeader } from "@/components/SiteHeader";
+import { SiteFooter } from "@/components/SiteFooter";
 import { PORT_DATA, MARINE_SERVICES } from "@/lib/port-data";
 
 const MAX_PORTS = 10;
@@ -134,33 +135,35 @@ export default function CompleteProfilePage() {
 
   if (loadingUser) {
     return (
-      <main className="min-h-screen flex items-center justify-center" style={{ background: "#08100a" }}>
-        <span style={{ color: "#d4dcc8" }}>Loading...</span>
-      </main>
+      <>
+        <SiteHeader />
+        <main className="flex items-center justify-center" style={{ background: "var(--bg)", minHeight: "60vh" }}>
+          <span style={{ color: "var(--ink2)" }}>Loading...</span>
+        </main>
+      </>
     );
   }
 
   return (
-    <main className="min-h-screen px-4 py-10" style={{ background: "#08100a" }}>
+    <>
+    <SiteHeader />
+    <main className="px-4 py-10" style={{ background: "var(--bg)" }}>
       <div className="max-w-2xl mx-auto">
-        <Link href="/" className="inline-block mb-6" style={{ color: "#c8a84b", fontSize: 13, fontWeight: 700 }}>
-          Port<span>Service</span>Finder
-        </Link>
 
-        <h1 style={{ color: "#f5f0e8", fontSize: 26, fontWeight: 700, marginBottom: 6 }}>
-          Almost there — complete your listing
+        <h1 style={{ color: "var(--ink)", fontSize: 26, fontWeight: 700, marginBottom: 6 }}>
+          Complete your listing
         </h1>
-        <p style={{ color: "#d4dcc8", fontSize: 14, marginBottom: 28 }}>
-          This is what vessel operators will see. All fields marked * are required.
+        <p style={{ color: "var(--ink2)", fontSize: 14, marginBottom: 28 }}>
+          This is what vessel operators will see on your port pages and your company page. Fields marked * are required.
         </p>
 
         <form
           onSubmit={handleSubmit}
           className="rounded-2xl p-6 md:p-8 space-y-5"
-          style={{ background: "#111c13", border: "1px solid rgba(200,168,75,.15)" }}
+          style={{ background: "var(--card)", border: "1px solid var(--line)" }}
         >
           <div>
-            <label style={{ display: "block", color: "#d4dcc8", fontSize: 11, fontWeight: 700, letterSpacing: "1px", textTransform: "uppercase", marginBottom: 8 }}>
+            <label style={{ display: "block", color: "var(--ink2)", fontSize: 13, fontWeight: 600, marginBottom: 8 }}>
               About your company
             </label>
             <textarea
@@ -169,19 +172,19 @@ export default function CompleteProfilePage() {
               placeholder="Briefly describe your services, experience, and what makes you reliable."
               rows={3}
               className="w-full px-4 py-3 rounded-lg outline-none"
-              style={{ background: "#08100a", border: "1px solid rgba(255,255,255,.1)", color: "#f5f0e8" }}
+              style={{ background: "var(--bg)", border: "1px solid color-mix(in srgb, var(--ink) 10%, transparent)", color: "var(--ink)" }}
             />
           </div>
 
           <div>
-            <label style={{ display: "block", color: "#d4dcc8", fontSize: 11, fontWeight: 700, letterSpacing: "1px", textTransform: "uppercase", marginBottom: 8 }}>
+            <label style={{ display: "block", color: "var(--ink2)", fontSize: 13, fontWeight: 600, marginBottom: 8 }}>
               Country *
             </label>
             <select
               value={country}
               onChange={(e) => { setCountry(e.target.value); setPorts([]); }}
               className="w-full px-4 py-3 rounded-lg outline-none"
-              style={{ background: "#08100a", border: "1px solid rgba(255,255,255,.1)", color: "#f5f0e8" }}
+              style={{ background: "var(--bg)", border: "1px solid color-mix(in srgb, var(--ink) 10%, transparent)", color: "var(--ink)" }}
             >
               <option value="">Select country</option>
               {countries.map((c) => <option key={c}>{c}</option>)}
@@ -190,7 +193,7 @@ export default function CompleteProfilePage() {
 
           {country && (
             <div>
-              <label style={{ display: "block", color: "#d4dcc8", fontSize: 11, fontWeight: 700, letterSpacing: "1px", textTransform: "uppercase", marginBottom: 8 }}>
+              <label style={{ display: "block", color: "var(--ink2)", fontSize: 13, fontWeight: 600, marginBottom: 8 }}>
                 Ports you operate at * (max {MAX_PORTS}, {ports.length} selected)
               </label>
               <div className="flex flex-wrap gap-2">
@@ -202,12 +205,13 @@ export default function CompleteProfilePage() {
                       type="button"
                       onClick={() => togglePort(p)}
                       style={{
-                        padding: "7px 12px",
+                        padding: "8px 12px",
+                        minHeight: 40,
                         borderRadius: 999,
                         fontSize: 12.5,
-                        border: selected ? "1px solid #c8a84b" : "1px solid rgba(255,255,255,.15)",
-                        background: selected ? "rgba(200,168,75,.15)" : "transparent",
-                        color: selected ? "#c8a84b" : "#d4dcc8",
+                        border: selected ? "1px solid var(--acc)" : "1px solid color-mix(in srgb, var(--ink) 15%, transparent)",
+                        background: selected ? "color-mix(in srgb, var(--acc) 15%, transparent)" : "transparent",
+                        color: selected ? "var(--acc)" : "var(--ink2)",
                       }}
                     >
                       {p}
@@ -215,13 +219,13 @@ export default function CompleteProfilePage() {
                   );
                 })}
               </div>
-              {portWarning && <p style={{ color: "#ff8a8a", fontSize: 12, marginTop: 8 }}>{portWarning}</p>}
+              {portWarning && <p style={{ color: "var(--bad)", fontSize: 12, marginTop: 8 }}>{portWarning}</p>}
             </div>
           )}
 
           {providerType === "service" && (
             <div>
-              <label style={{ display: "block", color: "#d4dcc8", fontSize: 11, fontWeight: 700, letterSpacing: "1px", textTransform: "uppercase", marginBottom: 8 }}>
+              <label style={{ display: "block", color: "var(--ink2)", fontSize: 13, fontWeight: 600, marginBottom: 8 }}>
                 Services you offer *
               </label>
               <div className="flex flex-wrap gap-2">
@@ -233,12 +237,13 @@ export default function CompleteProfilePage() {
                       type="button"
                       onClick={() => toggleSvc(s.key)}
                       style={{
-                        padding: "7px 12px",
+                        padding: "8px 12px",
+                        minHeight: 40,
                         borderRadius: 999,
                         fontSize: 12.5,
-                        border: selected ? "1px solid #c8a84b" : "1px solid rgba(255,255,255,.15)",
-                        background: selected ? "rgba(200,168,75,.15)" : "transparent",
-                        color: selected ? "#c8a84b" : "#d4dcc8",
+                        border: selected ? "1px solid var(--acc)" : "1px solid color-mix(in srgb, var(--ink) 15%, transparent)",
+                        background: selected ? "color-mix(in srgb, var(--acc) 15%, transparent)" : "transparent",
+                        color: selected ? "var(--acc)" : "var(--ink2)",
                       }}
                     >
                       {s.label}
@@ -251,66 +256,66 @@ export default function CompleteProfilePage() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label style={{ display: "block", color: "#d4dcc8", fontSize: 11, fontWeight: 700, letterSpacing: "1px", textTransform: "uppercase", marginBottom: 8 }}>
-                Contact Person *
+              <label style={{ display: "block", color: "var(--ink2)", fontSize: 13, fontWeight: 600, marginBottom: 8 }}>
+                Contact person *
               </label>
               <input
                 value={contactPerson}
                 onChange={(e) => setContactPerson(e.target.value)}
                 className="w-full px-4 py-3 rounded-lg outline-none"
-                style={{ background: "#08100a", border: "1px solid rgba(255,255,255,.1)", color: "#f5f0e8" }}
+                style={{ background: "var(--bg)", border: "1px solid color-mix(in srgb, var(--ink) 10%, transparent)", color: "var(--ink)" }}
               />
             </div>
             <div>
-              <label style={{ display: "block", color: "#d4dcc8", fontSize: 11, fontWeight: 700, letterSpacing: "1px", textTransform: "uppercase", marginBottom: 8 }}>
+              <label style={{ display: "block", color: "var(--ink2)", fontSize: 13, fontWeight: 600, marginBottom: 8 }}>
                 Phone *
               </label>
               <input
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 className="w-full px-4 py-3 rounded-lg outline-none"
-                style={{ background: "#08100a", border: "1px solid rgba(255,255,255,.1)", color: "#f5f0e8" }}
+                style={{ background: "var(--bg)", border: "1px solid color-mix(in srgb, var(--ink) 10%, transparent)", color: "var(--ink)" }}
               />
             </div>
             <div>
-              <label style={{ display: "block", color: "#d4dcc8", fontSize: 11, fontWeight: 700, letterSpacing: "1px", textTransform: "uppercase", marginBottom: 8 }}>
+              <label style={{ display: "block", color: "var(--ink2)", fontSize: 13, fontWeight: 600, marginBottom: 8 }}>
                 WhatsApp (if different)
               </label>
               <input
                 value={whatsapp}
                 onChange={(e) => setWhatsapp(e.target.value)}
                 className="w-full px-4 py-3 rounded-lg outline-none"
-                style={{ background: "#08100a", border: "1px solid rgba(255,255,255,.1)", color: "#f5f0e8" }}
+                style={{ background: "var(--bg)", border: "1px solid color-mix(in srgb, var(--ink) 10%, transparent)", color: "var(--ink)" }}
               />
             </div>
             <div>
-              <label style={{ display: "block", color: "#d4dcc8", fontSize: 11, fontWeight: 700, letterSpacing: "1px", textTransform: "uppercase", marginBottom: 8 }}>
+              <label style={{ display: "block", color: "var(--ink2)", fontSize: 13, fontWeight: 600, marginBottom: 8 }}>
                 Website
               </label>
               <input
                 value={website}
                 onChange={(e) => setWebsite(e.target.value)}
                 className="w-full px-4 py-3 rounded-lg outline-none"
-                style={{ background: "#08100a", border: "1px solid rgba(255,255,255,.1)", color: "#f5f0e8" }}
+                style={{ background: "var(--bg)", border: "1px solid color-mix(in srgb, var(--ink) 10%, transparent)", color: "var(--ink)" }}
               />
             </div>
           </div>
 
           <div>
-            <label style={{ display: "block", color: "#d4dcc8", fontSize: 11, fontWeight: 700, letterSpacing: "1px", textTransform: "uppercase", marginBottom: 8 }}>
+            <label style={{ display: "block", color: "var(--ink2)", fontSize: 13, fontWeight: 600, marginBottom: 8 }}>
               Address
             </label>
             <input
               value={address}
               onChange={(e) => setAddress(e.target.value)}
               className="w-full px-4 py-3 rounded-lg outline-none"
-              style={{ background: "#08100a", border: "1px solid rgba(255,255,255,.1)", color: "#f5f0e8" }}
+              style={{ background: "var(--bg)", border: "1px solid color-mix(in srgb, var(--ink) 10%, transparent)", color: "var(--ink)" }}
             />
           </div>
 
           {error && (
-            <div className="rounded-lg p-3" style={{ background: "rgba(255,138,138,.1)", border: "1px solid rgba(255,138,138,.3)" }}>
-              <span style={{ color: "#ff8a8a", fontSize: 13 }}>{error}</span>
+            <div className="rounded-lg p-3" style={{ background: "color-mix(in srgb, var(--bad) 10%, transparent)", border: "1px solid color-mix(in srgb, var(--bad) 30%, transparent)" }}>
+              <span style={{ color: "var(--bad)", fontSize: 13 }}>{error}</span>
             </div>
           )}
 
@@ -319,18 +324,20 @@ export default function CompleteProfilePage() {
             disabled={saving}
             className="w-full py-3 rounded-lg"
             style={{
-              background: "linear-gradient(135deg,#e2c06a,#c8a84b)",
-              color: "#08100a",
+              background: "var(--acc)",
+              color: "var(--on-acc)",
               fontWeight: 700,
               fontSize: 14,
               opacity: saving ? 0.6 : 1,
               cursor: saving ? "not-allowed" : "pointer",
             }}
           >
-            {saving ? "Publishing..." : "Publish My Listing →"}
+            {saving ? "Publishing..." : "Publish my listing"}
           </button>
         </form>
       </div>
     </main>
+    <SiteFooter />
+    </>
   );
 }

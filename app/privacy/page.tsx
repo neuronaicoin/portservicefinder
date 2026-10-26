@@ -1,155 +1,44 @@
-'use client';
 import Link from 'next/link';
+import type { Metadata } from 'next';
+import { SiteHeader } from '@/components/SiteHeader';
+import { SiteFooter } from '@/components/SiteFooter';
+
+export const metadata: Metadata = {
+  title: 'Privacy Notice: How We Handle Your Data',
+  description: 'How PortServiceFinder collects, uses, stores and shares personal data from vessel operators and listed providers, and how to exercise your privacy rights.',
+  alternates: { canonical: '/privacy' },
+};
 
 export default function PrivacyPolicy() {
-  const g = { color: '#c8a84b' } as React.CSSProperties;
-  const rj = "'Rajdhani',sans-serif";
-  const lb = "'Libre Baskerville',serif";
-
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;500;600;700&family=Rajdhani:wght@500;600;700&display=swap');
-        *{margin:0;padding:0;box-sizing:border-box;}
-        html{scroll-behavior:smooth;}
-        body{background:#08100a;overflow-x:hidden;}
-        .legal-content h2{
-          font-family:'Libre Baskerville',serif;
-          font-size:22px;
-          font-weight:700;
-          color:#f5f0e8;
-          margin:36px 0 14px;
-          padding-bottom:10px;
-          border-bottom:1px solid rgba(200,168,75,.2);
-        }
-        .legal-content h3{
-          font-family:'Libre Baskerville',serif;
-          font-size:17px;
-          font-weight:700;
-          color:#c8a84b;
-          margin:24px 0 10px;
-        }
-        .legal-content p{
-          color:#b0c0a4;
-          line-height:1.8;
-          margin-bottom:14px;
-          font-size:14px;
-        }
-        .legal-content ul{
-          list-style:none;
-          padding-left:0;
-          margin-bottom:14px;
-        }
-        .legal-content ul li{
-          color:#b0c0a4;
-          line-height:1.8;
-          font-size:14px;
-          padding-left:22px;
-          position:relative;
-          margin-bottom:7px;
-        }
-        .legal-content ul li::before{
-          content:'▸';
-          color:#c8a84b;
-          position:absolute;
-          left:6px;
-          font-weight:700;
-        }
-        .legal-content strong{color:#f5f0e8;font-weight:600;}
-        .legal-content em{color:#d4dcc8;font-style:italic;}
-        .legal-content a{color:#c8a84b;text-decoration:none;border-bottom:1px solid rgba(200,168,75,.3);transition:border-color .2s;}
-        .legal-content a:hover{border-bottom-color:#c8a84b;}
-        .legal-content table{
-          width:100%;
-          border-collapse:collapse;
-          margin:18px 0;
-          font-size:13px;
-        }
-        .legal-content table th,
-        .legal-content table td{
-          padding:10px 12px;
-          text-align:left;
-          border:1px solid rgba(200,168,75,.2);
-          color:#b0c0a4;
-        }
-        .legal-content table th{
-          background:rgba(200,168,75,.08);
-          color:#c8a84b;
-          font-family:'Rajdhani',sans-serif;
-          font-weight:700;
-          letter-spacing:1px;
-          text-transform:uppercase;
-          font-size:11px;
-        }
-        .legal-content .toc{
-          background:rgba(200,168,75,.04);
-          border:1px solid rgba(200,168,75,.15);
-          padding:22px 26px;
-          margin:24px 0;
-        }
-        .legal-content .toc a{
-          display:block;
-          padding:5px 0;
-          color:#c8a84b;
-          border-bottom:none;
-          font-family:'Rajdhani',sans-serif;
-          font-weight:600;
-          font-size:13px;
-        }
-        .legal-content .toc a:hover{
-          color:#e2c06a;
-        }
-        .legal-content .summary-box{
-          background:rgba(200,168,75,.05);
-          border-left:3px solid #c8a84b;
-          padding:14px 18px;
-          margin:16px 0;
-          font-size:13.5px;
-          color:#d4dcc8;
-          font-style:italic;
-          line-height:1.7;
-        }
-        .legal-content .summary-box strong{color:#c8a84b;}
-        @media(max-width:768px){
-          .legal-content h2{font-size:18px;}
-          .legal-content h3{font-size:15px;}
-          .legal-content p,.legal-content ul li{font-size:13px;}
-          .legal-content table{font-size:11px;}
-          .legal-content table th,.legal-content table td{padding:6px 8px;}
-        }
+        .legal{max-width:820px;margin:0 auto;padding:40px 20px 8px;color:var(--ink);font-family:var(--font-ui)}
+        .legal .eyebrow{font-size:13px;font-weight:600;color:var(--ink3);margin:0 0 8px}
+        .legal h1{font-size:clamp(28px,6vw,40px);font-weight:700;letter-spacing:-0.02em;line-height:1.15;margin:0 0 8px}
+        .legal .meta{font-size:14px;color:var(--ink3);margin:0 0 28px}
+        .legal-content h2{font-size:20px;font-weight:700;color:var(--ink);margin:36px 0 12px;padding-bottom:8px;border-bottom:1px solid var(--line);scroll-margin-top:84px;line-height:1.3}
+        .legal-content h3{font-size:16px;font-weight:650;color:var(--ink);margin:22px 0 8px}
+        .legal-content p{color:var(--ink2);line-height:1.75;margin:0 0 14px;font-size:15px}
+        .legal-content ul{padding-left:20px;margin:0 0 14px}
+        .legal-content li{color:var(--ink2);line-height:1.7;font-size:15px;margin-bottom:6px}
+        .legal-content strong{color:var(--ink);font-weight:600}
+        .legal-content a{color:var(--acc);text-underline-offset:2px;overflow-wrap:anywhere}
+        .legal-content .toc{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 20px;margin:20px 0}
+        .legal-content .toc-title{font-size:13px;font-weight:600;color:var(--ink3);margin-bottom:6px}
+        .legal-content .toc a{display:block;padding:6px 0;text-decoration:none;font-size:14.5px}
+        .legal-content .summary-box,.legal-content .warning-box,.legal-content .success-box{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--acc);border-radius:10px;padding:14px 16px;margin:16px 0;font-size:14.5px;color:var(--ink2);line-height:1.7}
+        .legal-content .warning-box{border-left-color:var(--warn)}
+        .legal-content .success-box{border-left-color:var(--ok)}
+        .legal-content .contact-box{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 20px;margin:16px 0;font-size:15px;line-height:1.8;color:var(--ink2)}
+        .legal-content .contact-box strong{display:block}
       `}</style>
-
-      <div style={{background:'#08100a',color:'#f5f0e8',fontFamily:"'Outfit',sans-serif",fontWeight:300,minHeight:'100vh'}}>
-        {/* NAV */}
-        <nav style={{position:'fixed',top:0,width:'100%',zIndex:300,height:62,display:'flex',alignItems:'center',justifyContent:'space-between',padding:'0 24px',background:'rgba(8,16,10,.97)',backdropFilter:'blur(20px)',borderBottom:'1px solid rgba(200,168,75,.2)'}}>
-          <Link href="/" style={{display:'flex',alignItems:'center',gap:10,textDecoration:'none',color:'#f5f0e8'}}>
-            <svg width="32" height="32" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="50" cy="50" r="44" fill="none" stroke="#c8a84b" strokeWidth="2.5"/>
-              <polygon points="50,15 56,50 50,50" fill="#f5f0e8"/>
-              <polygon points="50,15 44,50 50,50" fill="#c8a84b"/>
-              <polygon points="50,85 56,50 50,50" fill="#c8a84b"/>
-              <polygon points="50,85 44,50 50,50" fill="#f5f0e8"/>
-              <polygon points="85,50 50,44 50,50" fill="#c8a84b"/>
-              <polygon points="85,50 50,56 50,50" fill="#f5f0e8"/>
-              <polygon points="15,50 50,44 50,50" fill="#f5f0e8"/>
-              <polygon points="15,50 50,56 50,50" fill="#c8a84b"/>
-              <circle cx="50" cy="50" r="3.5" fill="#c8a84b"/>
-            </svg>
-            <span style={{fontFamily:lb,fontSize:20,fontWeight:700,letterSpacing:1}}>PortService<span style={g}>Finder</span></span>
-          </Link>
-          <Link href="/" style={{background:'#c8a84b',color:'#08100a',border:'none',padding:'7px 14px',fontFamily:rj,fontSize:11,letterSpacing:'1.5px',textTransform:'uppercase',fontWeight:700,textDecoration:'none'}}>← Back to Home</Link>
-        </nav>
-
-        {/* HEADER */}
-        <section style={{paddingTop:130,paddingBottom:40,paddingLeft:24,paddingRight:24,textAlign:'center',background:'linear-gradient(180deg,rgba(200,168,75,.04) 0%,transparent 100%)'}}>
-          <div style={{fontFamily:rj,fontSize:11,letterSpacing:'4px',textTransform:'uppercase',color:'#c8a84b',marginBottom:14,fontWeight:700}}>⚖️ Legal Document</div>
-          <h1 style={{fontFamily:lb,fontSize:'clamp(28px,4vw,46px)',fontWeight:700,lineHeight:1.1,letterSpacing:-1,marginBottom:14}}>Privacy <em style={g}>Notice</em></h1>
-          <p style={{fontFamily:rj,fontSize:13,color:'#7a8a72',letterSpacing:'2px',textTransform:'uppercase',fontWeight:600}}>Last Updated: May 23, 2026</p>
-        </section>
-
-        {/* CONTENT */}
-        <section style={{padding:'10px 24px 80px',maxWidth:880,margin:'0 auto'}}>
-          <div className="legal-content">
+      <SiteHeader />
+      <main className="legal">
+        <p className="eyebrow">Legal</p>
+        <h1>Privacy Notice</h1>
+        <p className="meta">Last updated: May 23, 2026</p>
+        <div className="legal-content">
 
             <p>This Privacy Notice for <strong>PortServiceFinder</strong> (<strong>&ldquo;we&rdquo;</strong>, <strong>&ldquo;us&rdquo;</strong>, or <strong>&ldquo;our&rdquo;</strong>) describes how and why we might access, collect, store, use, and/or share (<strong>&ldquo;process&rdquo;</strong>) your personal information when you use our services (<strong>&ldquo;Services&rdquo;</strong>), including when you:</p>
 
@@ -179,7 +68,7 @@ export default function PrivacyPolicy() {
             <p><strong>How do you exercise your rights?</strong> The easiest way to exercise your rights is by contacting us at <a href="mailto:contact@portservicefinder.com">contact@portservicefinder.com</a>. We will consider and act upon any request in accordance with applicable data protection laws.</p>
 
             <div className="toc">
-              <div style={{fontFamily:rj,fontSize:11,letterSpacing:'2px',textTransform:'uppercase',color:'#c8a84b',marginBottom:12,fontWeight:700}}>📑 Table of Contents</div>
+              <div className="toc-title">Contents</div>
               <a href="#section1">1. What Information Do We Collect?</a>
               <a href="#section2">2. How Do We Process Your Information?</a>
               <a href="#section3">3. What Legal Bases Do We Rely On?</a>
@@ -397,10 +286,10 @@ export default function PrivacyPolicy() {
 
             <p>If you have questions or comments about this notice, you may contact us by email at <a href="mailto:contact@portservicefinder.com">contact@portservicefinder.com</a> or by post at:</p>
 
-            <div style={{background:'rgba(200,168,75,.06)',border:'1px solid rgba(200,168,75,.2)',padding:'18px 22px',margin:'16px 0',fontFamily:rj,fontSize:14,lineHeight:1.8,color:'#d4dcc8'}}>
-              <strong style={{color:'#c8a84b',display:'block',marginBottom:6,letterSpacing:1}}>PortServiceFinder</strong>
+            <div className="contact-box">
+              <strong>PortServiceFinder</strong>
               London, England<br/>
-              <a href="mailto:contact@portservicefinder.com" style={{color:'#c8a84b'}}>contact@portservicefinder.com</a>
+              <a href="mailto:contact@portservicefinder.com">contact@portservicefinder.com</a>
             </div>
 
             <h2 id="section17">17. How Can You Review, Update, Or Delete The Data We Collect From You?</h2>
@@ -408,21 +297,9 @@ export default function PrivacyPolicy() {
             <p>Based on the applicable laws of your country or state of residence, you may have the right to request access to the personal information we collect from you, details about how we have processed it, correct inaccuracies, or delete your personal information. You may also have the right to withdraw your consent to our processing of your personal information. These rights may be limited in some circumstances by applicable law.</p>
 
             <p>To request to review, update, or delete your personal information, please email us at <a href="mailto:contact@portservicefinder.com">contact@portservicefinder.com</a>.</p>
-
-          </div>
-        </section>
-
-        {/* FOOTER */}
-        <footer style={{borderTop:'1px solid rgba(200,168,75,.15)',padding:'30px 24px',textAlign:'center'}}>
-          <div style={{display:'flex',justifyContent:'center',gap:24,marginBottom:14,flexWrap:'wrap'}}>
-            <Link href="/" style={{color:'#7a8a72',textDecoration:'none',fontSize:12,fontFamily:rj,letterSpacing:'1.5px',textTransform:'uppercase',fontWeight:600}}>Home</Link>
-            <Link href="/terms" style={{color:'#7a8a72',textDecoration:'none',fontSize:12,fontFamily:rj,letterSpacing:'1.5px',textTransform:'uppercase',fontWeight:600}}>Terms</Link>
-            <Link href="/privacy" style={{color:'#c8a84b',textDecoration:'none',fontSize:12,fontFamily:rj,letterSpacing:'1.5px',textTransform:'uppercase',fontWeight:600}}>Privacy</Link>
-            <Link href="/listing-rules" style={{color:'#7a8a72',textDecoration:'none',fontSize:12,fontFamily:rj,letterSpacing:'1.5px',textTransform:'uppercase',fontWeight:600}}>Listing Rules</Link>
-          </div>
-          <div style={{fontFamily:rj,fontSize:10,color:'#3a3a2a',letterSpacing:1,fontWeight:600}}>© 2026 PortServiceFinder. All rights reserved.</div>
-        </footer>
-      </div>
+        </div>
+      </main>
+      <SiteFooter />
     </>
   );
 }

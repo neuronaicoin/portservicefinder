@@ -2,9 +2,9 @@
 import { useState, useEffect, useMemo } from 'react';
 import { saveItem, loadItem, genId } from '@/lib/voyage-storage';
 
-const lb = "'Libre Bodoni', serif";
-const rj = "'Rajdhani', sans-serif";
-const g = { color: '#c8a84b', fontStyle: 'italic' } as React.CSSProperties;
+const lb = 'var(--font-display)';
+const rj = 'var(--font-ui)';
+const g = { color: 'var(--acc)' } as React.CSSProperties;
 
 // ============================================================
 // TYPES
@@ -40,12 +40,12 @@ const CATEGORY_META: Record<Category, { label: string; icon: string }> = {
 // ============================================================
 // STYLES
 // ============================================================
-const card: React.CSSProperties = { background: '#111c13', border: '1px solid rgba(200,168,75,.18)', padding: '20px 18px', borderRadius: 4, marginBottom: 16 };
-const sectionTitle: React.CSSProperties = { fontFamily: rj, fontSize: 11, letterSpacing: '2px', textTransform: 'uppercase', color: '#c8a84b', fontWeight: 700, marginBottom: 14, paddingBottom: 8, borderBottom: '1px solid rgba(200,168,75,.12)' };
-const label: React.CSSProperties = { display: 'block', fontFamily: rj, fontSize: 10, letterSpacing: '.5px', textTransform: 'uppercase', color: '#7a8a72', fontWeight: 600, marginBottom: 4 };
-const inputStyle: React.CSSProperties = { width: '100%', background: '#0c1610', border: '1px solid rgba(200,168,75,.2)', color: '#f5f0e8', padding: '7px 9px', fontFamily: rj, fontSize: 12.5, fontWeight: 500, borderRadius: 3, boxSizing: 'border-box' };
-const ghostBtn: React.CSSProperties = { background: 'transparent', color: '#c8a84b', border: '1px solid rgba(200,168,75,.4)', padding: '8px 14px', fontFamily: rj, fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 };
-const goldBtn: React.CSSProperties = { background: '#c8a84b', color: '#08100a', border: 'none', padding: '8px 16px', fontFamily: rj, fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 };
+const card: React.CSSProperties = { background: 'var(--card)', border: '1px solid color-mix(in srgb, var(--acc) 18%, transparent)', padding: '20px 18px', borderRadius: 4, marginBottom: 16 };
+const sectionTitle: React.CSSProperties = { fontFamily: rj, fontSize: 11, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--acc)', fontWeight: 700, marginBottom: 14, paddingBottom: 8, borderBottom: '1px solid color-mix(in srgb, var(--acc) 12%, transparent)' };
+const label: React.CSSProperties = { display: 'block', fontFamily: rj, fontSize: 10, letterSpacing: '.5px', textTransform: 'uppercase', color: 'var(--ink3)', fontWeight: 600, marginBottom: 4 };
+const inputStyle: React.CSSProperties = { width: '100%', background: 'var(--bg2)', border: '1px solid color-mix(in srgb, var(--acc) 20%, transparent)', color: 'var(--ink)', padding: '7px 9px', fontFamily: rj, fontSize: 12.5, fontWeight: 500, borderRadius: 3, boxSizing: 'border-box' };
+const ghostBtn: React.CSSProperties = { background: 'transparent', color: 'var(--acc)', border: '1px solid color-mix(in srgb, var(--acc) 40%, transparent)', padding: '8px 14px', fontFamily: rj, fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 };
+const goldBtn: React.CSSProperties = { background: 'var(--acc)', color: 'var(--bg)', border: 'none', padding: '8px 16px', fontFamily: rj, fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 };
 
 const STORAGE_KEY = 'contacts';
 const SINGLETON_ID = 'contactbook';
@@ -117,13 +117,13 @@ export default function ContactBookPage() {
     <div>
       {/* Header */}
       <div style={{ marginBottom: 24 }}>
-        <div style={{ fontFamily: rj, fontSize: 10, letterSpacing: '2px', textTransform: 'uppercase', color: '#c8a84b', fontWeight: 700, marginBottom: 8 }}>
+        <div style={{ fontFamily: rj, fontSize: 10, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--acc)', fontWeight: 700, marginBottom: 8 }}>
           ⚓ Voyage Hub · Contact Book
         </div>
         <h1 style={{ fontFamily: lb, fontSize: 'clamp(22px,3vw,32px)', fontWeight: 700, lineHeight: 1.1, marginBottom: 8 }}>
           Contact <em style={g}>Book</em>
         </h1>
-        <p style={{ fontSize: 13, color: '#b0c0a4', lineHeight: 1.6, maxWidth: 720 }}>
+        <p style={{ fontSize: 13, color: 'var(--ink2)', lineHeight: 1.6, maxWidth: 720 }}>
           Your agents, surveyors, bunker suppliers, P&amp;I and class contacts — organised by port and
           category, with emergency numbers pinned to the top. Stored in your browser.
         </p>
@@ -133,16 +133,16 @@ export default function ContactBookPage() {
       <div className="action-bar" style={{ display: 'flex', gap: 10, marginBottom: 22, flexWrap: 'wrap', alignItems: 'center' }}>
         <button onClick={openNew} style={goldBtn}>+ Add Contact</button>
         <button onClick={() => window.print()} style={ghostBtn}>🖨️ Print / PDF</button>
-        {saveMsg && <span style={{ color: '#4caf76', fontFamily: rj, fontSize: 12, fontWeight: 600 }}>{saveMsg}</span>}
-        <span style={{ fontFamily: rj, fontSize: 11, color: '#7a8a72', marginLeft: 'auto' }}>
+        {saveMsg && <span style={{ color: 'var(--ok)', fontFamily: rj, fontSize: 12, fontWeight: 600 }}>{saveMsg}</span>}
+        <span style={{ fontFamily: rj, fontSize: 11, color: 'var(--ink3)', marginLeft: 'auto' }}>
           {contacts.length} contact{contacts.length !== 1 ? 's' : ''}{emergencyCount > 0 && ` · ${emergencyCount} emergency`}
         </span>
       </div>
 
       {/* PSF cross-sell */}
-      <div style={{ ...card, background: 'rgba(200,168,75,.05)', borderColor: 'rgba(200,168,75,.3)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
-        <div style={{ fontFamily: rj, fontSize: 12.5, color: '#b0c0a4' }}>
-          🔎 Need an agent, chandler or service at a port? <b style={{ color: '#c8a84b' }}>Find verified providers on PortServiceFinder.</b>
+      <div style={{ ...card, background: 'color-mix(in srgb, var(--acc) 5%, transparent)', borderColor: 'color-mix(in srgb, var(--acc) 30%, transparent)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+        <div style={{ fontFamily: rj, fontSize: 12.5, color: 'var(--ink2)' }}>
+          🔎 Need an agent, chandler or service at a port? <b style={{ color: 'var(--acc)' }}>Find verified providers on PortServiceFinder.</b>
         </div>
         <a href="/" style={{ ...ghostBtn, textDecoration: 'none', display: 'inline-block' }}>Search Providers →</a>
       </div>
@@ -165,7 +165,7 @@ export default function ContactBookPage() {
 
       {/* Form */}
       {showForm && editing && (
-        <div style={{ ...card, borderColor: 'rgba(200,168,75,.5)' }}>
+        <div style={{ ...card, borderColor: 'color-mix(in srgb, var(--acc) 50%, transparent)' }}>
           <div style={sectionTitle}>{contacts.some((c) => c.id === editing.id) ? 'Edit Contact' : 'New Contact'}</div>
           <div className="ct-g3" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 10, marginBottom: 10 }}>
             <div><label style={label}>Name</label><input style={inputStyle} value={editing.name} onChange={(e) => setEditing({ ...editing, name: e.target.value })} placeholder="John Tan" /></div>
@@ -185,8 +185,8 @@ export default function ContactBookPage() {
           <div className="ct-g3" style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 10, marginBottom: 10 }}>
             <div><label style={label}>Email</label><input style={inputStyle} value={editing.email} onChange={(e) => setEditing({ ...editing, email: e.target.value })} placeholder="ops@agency.com" /></div>
             <div style={{ display: 'flex', alignItems: 'flex-end' }}>
-              <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', fontFamily: rj, fontSize: 12.5, color: editing.emergency ? '#ff8a8a' : '#7a8a72', padding: '7px 0' }}>
-                <input type="checkbox" checked={editing.emergency} onChange={(e) => setEditing({ ...editing, emergency: e.target.checked })} style={{ width: 16, height: 16, accentColor: '#ff8a8a' }} />
+              <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', fontFamily: rj, fontSize: 12.5, color: editing.emergency ? 'var(--bad)' : 'var(--ink3)', padding: '7px 0' }}>
+                <input type="checkbox" checked={editing.emergency} onChange={(e) => setEditing({ ...editing, emergency: e.target.checked })} style={{ width: 16, height: 16, accentColor: 'var(--bad)' }} />
                 🚨 Emergency / 24h
               </label>
             </div>
@@ -201,30 +201,30 @@ export default function ContactBookPage() {
 
       {/* List */}
       {contacts.length === 0 && !showForm && (
-        <div style={{ ...card, textAlign: 'center', color: '#7a8a72', fontFamily: rj }}>
-          No contacts yet. Tap <b style={{ color: '#c8a84b' }}>+ Add Contact</b> to build your book.
+        <div style={{ ...card, textAlign: 'center', color: 'var(--ink3)', fontFamily: rj }}>
+          No contacts yet. Tap <b style={{ color: 'var(--acc)' }}>+ Add Contact</b> to build your book.
         </div>
       )}
       {contacts.length > 0 && filtered.length === 0 && (
-        <div style={{ ...card, textAlign: 'center', color: '#7a8a72', fontFamily: rj }}>No contacts match your search.</div>
+        <div style={{ ...card, textAlign: 'center', color: 'var(--ink3)', fontFamily: rj }}>No contacts match your search.</div>
       )}
 
       <div className="ct-list" style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 12 }}>
         {filtered.map((c) => {
           const m = CATEGORY_META[c.category];
           return (
-            <div key={c.id} style={{ ...card, marginBottom: 0, borderColor: c.emergency ? 'rgba(255,138,138,.4)' : 'rgba(200,168,75,.18)', padding: '14px 16px' }}>
+            <div key={c.id} style={{ ...card, marginBottom: 0, borderColor: c.emergency ? 'color-mix(in srgb, var(--bad) 40%, transparent)' : 'color-mix(in srgb, var(--acc) 18%, transparent)', padding: '14px 16px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8, marginBottom: 8 }}>
                 <div>
-                  <div style={{ fontFamily: lb, fontSize: 15, fontWeight: 700, color: '#f5f0e8', lineHeight: 1.2 }}>{c.name || c.company}</div>
-                  {c.name && c.company && <div style={{ fontFamily: rj, fontSize: 11.5, color: '#b0c0a4' }}>{c.company}</div>}
-                  <div style={{ fontFamily: rj, fontSize: 10, color: '#7a8a72', marginTop: 3, display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                  <div style={{ fontFamily: lb, fontSize: 15, fontWeight: 700, color: 'var(--ink)', lineHeight: 1.2 }}>{c.name || c.company}</div>
+                  {c.name && c.company && <div style={{ fontFamily: rj, fontSize: 11.5, color: 'var(--ink2)' }}>{c.company}</div>}
+                  <div style={{ fontFamily: rj, fontSize: 10, color: 'var(--ink3)', marginTop: 3, display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                     <span>{m.icon} {m.label}</span>
                     {c.port && <span>📍 {c.port}</span>}
                     {c.vhf && <span>📻 {c.vhf}</span>}
                   </div>
                 </div>
-                {c.emergency && <span style={{ fontSize: 9, background: 'rgba(255,138,138,.14)', color: '#ff8a8a', padding: '2px 7px', borderRadius: 3, fontFamily: rj, fontWeight: 700, letterSpacing: '.5px', border: '1px solid rgba(255,138,138,.3)', whiteSpace: 'nowrap' }}>🚨 24H</span>}
+                {c.emergency && <span style={{ fontSize: 9, background: 'color-mix(in srgb, var(--bad) 14%, transparent)', color: 'var(--bad)', padding: '2px 7px', borderRadius: 3, fontFamily: rj, fontWeight: 700, letterSpacing: '.5px', border: '1px solid color-mix(in srgb, var(--bad) 30%, transparent)', whiteSpace: 'nowrap' }}>🚨 24H</span>}
               </div>
 
               <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 8 }}>
@@ -232,11 +232,11 @@ export default function ContactBookPage() {
                 {c.email && <a href={`mailto:${c.email}`} style={linkBtn}>✉️ Email</a>}
               </div>
 
-              {c.notes && <p style={{ fontFamily: rj, fontSize: 11, color: '#7a8a72', marginTop: 8, lineHeight: 1.5 }}>{c.notes}</p>}
+              {c.notes && <p style={{ fontFamily: rj, fontSize: 11, color: 'var(--ink3)', marginTop: 8, lineHeight: 1.5 }}>{c.notes}</p>}
 
-              <div style={{ display: 'flex', gap: 10, marginTop: 10, paddingTop: 8, borderTop: '1px dashed rgba(200,168,75,.12)' }}>
-                <button onClick={() => openEdit(c)} style={{ background: 'transparent', border: 'none', color: '#c8a84b', fontFamily: rj, fontSize: 10.5, cursor: 'pointer', letterSpacing: '.5px', textTransform: 'uppercase', fontWeight: 700 }}>Edit</button>
-                <button onClick={() => deleteContact(c.id)} style={{ background: 'transparent', border: 'none', color: '#ff8a8a', fontFamily: rj, fontSize: 10.5, cursor: 'pointer', letterSpacing: '.5px', textTransform: 'uppercase', fontWeight: 700 }}>Delete</button>
+              <div style={{ display: 'flex', gap: 10, marginTop: 10, paddingTop: 8, borderTop: '1px dashed color-mix(in srgb, var(--acc) 12%, transparent)' }}>
+                <button onClick={() => openEdit(c)} style={{ background: 'transparent', border: 'none', color: 'var(--acc)', fontFamily: rj, fontSize: 10.5, cursor: 'pointer', letterSpacing: '.5px', textTransform: 'uppercase', fontWeight: 700 }}>Edit</button>
+                <button onClick={() => deleteContact(c.id)} style={{ background: 'transparent', border: 'none', color: 'var(--bad)', fontFamily: rj, fontSize: 10.5, cursor: 'pointer', letterSpacing: '.5px', textTransform: 'uppercase', fontWeight: 700 }}>Delete</button>
               </div>
             </div>
           );
@@ -261,15 +261,15 @@ export default function ContactBookPage() {
 function chip(active: boolean): React.CSSProperties {
   return {
     padding: '5px 11px',
-    background: active ? '#c8a84b' : 'transparent',
-    color: active ? '#08100a' : '#7a8a72',
-    border: `1px solid ${active ? '#c8a84b' : 'rgba(200,168,75,.25)'}`,
+    background: active ? 'var(--acc)' : 'transparent',
+    color: active ? 'var(--bg)' : 'var(--ink3)',
+    border: `1px solid ${active ? 'var(--acc)' : 'color-mix(in srgb, var(--acc) 25%, transparent)'}`,
     fontFamily: rj, fontSize: 10, letterSpacing: '.5px', fontWeight: 700, cursor: 'pointer', borderRadius: 4, whiteSpace: 'nowrap',
   };
 }
 
 const linkBtn: React.CSSProperties = {
-  display: 'inline-block', textDecoration: 'none', background: '#0c1610', color: '#c8a84b',
-  border: '1px solid rgba(200,168,75,.25)', padding: '5px 10px', borderRadius: 3,
+  display: 'inline-block', textDecoration: 'none', background: 'var(--bg2)', color: 'var(--acc)',
+  border: '1px solid color-mix(in srgb, var(--acc) 25%, transparent)', padding: '5px 10px', borderRadius: 3,
   fontFamily: rj, fontSize: 11.5, fontWeight: 600,
 };

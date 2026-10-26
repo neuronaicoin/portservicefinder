@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useState } from "react";
 import { submitRfq } from "@/lib/rfq";
+import { SiteHeader } from "@/components/SiteHeader";
+import { SiteFooter } from "@/components/SiteFooter";
 import { PORT_DATA, MARINE_SERVICES } from "@/lib/port-data";
 
 const countries = Object.keys(PORT_DATA).sort();
@@ -56,93 +58,99 @@ export default function RequestQuotePage() {
     setResult({ distributedCount: res.distributedCount });
   }
 
+  const css = `
+    .rq{max-width:600px;margin:0 auto;padding:40px 20px 8px;color:var(--ink);font-family:var(--font-ui)}
+    .rq .eyebrow{font-size:13px;font-weight:600;color:var(--ink3);margin:0 0 8px}
+    .rq h1{font-size:clamp(28px,6vw,38px);font-weight:700;letter-spacing:-0.02em;line-height:1.15;margin:0 0 10px}
+    .rq .lede{font-size:16px;line-height:1.65;color:var(--ink2);margin:0 0 24px}
+    .rq form{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px}
+    .rq .row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+    .rq .field{margin-bottom:14px}
+    .rq .row .field{margin-bottom:0}
+    .rq label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin-bottom:6px}
+    .rq input,.rq select,.rq textarea{width:100%;box-sizing:border-box;min-height:44px;padding:10px 12px;border-radius:10px;background:var(--bg);border:1px solid var(--line);color:var(--ink);font-size:15px;font-family:var(--font-ui)}
+    .rq input:focus,.rq select:focus,.rq textarea:focus{outline:none;border-color:var(--acc)}
+    .rq .seg{display:flex;gap:8px}
+    .rq .seg button{flex:1;min-height:44px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;font-family:var(--font-ui)}
+    .rq .sep{border-top:1px solid var(--line);padding-top:16px;margin-top:4px}
+    .rq .hint{font-size:13px;color:var(--ink3);margin:0 0 12px}
+    .rq .err{background:color-mix(in srgb, var(--bad) 10%, transparent);border:1px solid color-mix(in srgb, var(--bad) 30%, transparent);border-radius:10px;padding:10px 12px;margin-bottom:14px;color:var(--bad);font-size:14px}
+    .rq .submit{width:100%;min-height:48px;border-radius:10px;border:none;background:var(--acc);color:var(--on-acc);font-weight:650;font-size:15px;font-family:var(--font-ui)}
+    .rq .submit:hover{background:var(--acc-h)}
+    .rq .done{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:26px;text-align:center}
+    .rq .done p{color:var(--ink2);font-size:15px;line-height:1.7;margin:0}
+    .rq .done a{color:var(--acc)}
+    @media (max-width:480px){.rq .row{grid-template-columns:1fr}}
+  `;
+
   if (result) {
     return (
-      <main style={{ minHeight: "100vh", background: "#08100a", display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
-        <div style={{ maxWidth: 460, textAlign: "center" }}>
-          <div style={{ fontSize: 40, marginBottom: 16 }}>✅</div>
-          <h1 style={{ color: "#f5f0e8", fontSize: 24, fontWeight: 700, marginBottom: 12 }}>Request sent</h1>
-          {result.distributedCount > 0 ? (
-            <p style={{ color: "#d4dcc8", fontSize: 14, lineHeight: 1.7 }}>
-              Your request was sent to <b style={{ color: "#c8a84b" }}>{result.distributedCount}</b> verified{" "}
-              {result.distributedCount === 1 ? "provider" : "providers"} matching your port and service. They&apos;ll
-              contact you directly at the email or phone you provided.
+      <>
+        <style>{css}</style>
+        <SiteHeader />
+        <main className="rq">
+          <div className="done" role="status">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--ok)" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ marginBottom: 10 }}>
+              <circle cx="12" cy="12" r="10" />
+              <path d="M7.5 12.5l3 3 6-6.5" />
+            </svg>
+            <h1>Request sent</h1>
+            {result.distributedCount > 0 ? (
+              <p>
+                Your request went to <b style={{ color: "var(--ink)" }}>{result.distributedCount}</b>{" "}
+                {result.distributedCount === 1 ? "provider" : "providers"} listed for that port and service. They will contact you
+                directly by email or phone.
+              </p>
+            ) : (
+              <p>
+                No listed provider matches that exact port and service yet. We have logged your request; in the meantime you can{" "}
+                <Link href="/ports">browse providers by port</Link>.
+              </p>
+            )}
+            <p style={{ marginTop: 18 }}>
+              <Link href="/">Back to the homepage</Link>
             </p>
-          ) : (
-            <p style={{ color: "#d4dcc8", fontSize: 14, lineHeight: 1.7 }}>
-              We don&apos;t have a verified provider matching that exact port and service yet. Your request has
-              been logged — in the meantime, try{" "}
-              <Link href="/ports" style={{ color: "#c8a84b" }}>browsing providers directly</Link>.
-            </p>
-          )}
-          <Link href="/" style={{ display: "inline-block", marginTop: 24, color: "#c8a84b", fontSize: 13, fontWeight: 700, textDecoration: "underline" }}>
-            ← Back to homepage
-          </Link>
-        </div>
-      </main>
+          </div>
+        </main>
+        <SiteFooter />
+      </>
     );
   }
 
   return (
-    <main style={{ minHeight: "100vh", background: "#08100a", padding: "40px 16px 60px" }}>
-      <div style={{ maxWidth: 560, margin: "0 auto" }}>
-        <Link href="/" style={{ color: "#c8a84b", fontSize: 13, fontWeight: 700, textDecoration: "none" }}>
-          ← PortServiceFinder
-        </Link>
+    <>
+      <style>{css}</style>
+      <SiteHeader />
+      <main className="rq">
+        <p className="eyebrow">For vessel operators</p>
+        <h1>Request a quote</h1>
+        <p className="lede">
+          Send one request and it goes to the providers listed for your port and service. No sign-up needed; they contact you directly.
+        </p>
 
-        <div style={{ textAlign: "center", margin: "24px 0 28px" }}>
-          <h1 style={{ color: "#f5f0e8", fontSize: 28, fontWeight: 700, marginBottom: 8 }}>Request a Quote</h1>
-          <p style={{ color: "#d4dcc8", fontSize: 14, lineHeight: 1.6 }}>
-            Send one request. It goes directly to verified providers matching your port and service — no signup
-            needed, they&apos;ll contact you.
-          </p>
-        </div>
-
-        <form
-          onSubmit={handleSubmit}
-          style={{ background: "#111c13", border: "1px solid rgba(200,168,75,.15)", borderRadius: 14, padding: 24 }}
-        >
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 14 }}>
-            <div>
-              <label style={{ display: "block", color: "#c8a84b", fontSize: 10, fontWeight: 700, letterSpacing: 1, textTransform: "uppercase", marginBottom: 6 }}>
-                Country *
-              </label>
-              <select
-                value={country}
-                onChange={(e) => { setCountry(e.target.value); setPort(""); }}
-                style={{ width: "100%", padding: "10px 12px", borderRadius: 8, background: "#08100a", border: "1px solid rgba(255,255,255,.12)", color: "#f5f0e8", fontSize: 13 }}
-              >
+        <form onSubmit={handleSubmit}>
+          <div className="row">
+            <div className="field">
+              <label htmlFor="rq-country">Country *</label>
+              <select id="rq-country" value={country} onChange={(e) => { setCountry(e.target.value); setPort(""); }}>
                 <option value="">Select</option>
                 {countries.map((c) => <option key={c}>{c}</option>)}
               </select>
             </div>
-            <div>
-              <label style={{ display: "block", color: "#c8a84b", fontSize: 10, fontWeight: 700, letterSpacing: 1, textTransform: "uppercase", marginBottom: 6 }}>
-                Port *
-              </label>
-              <select
-                value={port}
-                onChange={(e) => setPort(e.target.value)}
-                disabled={!country}
-                style={{ width: "100%", padding: "10px 12px", borderRadius: 8, background: "#08100a", border: "1px solid rgba(255,255,255,.12)", color: "#f5f0e8", fontSize: 13 }}
-              >
+            <div className="field">
+              <label htmlFor="rq-port">Port *</label>
+              <select id="rq-port" value={port} onChange={(e) => setPort(e.target.value)} disabled={!country}>
                 <option value="">Select</option>
                 {availablePorts.map((p) => <option key={p}>{p}</option>)}
               </select>
             </div>
           </div>
 
-          <div style={{ marginBottom: 14 }}>
-            <label style={{ display: "block", color: "#c8a84b", fontSize: 10, fontWeight: 700, letterSpacing: 1, textTransform: "uppercase", marginBottom: 6 }}>
-              Service Needed *
-            </label>
-            <select
-              value={serviceType}
-              onChange={(e) => setServiceType(e.target.value)}
-              style={{ width: "100%", padding: "10px 12px", borderRadius: 8, background: "#08100a", border: "1px solid rgba(255,255,255,.12)", color: "#f5f0e8", fontSize: 13 }}
-            >
+          <div className="field">
+            <label htmlFor="rq-service">Service needed *</label>
+            <select id="rq-service" value={serviceType} onChange={(e) => setServiceType(e.target.value)}>
               <option value="">Select a service</option>
-              <option value="agent">Ship Agency</option>
+              <option value="agent">Ship agency</option>
               <option value="chandler">Shipchandler</option>
               {MARINE_SERVICES.map((s: any) => (
                 <option key={s.key} value={s.key}>{s.label}</option>
@@ -150,111 +158,75 @@ export default function RequestQuotePage() {
             </select>
           </div>
 
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 14 }}>
-            <div>
-              <label style={{ display: "block", color: "#c8a84b", fontSize: 10, fontWeight: 700, letterSpacing: 1, textTransform: "uppercase", marginBottom: 6 }}>
-                Vessel Type
-              </label>
-              <input
-                value={vesselType}
-                onChange={(e) => setVesselType(e.target.value)}
-                placeholder="e.g. Bulk Carrier"
-                style={{ width: "100%", padding: "10px 12px", borderRadius: 8, background: "#08100a", border: "1px solid rgba(255,255,255,.12)", color: "#f5f0e8", fontSize: 13 }}
-              />
+          <div className="row">
+            <div className="field">
+              <label htmlFor="rq-vessel">Vessel type</label>
+              <input id="rq-vessel" value={vesselType} onChange={(e) => setVesselType(e.target.value)} placeholder="e.g. Bulk carrier" />
             </div>
-            <div>
-              <label style={{ display: "block", color: "#c8a84b", fontSize: 10, fontWeight: 700, letterSpacing: 1, textTransform: "uppercase", marginBottom: 6 }}>
-                ETA
-              </label>
-              <input
-                type="date"
-                value={eta}
-                onChange={(e) => setEta(e.target.value)}
-                style={{ width: "100%", padding: "10px 12px", borderRadius: 8, background: "#08100a", border: "1px solid rgba(255,255,255,.12)", color: "#f5f0e8", fontSize: 13 }}
-              />
+            <div className="field">
+              <label htmlFor="rq-eta">ETA</label>
+              <input id="rq-eta" type="date" value={eta} onChange={(e) => setEta(e.target.value)} />
             </div>
           </div>
 
-          <div style={{ marginBottom: 14 }}>
-            <label style={{ display: "block", color: "#c8a84b", fontSize: 10, fontWeight: 700, letterSpacing: 1, textTransform: "uppercase", marginBottom: 6 }}>
-              Requirement Details *
-            </label>
+          <div className="field">
+            <label htmlFor="rq-details">Requirement details *</label>
             <textarea
+              id="rq-details"
               value={requirementDetails}
               onChange={(e) => setRequirementDetails(e.target.value)}
-              placeholder="Describe what you need — e.g. husbandry + crew change, 2 crew signing off"
+              placeholder="What you need, e.g. husbandry and crew change, 2 crew signing off"
               rows={3}
-              style={{ width: "100%", padding: "10px 12px", borderRadius: 8, background: "#08100a", border: "1px solid rgba(255,255,255,.12)", color: "#f5f0e8", fontSize: 13 }}
             />
           </div>
 
-          <div style={{ marginBottom: 18 }}>
-            <label style={{ display: "block", color: "#c8a84b", fontSize: 10, fontWeight: 700, letterSpacing: 1, textTransform: "uppercase", marginBottom: 6 }}>
-              Urgency
-            </label>
-            <div style={{ display: "flex", gap: 8 }}>
+          <div className="field">
+            <label>Urgency</label>
+            <div className="seg">
               {(["standard", "urgent"] as const).map((u) => (
                 <button
                   key={u}
                   type="button"
                   onClick={() => setUrgency(u)}
+                  aria-pressed={urgency === u}
                   style={{
-                    flex: 1, padding: "9px 12px", borderRadius: 8, fontSize: 12.5, fontWeight: 700, textTransform: "capitalize",
-                    border: urgency === u ? "1.5px solid #c8a84b" : "1px solid rgba(255,255,255,.12)",
-                    background: urgency === u ? "rgba(200,168,75,.15)" : "transparent",
-                    color: urgency === u ? "#c8a84b" : "#d4dcc8",
+                    border: urgency === u ? "1.5px solid var(--acc)" : "1px solid var(--line)",
+                    background: urgency === u ? "color-mix(in srgb, var(--acc) 12%, transparent)" : "var(--bg)",
+                    color: urgency === u ? "var(--ink)" : "var(--ink2)",
                   }}
                 >
-                  {u === "urgent" ? "⚡ Urgent" : u}
+                  {u === "urgent" ? "Urgent" : "Standard"}
                 </button>
               ))}
             </div>
           </div>
 
-          <div style={{ borderTop: "1px solid rgba(255,255,255,.08)", paddingTop: 16, marginBottom: 14 }}>
-            <div style={{ color: "#7a8a72", fontSize: 11, marginBottom: 12 }}>Your contact details (so providers can reach you)</div>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 12 }}>
-              <input
-                value={operatorName}
-                onChange={(e) => setOperatorName(e.target.value)}
-                placeholder="Your name / company *"
-                style={{ padding: "10px 12px", borderRadius: 8, background: "#08100a", border: "1px solid rgba(255,255,255,.12)", color: "#f5f0e8", fontSize: 13 }}
-              />
-              <input
-                type="email"
-                value={operatorEmail}
-                onChange={(e) => setOperatorEmail(e.target.value)}
-                placeholder="Email *"
-                style={{ padding: "10px 12px", borderRadius: 8, background: "#08100a", border: "1px solid rgba(255,255,255,.12)", color: "#f5f0e8", fontSize: 13 }}
-              />
+          <div className="sep">
+            <p className="hint">Your contact details, so providers can reach you</p>
+            <div className="row">
+              <div className="field">
+                <label htmlFor="rq-name">Name or company *</label>
+                <input id="rq-name" autoComplete="organization" value={operatorName} onChange={(e) => setOperatorName(e.target.value)} />
+              </div>
+              <div className="field">
+                <label htmlFor="rq-email">Email *</label>
+                <input id="rq-email" type="email" autoComplete="email" value={operatorEmail} onChange={(e) => setOperatorEmail(e.target.value)} />
+              </div>
             </div>
-            <input
-              value={operatorPhone}
-              onChange={(e) => setOperatorPhone(e.target.value)}
-              placeholder="Phone / WhatsApp (optional)"
-              style={{ width: "100%", padding: "10px 12px", borderRadius: 8, background: "#08100a", border: "1px solid rgba(255,255,255,.12)", color: "#f5f0e8", fontSize: 13 }}
-            />
+            <div className="field">
+              <label htmlFor="rq-phone">Phone or WhatsApp (optional)</label>
+              <input id="rq-phone" type="tel" autoComplete="tel" value={operatorPhone} onChange={(e) => setOperatorPhone(e.target.value)} />
+            </div>
           </div>
 
-          {error && (
-            <div style={{ background: "rgba(224,85,85,.1)", border: "1px solid rgba(224,85,85,.3)", borderRadius: 8, padding: "10px 12px", marginBottom: 14 }}>
-              <span style={{ color: "#e88", fontSize: 12.5 }}>{error}</span>
-            </div>
-          )}
+          {error && <div className="err" role="alert">{error}</div>}
 
-          <button
-            type="submit"
-            disabled={submitting}
-            style={{
-              width: "100%", padding: "13px", borderRadius: 10, border: "none",
-              background: "#c8a84b", color: "#08100a", fontWeight: 700, fontSize: 14,
-              cursor: submitting ? "not-allowed" : "pointer", opacity: submitting ? 0.6 : 1,
-            }}
-          >
-            {submitting ? "Sending..." : "Send Request →"}
+          <button type="submit" className="submit" disabled={submitting} style={{ cursor: submitting ? "not-allowed" : "pointer", opacity: submitting ? 0.6 : 1 }}>
+            {submitting ? "Sending..." : "Send request"}
           </button>
         </form>
-      </div>
-    </main>
+      </main>
+      <SiteFooter />
+    </>
   );
 }

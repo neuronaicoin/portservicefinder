@@ -3,9 +3,9 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { listItems, deleteItem, exportAll, importAll, type ToolKey } from '@/lib/voyage-storage';
 
-const lb = "'Libre Bodoni', serif";
-const rj = "'Rajdhani', sans-serif";
-const g = { color: '#c8a84b', fontStyle: 'italic' };
+const lb = 'var(--font-display)';
+const rj = 'var(--font-ui)';
+const g = { color: 'var(--acc)' };
 
 const TOOL_INFO: Record<string, { name: string; icon: string; href: string }> = {
   bunker: { name: 'CP Performance', icon: '⛽', href: '/voyage/bunker' },
@@ -95,11 +95,11 @@ export default function SavedItemsPage() {
   return (
     <div>
       {/* HERO */}
-      <section style={{ padding: '30px 0 20px', borderBottom: '1px solid rgba(200,168,75,.1)', marginBottom: 28 }}>
+      <section style={{ padding: '30px 0 20px', borderBottom: '1px solid color-mix(in srgb, var(--acc) 10%, transparent)', marginBottom: 28 }}>
         <h1 style={{ fontFamily: lb, fontSize: 'clamp(24px,3.5vw,38px)', fontWeight: 700, marginBottom: 10 }}>
           💾 My <em style={g}>Saved</em> Items
         </h1>
-        <p style={{ fontSize: 13, color: '#b0c0a4', lineHeight: 1.6 }}>
+        <p style={{ fontSize: 13, color: 'var(--ink2)', lineHeight: 1.6 }}>
           All your saved voyages, calculations, and documents — stored locally in your browser.
         </p>
 
@@ -110,8 +110,8 @@ export default function SavedItemsPage() {
             disabled={items.length === 0}
             style={{
               background: 'transparent',
-              border: '1px solid rgba(200,168,75,.4)',
-              color: '#c8a84b',
+              border: '1px solid color-mix(in srgb, var(--acc) 40%, transparent)',
+              color: 'var(--acc)',
               padding: '8px 14px',
               fontFamily: rj,
               fontSize: 11,
@@ -129,8 +129,8 @@ export default function SavedItemsPage() {
             onClick={() => setShowImport(!showImport)}
             style={{
               background: 'transparent',
-              border: '1px solid rgba(200,168,75,.4)',
-              color: '#c8a84b',
+              border: '1px solid color-mix(in srgb, var(--acc) 40%, transparent)',
+              color: 'var(--acc)',
               padding: '8px 14px',
               fontFamily: rj,
               fontSize: 11,
@@ -150,9 +150,9 @@ export default function SavedItemsPage() {
             style={{
               marginTop: 12,
               padding: '8px 14px',
-              background: 'rgba(200,168,75,.08)',
-              border: '1px solid rgba(200,168,75,.3)',
-              color: '#c8a84b',
+              background: 'color-mix(in srgb, var(--acc) 8%, transparent)',
+              border: '1px solid color-mix(in srgb, var(--acc) 30%, transparent)',
+              color: 'var(--acc)',
               fontFamily: rj,
               fontSize: 12,
               fontWeight: 600,
@@ -172,9 +172,9 @@ export default function SavedItemsPage() {
               rows={6}
               style={{
                 width: '100%',
-                background: '#0c1610',
-                border: '1px solid rgba(200,168,75,.3)',
-                color: '#f5f0e8',
+                background: 'var(--bg2)',
+                border: '1px solid color-mix(in srgb, var(--acc) 30%, transparent)',
+                color: 'var(--ink)',
                 padding: 12,
                 fontFamily: 'monospace',
                 fontSize: 11,
@@ -185,8 +185,8 @@ export default function SavedItemsPage() {
               onClick={handleImport}
               style={{
                 marginTop: 8,
-                background: '#c8a84b',
-                color: '#08100a',
+                background: 'var(--acc)',
+                color: 'var(--bg)',
                 border: 'none',
                 padding: '8px 14px',
                 fontFamily: rj,
@@ -211,9 +211,9 @@ export default function SavedItemsPage() {
             onClick={() => setFilter('all')}
             style={{
               padding: '6px 12px',
-              background: filter === 'all' ? '#c8a84b' : 'transparent',
-              color: filter === 'all' ? '#08100a' : '#7a8a72',
-              border: `1px solid ${filter === 'all' ? '#c8a84b' : 'rgba(200,168,75,.25)'}`,
+              background: filter === 'all' ? 'var(--acc)' : 'transparent',
+              color: filter === 'all' ? 'var(--bg)' : 'var(--ink3)',
+              border: `1px solid ${filter === 'all' ? 'var(--acc)' : 'color-mix(in srgb, var(--acc) 25%, transparent)'}`,
               fontFamily: rj,
               fontSize: 10,
               letterSpacing: '1px',
@@ -235,9 +235,9 @@ export default function SavedItemsPage() {
                 onClick={() => setFilter(key)}
                 style={{
                   padding: '6px 12px',
-                  background: filter === key ? '#c8a84b' : 'transparent',
-                  color: filter === key ? '#08100a' : '#7a8a72',
-                  border: `1px solid ${filter === key ? '#c8a84b' : 'rgba(200,168,75,.25)'}`,
+                  background: filter === key ? 'var(--acc)' : 'transparent',
+                  color: filter === key ? 'var(--bg)' : 'var(--ink3)',
+                  border: `1px solid ${filter === key ? 'var(--acc)' : 'color-mix(in srgb, var(--acc) 25%, transparent)'}`,
                   fontFamily: rj,
                   fontSize: 10,
                   letterSpacing: '1px',
@@ -260,7 +260,7 @@ export default function SavedItemsPage() {
           style={{
             padding: '60px 20px',
             textAlign: 'center',
-            border: '1px dashed rgba(200,168,75,.2)',
+            border: '1px dashed color-mix(in srgb, var(--acc) 20%, transparent)',
             borderRadius: 6,
           }}
         >
@@ -268,15 +268,15 @@ export default function SavedItemsPage() {
           <h3 style={{ fontFamily: lb, fontSize: 18, fontWeight: 700, marginBottom: 8 }}>
             No saved items yet
           </h3>
-          <p style={{ fontSize: 13, color: '#b0c0a4', marginBottom: 22 }}>
-            Use any tool and click <strong style={{ color: '#c8a84b' }}>Save</strong> to keep your
+          <p style={{ fontSize: 13, color: 'var(--ink2)', marginBottom: 22 }}>
+            Use any tool and click <strong style={{ color: 'var(--acc)' }}>Save</strong> to keep your
             work here.
           </p>
           <Link href="/voyage" style={{ textDecoration: 'none' }}>
             <button
               style={{
-                background: '#c8a84b',
-                color: '#08100a',
+                background: 'var(--acc)',
+                color: 'var(--bg)',
                 border: 'none',
                 padding: '10px 22px',
                 fontFamily: rj,
@@ -301,8 +301,8 @@ export default function SavedItemsPage() {
               <div
                 key={`${item.key}_${item.id}`}
                 style={{
-                  background: '#111c13',
-                  border: '1px solid rgba(200,168,75,.15)',
+                  background: 'var(--card)',
+                  border: '1px solid color-mix(in srgb, var(--acc) 15%, transparent)',
                   padding: '14px 16px',
                   borderRadius: 4,
                   display: 'flex',
@@ -318,13 +318,13 @@ export default function SavedItemsPage() {
                       fontFamily: lb,
                       fontSize: 14,
                       fontWeight: 600,
-                      color: '#f5f0e8',
+                      color: 'var(--ink)',
                       marginBottom: 3,
                     }}
                   >
                     {item.name}
                   </div>
-                  <div style={{ fontSize: 11, color: '#7a8a72', fontFamily: rj }}>
+                  <div style={{ fontSize: 11, color: 'var(--ink3)', fontFamily: rj }}>
                     {info.name} · Last edit: {new Date(item.updatedAt).toLocaleString()}
                   </div>
                 </div>
@@ -333,8 +333,8 @@ export default function SavedItemsPage() {
                     <button
                       style={{
                         background: 'transparent',
-                        border: '1px solid #c8a84b',
-                        color: '#c8a84b',
+                        border: '1px solid var(--acc)',
+                        color: 'var(--acc)',
                         padding: '6px 12px',
                         fontFamily: rj,
                         fontSize: 10,
@@ -352,8 +352,8 @@ export default function SavedItemsPage() {
                     onClick={() => handleDelete(item.key, item.id, item.name)}
                     style={{
                       background: 'transparent',
-                      border: '1px solid rgba(255,138,138,.3)',
-                      color: '#ff8a8a',
+                      border: '1px solid color-mix(in srgb, var(--bad) 30%, transparent)',
+                      color: 'var(--bad)',
                       padding: '6px 12px',
                       fontFamily: rj,
                       fontSize: 10,

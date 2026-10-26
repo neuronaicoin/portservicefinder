@@ -1,250 +1,201 @@
-'use client';
-
 import Link from 'next/link';
-import { useState } from 'react';
+import type { Metadata } from 'next';
+import { SiteHeader } from '@/components/SiteHeader';
+import { SiteFooter } from '@/components/SiteFooter';
 
-interface FAQItem { q: string; a: string }
-interface FAQCategory { title: string; icon: string; items: FAQItem[] }
+export const metadata: Metadata = {
+  title: 'FAQ: Vessel Operators and Providers',
+  description:
+    'Answers about PortServiceFinder: free search for vessel operators, how listings work, launch-period pricing for providers, payments and where we are based.',
+  alternates: { canonical: '/faq' },
+};
+
+interface FAQItem {
+  q: string;
+  a: string;
+}
+interface FAQCategory {
+  title: string;
+  items: FAQItem[];
+}
 
 const FAQ_DATA: FAQCategory[] = [
   {
-    title: 'For Vessel Operators',
-    icon: '🚢',
+    title: 'For vessel operators',
     items: [
-      { q: 'Is PortServiceFinder free for vessel operators?', a: 'Yes, completely free. There is no subscription, no signup, no paywall. Search any port worldwide and contact any provider — always free for vessel operators, ship managers, captains, and shipping companies.' },
-      { q: 'How do I contact a provider after I find them?', a: 'Click on any provider listing to see their full contact details — phone, email, WhatsApp, and website. Communication happens directly between you and the provider. We never sit in the middle, take a commission, or filter messages.' },
-      { q: 'How are providers verified?', a: 'Every provider on the platform goes through our manual verification process. We check business registration, contact details, port operations, and reputation. Verified providers display the green "Verified" badge. Note: verification confirms legitimacy, not an endorsement of service quality.' },
-      { q: 'What if no provider is listed at my port?', a: 'Our smart fallback shows other providers from the same country. We are actively expanding our database — if your specific port is not covered yet, you can also contact us and we will prioritise outreach to providers at that port.' },
+      {
+        q: 'Is PortServiceFinder free for vessel operators?',
+        a: 'Yes. There is no subscription, no sign-up and no paywall. Search any port and contact any provider for free, whether you are a ship manager, master, superintendent or shipping company.',
+      },
+      {
+        q: 'How do I contact a provider after I find them?',
+        a: 'Open the provider listing to see their phone, email, WhatsApp and website. You talk to the provider directly. We do not sit in the middle, filter messages or take a commission.',
+      },
+      {
+        q: 'Can I ask several providers for a quote at once?',
+        a: 'Yes. Use the Request a Quote form: choose the port and service, describe what you need, and the request goes to the listed providers that match. They reply to you directly.',
+      },
+      {
+        q: 'How are providers checked?',
+        a: 'We review listings against our listing rules, including contact details and the ports a company claims to serve, and remove listings with false information. Listings that pass display a Verified badge. The badge confirms the business is real; it is not a guarantee of service quality, so do your usual checks before you appoint anyone.',
+      },
+      {
+        q: 'What if no provider is listed at my port?',
+        a: 'We show providers from the same country as a fallback. You can also email us with the port name and we will prioritise finding providers there.',
+      },
     ],
   },
   {
-    title: 'For Service Providers',
-    icon: '🏢',
+    title: 'For service providers',
     items: [
-      { q: 'How much does it cost to list my business?', a: 'There are two simple plans: $99 per month or $1,000 per year (saves $188 versus monthly). Both plans include a 1-month free trial after we verify your details. No commission is ever taken from any deal you make through the platform.' },
-      { q: 'How long is the free trial?', a: 'One full month, starting the day we verify your business details. You will not be charged during this period and you can cancel any time before the trial ends with no fees.' },
-      { q: 'What does "Founding Members" mean?', a: 'Founding Members are the first wave of providers who join while we build the platform. Currently, founding member applications are reviewed individually and may receive extended trial periods or other benefits. Apply through the registration form to be considered.' },
-      { q: 'What happens if I cancel?', a: 'You can cancel any time from your account or by emailing us. If you cancel during the free trial, you owe nothing. If you cancel during a paid month, your listing stays active until the end of the current billing period. We do not pro-rate refunds for partial months.' },
-      { q: 'How do I get the Verified Badge?', a: 'During the application process, our team reviews your business registration, contact information, and operations at the ports you list. Verification usually takes 24-48 hours. Once approved, your listing displays a green "Verified" badge to vessel operators.' },
-      { q: 'Can I list at multiple ports?', a: 'Yes. Each listing can cover up to 3 ports under one subscription. If you serve more ports, contact us and we will work out a custom arrangement.' },
+      {
+        q: 'How much does it cost to list my business?',
+        a: 'Listing is free during our launch period. After the launch period, listings will cost $49.90/month or $499.90/year. We never take a commission on any job you win through the platform.',
+      },
+      {
+        q: 'What happens when the launch period ends?',
+        a: 'We will email every listed provider before it ends. You choose whether to continue on a paid plan; you are never moved to one automatically, and you can remove your listing at any time.',
+      },
+      {
+        q: 'What does "founding member" mean?',
+        a: 'Providers who list during the launch period are our founding members. They are the first companies operators see at their ports while the directory grows.',
+      },
+      {
+        q: 'How do I get the Verified badge?',
+        a: 'Complete your profile with accurate company details, ports and contact information. We review new listings and add the badge once the details check out.',
+      },
+      {
+        q: 'How many ports can I list?',
+        a: 'Up to 10 ports per listing, at no extra cost per port. If you serve more ports than that, contact us.',
+      },
+      {
+        q: 'Do I get my own company page?',
+        a: 'Yes. Your listing appears on each of your port pages and also has its own company page with a link you can share on LinkedIn, in email signatures or with clients.',
+      },
     ],
   },
   {
-    title: 'Payments & Billing',
-    icon: '💳',
+    title: 'Payments and billing',
     items: [
-      { q: 'When am I charged?', a: 'You are not charged when you submit your application. Charging only begins after we verify your business and your 1-month free trial ends. You will receive a notification before any charge is made.' },
-      { q: 'What payment methods do you accept?', a: 'Currently we accept all major credit and debit cards (Visa, Mastercard, American Express). We are working on additional payment options including bank transfer for annual subscriptions.' },
-      { q: 'Can I switch between monthly and annual?', a: 'Yes. You can upgrade from monthly to annual any time and we will apply a pro-rated credit. Downgrading from annual to monthly happens at the end of your current annual period.' },
-      { q: 'Is my payment information secure?', a: 'Yes. Payment processing is handled through industry-standard secure payment processors. We never store full card details on our servers — only the last 4 digits for your reference.' },
+      {
+        q: 'When am I charged?',
+        a: 'Not during the launch period: listing is free and we do not ask for card details. Charges only start if you choose a paid plan after the launch period ends, and we will tell you before that happens.',
+      },
+      {
+        q: 'Which payment methods will you accept?',
+        a: 'We will publish the accepted payment methods and email listed providers before paid plans start.',
+      },
+      {
+        q: 'Can I switch between monthly and annual?',
+        a: 'Yes. Once paid plans are live you can move from monthly to annual at any time. Moving from annual to monthly takes effect at the end of your annual period.',
+      },
+      {
+        q: 'What is your refund policy?',
+        a: 'Refunds apply to paid subscriptions after the launch period, as set out in our Refund Policy. You can cancel at any time and your listing stays active until the end of the period you paid for.',
+      },
     ],
   },
   {
     title: 'General',
-    icon: 'ℹ️',
     items: [
-      { q: 'Who runs PortServiceFinder?', a: 'PortServiceFinder is operated by maritime industry professionals with years of operational experience across global shipping routes. We built this platform because we lived the problem ourselves — finding reliable port services at unfamiliar ports was inefficient and opaque. We are based in Istanbul, Turkey and serve ports worldwide.' },
-      { q: 'Where are you based?', a: 'Our base of operations is Istanbul, Turkey — one of the world\'s most strategic maritime crossroads. From here we serve providers and vessel operators across 150+ countries and 1,200+ ports.' },
-      { q: 'How is PortServiceFinder different from other maritime directories?', a: 'Three things make us different: (1) we are free for vessel operators forever, with no signup or paywall; (2) we never take commission from deals — providers pay a flat subscription only; (3) the platform is built by people who have actually worked in maritime operations, not by outsiders who only see the industry from spreadsheets.' },
+      {
+        q: 'Who runs PortServiceFinder?',
+        a: 'PortServiceFinder is run by people from the maritime industry who have worked on board and around port operations. We built it because finding reliable services at an unfamiliar port was slow and opaque.',
+      },
+      {
+        q: 'Where are you based?',
+        a: 'We are based in London, England, United Kingdom, and cover 1,200+ ports in 150+ countries.',
+      },
+      {
+        q: 'How is PortServiceFinder different from other maritime directories?',
+        a: 'Three things: search is free for vessel operators with no sign-up; we never take commission on jobs; and the platform is built by people who have done the work, so it is organised around how a port call actually runs.',
+      },
+      {
+        q: 'Do you have free tools as well?',
+        a: 'Yes. Voyage Hub has about 41 free browser-based maritime calculators and tools. No sign-up is needed and your data stays in your browser.',
+      },
     ],
   },
 ];
 
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: FAQ_DATA.flatMap((c) =>
+    c.items.map((item) => ({
+      '@type': 'Question',
+      name: item.q,
+      acceptedAnswer: { '@type': 'Answer', text: item.a },
+    })),
+  ),
+};
+
 export default function FAQPage() {
-  const g = { color: '#c8a84b' };
-  const rj = "'Rajdhani',sans-serif";
-  const lb = "'Libre Baskerville',serif";
-
-  const [openKey, setOpenKey] = useState<string | null>(null);
-
-  function toggle(key: string) {
-    setOpenKey(openKey === key ? null : key);
-  }
-
-  // Schema.org FAQPage structured data — generated from FAQ_DATA
-  const faqSchema = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: FAQ_DATA.flatMap((category) =>
-      category.items.map((item) => ({
-        "@type": "Question",
-        name: item.q,
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: item.a,
-        },
-      }))
-    ),
-  };
-
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-      />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema).replace(/</g, '\\u003c') }} />
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;500;600;700&family=Rajdhani:wght@500;600;700&display=swap');
-        *{margin:0;padding:0;box-sizing:border-box;}
-        html{scroll-behavior:smooth;}
-        body{background:#08100a;overflow-x:hidden;}
-        .nlnk:hover{color:#c8a84b!important;}
-        .footer-link:hover{color:#c8a84b!important;}
-        .btn-gold{transition:transform .25s ease, box-shadow .25s ease, filter .25s ease;}
-        .btn-gold:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(200,168,75,.35);filter:brightness(1.08);}
-        .btn-ghost{transition:background .25s ease, color .25s ease, border-color .25s ease;}
-        .btn-ghost:hover{background:rgba(200,168,75,.12);border-color:#c8a84b!important;}
-        .faq-row{transition:border-color .25s ease, background .25s ease;}
-        .faq-row:hover{border-color:rgba(200,168,75,.5)!important;}
-        .faq-q{transition:color .25s ease;}
-        .faq-row:hover .faq-q{color:#c8a84b;}
-        .logo-mark{filter:drop-shadow(0 1px 2px rgba(0,0,0,.4));}
-        @media(max-width:768px){
-          nav{padding:0 16px!important;}
-          .logo-text{font-size:16px!important;}
-          .hero-pad{padding:100px 16px 40px!important;}
-          .hero-h1{font-size:clamp(28px,7vw,42px)!important;}
-          .sec-pad{padding:36px 16px!important;}
-          .ftgrid{grid-template-columns:1fr!important;}
-          .ftpad{padding:36px 16px 0!important;}
-        }
+        .fq{max-width:820px;margin:0 auto;padding:44px 20px 8px;color:var(--ink);font-family:var(--font-ui)}
+        .fq .eyebrow{font-size:13px;font-weight:600;color:var(--ink3);margin:0 0 8px}
+        .fq h1{font-size:clamp(28px,6vw,42px);font-weight:700;letter-spacing:-0.02em;line-height:1.15;margin:0 0 12px}
+        .fq .lede{font-size:17px;line-height:1.65;color:var(--ink2);margin:0 0 12px}
+        .fq h2{font-size:20px;font-weight:700;margin:36px 0 12px}
+        .fq .list{display:grid;gap:8px}
+        .fq details{background:var(--card);border:1px solid var(--line);border-radius:12px}
+        .fq details[open]{border-color:color-mix(in srgb, var(--acc) 45%, var(--line))}
+        .fq summary{list-style:none;cursor:pointer;padding:14px 18px;min-height:44px;display:flex;align-items:center;justify-content:space-between;gap:14px;font-size:15.5px;font-weight:600;line-height:1.4}
+        .fq summary::-webkit-details-marker{display:none}
+        .fq summary .pm{flex-shrink:0;color:var(--ink3);font-size:20px;line-height:1;transition:transform .2s}
+        .fq details[open] summary .pm{transform:rotate(45deg)}
+        .fq .ans{padding:0 18px 16px;font-size:15px;line-height:1.7;color:var(--ink2)}
+        .fq .help{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px;margin-top:36px}
+        .fq .help h2{margin:0 0 6px}
+        .fq .help p{font-size:15px;line-height:1.65;color:var(--ink2);margin:0 0 14px}
+        .fq .actions{display:flex;flex-wrap:wrap;gap:10px}
+        .fq .btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 20px;border-radius:10px;font-weight:650;font-size:15px;text-decoration:none}
+        .fq .btn.primary{background:var(--acc);color:var(--on-acc)}
+        .fq .btn.primary:hover{background:var(--acc-h)}
+        .fq .btn.ghost{border:1px solid var(--line);color:var(--ink);background:var(--bg)}
       `}</style>
+      <SiteHeader />
+      <main className="fq">
+        <p className="eyebrow">FAQ</p>
+        <h1>Frequently asked questions</h1>
+        <p className="lede">Common questions from vessel operators, service providers and others in the industry.</p>
 
-      <div style={{background:'#08100a',color:'#f5f0e8',fontFamily:"'Outfit',sans-serif",fontWeight:300,minHeight:'100vh'}}>
+        {FAQ_DATA.map((category) => (
+          <section key={category.title}>
+            <h2>{category.title}</h2>
+            <div className="list">
+              {category.items.map((item) => (
+                <details key={item.q}>
+                  <summary>
+                    <span>{item.q}</span>
+                    <span className="pm" aria-hidden="true">
+                      +
+                    </span>
+                  </summary>
+                  <div className="ans">{item.a}</div>
+                </details>
+              ))}
+            </div>
+          </section>
+        ))}
 
-        {/* NAV */}
-        <nav style={{position:'fixed',top:0,width:'100%',zIndex:300,height:62,display:'flex',alignItems:'center',justifyContent:'space-between',padding:'0 24px',background:'rgba(8,16,10,.97)',backdropFilter:'blur(20px)',borderBottom:'1px solid rgba(200,168,75,.2)'}}>
-          <Link href="/" style={{display:'flex',alignItems:'center',gap:10,textDecoration:'none',color:'#f5f0e8'}}>
-            <svg className="logo-mark" width="32" height="32" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="50" cy="50" r="44" fill="none" stroke="#c8a84b" strokeWidth="2.5"/>
-              <circle cx="50" cy="50" r="36" fill="none" stroke="#c8a84b" strokeWidth="0.6" opacity="0.5"/>
-              <polygon points="50,15 56,50 50,50" fill="#f5f0e8"/>
-              <polygon points="50,15 44,50 50,50" fill="#c8a84b"/>
-              <polygon points="50,85 56,50 50,50" fill="#c8a84b"/>
-              <polygon points="50,85 44,50 50,50" fill="#f5f0e8"/>
-              <polygon points="85,50 50,44 50,50" fill="#c8a84b"/>
-              <polygon points="85,50 50,56 50,50" fill="#f5f0e8"/>
-              <polygon points="15,50 50,44 50,50" fill="#f5f0e8"/>
-              <polygon points="15,50 50,56 50,50" fill="#c8a84b"/>
-              <circle cx="50" cy="50" r="3.5" fill="#c8a84b"/>
-            </svg>
-            <span className="logo-text" style={{fontFamily:lb,fontSize:20,fontWeight:700,letterSpacing:1}}>PortService<span style={g}>Finder</span></span>
-          </Link>
-          <Link href="/" className="btn-ghost" style={{background:'transparent',border:'1px solid rgba(200,168,75,.4)',color:'#c8a84b',padding:'7px 14px',fontFamily:rj,fontSize:11,letterSpacing:'1.5px',textTransform:'uppercase',fontWeight:700,textDecoration:'none'}}>← Back to Home</Link>
-        </nav>
-
-        {/* HERO */}
-        <section className="hero-pad" style={{paddingTop:120,paddingBottom:50,paddingLeft:48,paddingRight:48,textAlign:'center',maxWidth:900,margin:'0 auto'}}>
-          <div style={{fontFamily:rj,fontSize:11,letterSpacing:'4px',textTransform:'uppercase',color:'#c8a84b',marginBottom:18,fontWeight:700}}>
-            <span style={{display:'inline-block',width:32,height:1,background:'#c8a84b',verticalAlign:'middle',marginRight:12,opacity:.5}}/>
-            FAQ
-            <span style={{display:'inline-block',width:32,height:1,background:'#c8a84b',verticalAlign:'middle',marginLeft:12,opacity:.5}}/>
+        <div className="help">
+          <h2>Still have a question?</h2>
+          <p>Write to us and we will usually reply within 24 hours.</p>
+          <div className="actions">
+            <Link href="/contact" className="btn primary">
+              Contact us
+            </Link>
+            <a href="mailto:contact@portservicefinder.com" className="btn ghost">
+              contact@portservicefinder.com
+            </a>
           </div>
-          <h1 className="hero-h1" style={{fontFamily:lb,fontSize:'clamp(32px,4vw,52px)',fontWeight:700,lineHeight:1.1,letterSpacing:-1.2,marginBottom:20}}>
-            Frequently Asked <em style={g}>Questions</em>
-          </h1>
-          <p style={{fontSize:15,lineHeight:1.8,color:'#d4dcc8',maxWidth:580,margin:'0 auto'}}>
-            Answers to common questions from vessel operators, providers, and maritime professionals.
-          </p>
-        </section>
-
-        {/* FAQ CATEGORIES */}
-        <section className="sec-pad" style={{padding:'30px 48px 80px',maxWidth:920,margin:'0 auto'}}>
-          {FAQ_DATA.map((category, ci) => (
-            <div key={ci} style={{marginBottom:36}}>
-              <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:18,paddingBottom:10,borderBottom:'1px solid rgba(200,168,75,.18)'}}>
-                <span style={{fontSize:24}}>{category.icon}</span>
-                <h2 style={{fontFamily:lb,fontSize:22,fontWeight:700}}>{category.title}</h2>
-              </div>
-              <div style={{display:'flex',flexDirection:'column',gap:8}}>
-                {category.items.map((item, ii) => {
-                  const key = `${ci}-${ii}`;
-                  const isOpen = openKey === key;
-                  return (
-                    <div key={key} className="faq-row" style={{background:'#0c1610',border:`1px solid ${isOpen?'rgba(200,168,75,.5)':'rgba(200,168,75,.18)'}`,overflow:'hidden'}}>
-                      <button onClick={()=>toggle(key)} style={{width:'100%',background:'none',border:'none',padding:'18px 22px',display:'flex',alignItems:'center',justifyContent:'space-between',cursor:'pointer',textAlign:'left',gap:16,color:'#f5f0e8'}}>
-                        <span className="faq-q" style={{fontFamily:lb,fontSize:15,fontWeight:700,lineHeight:1.4,color:isOpen?'#c8a84b':'#f5f0e8',flex:1}}>{item.q}</span>
-                        <span style={{fontFamily:rj,fontSize:24,color:'#c8a84b',fontWeight:600,transition:'transform .3s ease',transform:isOpen?'rotate(45deg)':'rotate(0deg)',flexShrink:0,lineHeight:1}}>+</span>
-                      </button>
-                      {isOpen && (
-                        <div style={{padding:'0 22px 20px',fontSize:13.5,lineHeight:1.8,color:'#d4dcc8',borderTop:'1px solid rgba(200,168,75,.1)',paddingTop:14}}>
-                          {item.a}
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          ))}
-
-          {/* Still have questions */}
-          <div style={{background:'linear-gradient(180deg,rgba(200,168,75,.06),transparent)',border:'1px solid rgba(200,168,75,.3)',padding:'30px 30px',marginTop:24,textAlign:'center'}}>
-            <h3 style={{fontFamily:lb,fontSize:22,fontWeight:700,marginBottom:10}}>Still have <em style={g}>questions?</em></h3>
-            <p style={{fontSize:14,color:'#b0c0a4',lineHeight:1.7,maxWidth:480,margin:'0 auto 20px'}}>
-              We&apos;re happy to help. Reach out anytime and we&apos;ll get back to you within 24 hours.
-            </p>
-            <div style={{display:'flex',gap:10,justifyContent:'center',flexWrap:'wrap'}}>
-              <Link href="/contact" className="btn-gold" style={{background:'#c8a84b',color:'#08100a',border:'none',padding:'12px 26px',fontFamily:rj,fontSize:12,letterSpacing:'2px',textTransform:'uppercase',fontWeight:700,textDecoration:'none'}}>Contact Us</Link>
-              <a href="mailto:contact@portservicefinder.com" className="btn-ghost" style={{background:'transparent',color:'#c8a84b',border:'1px solid rgba(200,168,75,.4)',padding:'11px 22px',fontFamily:rj,fontSize:12,letterSpacing:'2px',textTransform:'uppercase',fontWeight:700,textDecoration:'none'}}>Email Us</a>
-            </div>
-          </div>
-        </section>
-
-        {/* FOOTER */}
-        <footer className="ftpad" style={{borderTop:'1px solid rgba(200,168,75,.15)',padding:'48px 48px 0',background:'#08100a'}}>
-          <div className="ftgrid" style={{display:'grid',gridTemplateColumns:'2fr 1fr 1fr 1fr',gap:44,marginBottom:32}}>
-            <div>
-              <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:12}}>
-                <svg width="28" height="28" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                  <circle cx="50" cy="50" r="44" fill="none" stroke="#c8a84b" strokeWidth="2.5"/>
-                  <polygon points="50,15 56,50 50,50" fill="#f5f0e8"/>
-                  <polygon points="50,15 44,50 50,50" fill="#c8a84b"/>
-                  <polygon points="50,85 56,50 50,50" fill="#c8a84b"/>
-                  <polygon points="50,85 44,50 50,50" fill="#f5f0e8"/>
-                  <polygon points="85,50 50,44 50,50" fill="#c8a84b"/>
-                  <polygon points="85,50 50,56 50,50" fill="#f5f0e8"/>
-                  <polygon points="15,50 50,44 50,50" fill="#f5f0e8"/>
-                  <polygon points="15,50 50,56 50,50" fill="#c8a84b"/>
-                  <circle cx="50" cy="50" r="3.5" fill="#c8a84b"/>
-                </svg>
-                <div style={{fontFamily:lb,fontSize:18,fontWeight:700,letterSpacing:1}}>PortService<span style={g}>Finder</span></div>
-              </div>
-              <p style={{fontSize:12,color:'#7a8a72',lineHeight:1.75,maxWidth:240,marginBottom:14}}>The global maritime services directory. Free for vessel operators. No commission, ever.</p>
-              <a href="mailto:contact@portservicefinder.com" className="footer-link" style={{fontSize:12,color:'rgba(200,168,75,.6)',textDecoration:'none'}}>contact@portservicefinder.com</a>
-            </div>
-            <div>
-              <h4 style={{fontFamily:rj,fontSize:10,letterSpacing:'2px',textTransform:'uppercase',color:'#c8a84b',marginBottom:12,fontWeight:700}}>Directory</h4>
-              <ul style={{listStyle:'none',display:'flex',flexDirection:'column',gap:7}}>
-                <li><Link href="/" className="footer-link" style={{color:'#7a8a72',textDecoration:'none',fontSize:12}}>Search Ports</Link></li>
-                <li><Link href="/blog" className="footer-link" style={{color:'#7a8a72',textDecoration:'none',fontSize:12}}>Blog &amp; Guides</Link></li>
-                <li><Link href="/for-providers" className="footer-link" style={{color:'#7a8a72',textDecoration:'none',fontSize:12}}>For Providers</Link></li>
-                <li><Link href="/faq" className="footer-link" style={{color:'#7a8a72',textDecoration:'none',fontSize:12}}>FAQ</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h4 style={{fontFamily:rj,fontSize:10,letterSpacing:'2px',textTransform:'uppercase',color:'#c8a84b',marginBottom:12,fontWeight:700}}>Company</h4>
-              <ul style={{listStyle:'none',display:'flex',flexDirection:'column',gap:7}}>
-                <li><Link href="/about" className="footer-link" style={{color:'#7a8a72',textDecoration:'none',fontSize:12}}>About</Link></li>
-                <li><Link href="/contact" className="footer-link" style={{color:'#7a8a72',textDecoration:'none',fontSize:12}}>Contact</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h4 style={{fontFamily:rj,fontSize:10,letterSpacing:'2px',textTransform:'uppercase',color:'#c8a84b',marginBottom:12,fontWeight:700}}>Legal</h4>
-              <ul style={{listStyle:'none',display:'flex',flexDirection:'column',gap:7}}>
-                <li><Link href="/terms" className="footer-link" style={{color:'#7a8a72',textDecoration:'none',fontSize:12}}>Terms of Service</Link></li>
-                <li><Link href="/privacy" className="footer-link" style={{color:'#7a8a72',textDecoration:'none',fontSize:12}}>Privacy Policy</Link></li>
-                <li><Link href="/listing-rules" className="footer-link" style={{color:'#7a8a72',textDecoration:'none',fontSize:12}}>Listing Rules</Link></li>
-              </ul>
-            </div>
-          </div>
-          <div style={{borderTop:'1px solid rgba(200,168,75,.1)',padding:'14px 0 20px',display:'flex',justifyContent:'space-between',fontFamily:rj,fontSize:10,color:'#3a3a2a',letterSpacing:1,fontWeight:600,flexWrap:'wrap',gap:8}}>
-            <span>© 2026 PortServiceFinder. All rights reserved.</span>
-            <span>MARITIME DIRECTORY · GLOBAL · FREE TO SEARCH</span>
-          </div>
-        </footer>
-
-      </div>
+        </div>
+      </main>
+      <SiteFooter />
     </>
   );
 }

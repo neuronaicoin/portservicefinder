@@ -3,9 +3,9 @@ import { useState, useEffect, useMemo } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { saveItem, loadItem, genId } from '@/lib/voyage-storage';
 
-const lb = "'Libre Bodoni', serif";
-const rj = "'Rajdhani', sans-serif";
-const g = { color: '#c8a84b', fontStyle: 'italic' };
+const lb = 'var(--font-display)';
+const rj = 'var(--font-ui)';
+const g = { color: 'var(--acc)' };
 
 // ============================================================
 // FORM DATA INTERFACE
@@ -184,8 +184,8 @@ function calculate(d: BunkerData) {
 // STYLES
 // ============================================================
 const card: React.CSSProperties = {
-  background: '#111c13',
-  border: '1px solid rgba(200,168,75,.18)',
+  background: 'var(--card)',
+  border: '1px solid color-mix(in srgb, var(--acc) 18%, transparent)',
   padding: '20px 18px',
   borderRadius: 4,
   marginBottom: 16,
@@ -195,11 +195,11 @@ const sectionTitle: React.CSSProperties = {
   fontSize: 11,
   letterSpacing: '2px',
   textTransform: 'uppercase',
-  color: '#c8a84b',
+  color: 'var(--acc)',
   fontWeight: 700,
   marginBottom: 14,
   paddingBottom: 8,
-  borderBottom: '1px solid rgba(200,168,75,.12)',
+  borderBottom: '1px solid color-mix(in srgb, var(--acc) 12%, transparent)',
 };
 const label: React.CSSProperties = {
   display: 'block',
@@ -207,15 +207,15 @@ const label: React.CSSProperties = {
   fontSize: 10.5,
   letterSpacing: '.5px',
   textTransform: 'uppercase',
-  color: '#7a8a72',
+  color: 'var(--ink3)',
   fontWeight: 600,
   marginBottom: 5,
 };
 const input: React.CSSProperties = {
   width: '100%',
-  background: '#0c1610',
-  border: '1px solid rgba(200,168,75,.2)',
-  color: '#f5f0e8',
+  background: 'var(--bg2)',
+  border: '1px solid color-mix(in srgb, var(--acc) 20%, transparent)',
+  color: 'var(--ink)',
   padding: '8px 10px',
   fontFamily: rj,
   fontSize: 13,
@@ -305,13 +305,13 @@ export default function BunkerCalculatorPage() {
     <div>
       {/* Header */}
       <div style={{ marginBottom: 24 }}>
-        <div style={{ fontFamily: rj, fontSize: 10, letterSpacing: '2px', textTransform: 'uppercase', color: '#c8a84b', fontWeight: 700, marginBottom: 8 }}>
+        <div style={{ fontFamily: rj, fontSize: 10, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--acc)', fontWeight: 700, marginBottom: 8 }}>
           ⛽ Voyage Hub · Bunker Calculator
         </div>
         <h1 style={{ fontFamily: lb, fontSize: 'clamp(22px,3vw,32px)', fontWeight: 700, lineHeight: 1.1, marginBottom: 8 }}>
           Charter Party <em style={g}>Performance</em> Analysis
         </h1>
-        <p style={{ fontSize: 13, color: '#b0c0a4', lineHeight: 1.6, maxWidth: 720 }}>
+        <p style={{ fontSize: 13, color: 'var(--ink2)', lineHeight: 1.6, maxWidth: 720 }}>
           Compare actual vessel performance vs charter party warranties. Calculate speed claim, fuel
           overconsumption claim, and off-hire amounts using REQ-method (good weather period only).
         </p>
@@ -322,9 +322,9 @@ export default function BunkerCalculatorPage() {
         <button
           onClick={() => setView(view === 'input' ? 'report' : 'input')}
           style={{
-            background: view === 'report' ? 'transparent' : '#c8a84b',
-            color: view === 'report' ? '#c8a84b' : '#08100a',
-            border: '1px solid #c8a84b',
+            background: view === 'report' ? 'transparent' : 'var(--acc)',
+            color: view === 'report' ? 'var(--acc)' : 'var(--bg)',
+            border: '1px solid var(--acc)',
             padding: '8px 16px',
             fontFamily: rj,
             fontSize: 11,
@@ -341,8 +341,8 @@ export default function BunkerCalculatorPage() {
           onClick={() => setShowSave(true)}
           style={{
             background: 'transparent',
-            color: '#c8a84b',
-            border: '1px solid rgba(200,168,75,.4)',
+            color: 'var(--acc)',
+            border: '1px solid color-mix(in srgb, var(--acc) 40%, transparent)',
             padding: '8px 14px',
             fontFamily: rj,
             fontSize: 11,
@@ -359,8 +359,8 @@ export default function BunkerCalculatorPage() {
           onClick={handlePrint}
           style={{
             background: 'transparent',
-            color: '#7a8a72',
-            border: '1px solid rgba(200,168,75,.2)',
+            color: 'var(--ink3)',
+            border: '1px solid color-mix(in srgb, var(--acc) 20%, transparent)',
             padding: '8px 14px',
             fontFamily: rj,
             fontSize: 11,
@@ -377,8 +377,8 @@ export default function BunkerCalculatorPage() {
           onClick={handleReset}
           style={{
             background: 'transparent',
-            color: '#ff8a8a',
-            border: '1px solid rgba(255,138,138,.3)',
+            color: 'var(--bad)',
+            border: '1px solid color-mix(in srgb, var(--bad) 30%, transparent)',
             padding: '8px 14px',
             fontFamily: rj,
             fontSize: 11,
@@ -391,26 +391,26 @@ export default function BunkerCalculatorPage() {
         >
           🗑️ Reset
         </button>
-        {saveMsg && <span style={{ color: '#4caf76', fontFamily: rj, fontSize: 12, fontWeight: 600 }}>{saveMsg}</span>}
-        {recordName && <span style={{ color: '#7a8a72', fontFamily: rj, fontSize: 11, marginLeft: 'auto' }}>📂 {recordName}</span>}
+        {saveMsg && <span style={{ color: 'var(--ok)', fontFamily: rj, fontSize: 12, fontWeight: 600 }}>{saveMsg}</span>}
+        {recordName && <span style={{ color: 'var(--ink3)', fontFamily: rj, fontSize: 11, marginLeft: 'auto' }}>📂 {recordName}</span>}
       </div>
 
       {/* Save Dialog */}
       {showSave && (
-        <div style={{ ...card, background: 'rgba(200,168,75,.05)', borderColor: 'rgba(200,168,75,.4)', marginBottom: 16 }}>
+        <div style={{ ...card, background: 'color-mix(in srgb, var(--acc) 5%, transparent)', borderColor: 'color-mix(in srgb, var(--acc) 40%, transparent)', marginBottom: 16 }}>
           <label style={label}>Name for this analysis</label>
           <input
             type="text"
             value={recordName}
             onChange={(e) => setRecordName(e.target.value)}
-            placeholder="e.g. MV NEURONAI — Singapore→Rotterdam Jan 2026"
+            placeholder="e.g. MV OCEAN PIONEER — Singapore→Rotterdam Jan 2026"
             style={{ ...input, marginBottom: 10 }}
           />
           <div style={{ display: 'flex', gap: 8 }}>
-            <button onClick={handleSave} style={{ background: '#c8a84b', color: '#08100a', border: 'none', padding: '8px 14px', fontFamily: rj, fontSize: 11, letterSpacing: '1px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 3 }}>
+            <button onClick={handleSave} style={{ background: 'var(--acc)', color: 'var(--bg)', border: 'none', padding: '8px 14px', fontFamily: rj, fontSize: 11, letterSpacing: '1px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 3 }}>
               Save
             </button>
-            <button onClick={() => setShowSave(false)} style={{ background: 'transparent', color: '#7a8a72', border: '1px solid rgba(200,168,75,.2)', padding: '8px 14px', fontFamily: rj, fontSize: 11, letterSpacing: '1px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 3 }}>
+            <button onClick={() => setShowSave(false)} style={{ background: 'transparent', color: 'var(--ink3)', border: '1px solid color-mix(in srgb, var(--acc) 20%, transparent)', padding: '8px 14px', fontFamily: rj, fontSize: 11, letterSpacing: '1px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 3 }}>
               Cancel
             </button>
           </div>
@@ -428,7 +428,7 @@ export default function BunkerCalculatorPage() {
             <div className="form-grid-3" style={grid3}>
               <div>
                 <label style={label}>Vessel Name</label>
-                <input style={input} type="text" value={data.vesselName} onChange={(e) => update('vesselName', e.target.value)} placeholder="MV NEURONAI" />
+                <input style={input} type="text" value={data.vesselName} onChange={(e) => update('vesselName', e.target.value)} placeholder="MV OCEAN PIONEER" />
               </div>
               <div>
                 <label style={label}>IMO Number</label>
@@ -483,7 +483,7 @@ export default function BunkerCalculatorPage() {
           {/* 2. Charter Party Warranties */}
           <div style={card}>
             <div style={sectionTitle}>2. Charter Party Warranties</div>
-            <p style={{ fontSize: 11, color: '#7a8a72', marginBottom: 12 }}>
+            <p style={{ fontSize: 11, color: 'var(--ink3)', marginBottom: 12 }}>
               Values stated in the charter party — speed and consumption guaranteed by owner.
             </p>
             <div className="form-grid-3" style={grid3}>
@@ -537,7 +537,7 @@ export default function BunkerCalculatorPage() {
           {/* 3. Actual Performance */}
           <div style={card}>
             <div style={sectionTitle}>3. Actual Voyage Performance</div>
-            <p style={{ fontSize: 11, color: '#7a8a72', marginBottom: 12 }}>
+            <p style={{ fontSize: 11, color: 'var(--ink3)', marginBottom: 12 }}>
               From ship&apos;s noon reports — actual averages for this voyage.
             </p>
             <div className="form-grid-3" style={grid3}>
@@ -576,7 +576,7 @@ export default function BunkerCalculatorPage() {
           {/* 4. Weather Analysis */}
           <div style={card}>
             <div style={sectionTitle}>4. Weather Analysis</div>
-            <p style={{ fontSize: 11, color: '#7a8a72', marginBottom: 12 }}>
+            <p style={{ fontSize: 11, color: 'var(--ink3)', marginBottom: 12 }}>
               Good weather = within CP criteria (BF ≤ {data.weatherCriteriaBf}, SS ≤ {data.weatherCriteriaSs}). Used for REQ-method claim calculation.
             </p>
             <div className="form-grid-3" style={grid3}>
@@ -593,10 +593,10 @@ export default function BunkerCalculatorPage() {
                 <input style={input} type="number" step="1" value={data.adverseCurrentHours || ''} onChange={(e) => update('adverseCurrentHours', parseFloat(e.target.value) || 0)} placeholder="38" />
               </div>
             </div>
-            <div style={{ padding: '8px 12px', background: 'rgba(200,168,75,.05)', border: '1px solid rgba(200,168,75,.15)', fontFamily: rj, fontSize: 11, color: '#b0c0a4', borderRadius: 3 }}>
-              Total hours: <strong style={{ color: '#f5f0e8' }}>{fmt(calc.totalHours, 0)}h</strong> · Good: <strong style={{ color: '#4caf76' }}>{fmt(calc.goodPct, 1)}%</strong> · Bad: <strong style={{ color: '#ff8a8a' }}>{fmt(calc.badPct, 1)}%</strong>
+            <div style={{ padding: '8px 12px', background: 'color-mix(in srgb, var(--acc) 5%, transparent)', border: '1px solid color-mix(in srgb, var(--acc) 15%, transparent)', fontFamily: rj, fontSize: 11, color: 'var(--ink2)', borderRadius: 3 }}>
+              Total hours: <strong style={{ color: 'var(--ink)' }}>{fmt(calc.totalHours, 0)}h</strong> · Good: <strong style={{ color: 'var(--ok)' }}>{fmt(calc.goodPct, 1)}%</strong> · Bad: <strong style={{ color: 'var(--bad)' }}>{fmt(calc.badPct, 1)}%</strong>
               {data.goodWeatherHours + data.badWeatherHours > calc.totalHours + 1 && (
-                <div style={{ color: '#ff8a8a', marginTop: 4 }}>⚠ Weather hours exceed total voyage hours — please check</div>
+                <div style={{ color: 'var(--bad)', marginTop: 4 }}>⚠ Weather hours exceed total voyage hours — please check</div>
               )}
             </div>
           </div>
@@ -648,20 +648,20 @@ export default function BunkerCalculatorPage() {
           </div>
 
           {/* Quick Summary */}
-          <div style={{ ...card, background: 'linear-gradient(135deg,rgba(200,168,75,.08),transparent)', borderColor: 'rgba(200,168,75,.4)' }}>
+          <div style={{ ...card, background: 'linear-gradient(135deg,color-mix(in srgb, var(--acc) 8%, transparent),transparent)', borderColor: 'color-mix(in srgb, var(--acc) 40%, transparent)' }}>
             <div style={sectionTitle}>⚡ Quick Result Preview</div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px,1fr))', gap: 14 }}>
-              <KpiBox label="Speed Claim" value={fmtMoney(calc.speedClaimValue)} color={calc.speedClaimValue > 0 ? '#ff8a8a' : '#4caf76'} sub={calc.speedDeficit > 0 ? `-${fmt(calc.speedDeficit, 2)} kts` : 'OK'} />
-              <KpiBox label="Fuel Claim" value={fmtMoney(calc.fuelClaimValue)} color={calc.fuelClaimValue > 0 ? '#ff8a8a' : '#4caf76'} sub={calc.fuelDeficit > 0 ? `+${fmt(calc.fuelDeficit, 2)} MT/day` : 'OK'} />
-              <KpiBox label="Off-hire" value={fmtMoney(calc.offHireValue)} color={calc.offHireValue > 0 ? '#ff8a8a' : '#4caf76'} sub={`${fmt(calc.offHireDays, 2)} days`} />
-              <KpiBox label="Total Claim" value={fmtMoney(calc.totalClaim)} color="#c8a84b" sub="Owner pays" big />
+              <KpiBox label="Speed Claim" value={fmtMoney(calc.speedClaimValue)} color={calc.speedClaimValue > 0 ? 'var(--bad)' : 'var(--ok)'} sub={calc.speedDeficit > 0 ? `-${fmt(calc.speedDeficit, 2)} kts` : 'OK'} />
+              <KpiBox label="Fuel Claim" value={fmtMoney(calc.fuelClaimValue)} color={calc.fuelClaimValue > 0 ? 'var(--bad)' : 'var(--ok)'} sub={calc.fuelDeficit > 0 ? `+${fmt(calc.fuelDeficit, 2)} MT/day` : 'OK'} />
+              <KpiBox label="Off-hire" value={fmtMoney(calc.offHireValue)} color={calc.offHireValue > 0 ? 'var(--bad)' : 'var(--ok)'} sub={`${fmt(calc.offHireDays, 2)} days`} />
+              <KpiBox label="Total Claim" value={fmtMoney(calc.totalClaim)} color="var(--acc)" sub="Owner pays" big />
             </div>
             <button
               onClick={() => setView('report')}
               style={{
                 marginTop: 16,
-                background: '#c8a84b',
-                color: '#08100a',
+                background: 'var(--acc)',
+                color: 'var(--bg)',
                 border: 'none',
                 padding: '10px 22px',
                 fontFamily: rj,
@@ -704,13 +704,13 @@ export default function BunkerCalculatorPage() {
 // ============================================================
 function KpiBox({ label, value, color, sub, big }: { label: string; value: string; color: string; sub?: string; big?: boolean }) {
   return (
-    <div style={{ background: '#0c1610', padding: '12px 14px', border: '1px solid rgba(200,168,75,.15)', borderRadius: 3 }}>
-      <div style={{ fontFamily: rj, fontSize: 10, color: '#7a8a72', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: 6, fontWeight: 600 }}>
+    <div style={{ background: 'var(--bg2)', padding: '12px 14px', border: '1px solid color-mix(in srgb, var(--acc) 15%, transparent)', borderRadius: 3 }}>
+      <div style={{ fontFamily: rj, fontSize: 10, color: 'var(--ink3)', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: 6, fontWeight: 600 }}>
         {label}
       </div>
       <div style={{ fontFamily: lb, fontSize: big ? 22 : 18, fontWeight: 700, color, lineHeight: 1.1 }}>{value}</div>
       {sub && (
-        <div style={{ fontFamily: rj, fontSize: 10.5, color: '#b0c0a4', marginTop: 4, fontWeight: 500 }}>{sub}</div>
+        <div style={{ fontFamily: rj, fontSize: 10.5, color: 'var(--ink2)', marginTop: 4, fontWeight: 500 }}>{sub}</div>
       )}
     </div>
   );
@@ -724,50 +724,50 @@ function ReportView({ data, calc, fmt, fmtMoney }: { data: BunkerData; calc: Ret
     display: 'flex',
     justifyContent: 'space-between',
     padding: '8px 0',
-    borderBottom: '1px dashed rgba(200,168,75,.1)',
+    borderBottom: '1px dashed color-mix(in srgb, var(--acc) 10%, transparent)',
     fontFamily: rj,
     fontSize: 13,
   };
   return (
     <div className="report-area">
       {/* Report Header */}
-      <div style={{ ...card, background: 'linear-gradient(135deg,rgba(200,168,75,.08),transparent)', borderColor: '#c8a84b', textAlign: 'center', padding: '24px 20px' }}>
-        <div style={{ fontFamily: rj, fontSize: 11, letterSpacing: '3px', textTransform: 'uppercase', color: '#c8a84b', fontWeight: 700, marginBottom: 12 }}>
+      <div style={{ ...card, background: 'linear-gradient(135deg,color-mix(in srgb, var(--acc) 8%, transparent),transparent)', borderColor: 'var(--acc)', textAlign: 'center', padding: '24px 20px' }}>
+        <div style={{ fontFamily: rj, fontSize: 11, letterSpacing: '3px', textTransform: 'uppercase', color: 'var(--acc)', fontWeight: 700, marginBottom: 12 }}>
           ⚓ Charter Party Performance Report
         </div>
         <h2 style={{ fontFamily: lb, fontSize: 26, fontWeight: 700, marginBottom: 8 }}>
           {data.vesselName || 'Vessel Name'}
         </h2>
-        <div style={{ fontSize: 13, color: '#b0c0a4', marginBottom: 6 }}>
+        <div style={{ fontSize: 13, color: 'var(--ink2)', marginBottom: 6 }}>
           {data.voyageFrom || '—'} → {data.voyageTo || '—'}
         </div>
-        <div style={{ fontSize: 11, color: '#7a8a72', fontFamily: rj }}>
+        <div style={{ fontSize: 11, color: 'var(--ink3)', fontFamily: rj }}>
           {data.voyageStart} {data.voyageEnd && `to ${data.voyageEnd}`} · {data.vesselType} · {data.charterType === 'time' ? 'Time Charter' : 'Voyage Charter'}
         </div>
-        {data.imo && <div style={{ fontSize: 11, color: '#7a8a72', fontFamily: rj, marginTop: 4 }}>IMO: {data.imo}</div>}
+        {data.imo && <div style={{ fontSize: 11, color: 'var(--ink3)', fontFamily: rj, marginTop: 4 }}>IMO: {data.imo}</div>}
       </div>
 
       {/* Charter Party Warranties */}
       <div style={card}>
         <div style={sectionTitle}>📋 Charter Party Warranties</div>
         <div style={reportRow}>
-          <span style={{ color: '#7a8a72' }}>Speed (Laden / Ballast)</span>
+          <span style={{ color: 'var(--ink3)' }}>Speed (Laden / Ballast)</span>
           <strong>{fmt(data.cpSpeedLaden, 1)} / {fmt(data.cpSpeedBallast, 1)} kts</strong>
         </div>
         <div style={reportRow}>
-          <span style={{ color: '#7a8a72' }}>ME Consumption (Laden / Ballast)</span>
+          <span style={{ color: 'var(--ink3)' }}>ME Consumption (Laden / Ballast)</span>
           <strong>{fmt(data.cpConsMeLaden, 1)} / {fmt(data.cpConsMeBallast, 1)} MT/day {data.cpFuelType}</strong>
         </div>
         <div style={reportRow}>
-          <span style={{ color: '#7a8a72' }}>AE Consumption</span>
+          <span style={{ color: 'var(--ink3)' }}>AE Consumption</span>
           <strong>{fmt(data.cpConsAe, 2)} MT/day MGO</strong>
         </div>
         <div style={reportRow}>
-          <span style={{ color: '#7a8a72' }}>Weather Criteria</span>
+          <span style={{ color: 'var(--ink3)' }}>Weather Criteria</span>
           <strong>BF ≤ {data.weatherCriteriaBf}, Sea State ≤ {data.weatherCriteriaSs}</strong>
         </div>
         <div style={{ ...reportRow, borderBottom: 'none' }}>
-          <span style={{ color: '#7a8a72' }}>Voyage Condition</span>
+          <span style={{ color: 'var(--ink3)' }}>Voyage Condition</span>
           <strong style={{ textTransform: 'capitalize' }}>{data.ladenOrBallast}</strong>
         </div>
       </div>
@@ -776,31 +776,31 @@ function ReportView({ data, calc, fmt, fmtMoney }: { data: BunkerData; calc: Ret
       <div style={card}>
         <div style={sectionTitle}>📈 Actual Performance</div>
         <div style={reportRow}>
-          <span style={{ color: '#7a8a72' }}>Total Voyage Days</span>
+          <span style={{ color: 'var(--ink3)' }}>Total Voyage Days</span>
           <strong>{fmt(data.totalDays, 2)} days ({fmt(calc.totalHours, 0)} hours)</strong>
         </div>
         <div style={reportRow}>
-          <span style={{ color: '#7a8a72' }}>Total Distance</span>
+          <span style={{ color: 'var(--ink3)' }}>Total Distance</span>
           <strong>{fmt(data.totalDistance, 0)} nm</strong>
         </div>
         <div style={reportRow}>
-          <span style={{ color: '#7a8a72' }}>Actual Average Speed</span>
-          <strong style={{ color: calc.speedDeficit > 0 ? '#ff8a8a' : '#4caf76' }}>
+          <span style={{ color: 'var(--ink3)' }}>Actual Average Speed</span>
+          <strong style={{ color: calc.speedDeficit > 0 ? 'var(--bad)' : 'var(--ok)' }}>
             {fmt(data.actualAvgSpeed, 2)} kts ({calc.speedDeficit > 0 ? '-' : '+'}{fmt(Math.abs(calc.speedDeficitPct), 1)}%)
           </strong>
         </div>
         <div style={reportRow}>
-          <span style={{ color: '#7a8a72' }}>Actual ME Consumption</span>
-          <strong style={{ color: calc.fuelDeficit > 0 ? '#ff8a8a' : '#4caf76' }}>
+          <span style={{ color: 'var(--ink3)' }}>Actual ME Consumption</span>
+          <strong style={{ color: calc.fuelDeficit > 0 ? 'var(--bad)' : 'var(--ok)' }}>
             {fmt(data.actualConsMe, 2)} MT/day ({calc.fuelDeficit > 0 ? '+' : ''}{fmt(calc.fuelDeficitPct, 1)}%)
           </strong>
         </div>
         <div style={reportRow}>
-          <span style={{ color: '#7a8a72' }}>Actual AE Consumption</span>
+          <span style={{ color: 'var(--ink3)' }}>Actual AE Consumption</span>
           <strong>{fmt(data.actualConsAe, 2)} MT/day</strong>
         </div>
         <div style={{ ...reportRow, borderBottom: 'none' }}>
-          <span style={{ color: '#7a8a72' }}>Total Bunker Consumed</span>
+          <span style={{ color: 'var(--ink3)' }}>Total Bunker Consumed</span>
           <strong>
             {fmt(calc.totalMeConsumed, 1)} MT {data.cpFuelType} + {fmt(calc.totalAeConsumed, 1)} MT MGO
           </strong>
@@ -811,74 +811,74 @@ function ReportView({ data, calc, fmt, fmtMoney }: { data: BunkerData; calc: Ret
       <div style={card}>
         <div style={sectionTitle}>🌊 Weather Analysis</div>
         <div style={reportRow}>
-          <span style={{ color: '#7a8a72' }}>Good Weather Hours / Days</span>
-          <strong style={{ color: '#4caf76' }}>{fmt(data.goodWeatherHours, 0)}h / {fmt(calc.goodWeatherDays, 2)} days ({fmt(calc.goodPct, 1)}%)</strong>
+          <span style={{ color: 'var(--ink3)' }}>Good Weather Hours / Days</span>
+          <strong style={{ color: 'var(--ok)' }}>{fmt(data.goodWeatherHours, 0)}h / {fmt(calc.goodWeatherDays, 2)} days ({fmt(calc.goodPct, 1)}%)</strong>
         </div>
         <div style={reportRow}>
-          <span style={{ color: '#7a8a72' }}>Bad Weather Hours / Days</span>
-          <strong style={{ color: '#ff8a8a' }}>{fmt(data.badWeatherHours, 0)}h / {fmt(calc.badWeatherDays, 2)} days ({fmt(calc.badPct, 1)}%)</strong>
+          <span style={{ color: 'var(--ink3)' }}>Bad Weather Hours / Days</span>
+          <strong style={{ color: 'var(--bad)' }}>{fmt(data.badWeatherHours, 0)}h / {fmt(calc.badWeatherDays, 2)} days ({fmt(calc.badPct, 1)}%)</strong>
         </div>
         <div style={{ ...reportRow, borderBottom: 'none' }}>
-          <span style={{ color: '#7a8a72' }}>Adverse Current Hours</span>
+          <span style={{ color: 'var(--ink3)' }}>Adverse Current Hours</span>
           <strong>{fmt(data.adverseCurrentHours, 0)}h</strong>
         </div>
       </div>
 
       {/* SPEED CLAIM */}
-      <div style={{ ...card, borderColor: calc.speedClaimValue > 0 ? 'rgba(255,138,138,.3)' : 'rgba(76,175,118,.3)' }}>
+      <div style={{ ...card, borderColor: calc.speedClaimValue > 0 ? 'color-mix(in srgb, var(--bad) 30%, transparent)' : 'color-mix(in srgb, var(--ok) 30%, transparent)' }}>
         <div style={sectionTitle}>⏱️ Speed Claim (Good Weather Period)</div>
         <div style={reportRow}>
-          <span style={{ color: '#7a8a72' }}>CP Warranted Speed</span>
+          <span style={{ color: 'var(--ink3)' }}>CP Warranted Speed</span>
           <strong>{fmt(calc.cpSpeed, 2)} kts</strong>
         </div>
         <div style={reportRow}>
-          <span style={{ color: '#7a8a72' }}>Actual Speed</span>
+          <span style={{ color: 'var(--ink3)' }}>Actual Speed</span>
           <strong>{fmt(data.actualAvgSpeed, 2)} kts</strong>
         </div>
         <div style={reportRow}>
-          <span style={{ color: '#7a8a72' }}>Speed Deficit</span>
-          <strong style={{ color: calc.speedDeficit > 0 ? '#ff8a8a' : '#4caf76' }}>
+          <span style={{ color: 'var(--ink3)' }}>Speed Deficit</span>
+          <strong style={{ color: calc.speedDeficit > 0 ? 'var(--bad)' : 'var(--ok)' }}>
             {calc.speedDeficit > 0 ? '−' : '+'}{fmt(Math.abs(calc.speedDeficit), 2)} kts
           </strong>
         </div>
         <div style={reportRow}>
-          <span style={{ color: '#7a8a72' }}>Time Lost in Good Weather</span>
+          <span style={{ color: 'var(--ink3)' }}>Time Lost in Good Weather</span>
           <strong>{fmt(calc.speedClaimHours, 2)} hours ({fmt(calc.speedClaimHours / 24, 3)} days)</strong>
         </div>
-        <div style={{ ...reportRow, borderBottom: 'none', borderTop: '1px solid rgba(200,168,75,.2)', paddingTop: 12, marginTop: 6 }}>
-          <span style={{ color: '#c8a84b', fontWeight: 700 }}>SPEED CLAIM VALUE</span>
-          <strong style={{ color: calc.speedClaimValue > 0 ? '#ff8a8a' : '#4caf76', fontSize: 16 }}>{fmtMoney(calc.speedClaimValue)}</strong>
+        <div style={{ ...reportRow, borderBottom: 'none', borderTop: '1px solid color-mix(in srgb, var(--acc) 20%, transparent)', paddingTop: 12, marginTop: 6 }}>
+          <span style={{ color: 'var(--acc)', fontWeight: 700 }}>SPEED CLAIM VALUE</span>
+          <strong style={{ color: calc.speedClaimValue > 0 ? 'var(--bad)' : 'var(--ok)', fontSize: 16 }}>{fmtMoney(calc.speedClaimValue)}</strong>
         </div>
       </div>
 
       {/* FUEL CLAIM */}
-      <div style={{ ...card, borderColor: calc.fuelClaimValue > 0 ? 'rgba(255,138,138,.3)' : 'rgba(76,175,118,.3)' }}>
+      <div style={{ ...card, borderColor: calc.fuelClaimValue > 0 ? 'color-mix(in srgb, var(--bad) 30%, transparent)' : 'color-mix(in srgb, var(--ok) 30%, transparent)' }}>
         <div style={sectionTitle}>⛽ Fuel Overconsumption Claim (Good Weather)</div>
         <div style={reportRow}>
-          <span style={{ color: '#7a8a72' }}>CP ME Consumption</span>
+          <span style={{ color: 'var(--ink3)' }}>CP ME Consumption</span>
           <strong>{fmt(calc.cpConsMe, 2)} MT/day</strong>
         </div>
         <div style={reportRow}>
-          <span style={{ color: '#7a8a72' }}>Actual ME Consumption</span>
+          <span style={{ color: 'var(--ink3)' }}>Actual ME Consumption</span>
           <strong>{fmt(data.actualConsMe, 2)} MT/day</strong>
         </div>
         <div style={reportRow}>
-          <span style={{ color: '#7a8a72' }}>Overconsumption per Day</span>
-          <strong style={{ color: calc.fuelDeficit > 0 ? '#ff8a8a' : '#4caf76' }}>
+          <span style={{ color: 'var(--ink3)' }}>Overconsumption per Day</span>
+          <strong style={{ color: calc.fuelDeficit > 0 ? 'var(--bad)' : 'var(--ok)' }}>
             {calc.fuelDeficit > 0 ? '+' : ''}{fmt(calc.fuelDeficit, 2)} MT/day
           </strong>
         </div>
         <div style={reportRow}>
-          <span style={{ color: '#7a8a72' }}>Good Weather Days</span>
+          <span style={{ color: 'var(--ink3)' }}>Good Weather Days</span>
           <strong>{fmt(calc.goodWeatherDays, 2)} days</strong>
         </div>
         <div style={reportRow}>
-          <span style={{ color: '#7a8a72' }}>Excess Fuel in Good Weather</span>
+          <span style={{ color: 'var(--ink3)' }}>Excess Fuel in Good Weather</span>
           <strong>{fmt(calc.fuelExcessMt, 2)} MT × ${fmt(data.bunkerPriceMain, 0)}/MT</strong>
         </div>
-        <div style={{ ...reportRow, borderBottom: 'none', borderTop: '1px solid rgba(200,168,75,.2)', paddingTop: 12, marginTop: 6 }}>
-          <span style={{ color: '#c8a84b', fontWeight: 700 }}>FUEL CLAIM VALUE</span>
-          <strong style={{ color: calc.fuelClaimValue > 0 ? '#ff8a8a' : '#4caf76', fontSize: 16 }}>{fmtMoney(calc.fuelClaimValue)}</strong>
+        <div style={{ ...reportRow, borderBottom: 'none', borderTop: '1px solid color-mix(in srgb, var(--acc) 20%, transparent)', paddingTop: 12, marginTop: 6 }}>
+          <span style={{ color: 'var(--acc)', fontWeight: 700 }}>FUEL CLAIM VALUE</span>
+          <strong style={{ color: calc.fuelClaimValue > 0 ? 'var(--bad)' : 'var(--ok)', fontSize: 16 }}>{fmtMoney(calc.fuelClaimValue)}</strong>
         </div>
       </div>
 
@@ -886,48 +886,48 @@ function ReportView({ data, calc, fmt, fmtMoney }: { data: BunkerData; calc: Ret
       <div style={card}>
         <div style={sectionTitle}>⏸️ Off-hire</div>
         <div style={reportRow}>
-          <span style={{ color: '#7a8a72' }}>Off-hire Hours</span>
+          <span style={{ color: 'var(--ink3)' }}>Off-hire Hours</span>
           <strong>{fmt(data.offHireHours, 1)} hours ({fmt(calc.offHireDays, 3)} days)</strong>
         </div>
         <div style={reportRow}>
-          <span style={{ color: '#7a8a72' }}>Hire Rate</span>
+          <span style={{ color: 'var(--ink3)' }}>Hire Rate</span>
           <strong>{fmtMoney(data.hireRate)}/day</strong>
         </div>
-        <div style={{ ...reportRow, borderBottom: 'none', borderTop: '1px solid rgba(200,168,75,.2)', paddingTop: 12, marginTop: 6 }}>
-          <span style={{ color: '#c8a84b', fontWeight: 700 }}>OFF-HIRE VALUE</span>
-          <strong style={{ color: calc.offHireValue > 0 ? '#ff8a8a' : '#4caf76', fontSize: 16 }}>{fmtMoney(calc.offHireValue)}</strong>
+        <div style={{ ...reportRow, borderBottom: 'none', borderTop: '1px solid color-mix(in srgb, var(--acc) 20%, transparent)', paddingTop: 12, marginTop: 6 }}>
+          <span style={{ color: 'var(--acc)', fontWeight: 700 }}>OFF-HIRE VALUE</span>
+          <strong style={{ color: calc.offHireValue > 0 ? 'var(--bad)' : 'var(--ok)', fontSize: 16 }}>{fmtMoney(calc.offHireValue)}</strong>
         </div>
       </div>
 
       {/* TOTAL */}
-      <div style={{ ...card, background: 'linear-gradient(135deg,rgba(200,168,75,.12),transparent)', borderColor: '#c8a84b', padding: '24px 20px' }}>
+      <div style={{ ...card, background: 'linear-gradient(135deg,color-mix(in srgb, var(--acc) 12%, transparent),transparent)', borderColor: 'var(--acc)', padding: '24px 20px' }}>
         <div style={{ ...sectionTitle, borderBottom: 'none', textAlign: 'center', fontSize: 13 }}>💰 Total Claim Summary</div>
         <div style={reportRow}>
           <span>Speed Claim</span>
-          <strong style={{ color: calc.speedClaimValue > 0 ? '#ff8a8a' : '#4caf76' }}>{fmtMoney(calc.speedClaimValue)}</strong>
+          <strong style={{ color: calc.speedClaimValue > 0 ? 'var(--bad)' : 'var(--ok)' }}>{fmtMoney(calc.speedClaimValue)}</strong>
         </div>
         <div style={reportRow}>
           <span>Fuel Overconsumption Claim</span>
-          <strong style={{ color: calc.fuelClaimValue > 0 ? '#ff8a8a' : '#4caf76' }}>{fmtMoney(calc.fuelClaimValue)}</strong>
+          <strong style={{ color: calc.fuelClaimValue > 0 ? 'var(--bad)' : 'var(--ok)' }}>{fmtMoney(calc.fuelClaimValue)}</strong>
         </div>
         <div style={reportRow}>
           <span>Off-hire</span>
-          <strong style={{ color: calc.offHireValue > 0 ? '#ff8a8a' : '#4caf76' }}>{fmtMoney(calc.offHireValue)}</strong>
+          <strong style={{ color: calc.offHireValue > 0 ? 'var(--bad)' : 'var(--ok)' }}>{fmtMoney(calc.offHireValue)}</strong>
         </div>
-        <div style={{ ...reportRow, borderBottom: 'none', borderTop: '2px solid #c8a84b', paddingTop: 14, marginTop: 10 }}>
+        <div style={{ ...reportRow, borderBottom: 'none', borderTop: '2px solid var(--acc)', paddingTop: 14, marginTop: 10 }}>
           <span style={{ fontSize: 16, fontWeight: 700 }}>NET CLAIM POSITION</span>
-          <strong style={{ fontFamily: lb, fontSize: 24, color: calc.totalClaim > 0 ? '#ff8a8a' : '#4caf76' }}>{fmtMoney(calc.totalClaim)}</strong>
+          <strong style={{ fontFamily: lb, fontSize: 24, color: calc.totalClaim > 0 ? 'var(--bad)' : 'var(--ok)' }}>{fmtMoney(calc.totalClaim)}</strong>
         </div>
-        <p style={{ fontSize: 11, color: '#7a8a72', marginTop: 14, textAlign: 'center', fontStyle: 'italic' }}>
+        <p style={{ fontSize: 11, color: 'var(--ink3)', marginTop: 14, textAlign: 'center', fontStyle: 'italic' }}>
           {calc.totalClaim > 0 ? '→ Owner pays (vessel underperformed)' : calc.totalClaim < 0 ? '→ Charterer credit' : '→ Balanced performance'}
         </p>
       </div>
 
       {/* Methodology */}
-      <div style={{ ...card, background: 'rgba(122,138,114,.05)', borderColor: 'rgba(122,138,114,.15)' }}>
+      <div style={{ ...card, background: 'color-mix(in srgb, var(--ink3) 5%, transparent)', borderColor: 'color-mix(in srgb, var(--ink3) 15%, transparent)' }}>
         <div style={sectionTitle}>📖 Methodology Notes</div>
-        <ul style={{ fontSize: 12, color: '#b0c0a4', lineHeight: 1.7, paddingLeft: 18, marginBottom: 0 }}>
-          <li>Claims calculated using <strong style={{ color: '#c8a84b' }}>REQ-method</strong> (Good Weather Period only).</li>
+        <ul style={{ fontSize: 12, color: 'var(--ink2)', lineHeight: 1.7, paddingLeft: 18, marginBottom: 0 }}>
+          <li>Claims calculated using <strong style={{ color: 'var(--acc)' }}>REQ-method</strong> (Good Weather Period only).</li>
           <li>Weather criteria as per charter party: BF ≤ {data.weatherCriteriaBf}, Sea State ≤ {data.weatherCriteriaSs}.</li>
           <li>Adverse currents not counted as good weather for speed claim.</li>
           <li>BIMCO/INTERTANKO methodology references.</li>
@@ -938,11 +938,11 @@ function ReportView({ data, calc, fmt, fmtMoney }: { data: BunkerData; calc: Ret
       {data.notes && (
         <div style={card}>
           <div style={sectionTitle}>📝 Notes</div>
-          <p style={{ fontSize: 13, color: '#b0c0a4', lineHeight: 1.7, whiteSpace: 'pre-wrap' }}>{data.notes}</p>
+          <p style={{ fontSize: 13, color: 'var(--ink2)', lineHeight: 1.7, whiteSpace: 'pre-wrap' }}>{data.notes}</p>
         </div>
       )}
 
-      <div style={{ marginTop: 20, padding: '14px 16px', background: 'rgba(200,168,75,.04)', border: '1px solid rgba(200,168,75,.12)', borderRadius: 4, textAlign: 'center', fontFamily: rj, fontSize: 11, color: '#7a8a72', letterSpacing: '.5px' }}>
+      <div style={{ marginTop: 20, padding: '14px 16px', background: 'color-mix(in srgb, var(--acc) 4%, transparent)', border: '1px solid color-mix(in srgb, var(--acc) 12%, transparent)', borderRadius: 4, textAlign: 'center', fontFamily: rj, fontSize: 11, color: 'var(--ink3)', letterSpacing: '.5px' }}>
         Generated by PortServiceFinder Voyage Hub · portservicefinder.com/voyage
       </div>
     </div>

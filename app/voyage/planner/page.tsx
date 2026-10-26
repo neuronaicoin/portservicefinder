@@ -5,9 +5,9 @@ import { saveItem, loadItem, genId } from '@/lib/voyage-storage';
 import { PORTS_SORTED, searchPorts, haversineDistance, initialBearing, bearingToCompass, type PortCoord } from '@/lib/ports-data';
 import { computeSeaRoute, type RouteWaypoint } from '@/lib/sea-router';
 
-const lb = "'Libre Bodoni', serif";
-const rj = "'Rajdhani', sans-serif";
-const g = { color: '#c8a84b', fontStyle: 'italic' } as React.CSSProperties;
+const lb = 'var(--font-display)';
+const rj = 'var(--font-ui)';
+const g = { color: 'var(--acc)' } as React.CSSProperties;
 
 // ============================================================
 // TYPES
@@ -219,7 +219,7 @@ function severity(w: DayWeather): 0 | 1 | 2 | 3 {
   if (wind >= 11 || hs >= 1.25) return 1;     // moderate
   return 0;                                   // calm
 }
-const SEV_COLOR = ['#4caf76', '#8bc34a', '#e8b85a', '#ff6b6b'];
+const SEV_COLOR = ['var(--ok)', 'var(--ok)', 'var(--warn)', 'var(--bad)'];
 
 // fetch one point's forecast for a specific date (returns midday value)
 async function fetchPointWeather(lat: number, lon: number, dateISO: string): Promise<Partial<DayWeather>> {
@@ -357,17 +357,17 @@ function RouteMap({ departure, arrival, waypoints, densified, dailyPositions, we
     const latlngs = densified.map((p) => [p.lat, p.lon]);
     if (latlngs.length >= 2) {
       // route line (gold)
-      L.polyline(latlngs, { color: '#c8a84b', weight: 3, opacity: 0.9 }).addTo(lg);
+      L.polyline(latlngs, { color: 'var(--acc)', weight: 3, opacity: 0.9 }).addTo(lg);
     }
 
     const portIcon = (color: string, label: string) => L.divIcon({
-      className: '', html: `<div style="background:${color};color:#08100a;font-family:${rj};font-size:10px;font-weight:700;padding:2px 6px;border-radius:3px;white-space:nowrap;box-shadow:0 2px 6px rgba(0,0,0,.4)">${label}</div>`,
+      className: '', html: `<div style="background:${color};color:var(--bg);font-family:${rj};font-size:10px;font-weight:700;padding:2px 6px;border-radius:3px;white-space:nowrap;box-shadow:0 2px 6px rgba(0,0,0,.4)">${label}</div>`,
       iconSize: [0, 0], iconAnchor: [0, 0],
     });
 
-    if (departure) L.marker([departure.lat, departure.lon], { icon: portIcon('#4caf76', '● ' + departure.name) }).addTo(lg);
-    if (arrival) L.marker([arrival.lat, arrival.lon], { icon: portIcon('#ff8a8a', '◉ ' + arrival.name) }).addTo(lg);
-    waypoints.forEach((w) => { if (w.major !== false) L.marker([w.lat, w.lon], { icon: portIcon('#5aa6e8', '◇ ' + w.name) }).addTo(lg); });
+    if (departure) L.marker([departure.lat, departure.lon], { icon: portIcon('var(--ok)', '● ' + departure.name) }).addTo(lg);
+    if (arrival) L.marker([arrival.lat, arrival.lon], { icon: portIcon('var(--bad)', '◉ ' + arrival.name) }).addTo(lg);
+    waypoints.forEach((w) => { if (w.major !== false) L.marker([w.lat, w.lon], { icon: portIcon('var(--info)', '◇ ' + w.name) }).addTo(lg); });
 
     // weather-coloured segments between consecutive daily positions (if weather loaded)
     if (weather.length > 0) {
@@ -375,7 +375,7 @@ function RouteMap({ departure, arrival, waypoints, densified, dailyPositions, we
         const a = dailyPositions[i], b = dailyPositions[i + 1];
         const w = weather.find((x) => x.day === a.day);
         const sev = w ? severity(w) : 0;
-        const col = w && w.available ? SEV_COLOR[sev] : '#5a6b52';
+        const col = w && w.available ? SEV_COLOR[sev] : 'var(--ink3)';
         L.polyline([[a.lat, a.lon], [b.lat, b.lon]], { color: col, weight: 5, opacity: 0.85 }).addTo(lg);
       }
     }
@@ -384,7 +384,7 @@ function RouteMap({ departure, arrival, waypoints, densified, dailyPositions, we
     dailyPositions.forEach((dp) => {
       const w = weather.find((x) => x.day === dp.day);
       const sev = w ? severity(w) : 0;
-      const col = w && w.available ? SEV_COLOR[sev] : '#e8b85a';
+      const col = w && w.available ? SEV_COLOR[sev] : 'var(--warn)';
       const tip = w && w.available
         ? `Day ${dp.day}: ${w.windSpeed.toFixed(0)}kt, Hs ${w.waveHs.toFixed(1)}m`
         : (w && w.note ? `Day ${dp.day}: ${w.note}` : `Day ${dp.day}`);
@@ -416,9 +416,9 @@ function RouteMap({ departure, arrival, waypoints, densified, dailyPositions, we
 
   return (
     <div style={{ position: 'relative' }}>
-      <div ref={mapRef} style={{ width: '100%', height: 420, borderRadius: 6, overflow: 'hidden', border: '1px solid rgba(200,168,75,.2)', background: '#0c1610' }} />
-      {err && <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: rj, fontSize: 12, color: '#ff8a8a', background: 'rgba(12,22,16,.9)', borderRadius: 6 }}>{err}</div>}
-      {!ready && !err && <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: rj, fontSize: 12, color: '#7a8a72' }}>Loading map…</div>}
+      <div ref={mapRef} style={{ width: '100%', height: 420, borderRadius: 6, overflow: 'hidden', border: '1px solid color-mix(in srgb, var(--acc) 20%, transparent)', background: 'var(--bg2)' }} />
+      {err && <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: rj, fontSize: 12, color: 'var(--bad)', background: 'color-mix(in srgb, var(--bg2) 90%, transparent)', borderRadius: 6 }}>{err}</div>}
+      {!ready && !err && <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: rj, fontSize: 12, color: 'var(--ink3)' }}>Loading map…</div>}
     </div>
   );
 }
@@ -426,12 +426,12 @@ function RouteMap({ departure, arrival, waypoints, densified, dailyPositions, we
 // ============================================================
 // STYLES
 // ============================================================
-const card: React.CSSProperties = { background: '#111c13', border: '1px solid rgba(200,168,75,.18)', padding: '20px 18px', borderRadius: 4, marginBottom: 16 };
-const sectionTitle: React.CSSProperties = { fontFamily: rj, fontSize: 11, letterSpacing: '2px', textTransform: 'uppercase', color: '#c8a84b', fontWeight: 700, marginBottom: 14, paddingBottom: 8, borderBottom: '1px solid rgba(200,168,75,.12)' };
-const labelS: React.CSSProperties = { display: 'block', fontFamily: rj, fontSize: 10, letterSpacing: '.5px', textTransform: 'uppercase', color: '#7a8a72', fontWeight: 600, marginBottom: 4 };
-const inputStyle: React.CSSProperties = { width: '100%', background: '#0c1610', border: '1px solid rgba(200,168,75,.2)', color: '#f5f0e8', padding: '7px 9px', fontFamily: rj, fontSize: 12.5, fontWeight: 500, borderRadius: 3, boxSizing: 'border-box' };
-const ghostBtn: React.CSSProperties = { background: 'transparent', color: '#c8a84b', border: '1px solid rgba(200,168,75,.4)', padding: '8px 14px', fontFamily: rj, fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 };
-const goldBtn: React.CSSProperties = { background: '#c8a84b', color: '#08100a', border: 'none', padding: '8px 16px', fontFamily: rj, fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 };
+const card: React.CSSProperties = { background: 'var(--card)', border: '1px solid color-mix(in srgb, var(--acc) 18%, transparent)', padding: '20px 18px', borderRadius: 4, marginBottom: 16 };
+const sectionTitle: React.CSSProperties = { fontFamily: rj, fontSize: 11, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--acc)', fontWeight: 700, marginBottom: 14, paddingBottom: 8, borderBottom: '1px solid color-mix(in srgb, var(--acc) 12%, transparent)' };
+const labelS: React.CSSProperties = { display: 'block', fontFamily: rj, fontSize: 10, letterSpacing: '.5px', textTransform: 'uppercase', color: 'var(--ink3)', fontWeight: 600, marginBottom: 4 };
+const inputStyle: React.CSSProperties = { width: '100%', background: 'var(--bg2)', border: '1px solid color-mix(in srgb, var(--acc) 20%, transparent)', color: 'var(--ink)', padding: '7px 9px', fontFamily: rj, fontSize: 12.5, fontWeight: 500, borderRadius: 3, boxSizing: 'border-box' };
+const ghostBtn: React.CSSProperties = { background: 'transparent', color: 'var(--acc)', border: '1px solid color-mix(in srgb, var(--acc) 40%, transparent)', padding: '8px 14px', fontFamily: rj, fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 };
+const goldBtn: React.CSSProperties = { background: 'var(--acc)', color: 'var(--bg)', border: 'none', padding: '8px 16px', fontFamily: rj, fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 };
 
 // ============================================================
 // PORT SEARCH INPUT (autocomplete)
@@ -445,9 +445,9 @@ function PortSearch({ label, value, onSelect, placeholder }: { label: string; va
     <div style={{ position: 'relative' }}>
       <label style={labelS}>{label}</label>
       {value ? (
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#0c1610', border: '1px solid rgba(200,168,75,.3)', borderRadius: 3, padding: '7px 9px' }}>
-          <span style={{ fontFamily: rj, fontSize: 12.5, color: '#f5f0e8' }}>{value.name} <span style={{ color: '#7a8a72' }}>· {value.country}{value.unlocode ? ` · ${value.unlocode}` : ''}</span></span>
-          <button onClick={() => { onSelect(null); setQ(''); }} style={{ background: 'transparent', border: 'none', color: '#ff8a8a', cursor: 'pointer', fontSize: 13 }}>✕</button>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'var(--bg2)', border: '1px solid color-mix(in srgb, var(--acc) 30%, transparent)', borderRadius: 3, padding: '7px 9px' }}>
+          <span style={{ fontFamily: rj, fontSize: 12.5, color: 'var(--ink)' }}>{value.name} <span style={{ color: 'var(--ink3)' }}>· {value.country}{value.unlocode ? ` · ${value.unlocode}` : ''}</span></span>
+          <button onClick={() => { onSelect(null); setQ(''); }} style={{ background: 'transparent', border: 'none', color: 'var(--bad)', cursor: 'pointer', fontSize: 13 }}>✕</button>
         </div>
       ) : (
         <>
@@ -459,14 +459,14 @@ function PortSearch({ label, value, onSelect, placeholder }: { label: string; va
             placeholder={placeholder || 'Search port...'}
           />
           {open && results.length > 0 && (
-            <div style={{ position: 'absolute', top: '100%', left: 0, right: 0, zIndex: 20, background: '#0c1610', border: '1px solid rgba(200,168,75,.3)', borderRadius: 3, marginTop: 3, maxHeight: 240, overflowY: 'auto', boxShadow: '0 8px 20px rgba(0,0,0,.4)' }}>
+            <div style={{ position: 'absolute', top: '100%', left: 0, right: 0, zIndex: 20, background: 'var(--bg2)', border: '1px solid color-mix(in srgb, var(--acc) 30%, transparent)', borderRadius: 3, marginTop: 3, maxHeight: 240, overflowY: 'auto', boxShadow: '0 8px 20px rgba(0,0,0,.4)' }}>
               {results.map((p, i) => (
                 <button
                   key={`${p.unlocode || p.name}-${i}`}
                   onClick={() => { onSelect(p); setQ(''); setOpen(false); }}
-                  style={{ display: 'block', width: '100%', textAlign: 'left', background: 'transparent', border: 'none', borderBottom: '1px solid rgba(200,168,75,.08)', color: '#f5f0e8', padding: '8px 10px', fontFamily: rj, fontSize: 12.5, cursor: 'pointer' }}
+                  style={{ display: 'block', width: '100%', textAlign: 'left', background: 'transparent', border: 'none', borderBottom: '1px solid color-mix(in srgb, var(--acc) 8%, transparent)', color: 'var(--ink)', padding: '8px 10px', fontFamily: rj, fontSize: 12.5, cursor: 'pointer' }}
                 >
-                  {p.name} <span style={{ color: '#7a8a72', fontSize: 11 }}>· {p.country}{p.unlocode ? ` · ${p.unlocode}` : ''}</span>
+                  {p.name} <span style={{ color: 'var(--ink3)', fontSize: 11 }}>· {p.country}{p.unlocode ? ` · ${p.unlocode}` : ''}</span>
                 </button>
               ))}
             </div>
@@ -704,18 +704,18 @@ export default function VoyagePlannerPage() {
     <div>
       {/* breadcrumb */}
       <div style={{ marginBottom: 16 }}>
-        <a href="/voyage/operators" style={{ fontFamily: rj, fontSize: 11, color: '#7a8a72', textDecoration: 'none', letterSpacing: '.5px' }}>← Shore Office</a>
+        <a href="/voyage/operators" style={{ fontFamily: rj, fontSize: 11, color: 'var(--ink3)', textDecoration: 'none', letterSpacing: '.5px' }}>← Shore Office</a>
       </div>
 
       {/* Header */}
       <div style={{ marginBottom: 24 }}>
-        <div style={{ fontFamily: rj, fontSize: 10, letterSpacing: '2px', textTransform: 'uppercase', color: '#c8a84b', fontWeight: 700, marginBottom: 8 }}>
+        <div style={{ fontFamily: rj, fontSize: 10, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--acc)', fontWeight: 700, marginBottom: 8 }}>
           🧭 Voyage Hub · Voyage Planner
         </div>
         <h1 style={{ fontFamily: lb, fontSize: 'clamp(22px,3vw,32px)', fontWeight: 700, lineHeight: 1.1, marginBottom: 8 }}>
           Voyage <em style={g}>Planner</em>
         </h1>
-        <p style={{ fontSize: 13, color: '#b0c0a4', lineHeight: 1.6, maxWidth: 720 }}>
+        <p style={{ fontSize: 13, color: 'var(--ink2)', lineHeight: 1.6, maxWidth: 720 }}>
           Plan a passage port-to-port with waypoints, distance, ETA, fuel and — once the route is set —
           a live weather &amp; current outlook along the track. Set up your route and vessel below.
         </p>
@@ -725,13 +725,13 @@ export default function VoyagePlannerPage() {
       <div className="action-bar" style={{ display: 'flex', gap: 10, marginBottom: 22, flexWrap: 'wrap', alignItems: 'center' }}>
         <button onClick={() => setShowSave(true)} style={goldBtn}>💾 Save</button>
         <button onClick={() => window.print()} style={ghostBtn}>🖨️ Print / PDF</button>
-        <button onClick={handleReset} style={{ ...ghostBtn, color: '#ff8a8a', borderColor: 'rgba(255,138,138,.3)' }}>🗑️ Reset</button>
-        {saveMsg && <span style={{ color: '#4caf76', fontFamily: rj, fontSize: 12, fontWeight: 600 }}>{saveMsg}</span>}
-        {recordName && <span style={{ color: '#7a8a72', fontFamily: rj, fontSize: 11, marginLeft: 'auto' }}>📂 {recordName}</span>}
+        <button onClick={handleReset} style={{ ...ghostBtn, color: 'var(--bad)', borderColor: 'color-mix(in srgb, var(--bad) 30%, transparent)' }}>🗑️ Reset</button>
+        {saveMsg && <span style={{ color: 'var(--ok)', fontFamily: rj, fontSize: 12, fontWeight: 600 }}>{saveMsg}</span>}
+        {recordName && <span style={{ color: 'var(--ink3)', fontFamily: rj, fontSize: 11, marginLeft: 'auto' }}>📂 {recordName}</span>}
       </div>
 
       {showSave && (
-        <div style={{ ...card, background: 'rgba(200,168,75,.05)', borderColor: 'rgba(200,168,75,.4)' }}>
+        <div style={{ ...card, background: 'color-mix(in srgb, var(--acc) 5%, transparent)', borderColor: 'color-mix(in srgb, var(--acc) 40%, transparent)' }}>
           <label style={labelS}>Name</label>
           <input type="text" value={recordName} onChange={(e) => setRecordName(e.target.value)} placeholder="e.g. Santos → Amsterdam V-12" style={{ ...inputStyle, marginBottom: 10 }} />
           <div style={{ display: 'flex', gap: 8 }}>
@@ -751,32 +751,32 @@ export default function VoyagePlannerPage() {
 
         {/* Routing mode */}
         <div style={{ marginBottom: 10, display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
-          <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', fontFamily: rj, fontSize: 12, color: '#b0c0a4' }}>
-            <input type="checkbox" checked={autoOn} onChange={(e) => setAutoOn(e.target.checked)} style={{ accentColor: '#c8a84b', width: 16, height: 16 }} />
-            <b style={{ color: autoOn ? '#4caf76' : '#7a8a72' }}>Auto sea route</b> — draw a sea-only path (avoids land)
+          <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', fontFamily: rj, fontSize: 12, color: 'var(--ink2)' }}>
+            <input type="checkbox" checked={autoOn} onChange={(e) => setAutoOn(e.target.checked)} style={{ accentColor: 'var(--acc)', width: 16, height: 16 }} />
+            <b style={{ color: autoOn ? 'var(--ok)' : 'var(--ink3)' }}>Auto sea route</b> — draw a sea-only path (avoids land)
           </label>
         </div>
 
         {/* Auto route info */}
         {autoOn && routing && (
-          <div style={{ padding: '10px 12px', background: 'rgba(90,166,232,.06)', border: '1px solid rgba(90,166,232,.25)', borderRadius: 4, marginBottom: 8 }}>
-            <div style={{ fontFamily: rj, fontSize: 12, color: '#5aa6e8', fontWeight: 600 }}>⏳ Computing sea route (loading world map)…</div>
+          <div style={{ padding: '10px 12px', background: 'color-mix(in srgb, var(--info) 6%, transparent)', border: '1px solid color-mix(in srgb, var(--info) 25%, transparent)', borderRadius: 4, marginBottom: 8 }}>
+            <div style={{ fontFamily: rj, fontSize: 12, color: 'var(--info)', fontWeight: 600 }}>⏳ Computing sea route (loading world map)…</div>
           </div>
         )}
         {autoOn && routeErr && !routing && (
-          <div style={{ padding: '10px 12px', background: 'rgba(255,138,138,.06)', border: '1px solid rgba(255,138,138,.3)', borderRadius: 4, marginBottom: 8 }}>
-            <div style={{ fontFamily: rj, fontSize: 12, color: '#ff8a8a' }}>{routeErr}</div>
+          <div style={{ padding: '10px 12px', background: 'color-mix(in srgb, var(--bad) 6%, transparent)', border: '1px solid color-mix(in srgb, var(--bad) 30%, transparent)', borderRadius: 4, marginBottom: 8 }}>
+            <div style={{ fontFamily: rj, fontSize: 12, color: 'var(--bad)' }}>{routeErr}</div>
           </div>
         )}
         {autoOn && usingAuto && !routing && !routeErr && (
-          <div style={{ padding: '10px 12px', background: 'rgba(76,175,118,.06)', border: '1px solid rgba(76,175,118,.25)', borderRadius: 4, marginBottom: 8 }}>
-            <div style={{ fontFamily: rj, fontSize: 11, color: '#4caf76', fontWeight: 700, letterSpacing: '.5px', marginBottom: 4 }}>🌊 AUTO SEA ROUTE ACTIVE (land-avoiding)</div>
-            <div style={{ fontFamily: rj, fontSize: 12, color: '#b0c0a4', lineHeight: 1.5 }}>
+          <div style={{ padding: '10px 12px', background: 'color-mix(in srgb, var(--ok) 6%, transparent)', border: '1px solid color-mix(in srgb, var(--ok) 25%, transparent)', borderRadius: 4, marginBottom: 8 }}>
+            <div style={{ fontFamily: rj, fontSize: 11, color: 'var(--ok)', fontWeight: 700, letterSpacing: '.5px', marginBottom: 4 }}>🌊 AUTO SEA ROUTE ACTIVE (land-avoiding)</div>
+            <div style={{ fontFamily: rj, fontSize: 12, color: 'var(--ink2)', lineHeight: 1.5 }}>
               {autoWps.filter((w) => w.major).length > 0
-                ? <>Passing via: <b style={{ color: '#f5f0e8' }}>{autoWps.filter((w) => w.major).map((w) => w.name).join(' → ')}</b></>
+                ? <>Passing via: <b style={{ color: 'var(--ink)' }}>{autoWps.filter((w) => w.major).map((w) => w.name).join(' → ')}</b></>
                 : <>Direct sea leg — open water, no major choke points.</>}
             </div>
-            <div style={{ fontFamily: rj, fontSize: 10.5, color: '#7a8a72', marginTop: 4 }}>
+            <div style={{ fontFamily: rj, fontSize: 10.5, color: 'var(--ink3)', marginTop: 4 }}>
               Route computed over a real land/sea map. To fine-tune, turn off Auto and add waypoints manually.
             </div>
           </div>
@@ -791,7 +791,7 @@ export default function VoyagePlannerPage() {
                 <option value="">+ Add common waypoint…</option>
                 {COMMON_WAYPOINTS.map((w) => <option key={w.name} value={w.name}>{w.name}</option>)}
               </select>
-              <span style={{ fontFamily: rj, fontSize: 10.5, color: '#7a8a72' }}>Add points in the order the ship passes them.</span>
+              <span style={{ fontFamily: rj, fontSize: 10.5, color: 'var(--ink3)' }}>Add points in the order the ship passes them.</span>
             </div>
           </div>
         )}
@@ -799,14 +799,14 @@ export default function VoyagePlannerPage() {
         {!autoOn && data.waypoints.length > 0 && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginTop: 10 }}>
             {data.waypoints.map((w, i) => (
-              <div key={w.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#0c1610', border: '1px solid rgba(200,168,75,.12)', borderRadius: 3, padding: '6px 10px' }}>
-                <span style={{ fontFamily: rj, fontSize: 12, color: '#f5f0e8' }}>
-                  <span style={{ color: '#c8a84b', fontWeight: 700 }}>{i + 1}.</span> {w.name} <span style={{ color: '#7a8a72', fontSize: 10.5 }}>({w.lat.toFixed(1)}, {w.lon.toFixed(1)})</span>
+              <div key={w.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'var(--bg2)', border: '1px solid color-mix(in srgb, var(--acc) 12%, transparent)', borderRadius: 3, padding: '6px 10px' }}>
+                <span style={{ fontFamily: rj, fontSize: 12, color: 'var(--ink)' }}>
+                  <span style={{ color: 'var(--acc)', fontWeight: 700 }}>{i + 1}.</span> {w.name} <span style={{ color: 'var(--ink3)', fontSize: 10.5 }}>({w.lat.toFixed(1)}, {w.lon.toFixed(1)})</span>
                 </span>
                 <span style={{ display: 'flex', gap: 8 }}>
-                  <button onClick={() => moveWaypoint(w.id, -1)} disabled={i === 0} style={miniBtn(i === 0 ? '#3a4a38' : '#c8a84b')}>↑</button>
-                  <button onClick={() => moveWaypoint(w.id, 1)} disabled={i === data.waypoints.length - 1} style={miniBtn(i === data.waypoints.length - 1 ? '#3a4a38' : '#c8a84b')}>↓</button>
-                  <button onClick={() => delWaypoint(w.id)} style={miniBtn('#ff8a8a')}>✕</button>
+                  <button onClick={() => moveWaypoint(w.id, -1)} disabled={i === 0} style={miniBtn(i === 0 ? 'var(--line)' : 'var(--acc)')}>↑</button>
+                  <button onClick={() => moveWaypoint(w.id, 1)} disabled={i === data.waypoints.length - 1} style={miniBtn(i === data.waypoints.length - 1 ? 'var(--line)' : 'var(--acc)')}>↓</button>
+                  <button onClick={() => delWaypoint(w.id)} style={miniBtn('var(--bad)')}>✕</button>
                 </span>
               </div>
             ))}
@@ -818,7 +818,7 @@ export default function VoyagePlannerPage() {
       <div style={card}>
         <div style={sectionTitle}>2. Vessel &amp; Speed</div>
         <div className="pl-g4" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 10, marginBottom: 10 }}>
-          <div><label style={labelS}>Vessel Name</label><input style={inputStyle} value={data.vessel.name} onChange={(e) => setVessel('name', e.target.value)} placeholder="MV NEURONAI" /></div>
+          <div><label style={labelS}>Vessel Name</label><input style={inputStyle} value={data.vessel.name} onChange={(e) => setVessel('name', e.target.value)} placeholder="MV OCEAN PIONEER" /></div>
           <div><label style={labelS}>LOA (m)</label><input style={inputStyle} type="number" value={data.vessel.loa || ''} onChange={(e) => setVessel('loa', num(e.target.value))} placeholder="229" /></div>
           <div><label style={labelS}>Beam (m)</label><input style={inputStyle} type="number" value={data.vessel.beam || ''} onChange={(e) => setVessel('beam', num(e.target.value))} placeholder="32" /></div>
           <div><label style={labelS}>Draft (m)</label><input style={inputStyle} type="number" step="0.1" value={data.vessel.draft || ''} onChange={(e) => setVessel('draft', num(e.target.value))} placeholder="12.5" /></div>
@@ -856,13 +856,13 @@ export default function VoyagePlannerPage() {
 
       {/* SUMMARY (preview — map, weather, full fuel report come next) */}
       {ready && (
-        <div style={{ ...card, background: 'linear-gradient(135deg,rgba(200,168,75,.08),transparent)', borderColor: 'rgba(200,168,75,.4)' }}>
+        <div style={{ ...card, background: 'linear-gradient(135deg,color-mix(in srgb, var(--acc) 8%, transparent),transparent)', borderColor: 'color-mix(in srgb, var(--acc) 40%, transparent)' }}>
           <div style={sectionTitle}>⚡ Passage Summary</div>
           <div className="pl-kpis" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 10, marginBottom: 16 }}>
-            <KPI label="Distance" value={fmt(distanceWithMargin)} sub="nm" color="#c8a84b" big />
-            <KPI label="Sea Time" value={fmt(seaDays, 1)} sub="days" color="#5aa6e8" big />
-            <KPI label="ETA" value={eta ? eta.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }) : '–'} sub={eta ? eta.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }) : ''} color="#4caf76" />
-            <KPI label="Est. Fuel Burn" value={fmt(fuelBurn, 0)} sub={`MT ${data.vessel.fuelType}`} color="#e8b85a" />
+            <KPI label="Distance" value={fmt(distanceWithMargin)} sub="nm" color="var(--acc)" big />
+            <KPI label="Sea Time" value={fmt(seaDays, 1)} sub="days" color="var(--info)" big />
+            <KPI label="ETA" value={eta ? eta.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }) : '–'} sub={eta ? eta.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }) : ''} color="var(--ok)" />
+            <KPI label="Est. Fuel Burn" value={fmt(fuelBurn, 0)} sub={`MT ${data.vessel.fuelType}`} color="var(--warn)" />
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 0 }}>
@@ -870,22 +870,22 @@ export default function VoyagePlannerPage() {
             <RowR label={`With ${data.seaMargin}% sea margin`} value={`${fmt(distanceWithMargin)} nm`} />
             <RowR label="Service speed" value={`${data.vessel.serviceSpeed} kts`} />
             <RowR label="ETA (full)" value={fmtDateTime(eta)} />
-            {robTotal > 0 && <RowR label="ROB on arrival (approx VLSFO)" value={`${fmt(robOnArrival, 0)} MT`} color={robOnArrival < 0 ? '#ff6b6b' : robOnArrival < data.vessel.robVlsfo * 0.1 ? '#e8b85a' : '#4caf76'} />}
+            {robTotal > 0 && <RowR label="ROB on arrival (approx VLSFO)" value={`${fmt(robOnArrival, 0)} MT`} color={robOnArrival < 0 ? 'var(--bad)' : robOnArrival < data.vessel.robVlsfo * 0.1 ? 'var(--warn)' : 'var(--ok)'} />}
           </div>
 
           {robTotal > 0 && robOnArrival < 0 && (
-            <div style={{ marginTop: 12, padding: '10px 14px', background: 'rgba(255,107,107,.1)', border: '1px solid rgba(255,107,107,.4)', borderRadius: 4, fontFamily: rj, fontSize: 12.5, color: '#ff8a8a' }}>
+            <div style={{ marginTop: 12, padding: '10px 14px', background: 'color-mix(in srgb, var(--bad) 10%, transparent)', border: '1px solid color-mix(in srgb, var(--bad) 40%, transparent)', borderRadius: 4, fontFamily: rj, fontSize: 12.5, color: 'var(--bad)' }}>
               ⚠ Departure bunkers are insufficient for this passage at the entered consumption. Plan a bunker stem or reduce speed.
             </div>
           )}
 
           {/* legs table */}
           <div style={{ marginTop: 16 }}>
-            <div style={{ fontFamily: rj, fontSize: 10, color: '#c8a84b', letterSpacing: '1px', textTransform: 'uppercase', fontWeight: 700, marginBottom: 8 }}>Legs</div>
+            <div style={{ fontFamily: rj, fontSize: 10, color: 'var(--acc)', letterSpacing: '1px', textTransform: 'uppercase', fontWeight: 700, marginBottom: 8 }}>Legs</div>
             <div style={{ overflowX: 'auto' }}>
               <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 460, fontFamily: rj }}>
                 <thead>
-                  <tr style={{ color: '#7a8a72', fontSize: 9.5, letterSpacing: '.5px', textTransform: 'uppercase' }}>
+                  <tr style={{ color: 'var(--ink3)', fontSize: 9.5, letterSpacing: '.5px', textTransform: 'uppercase' }}>
                     <th style={{ ...thd, textAlign: 'left' }}>From → To</th>
                     <th style={thd}>Distance</th>
                     <th style={thd}>Course</th>
@@ -894,11 +894,11 @@ export default function VoyagePlannerPage() {
                 </thead>
                 <tbody>
                   {legs.map((l, i) => (
-                    <tr key={i} style={{ borderTop: '1px solid rgba(200,168,75,.08)' }}>
-                      <td style={{ padding: '6px', color: '#f5f0e8', fontSize: 12 }}>{l.from.name} → {l.to.name}</td>
-                      <td style={{ padding: '6px', textAlign: 'right', color: '#b0c0a4', fontSize: 12 }}>{fmt(l.distance)} nm</td>
-                      <td style={{ padding: '6px', textAlign: 'right', color: '#b0c0a4', fontSize: 12 }}>{fmt(l.bearing)}° {bearingToCompass(l.bearing)}</td>
-                      <td style={{ padding: '6px', textAlign: 'right', color: '#b0c0a4', fontSize: 12 }}>{speed > 0 ? fmt(l.distance / speed / 24, 1) : '–'} d</td>
+                    <tr key={i} style={{ borderTop: '1px solid color-mix(in srgb, var(--acc) 8%, transparent)' }}>
+                      <td style={{ padding: '6px', color: 'var(--ink)', fontSize: 12 }}>{l.from.name} → {l.to.name}</td>
+                      <td style={{ padding: '6px', textAlign: 'right', color: 'var(--ink2)', fontSize: 12 }}>{fmt(l.distance)} nm</td>
+                      <td style={{ padding: '6px', textAlign: 'right', color: 'var(--ink2)', fontSize: 12 }}>{fmt(l.bearing)}° {bearingToCompass(l.bearing)}</td>
+                      <td style={{ padding: '6px', textAlign: 'right', color: 'var(--ink2)', fontSize: 12 }}>{speed > 0 ? fmt(l.distance / speed / 24, 1) : '–'} d</td>
                     </tr>
                   ))}
                 </tbody>
@@ -927,9 +927,9 @@ export default function VoyagePlannerPage() {
             <button onClick={fetchWeatherAlongRoute} disabled={wxLoading} style={{ ...goldBtn, opacity: wxLoading ? 0.6 : 1 }}>
               {wxLoading ? '⏳ Loading weather…' : wxFetched ? '🔄 Refresh Weather' : '🌦️ Load Weather & Current'}
             </button>
-            {wxError && <span style={{ fontFamily: rj, fontSize: 12, color: '#ff8a8a' }}>{wxError}</span>}
+            {wxError && <span style={{ fontFamily: rj, fontSize: 12, color: 'var(--bad)' }}>{wxError}</span>}
             {wxFetched && !wxError && (
-              <span style={{ fontFamily: rj, fontSize: 11, color: '#7a8a72' }}>
+              <span style={{ fontFamily: rj, fontSize: 11, color: 'var(--ink3)' }}>
                 Data: Open-Meteo · forecast horizon ~16 days
               </span>
             )}
@@ -937,12 +937,12 @@ export default function VoyagePlannerPage() {
 
           {/* Weather legend */}
           {wxFetched && (
-            <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', marginTop: 10, fontFamily: rj, fontSize: 10.5, color: '#b0c0a4' }}>
+            <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', marginTop: 10, fontFamily: rj, fontSize: 10.5, color: 'var(--ink2)' }}>
               <span><b style={{ color: SEV_COLOR[0] }}>●</b> Calm</span>
               <span><b style={{ color: SEV_COLOR[1] }}>●</b> Moderate</span>
               <span><b style={{ color: SEV_COLOR[2] }}>●</b> Strong / rough</span>
               <span><b style={{ color: SEV_COLOR[3] }}>●</b> Gale</span>
-              <span><b style={{ color: '#5a6b52' }}>●</b> Beyond forecast</span>
+              <span><b style={{ color: 'var(--ink3)' }}>●</b> Beyond forecast</span>
             </div>
           )}
           {/* day scrubber (positions only for now; weather arrives next part) */}
@@ -950,7 +950,7 @@ export default function VoyagePlannerPage() {
             <div style={{ marginTop: 14 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
                 <label style={labelS}>Move the ship along the route</label>
-                <span style={{ fontFamily: rj, fontSize: 11, color: '#c8a84b', fontWeight: 700 }}>
+                <span style={{ fontFamily: rj, fontSize: 11, color: 'var(--acc)', fontWeight: 700 }}>
                   {activeDay == null ? 'Drag to preview' : `Day ${activeDay}`}
                 </span>
               </div>
@@ -960,7 +960,7 @@ export default function VoyagePlannerPage() {
                 max={dailyPositions.length - 1}
                 value={activeDay ?? 0}
                 onChange={(e) => setActiveDay(parseInt(e.target.value, 10))}
-                style={{ width: '100%', accentColor: '#c8a84b' }}
+                style={{ width: '100%', accentColor: 'var(--acc)' }}
               />
               {activeDay != null && (() => {
                 const dp = dailyPositions[activeDay];
@@ -968,29 +968,29 @@ export default function VoyagePlannerPage() {
                 const sev = w ? severity(w) : 0;
                 return (
                   <div style={{ marginTop: 10 }}>
-                    <div style={{ padding: '10px 14px', background: '#0c1610', border: '1px solid rgba(200,168,75,.2)', borderRadius: 4, display: 'flex', gap: 18, flexWrap: 'wrap', fontFamily: rj, fontSize: 12, color: '#b0c0a4' }}>
-                      <span>📅 <b style={{ color: '#f5f0e8' }}>{dp.date.toLocaleDateString('en-GB', { weekday: 'short', day: '2-digit', month: 'short' })}</b></span>
-                      <span>📍 <b style={{ color: '#f5f0e8' }}>{dp.lat.toFixed(2)}°, {dp.lon.toFixed(2)}°</b></span>
-                      <span>➡️ Covered <b style={{ color: '#c8a84b' }}>{fmt(dp.cumDist)} nm</b></span>
-                      <span>⛳ Remaining <b style={{ color: '#5aa6e8' }}>{fmt(dp.remainingDist)} nm</b></span>
+                    <div style={{ padding: '10px 14px', background: 'var(--bg2)', border: '1px solid color-mix(in srgb, var(--acc) 20%, transparent)', borderRadius: 4, display: 'flex', gap: 18, flexWrap: 'wrap', fontFamily: rj, fontSize: 12, color: 'var(--ink2)' }}>
+                      <span>📅 <b style={{ color: 'var(--ink)' }}>{dp.date.toLocaleDateString('en-GB', { weekday: 'short', day: '2-digit', month: 'short' })}</b></span>
+                      <span>📍 <b style={{ color: 'var(--ink)' }}>{dp.lat.toFixed(2)}°, {dp.lon.toFixed(2)}°</b></span>
+                      <span>➡️ Covered <b style={{ color: 'var(--acc)' }}>{fmt(dp.cumDist)} nm</b></span>
+                      <span>⛳ Remaining <b style={{ color: 'var(--info)' }}>{fmt(dp.remainingDist)} nm</b></span>
                     </div>
                     {w && w.available ? (
-                      <div style={{ marginTop: 8, padding: '12px 14px', background: '#0c1610', border: `1px solid ${SEV_COLOR[sev]}55`, borderRadius: 4 }}>
+                      <div style={{ marginTop: 8, padding: '12px 14px', background: 'var(--bg2)', border: `1px solid ${SEV_COLOR[sev]}55`, borderRadius: 4 }}>
                         <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap', fontFamily: rj, fontSize: 12.5 }}>
-                          <span style={{ color: '#7a8a72' }}>🌬️ Wind <b style={{ color: '#f5f0e8' }}>{w.windSpeed.toFixed(0)} kt {degToCompass(w.windDir)}</b></span>
-                          <span style={{ color: '#7a8a72' }}>🌊 Wave Hs <b style={{ color: '#f5f0e8' }}>{w.waveHs.toFixed(1)} m {degToCompass(w.waveDir)}</b></span>
-                          {w.wavePeriod > 0 && <span style={{ color: '#7a8a72' }}>⏱️ Period <b style={{ color: '#f5f0e8' }}>{w.wavePeriod.toFixed(0)} s</b></span>}
-                          {w.currentSpeed > 0 && <span style={{ color: '#7a8a72' }}>🌀 Current <b style={{ color: '#5aa6e8' }}>{w.currentSpeed.toFixed(1)} kt {degToCompass(w.currentDir)}</b></span>}
+                          <span style={{ color: 'var(--ink3)' }}>🌬️ Wind <b style={{ color: 'var(--ink)' }}>{w.windSpeed.toFixed(0)} kt {degToCompass(w.windDir)}</b></span>
+                          <span style={{ color: 'var(--ink3)' }}>🌊 Wave Hs <b style={{ color: 'var(--ink)' }}>{w.waveHs.toFixed(1)} m {degToCompass(w.waveDir)}</b></span>
+                          {w.wavePeriod > 0 && <span style={{ color: 'var(--ink3)' }}>⏱️ Period <b style={{ color: 'var(--ink)' }}>{w.wavePeriod.toFixed(0)} s</b></span>}
+                          {w.currentSpeed > 0 && <span style={{ color: 'var(--ink3)' }}>🌀 Current <b style={{ color: 'var(--info)' }}>{w.currentSpeed.toFixed(1)} kt {degToCompass(w.currentDir)}</b></span>}
                         </div>
                         {w.note && <div style={{ marginTop: 6, fontFamily: rj, fontSize: 12, color: SEV_COLOR[sev], fontWeight: 600 }}>{w.note}</div>}
                       </div>
                     ) : wxFetched ? (
-                      <div style={{ marginTop: 8, padding: '10px 14px', background: '#0c1610', border: '1px solid rgba(122,138,114,.3)', borderRadius: 4, fontFamily: rj, fontSize: 12, color: '#7a8a72' }}>
+                      <div style={{ marginTop: 8, padding: '10px 14px', background: 'var(--bg2)', border: '1px solid color-mix(in srgb, var(--ink3) 30%, transparent)', borderRadius: 4, fontFamily: rj, fontSize: 12, color: 'var(--ink3)' }}>
                         {w?.note || 'No forecast for this day'} — beyond the ~16-day forecast horizon or no marine data at this point.
                       </div>
                     ) : (
-                      <div style={{ marginTop: 8, fontFamily: rj, fontSize: 11, color: '#7a8a72' }}>
-                        Tap <b style={{ color: '#c8a84b' }}>Load Weather</b> above to see wind, waves and current for this position.
+                      <div style={{ marginTop: 8, fontFamily: rj, fontSize: 11, color: 'var(--ink3)' }}>
+                        Tap <b style={{ color: 'var(--acc)' }}>Load Weather</b> above to see wind, waves and current for this position.
                       </div>
                     )}
                   </div>
@@ -1007,23 +1007,23 @@ export default function VoyagePlannerPage() {
         <div style={card}>
           <div style={sectionTitle}>⛽ Fuel Plan</div>
           <div className="pl-kpis" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 10, marginBottom: 16 }}>
-            <KPI label="Main at Sea" value={fmt(fuelPlan.seaMain, 0)} sub={`MT ${fuelPlan.mainType}`} color="#c8a84b" />
-            <KPI label="Aux MGO at Sea" value={fmt(fuelPlan.seaMgo, 1)} sub="MT" color="#5aa6e8" />
-            <KPI label="Port MGO" value={fmt(fuelPlan.portMgo, 1)} sub="MT" color="#5aa6e8" />
-            <KPI label="Total Burn" value={fmt(fuelPlan.seaMain + fuelPlan.seaMgo + fuelPlan.portMgo, 0)} sub="MT" color="#e8b85a" big />
+            <KPI label="Main at Sea" value={fmt(fuelPlan.seaMain, 0)} sub={`MT ${fuelPlan.mainType}`} color="var(--acc)" />
+            <KPI label="Aux MGO at Sea" value={fmt(fuelPlan.seaMgo, 1)} sub="MT" color="var(--info)" />
+            <KPI label="Port MGO" value={fmt(fuelPlan.portMgo, 1)} sub="MT" color="var(--info)" />
+            <KPI label="Total Burn" value={fmt(fuelPlan.seaMain + fuelPlan.seaMgo + fuelPlan.portMgo, 0)} sub="MT" color="var(--warn)" big />
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 0, marginBottom: 14 }}>
             <RowR label={`VLSFO ROB on departure`} value={`${fmt(data.vessel.robVlsfo, 0)} MT`} />
             <RowR label="VLSFO consumed" value={`${fmt(fuelPlan.vlsfoUsed, 0)} MT`} />
-            <RowR label="VLSFO on arrival" value={`${fmt(fuelPlan.vlsfoArr, 0)} MT`} color={fuelPlan.vlsfoArr < 0 ? '#ff6b6b' : fuelPlan.vlsfoArr < data.vessel.robVlsfo * 0.1 ? '#e8b85a' : '#4caf76'} />
+            <RowR label="VLSFO on arrival" value={`${fmt(fuelPlan.vlsfoArr, 0)} MT`} color={fuelPlan.vlsfoArr < 0 ? 'var(--bad)' : fuelPlan.vlsfoArr < data.vessel.robVlsfo * 0.1 ? 'var(--warn)' : 'var(--ok)'} />
             <RowR label="MGO ROB on departure" value={`${fmt(data.vessel.robMgo, 0)} MT`} />
             <RowR label="MGO consumed" value={`${fmt(fuelPlan.mgoUsed, 1)} MT`} />
-            <RowR label="MGO on arrival" value={`${fmt(fuelPlan.mgoArr, 1)} MT`} color={fuelPlan.mgoArr < 0 ? '#ff6b6b' : fuelPlan.mgoArr < data.vessel.robMgo * 0.15 ? '#e8b85a' : '#4caf76'} />
+            <RowR label="MGO on arrival" value={`${fmt(fuelPlan.mgoArr, 1)} MT`} color={fuelPlan.mgoArr < 0 ? 'var(--bad)' : fuelPlan.mgoArr < data.vessel.robMgo * 0.15 ? 'var(--warn)' : 'var(--ok)'} />
           </div>
 
           {(fuelPlan.vlsfoArr < 0 || fuelPlan.mgoArr < 0) && (
-            <div style={{ padding: '10px 14px', background: 'rgba(255,107,107,.1)', border: '1px solid rgba(255,107,107,.4)', borderRadius: 4, fontFamily: rj, fontSize: 12.5, color: '#ff8a8a' }}>
+            <div style={{ padding: '10px 14px', background: 'color-mix(in srgb, var(--bad) 10%, transparent)', border: '1px solid color-mix(in srgb, var(--bad) 40%, transparent)', borderRadius: 4, fontFamily: rj, fontSize: 12.5, color: 'var(--bad)' }}>
               ⚠ Bunkers insufficient for this passage. Plan a stem before departure or en route, or reduce speed to cut consumption.
             </div>
           )}
@@ -1044,15 +1044,15 @@ export default function VoyagePlannerPage() {
             const d = pts.map((p, i) => `${i === 0 ? 'M' : 'L'} ${px(i).toFixed(1)} ${py(p.rob).toFixed(1)}`).join(' ');
             return (
               <div style={{ marginTop: 8 }}>
-                <div style={{ fontFamily: rj, fontSize: 10, color: '#c8a84b', letterSpacing: '1px', textTransform: 'uppercase', fontWeight: 700, marginBottom: 6 }}>
+                <div style={{ fontFamily: rj, fontSize: 10, color: 'var(--acc)', letterSpacing: '1px', textTransform: 'uppercase', fontWeight: 700, marginBottom: 6 }}>
                   {fuelPlan.mainType} ROB burn-down
                 </div>
                 <svg viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', height: 'auto' }}>
-                  <path d={`${d} L ${px(pts.length - 1)} ${H - pad} L ${px(0)} ${H - pad} Z`} fill="rgba(200,168,75,.12)" />
-                  <path d={d} fill="none" stroke="#c8a84b" strokeWidth={2} />
-                  <text x={pad} y={H - 8} fill="#7a8a72" fontSize={8} fontFamily={rj}>Day 0</text>
-                  <text x={W - pad} y={H - 8} fill="#7a8a72" fontSize={8} fontFamily={rj} textAnchor="end">Day {pts[pts.length - 1].day}</text>
-                  <text x={pad} y={py(maxR) + 8} fill="#7a8a72" fontSize={8} fontFamily={rj}>{fmt(maxR, 0)} MT</text>
+                  <path d={`${d} L ${px(pts.length - 1)} ${H - pad} L ${px(0)} ${H - pad} Z`} fill="color-mix(in srgb, var(--acc) 12%, transparent)" />
+                  <path d={d} fill="none" stroke="var(--acc)" strokeWidth={2} />
+                  <text x={pad} y={H - 8} fill="var(--ink3)" fontSize={8} fontFamily={rj}>Day 0</text>
+                  <text x={W - pad} y={H - 8} fill="var(--ink3)" fontSize={8} fontFamily={rj} textAnchor="end">Day {pts[pts.length - 1].day}</text>
+                  <text x={pad} y={py(maxR) + 8} fill="var(--ink3)" fontSize={8} fontFamily={rj}>{fmt(maxR, 0)} MT</text>
                 </svg>
               </div>
             );
@@ -1067,7 +1067,7 @@ export default function VoyagePlannerPage() {
           <div style={{ overflowX: 'auto' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 520, fontFamily: rj }}>
               <thead>
-                <tr style={{ color: '#7a8a72', fontSize: 9.5, letterSpacing: '.5px', textTransform: 'uppercase' }}>
+                <tr style={{ color: 'var(--ink3)', fontSize: 9.5, letterSpacing: '.5px', textTransform: 'uppercase' }}>
                   <th style={{ ...thd, textAlign: 'left' }}>Day / Date</th>
                   <th style={thd}>Wind</th>
                   <th style={thd}>Wave Hs</th>
@@ -1080,19 +1080,19 @@ export default function VoyagePlannerPage() {
                   const dp = dailyPositions.find((d) => d.day === w.day);
                   const sev = severity(w);
                   return (
-                    <tr key={w.day} style={{ borderTop: '1px solid rgba(200,168,75,.08)' }}>
-                      <td style={{ padding: '6px', color: '#f5f0e8', fontSize: 12 }}>
+                    <tr key={w.day} style={{ borderTop: '1px solid color-mix(in srgb, var(--acc) 8%, transparent)' }}>
+                      <td style={{ padding: '6px', color: 'var(--ink)', fontSize: 12 }}>
                         <b>Day {w.day}</b> {dp ? dp.date.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }) : ''}
                       </td>
                       {w.available ? (
                         <>
-                          <td style={{ padding: '6px', textAlign: 'right', color: '#b0c0a4', fontSize: 12 }}>{w.windSpeed.toFixed(0)} kt {degToCompass(w.windDir)}</td>
-                          <td style={{ padding: '6px', textAlign: 'right', color: '#b0c0a4', fontSize: 12 }}>{w.waveHs.toFixed(1)} m</td>
-                          <td style={{ padding: '6px', textAlign: 'right', color: '#5aa6e8', fontSize: 12 }}>{w.currentSpeed > 0 ? `${w.currentSpeed.toFixed(1)} kt ${degToCompass(w.currentDir)}` : '–'}</td>
+                          <td style={{ padding: '6px', textAlign: 'right', color: 'var(--ink2)', fontSize: 12 }}>{w.windSpeed.toFixed(0)} kt {degToCompass(w.windDir)}</td>
+                          <td style={{ padding: '6px', textAlign: 'right', color: 'var(--ink2)', fontSize: 12 }}>{w.waveHs.toFixed(1)} m</td>
+                          <td style={{ padding: '6px', textAlign: 'right', color: 'var(--info)', fontSize: 12 }}>{w.currentSpeed > 0 ? `${w.currentSpeed.toFixed(1)} kt ${degToCompass(w.currentDir)}` : '–'}</td>
                           <td style={{ padding: '6px 6px 6px 12px', color: SEV_COLOR[sev], fontSize: 11.5, fontWeight: 600 }}>{w.note}</td>
                         </>
                       ) : (
-                        <td colSpan={4} style={{ padding: '6px 6px 6px 12px', color: '#7a8a72', fontSize: 11.5 }}>{w.note || 'No forecast'}</td>
+                        <td colSpan={4} style={{ padding: '6px 6px 6px 12px', color: 'var(--ink3)', fontSize: 11.5 }}>{w.note || 'No forecast'}</td>
                       )}
                     </tr>
                   );
@@ -1105,9 +1105,9 @@ export default function VoyagePlannerPage() {
 
       {/* AI SUMMARY (Pro placeholder) */}
       {ready && (
-        <div style={{ ...card, background: 'linear-gradient(135deg,rgba(200,168,75,.06),transparent)', borderColor: 'rgba(200,168,75,.3)' }}>
+        <div style={{ ...card, background: 'linear-gradient(135deg,color-mix(in srgb, var(--acc) 6%, transparent),transparent)', borderColor: 'color-mix(in srgb, var(--acc) 30%, transparent)' }}>
           <div style={sectionTitle}>🤖 AI Voyage Summary</div>
-          <p style={{ fontFamily: rj, fontSize: 12.5, color: '#b0c0a4', lineHeight: 1.6, marginBottom: 12 }}>
+          <p style={{ fontFamily: rj, fontSize: 12.5, color: 'var(--ink2)', lineHeight: 1.6, marginBottom: 12 }}>
             Let AI read this entire plan — route, distance, ETA, fuel and the weather outlook — and write an
             operator-ready summary with routing advice, weather risk flags and a bunker recommendation.
           </p>
@@ -1135,10 +1135,10 @@ export default function VoyagePlannerPage() {
             <RowR label={`${fuelPlan.mainType} on arrival`} value={`${fmt(fuelPlan.mainType === 'LSMGO' ? fuelPlan.mgoArr : fuelPlan.vlsfoArr, 0)} MT`} />
             <RowR label="MGO on arrival" value={`${fmt(fuelPlan.mgoArr, 1)} MT`} />
             {wxFetched && weather.some((w) => severity(w) >= 3) && (
-              <RowR label="Weather risk" value={`Gale-force conditions expected on ${weather.filter((w) => severity(w) >= 3).map((w) => `Day ${w.day}`).join(', ')}`} color="#ff8a8a" />
+              <RowR label="Weather risk" value={`Gale-force conditions expected on ${weather.filter((w) => severity(w) >= 3).map((w) => `Day ${w.day}`).join(', ')}`} color="var(--bad)" />
             )}
           </div>
-          <p style={{ fontFamily: rj, fontSize: 10.5, color: '#7a8a72', marginTop: 12, lineHeight: 1.5 }}>
+          <p style={{ fontFamily: rj, fontSize: 10.5, color: 'var(--ink3)', marginTop: 12, lineHeight: 1.5 }}>
             Indicative planning figures. Distances are great-circle via your waypoints (not a navigated track); weather is Open-Meteo forecast (~16-day horizon). Always plan the actual passage with approved charts, routing and the vessel&apos;s own data.
           </p>
         </div>
@@ -1146,7 +1146,7 @@ export default function VoyagePlannerPage() {
 
 
       {!ready && (
-        <div style={{ ...card, textAlign: 'center', color: '#7a8a72', fontFamily: rj }}>
+        <div style={{ ...card, textAlign: 'center', color: 'var(--ink3)', fontFamily: rj }}>
           Select a departure port, an arrival port and a service speed to see the passage summary.
         </div>
       )}
@@ -1175,17 +1175,17 @@ function miniBtn(color: string): React.CSSProperties {
 }
 function KPI({ label: l, value, sub, color, big }: { label: string; value: string; sub?: string; color: string; big?: boolean }) {
   return (
-    <div style={{ background: '#0c1610', border: '1px solid rgba(200,168,75,.2)', borderRadius: 4, padding: '12px 10px', textAlign: 'center' }}>
-      <div style={{ fontFamily: rj, fontSize: 9, letterSpacing: '1px', textTransform: 'uppercase', color: '#7a8a72', fontWeight: 700 }}>{l}</div>
-      <div style={{ fontFamily: lb, fontSize: big ? 26 : 20, fontWeight: 700, color, marginTop: 4 }}>{value} {sub && <span style={{ fontSize: 11, color: '#7a8a72' }}>{sub}</span>}</div>
+    <div style={{ background: 'var(--bg2)', border: '1px solid color-mix(in srgb, var(--acc) 20%, transparent)', borderRadius: 4, padding: '12px 10px', textAlign: 'center' }}>
+      <div style={{ fontFamily: rj, fontSize: 9, letterSpacing: '1px', textTransform: 'uppercase', color: 'var(--ink3)', fontWeight: 700 }}>{l}</div>
+      <div style={{ fontFamily: lb, fontSize: big ? 26 : 20, fontWeight: 700, color, marginTop: 4 }}>{value} {sub && <span style={{ fontSize: 11, color: 'var(--ink3)' }}>{sub}</span>}</div>
     </div>
   );
 }
 function RowR({ label: l, value, color }: { label: string; value: string; color?: string }) {
   return (
-    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '7px 0', borderBottom: '1px dashed rgba(200,168,75,.1)', fontFamily: rj, fontSize: 13 }}>
-      <span style={{ color: '#7a8a72' }}>{l}</span>
-      <span style={{ color: color || '#f5f0e8', fontWeight: 600 }}>{value}</span>
+    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '7px 0', borderBottom: '1px dashed color-mix(in srgb, var(--acc) 10%, transparent)', fontFamily: rj, fontSize: 13 }}>
+      <span style={{ color: 'var(--ink3)' }}>{l}</span>
+      <span style={{ color: color || 'var(--ink)', fontWeight: 600 }}>{value}</span>
     </div>
   );
 }

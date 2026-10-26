@@ -10,11 +10,13 @@ export const siteConfig = {
   url: 'https://www.portservicefinder.com',
   email: 'contact@portservicefinder.com',
   foundingDate: '2025',
+  // Where the company is based (shown in the footer, About, Terms and structured data)
+  address: { addressLocality: 'London', addressRegion: 'England', addressCountry: 'GB' },
 
   // Tagline & description
-  tagline: 'Every Port. Every Service. One Platform.',
+  tagline: 'The global directory of port service providers.',
   description:
-    'Global maritime services directory connecting vessel operators with verified ship agents, shipchandlers and marine service companies at 1,200+ ports worldwide. Free for vessel operators. No commission, ever.',
+    'Find ship agents, shipchandlers and marine service companies at 1,200+ ports worldwide. Free for vessel operators to search and contact. No commission, ever.',
   shortDescription:
     'Find verified ship agents, shipchandlers and marine service companies at any port worldwide.',
 
@@ -271,7 +273,7 @@ export const siteConfig = {
   },
 
   // Open Graph & Twitter defaults
-  defaultOgImage: 'https://www.portservicefinder.com/og-image.jpg',
+  defaultOgImage: 'https://www.portservicefinder.com/opengraph-image',
 
   // Google verification (already in your layout)
   googleVerification: '3fDgLOOxUGm9843wNeYRE53K2bwHogMRq22_acvu8qo',
@@ -290,7 +292,7 @@ export function getOrganizationSchema() {
     name: siteConfig.name,
     alternateName: siteConfig.alternateName,
     url: siteConfig.url,
-    logo: `${siteConfig.url}/icon`,
+    logo: `${siteConfig.url}/icon-512.png`,
     description: siteConfig.description,
     foundingDate: siteConfig.foundingDate,
     areaServed: {
@@ -298,6 +300,7 @@ export function getOrganizationSchema() {
       name: siteConfig.areaServed,
     },
     knowsAbout: siteConfig.knowsAbout,
+    address: { '@type': 'PostalAddress', ...siteConfig.address },
     contactPoint: {
       '@type': 'ContactPoint',
       contactType: 'Customer Service',

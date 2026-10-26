@@ -103,12 +103,12 @@ export async function POST(request: Request) {
         const firstName = (contact_person || company_name || 'there').split(' ')[0];
         const emailHtml =
           '<div style="font-family:Arial,sans-serif;max-width:560px">' +
-          '<h2 style="color:#0d1030">Almost there — complete your payment</h2>' +
+          '<h2 style="color:#0d1030">Thanks for listing with PortServiceFinder</h2>' +
           '<p>Hi ' + firstName + ',</p>' +
-          '<p>Thanks for signing up <b>' + company_name + '</b> on PortServiceFinder. Your listing is saved and will go <b>live as soon as payment is confirmed</b>.</p>' +
-          '<p>You selected the <b>' + planLabel + '</b> plan.</p>' +
+          '<p>Thanks for signing up <b>' + company_name + '</b> on PortServiceFinder. Your listing is saved and our team will activate it shortly.</p>' +
+          '<p>You selected the <b>' + planLabel + '</b> plan. Listing is free during our launch period, so there is nothing to pay now.</p>' +
           '<p style="background:#f4f4f4;padding:12px;border-radius:8px;font-size:13px;">' +
-          'We will follow up shortly with payment instructions for your ' + planLabel + ' subscription. Once payment is received, your listing goes live immediately. If you have questions in the meantime, just reply to this email.' +
+          'After the launch period, listings will cost $49.90/month or $499.90/year. We will email you before the launch period ends, and nothing is charged unless you choose to continue on a paid plan. If you have questions, just reply to this email.' +
           '</p>' +
           '<p style="color:#888;font-size:12px;margin-top:18px">You are receiving this because you signed up your business on portservicefinder.com.</p>' +
           '</div>';
@@ -123,9 +123,9 @@ export async function POST(request: Request) {
             from: 'PortServiceFinder <notifications@shipcrewfinder.com>', // GECICI: portservicefinder.com Resend'de dogrulanana kadar
             reply_to: 'portservicefinder@gmail.com', // Uye "Yanitla" derse gercek gelen kutusuna gider
             to: [email],
-            subject: 'Complete your payment to activate your PortServiceFinder listing',
+            subject: 'Your PortServiceFinder listing: next steps',
             html: emailHtml,
-            text: 'Thanks for signing up ' + company_name + '. You selected the ' + planLabel + ' plan. We will follow up shortly with payment instructions — your listing goes live once payment is confirmed.',
+            text: 'Thanks for signing up ' + company_name + ' on PortServiceFinder. You selected the ' + planLabel + ' plan. Your listing is saved and our team will activate it shortly. Listing is free during our launch period, so there is nothing to pay now. After the launch period, listings will cost $49.90/month or $499.90/year. We will email you before the launch period ends, and nothing is charged unless you choose a paid plan. Questions: reply to this email.',
           }),
         });
         const customerRespBody = await customerResp.text();

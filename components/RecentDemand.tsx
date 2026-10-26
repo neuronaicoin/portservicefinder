@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { getTotalSearchesLast30Days, getTopSearchedPorts, type PortDemand } from "@/lib/demand";
 
-const rj = "'Rajdhani',sans-serif";
+const rj = 'var(--font-ui)';
 
 // Gercek search_events verisinden beslenir. Cok az veri varsa (yeni site,
 // dusuk hacim) sahte bir sayi UYDURMAZ - onun yerine durust, hala cesaret
@@ -31,8 +31,8 @@ export function RecentDemand() {
   return (
     <div
       style={{
-        background: "#111c13",
-        border: "1px solid rgba(200,168,75,.2)",
+        background: "var(--card)",
+        border: "1px solid color-mix(in srgb, var(--acc) 20%, transparent)",
         borderRadius: 14,
         padding: "22px 24px",
         maxWidth: 480,
@@ -40,28 +40,28 @@ export function RecentDemand() {
         textAlign: "center",
       }}
     >
-      <div style={{ fontFamily: rj, fontSize: 10, letterSpacing: "2px", textTransform: "uppercase", color: "#c8a84b", marginBottom: 10, fontWeight: 700 }}>
+      <div style={{ fontFamily: rj, fontSize: 10, letterSpacing: "2px", textTransform: "uppercase", color: "var(--acc)", marginBottom: 10, fontWeight: 700 }}>
         Real Demand
       </div>
 
       {hasMeaningfulData ? (
         <>
-          <p style={{ color: "#f5f0e8", fontSize: 15, fontWeight: 600, marginBottom: topPorts.length > 0 ? 14 : 0 }}>
+          <p style={{ color: "var(--ink)", fontSize: 15, fontWeight: 600, marginBottom: topPorts.length > 0 ? 14 : 0 }}>
             {total} operator searches on PortServiceFinder in the last 30 days
           </p>
           {topPorts.length > 0 && (
             <div style={{ display: "flex", flexDirection: "column", gap: 6, textAlign: "left" }}>
               {topPorts.map((p) => (
-                <div key={`${p.port}-${p.country}`} style={{ display: "flex", justifyContent: "space-between", fontSize: 13, color: "#d4dcc8" }}>
+                <div key={`${p.port}-${p.country}`} style={{ display: "flex", justifyContent: "space-between", fontSize: 13, color: "var(--ink2)" }}>
                   <span>{p.port}, {p.country}</span>
-                  <span style={{ color: "#c8a84b", fontWeight: 700 }}>{p.count} searches</span>
+                  <span style={{ color: "var(--acc)", fontWeight: 700 }}>{p.count} searches</span>
                 </div>
               ))}
             </div>
           )}
         </>
       ) : (
-        <p style={{ color: "#d4dcc8", fontSize: 14, lineHeight: 1.6 }}>
+        <p style={{ color: "var(--ink2)", fontSize: 14, lineHeight: 1.6 }}>
           Operators are actively searching PortServiceFinder for agents, chandlers, and marine services —
           list your business so they can find you.
         </p>

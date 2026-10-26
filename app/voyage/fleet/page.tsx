@@ -2,9 +2,9 @@
 import { useState, useEffect, useMemo } from 'react';
 import { saveItem, loadItem, genId } from '@/lib/voyage-storage';
 
-const lb = "'Libre Bodoni', serif";
-const rj = "'Rajdhani', sans-serif";
-const g = { color: '#c8a84b', fontStyle: 'italic' } as React.CSSProperties;
+const lb = 'var(--font-display)';
+const rj = 'var(--font-ui)';
+const g = { color: 'var(--acc)' } as React.CSSProperties;
 
 // ============================================================
 // TYPES
@@ -32,30 +32,30 @@ interface Vessel {
 }
 
 const STATUS_META: Record<VStatus, { label: string; icon: string; color: string }> = {
-  sea: { label: 'At Sea', icon: '🌊', color: '#5aa6e8' },
-  port: { label: 'In Port', icon: '🏴', color: '#c8a84b' },
-  loading: { label: 'Loading', icon: '📥', color: '#4caf76' },
-  discharge: { label: 'Discharge', icon: '📤', color: '#4caf76' },
-  anchor: { label: 'At Anchor', icon: '⚓', color: '#b0c0a4' },
-  idle: { label: 'Idle / Spot', icon: '⏸️', color: '#7a8a72' },
+  sea: { label: 'At Sea', icon: '🌊', color: 'var(--info)' },
+  port: { label: 'In Port', icon: '🏴', color: 'var(--acc)' },
+  loading: { label: 'Loading', icon: '📥', color: 'var(--ok)' },
+  discharge: { label: 'Discharge', icon: '📤', color: 'var(--ok)' },
+  anchor: { label: 'At Anchor', icon: '⚓', color: 'var(--ink2)' },
+  idle: { label: 'Idle / Spot', icon: '⏸️', color: 'var(--ink3)' },
 };
 
 const SCHED_META: Record<Schedule, { label: string; color: string; bg: string }> = {
-  onschedule: { label: 'ON SCHEDULE', color: '#4caf76', bg: 'rgba(76,175,118,.14)' },
-  ahead: { label: 'AHEAD', color: '#4caf76', bg: 'rgba(76,175,118,.14)' },
-  delayed: { label: 'DELAYED', color: '#ff8a8a', bg: 'rgba(255,138,138,.14)' },
-  demurrage: { label: 'DEMURRAGE', color: '#e8b85a', bg: 'rgba(232,184,90,.14)' },
+  onschedule: { label: 'ON SCHEDULE', color: 'var(--ok)', bg: 'color-mix(in srgb, var(--ok) 14%, transparent)' },
+  ahead: { label: 'AHEAD', color: 'var(--ok)', bg: 'color-mix(in srgb, var(--ok) 14%, transparent)' },
+  delayed: { label: 'DELAYED', color: 'var(--bad)', bg: 'color-mix(in srgb, var(--bad) 14%, transparent)' },
+  demurrage: { label: 'DEMURRAGE', color: 'var(--warn)', bg: 'color-mix(in srgb, var(--warn) 14%, transparent)' },
 };
 
 // ============================================================
 // STYLES
 // ============================================================
-const card: React.CSSProperties = { background: '#111c13', border: '1px solid rgba(200,168,75,.18)', padding: '20px 18px', borderRadius: 4, marginBottom: 16 };
-const sectionTitle: React.CSSProperties = { fontFamily: rj, fontSize: 11, letterSpacing: '2px', textTransform: 'uppercase', color: '#c8a84b', fontWeight: 700, marginBottom: 14, paddingBottom: 8, borderBottom: '1px solid rgba(200,168,75,.12)' };
-const label: React.CSSProperties = { display: 'block', fontFamily: rj, fontSize: 10, letterSpacing: '.5px', textTransform: 'uppercase', color: '#7a8a72', fontWeight: 600, marginBottom: 4 };
-const inputStyle: React.CSSProperties = { width: '100%', background: '#0c1610', border: '1px solid rgba(200,168,75,.2)', color: '#f5f0e8', padding: '7px 9px', fontFamily: rj, fontSize: 12.5, fontWeight: 500, borderRadius: 3, boxSizing: 'border-box' };
-const ghostBtn: React.CSSProperties = { background: 'transparent', color: '#c8a84b', border: '1px solid rgba(200,168,75,.4)', padding: '8px 14px', fontFamily: rj, fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 };
-const goldBtn: React.CSSProperties = { background: '#c8a84b', color: '#08100a', border: 'none', padding: '8px 16px', fontFamily: rj, fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 };
+const card: React.CSSProperties = { background: 'var(--card)', border: '1px solid color-mix(in srgb, var(--acc) 18%, transparent)', padding: '20px 18px', borderRadius: 4, marginBottom: 16 };
+const sectionTitle: React.CSSProperties = { fontFamily: rj, fontSize: 11, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--acc)', fontWeight: 700, marginBottom: 14, paddingBottom: 8, borderBottom: '1px solid color-mix(in srgb, var(--acc) 12%, transparent)' };
+const label: React.CSSProperties = { display: 'block', fontFamily: rj, fontSize: 10, letterSpacing: '.5px', textTransform: 'uppercase', color: 'var(--ink3)', fontWeight: 600, marginBottom: 4 };
+const inputStyle: React.CSSProperties = { width: '100%', background: 'var(--bg2)', border: '1px solid color-mix(in srgb, var(--acc) 20%, transparent)', color: 'var(--ink)', padding: '7px 9px', fontFamily: rj, fontSize: 12.5, fontWeight: 500, borderRadius: 3, boxSizing: 'border-box' };
+const ghostBtn: React.CSSProperties = { background: 'transparent', color: 'var(--acc)', border: '1px solid color-mix(in srgb, var(--acc) 40%, transparent)', padding: '8px 14px', fontFamily: rj, fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 };
+const goldBtn: React.CSSProperties = { background: 'var(--acc)', color: 'var(--bg)', border: 'none', padding: '8px 16px', fontFamily: rj, fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 };
 
 const STORAGE_KEY = 'fleet';
 const SINGLETON_ID = 'fleetboard';
@@ -124,13 +124,13 @@ export default function FleetDashboardPage() {
     <div>
       {/* Header */}
       <div style={{ marginBottom: 24 }}>
-        <div style={{ fontFamily: rj, fontSize: 10, letterSpacing: '2px', textTransform: 'uppercase', color: '#c8a84b', fontWeight: 700, marginBottom: 8 }}>
+        <div style={{ fontFamily: rj, fontSize: 10, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--acc)', fontWeight: 700, marginBottom: 8 }}>
           ⚓ Voyage Hub · Fleet Dashboard
         </div>
         <h1 style={{ fontFamily: lb, fontSize: 'clamp(22px,3vw,32px)', fontWeight: 700, lineHeight: 1.1, marginBottom: 8 }}>
           Fleet <em style={g}>Dashboard</em>
         </h1>
-        <p style={{ fontSize: 13, color: '#b0c0a4', lineHeight: 1.6, maxWidth: 720 }}>
+        <p style={{ fontSize: 13, color: 'var(--ink2)', lineHeight: 1.6, maxWidth: 720 }}>
           All your vessels on one screen — status, voyage progress, ETA, ROB and demurrage exposure.
           Delayed and demurrage vessels float to the top. Stored in your browser.
         </p>
@@ -140,26 +140,26 @@ export default function FleetDashboardPage() {
       <div className="action-bar" style={{ display: 'flex', gap: 10, marginBottom: 22, flexWrap: 'wrap', alignItems: 'center' }}>
         <button onClick={openNew} style={goldBtn}>+ Add Vessel</button>
         <button onClick={() => window.print()} style={ghostBtn}>🖨️ Print / PDF</button>
-        {saveMsg && <span style={{ color: '#4caf76', fontFamily: rj, fontSize: 12, fontWeight: 600 }}>{saveMsg}</span>}
+        {saveMsg && <span style={{ color: 'var(--ok)', fontFamily: rj, fontSize: 12, fontWeight: 600 }}>{saveMsg}</span>}
       </div>
 
       {/* Summary */}
       {vessels.length > 0 && (
         <div className="fleet-summary" style={{ display: 'grid', gridTemplateColumns: 'repeat(5,1fr)', gap: 10, marginBottom: 16 }}>
-          <KPI label="Vessels" value={String(summary.total)} color="#f5f0e8" />
-          <KPI label="At Sea" value={String(summary.atSea)} color="#5aa6e8" />
-          <KPI label="In Port" value={String(summary.inPort)} color="#c8a84b" />
-          <KPI label="Delayed" value={String(summary.delayed)} color={summary.delayed > 0 ? '#ff8a8a' : '#4caf76'} />
-          <KPI label="Demurrage" value={summary.totalDem > 0 ? `$${(summary.totalDem / 1000).toFixed(0)}k` : '$0'} color={summary.totalDem > 0 ? '#e8b85a' : '#4caf76'} />
+          <KPI label="Vessels" value={String(summary.total)} color="var(--ink)" />
+          <KPI label="At Sea" value={String(summary.atSea)} color="var(--info)" />
+          <KPI label="In Port" value={String(summary.inPort)} color="var(--acc)" />
+          <KPI label="Delayed" value={String(summary.delayed)} color={summary.delayed > 0 ? 'var(--bad)' : 'var(--ok)'} />
+          <KPI label="Demurrage" value={summary.totalDem > 0 ? `$${(summary.totalDem / 1000).toFixed(0)}k` : '$0'} color={summary.totalDem > 0 ? 'var(--warn)' : 'var(--ok)'} />
         </div>
       )}
 
       {/* Form */}
       {showForm && editing && (
-        <div style={{ ...card, borderColor: 'rgba(200,168,75,.5)' }}>
+        <div style={{ ...card, borderColor: 'color-mix(in srgb, var(--acc) 50%, transparent)' }}>
           <div style={sectionTitle}>{vessels.some((v) => v.id === editing.id) ? 'Edit Vessel' : 'Add Vessel'}</div>
           <div className="fleet-g4" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 10, marginBottom: 10 }}>
-            <div><label style={label}>Vessel Name</label><input style={inputStyle} value={editing.name} onChange={(e) => setEditing({ ...editing, name: e.target.value })} placeholder="MV NEURONAI" /></div>
+            <div><label style={label}>Vessel Name</label><input style={inputStyle} value={editing.name} onChange={(e) => setEditing({ ...editing, name: e.target.value })} placeholder="MV OCEAN PIONEER" /></div>
             <div><label style={label}>IMO</label><input style={inputStyle} value={editing.imo} onChange={(e) => setEditing({ ...editing, imo: e.target.value })} placeholder="9876543" /></div>
             <div><label style={label}>Type</label><input style={inputStyle} value={editing.type} onChange={(e) => setEditing({ ...editing, type: e.target.value })} placeholder="Bulk Carrier" /></div>
             <div><label style={label}>Charterer</label><input style={inputStyle} value={editing.charterer} onChange={(e) => setEditing({ ...editing, charterer: e.target.value })} placeholder="ABC Chartering" /></div>
@@ -210,8 +210,8 @@ export default function FleetDashboardPage() {
 
       {/* Vessel cards */}
       {vessels.length === 0 && !showForm && (
-        <div style={{ ...card, textAlign: 'center', color: '#7a8a72', fontFamily: rj }}>
-          No vessels yet. Tap <b style={{ color: '#c8a84b' }}>+ Add Vessel</b> to build your fleet view.
+        <div style={{ ...card, textAlign: 'center', color: 'var(--ink3)', fontFamily: rj }}>
+          No vessels yet. Tap <b style={{ color: 'var(--acc)' }}>+ Add Vessel</b> to build your fleet view.
         </div>
       )}
 
@@ -219,14 +219,14 @@ export default function FleetDashboardPage() {
         const sm = STATUS_META[v.status];
         const sch = SCHED_META[v.schedule];
         return (
-          <div key={v.id} style={{ ...card, borderColor: v.schedule === 'delayed' ? 'rgba(255,138,138,.4)' : v.schedule === 'demurrage' ? 'rgba(232,184,90,.4)' : 'rgba(200,168,75,.18)' }}>
+          <div key={v.id} style={{ ...card, borderColor: v.schedule === 'delayed' ? 'color-mix(in srgb, var(--bad) 40%, transparent)' : v.schedule === 'demurrage' ? 'color-mix(in srgb, var(--warn) 40%, transparent)' : 'color-mix(in srgb, var(--acc) 18%, transparent)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 10, flexWrap: 'wrap' }}>
               <div style={{ minWidth: 200 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-                  <span style={{ fontFamily: lb, fontSize: 17, fontWeight: 700, color: '#f5f0e8' }}>{v.name}</span>
+                  <span style={{ fontFamily: lb, fontSize: 17, fontWeight: 700, color: 'var(--ink)' }}>{v.name}</span>
                   <span style={{ fontSize: 9, background: sch.bg, color: sch.color, padding: '2px 8px', borderRadius: 3, fontFamily: rj, fontWeight: 700, letterSpacing: '.5px', border: `1px solid ${sch.color}40` }}>{sch.label}</span>
                 </div>
-                <div style={{ fontFamily: rj, fontSize: 11, color: '#7a8a72', marginTop: 3, display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+                <div style={{ fontFamily: rj, fontSize: 11, color: 'var(--ink3)', marginTop: 3, display: 'flex', gap: 10, flexWrap: 'wrap' }}>
                   {v.imo && <span>IMO {v.imo}</span>}
                   {v.type && <span>{v.type}</span>}
                   {v.charterer && <span>· {v.charterer}</span>}
@@ -234,19 +234,19 @@ export default function FleetDashboardPage() {
               </div>
               <div style={{ textAlign: 'right' }}>
                 <div style={{ fontFamily: rj, fontSize: 12, color: sm.color, fontWeight: 700 }}>{sm.icon} {sm.label}</div>
-                {v.eta && <div style={{ fontFamily: rj, fontSize: 11, color: '#b0c0a4' }}>ETA {v.eta}{v.delayDays ? ` (${v.delayDays > 0 ? '+' : ''}${v.delayDays}d)` : ''}</div>}
+                {v.eta && <div style={{ fontFamily: rj, fontSize: 11, color: 'var(--ink2)' }}>ETA {v.eta}{v.delayDays ? ` (${v.delayDays > 0 ? '+' : ''}${v.delayDays}d)` : ''}</div>}
               </div>
             </div>
 
             {/* route + progress */}
             {(v.from || v.to) && (
               <div style={{ marginTop: 12 }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontFamily: rj, fontSize: 12, color: '#b0c0a4', marginBottom: 5 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontFamily: rj, fontSize: 12, color: 'var(--ink2)', marginBottom: 5 }}>
                   <span>{v.from || '—'} → {v.to || '—'}</span>
-                  <span style={{ color: '#c8a84b', fontWeight: 700 }}>{v.progress}%</span>
+                  <span style={{ color: 'var(--acc)', fontWeight: 700 }}>{v.progress}%</span>
                 </div>
-                <div style={{ height: 8, background: '#0c1610', borderRadius: 4, overflow: 'hidden', border: '1px solid rgba(200,168,75,.2)' }}>
-                  <div style={{ width: `${Math.min(100, Math.max(0, v.progress))}%`, height: '100%', background: v.schedule === 'delayed' ? 'linear-gradient(90deg,#ff8a8a,#e8b85a)' : 'linear-gradient(90deg,#c8a84b,#4caf76)' }} />
+                <div style={{ height: 8, background: 'var(--bg2)', borderRadius: 4, overflow: 'hidden', border: '1px solid color-mix(in srgb, var(--acc) 20%, transparent)' }}>
+                  <div style={{ width: `${Math.min(100, Math.max(0, v.progress))}%`, height: '100%', background: v.schedule === 'delayed' ? 'linear-gradient(90deg,var(--bad),var(--warn))' : 'linear-gradient(90deg,var(--acc),var(--ok))' }} />
                 </div>
               </div>
             )}
@@ -254,21 +254,21 @@ export default function FleetDashboardPage() {
             {/* stats row */}
             <div style={{ display: 'flex', gap: 18, marginTop: 12, flexWrap: 'wrap', fontFamily: rj, fontSize: 12 }}>
               {(v.robVlsfo > 0 || v.robMgo > 0) && (
-                <span style={{ color: '#7a8a72' }}>⛽ ROB: <b style={{ color: '#f5f0e8' }}>{v.robVlsfo} VLSFO · {v.robMgo} MGO MT</b></span>
+                <span style={{ color: 'var(--ink3)' }}>⛽ ROB: <b style={{ color: 'var(--ink)' }}>{v.robVlsfo} VLSFO · {v.robMgo} MGO MT</b></span>
               )}
               {v.demurrage > 0 && (
-                <span style={{ color: '#7a8a72' }}>💰 Demurrage: <b style={{ color: '#e8b85a' }}>${v.demurrage.toLocaleString('en-US')}</b></span>
+                <span style={{ color: 'var(--ink3)' }}>💰 Demurrage: <b style={{ color: 'var(--warn)' }}>${v.demurrage.toLocaleString('en-US')}</b></span>
               )}
             </div>
 
-            {v.notes && <p style={{ fontFamily: rj, fontSize: 11, color: '#7a8a72', marginTop: 10, lineHeight: 1.5 }}>{v.notes}</p>}
+            {v.notes && <p style={{ fontFamily: rj, fontSize: 11, color: 'var(--ink3)', marginTop: 10, lineHeight: 1.5 }}>{v.notes}</p>}
 
-            <div style={{ display: 'flex', gap: 14, marginTop: 12, paddingTop: 10, borderTop: '1px dashed rgba(200,168,75,.12)', flexWrap: 'wrap' }}>
-              <button onClick={() => openEdit(v)} style={miniBtn('#c8a84b')}>Edit</button>
-              <a href="/voyage/tracker" style={{ ...miniBtn('#5aa6e8'), textDecoration: 'none' }}>Tracker →</a>
-              <a href="/voyage/noon" style={{ ...miniBtn('#5aa6e8'), textDecoration: 'none' }}>Noon →</a>
-              <a href="/voyage/claims" style={{ ...miniBtn('#5aa6e8'), textDecoration: 'none' }}>Claims →</a>
-              <button onClick={() => deleteVessel(v.id)} style={miniBtn('#ff8a8a')}>Remove</button>
+            <div style={{ display: 'flex', gap: 14, marginTop: 12, paddingTop: 10, borderTop: '1px dashed color-mix(in srgb, var(--acc) 12%, transparent)', flexWrap: 'wrap' }}>
+              <button onClick={() => openEdit(v)} style={miniBtn('var(--acc)')}>Edit</button>
+              <a href="/voyage/tracker" style={{ ...miniBtn('var(--info)'), textDecoration: 'none' }}>Tracker →</a>
+              <a href="/voyage/noon" style={{ ...miniBtn('var(--info)'), textDecoration: 'none' }}>Noon →</a>
+              <a href="/voyage/claims" style={{ ...miniBtn('var(--info)'), textDecoration: 'none' }}>Claims →</a>
+              <button onClick={() => deleteVessel(v.id)} style={miniBtn('var(--bad)')}>Remove</button>
             </div>
           </div>
         );
@@ -292,15 +292,15 @@ export default function FleetDashboardPage() {
 }
 
 function chip(active: boolean): React.CSSProperties {
-  return { padding: '5px 11px', background: active ? '#c8a84b' : 'transparent', color: active ? '#08100a' : '#7a8a72', border: `1px solid ${active ? '#c8a84b' : 'rgba(200,168,75,.25)'}`, fontFamily: rj, fontSize: 10, letterSpacing: '.5px', fontWeight: 700, cursor: 'pointer', borderRadius: 4, whiteSpace: 'nowrap' };
+  return { padding: '5px 11px', background: active ? 'var(--acc)' : 'transparent', color: active ? 'var(--bg)' : 'var(--ink3)', border: `1px solid ${active ? 'var(--acc)' : 'color-mix(in srgb, var(--acc) 25%, transparent)'}`, fontFamily: rj, fontSize: 10, letterSpacing: '.5px', fontWeight: 700, cursor: 'pointer', borderRadius: 4, whiteSpace: 'nowrap' };
 }
 function miniBtn(color: string): React.CSSProperties {
   return { background: 'transparent', border: 'none', color, fontFamily: rj, fontSize: 10.5, cursor: 'pointer', letterSpacing: '.5px', textTransform: 'uppercase', fontWeight: 700, padding: 0 };
 }
 function KPI({ label: l, value, color }: { label: string; value: string; color: string }) {
   return (
-    <div style={{ background: '#0c1610', border: '1px solid rgba(200,168,75,.2)', borderRadius: 4, padding: '12px 10px', textAlign: 'center' }}>
-      <div style={{ fontFamily: rj, fontSize: 9, letterSpacing: '1px', textTransform: 'uppercase', color: '#7a8a72', fontWeight: 700 }}>{l}</div>
+    <div style={{ background: 'var(--bg2)', border: '1px solid color-mix(in srgb, var(--acc) 20%, transparent)', borderRadius: 4, padding: '12px 10px', textAlign: 'center' }}>
+      <div style={{ fontFamily: rj, fontSize: 9, letterSpacing: '1px', textTransform: 'uppercase', color: 'var(--ink3)', fontWeight: 700 }}>{l}</div>
       <div style={{ fontFamily: lb, fontSize: 24, fontWeight: 700, color, marginTop: 4 }}>{value}</div>
     </div>
   );

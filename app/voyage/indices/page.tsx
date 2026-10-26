@@ -2,9 +2,9 @@
 import { useState, useEffect, useMemo } from 'react';
 import { saveItem, loadItem, genId } from '@/lib/voyage-storage';
 
-const lb = "'Libre Bodoni', serif";
-const rj = "'Rajdhani', sans-serif";
-const g = { color: '#c8a84b', fontStyle: 'italic' } as React.CSSProperties;
+const lb = 'var(--font-display)';
+const rj = 'var(--font-ui)';
+const g = { color: 'var(--acc)' } as React.CSSProperties;
 
 // ============================================================
 // TYPES
@@ -25,12 +25,12 @@ interface IndicesData {
 }
 
 const INDEX_META: Record<IndexKey, { label: string; full: string; color: string }> = {
-  BDI: { label: 'BDI', full: 'Baltic Dry Index', color: '#c8a84b' },
-  BCI: { label: 'BCI', full: 'Capesize', color: '#5aa6e8' },
-  BPI: { label: 'BPI', full: 'Panamax', color: '#4caf76' },
-  BSI: { label: 'BSI', full: 'Supramax', color: '#e8b85a' },
-  BHSI: { label: 'BHSI', full: 'Handysize', color: '#8bc34a' },
-  CUSTOM: { label: 'Custom', full: 'Your route / rate', color: '#ff8a8a' },
+  BDI: { label: 'BDI', full: 'Baltic Dry Index', color: 'var(--acc)' },
+  BCI: { label: 'BCI', full: 'Capesize', color: 'var(--info)' },
+  BPI: { label: 'BPI', full: 'Panamax', color: 'var(--ok)' },
+  BSI: { label: 'BSI', full: 'Supramax', color: 'var(--warn)' },
+  BHSI: { label: 'BHSI', full: 'Handysize', color: 'var(--ok)' },
+  CUSTOM: { label: 'Custom', full: 'Your route / rate', color: 'var(--bad)' },
 };
 
 function newReading(index: IndexKey = 'BDI'): Reading {
@@ -42,12 +42,12 @@ const DEFAULT_DATA: IndicesData = { readings: [], activeIndex: 'BDI' };
 // ============================================================
 // STYLES
 // ============================================================
-const card: React.CSSProperties = { background: '#111c13', border: '1px solid rgba(200,168,75,.18)', padding: '20px 18px', borderRadius: 4, marginBottom: 16 };
-const sectionTitle: React.CSSProperties = { fontFamily: rj, fontSize: 11, letterSpacing: '2px', textTransform: 'uppercase', color: '#c8a84b', fontWeight: 700, marginBottom: 14, paddingBottom: 8, borderBottom: '1px solid rgba(200,168,75,.12)' };
-const labelS: React.CSSProperties = { display: 'block', fontFamily: rj, fontSize: 10, letterSpacing: '.5px', textTransform: 'uppercase', color: '#7a8a72', fontWeight: 600, marginBottom: 4 };
-const inputStyle: React.CSSProperties = { width: '100%', background: '#0c1610', border: '1px solid rgba(200,168,75,.2)', color: '#f5f0e8', padding: '7px 9px', fontFamily: rj, fontSize: 12.5, fontWeight: 500, borderRadius: 3, boxSizing: 'border-box' };
-const ghostBtn: React.CSSProperties = { background: 'transparent', color: '#c8a84b', border: '1px solid rgba(200,168,75,.4)', padding: '8px 14px', fontFamily: rj, fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 };
-const goldBtn: React.CSSProperties = { background: '#c8a84b', color: '#08100a', border: 'none', padding: '8px 16px', fontFamily: rj, fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 };
+const card: React.CSSProperties = { background: 'var(--card)', border: '1px solid color-mix(in srgb, var(--acc) 18%, transparent)', padding: '20px 18px', borderRadius: 4, marginBottom: 16 };
+const sectionTitle: React.CSSProperties = { fontFamily: rj, fontSize: 11, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--acc)', fontWeight: 700, marginBottom: 14, paddingBottom: 8, borderBottom: '1px solid color-mix(in srgb, var(--acc) 12%, transparent)' };
+const labelS: React.CSSProperties = { display: 'block', fontFamily: rj, fontSize: 10, letterSpacing: '.5px', textTransform: 'uppercase', color: 'var(--ink3)', fontWeight: 600, marginBottom: 4 };
+const inputStyle: React.CSSProperties = { width: '100%', background: 'var(--bg2)', border: '1px solid color-mix(in srgb, var(--acc) 20%, transparent)', color: 'var(--ink)', padding: '7px 9px', fontFamily: rj, fontSize: 12.5, fontWeight: 500, borderRadius: 3, boxSizing: 'border-box' };
+const ghostBtn: React.CSSProperties = { background: 'transparent', color: 'var(--acc)', border: '1px solid color-mix(in srgb, var(--acc) 40%, transparent)', padding: '8px 14px', fontFamily: rj, fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 };
+const goldBtn: React.CSSProperties = { background: 'var(--acc)', color: 'var(--bg)', border: 'none', padding: '8px 16px', fontFamily: rj, fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 };
 
 const STORAGE_KEY = 'indices';
 const SINGLETON_ID = 'indicestracker';
@@ -122,30 +122,30 @@ export default function IndicesPage() {
     <div>
       {/* Header */}
       <div style={{ marginBottom: 24 }}>
-        <div style={{ fontFamily: rj, fontSize: 10, letterSpacing: '2px', textTransform: 'uppercase', color: '#c8a84b', fontWeight: 700, marginBottom: 8 }}>
+        <div style={{ fontFamily: rj, fontSize: 10, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--acc)', fontWeight: 700, marginBottom: 8 }}>
           ⚓ Voyage Hub · Market Indices
         </div>
         <h1 style={{ fontFamily: lb, fontSize: 'clamp(22px,3vw,32px)', fontWeight: 700, lineHeight: 1.1, marginBottom: 8 }}>
           Market <em style={g}>Indices</em>
         </h1>
-        <p style={{ fontSize: 13, color: '#b0c0a4', lineHeight: 1.6, maxWidth: 720 }}>
+        <p style={{ fontSize: 13, color: 'var(--ink2)', lineHeight: 1.6, maxWidth: 720 }}>
           Track the Baltic dry indices (or your own route rate) over time — log the daily figure and the
           tool charts the trend and the day-on-day change. You enter the values — no live feed.
         </p>
       </div>
 
       {/* Info */}
-      <div style={{ ...card, background: 'rgba(90,166,232,.06)', borderColor: 'rgba(90,166,232,.3)', padding: '12px 16px' }}>
-        <div style={{ fontFamily: rj, fontSize: 12, color: '#9fc6ef', lineHeight: 1.5 }}>
+      <div style={{ ...card, background: 'color-mix(in srgb, var(--info) 6%, transparent)', borderColor: 'color-mix(in srgb, var(--info) 30%, transparent)', padding: '12px 16px' }}>
+        <div style={{ fontFamily: rj, fontSize: 12, color: 'var(--info)', lineHeight: 1.5 }}>
           💡 The Baltic Exchange publishes BDI/BCI/BPI/BSI/BHSI each business day. Log the figure here to build
-          your own trend. <a href="https://www.balticexchange.com/" target="_blank" rel="noopener noreferrer" style={{ color: '#5aa6e8', fontWeight: 700 }}>Baltic Exchange ↗</a>
+          your own trend. <a href="https://www.balticexchange.com/" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--info)', fontWeight: 700 }}>Baltic Exchange ↗</a>
         </div>
       </div>
 
       <div className="action-bar" style={{ display: 'flex', gap: 10, marginBottom: 16, flexWrap: 'wrap', alignItems: 'center' }}>
         <button onClick={openNew} style={goldBtn}>+ Add Reading</button>
         <button onClick={() => window.print()} style={ghostBtn}>🖨️ Print / PDF</button>
-        {saveMsg && <span style={{ color: '#4caf76', fontFamily: rj, fontSize: 12, fontWeight: 600 }}>{saveMsg}</span>}
+        {saveMsg && <span style={{ color: 'var(--ok)', fontFamily: rj, fontSize: 12, fontWeight: 600 }}>{saveMsg}</span>}
       </div>
 
       {/* Index selector */}
@@ -156,7 +156,7 @@ export default function IndicesPage() {
           return (
             <button key={k} onClick={() => update('activeIndex', k)} style={{
               padding: '7px 14px', background: active ? m.color : 'transparent',
-              color: active ? '#08100a' : m.color, border: `1px solid ${m.color}66`,
+              color: active ? 'var(--bg)' : m.color, border: `1px solid ${m.color}66`,
               fontFamily: rj, fontSize: 11, fontWeight: 700, cursor: 'pointer', borderRadius: 4, whiteSpace: 'nowrap',
             }}>{m.label}</button>
           );
@@ -165,7 +165,7 @@ export default function IndicesPage() {
 
       {/* Form */}
       {showForm && editing && (
-        <div style={{ ...card, borderColor: 'rgba(200,168,75,.5)' }}>
+        <div style={{ ...card, borderColor: 'color-mix(in srgb, var(--acc) 50%, transparent)' }}>
           <div style={sectionTitle}>{data.readings.some((x) => x.id === editing.id) ? 'Edit Reading' : 'New Reading'}</div>
           <div className="ix-g3" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 10, marginBottom: 10 }}>
             <div>
@@ -189,21 +189,21 @@ export default function IndicesPage() {
 
       {/* Current value */}
       {latest && (
-        <div style={{ ...card, background: 'linear-gradient(135deg,rgba(200,168,75,.08),transparent)', borderColor: 'rgba(200,168,75,.4)' }}>
+        <div style={{ ...card, background: 'linear-gradient(135deg,color-mix(in srgb, var(--acc) 8%, transparent),transparent)', borderColor: 'color-mix(in srgb, var(--acc) 40%, transparent)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: 12 }}>
             <div>
-              <div style={{ fontFamily: rj, fontSize: 11, color: '#7a8a72', letterSpacing: '1px', textTransform: 'uppercase', fontWeight: 700 }}>
+              <div style={{ fontFamily: rj, fontSize: 11, color: 'var(--ink3)', letterSpacing: '1px', textTransform: 'uppercase', fontWeight: 700 }}>
                 {meta.label} — {data.activeIndex === 'CUSTOM' && latest.customLabel ? latest.customLabel : meta.full}
               </div>
               <div style={{ fontFamily: lb, fontSize: 38, fontWeight: 700, color: meta.color, lineHeight: 1.1 }}>{fmt(latest.value)}</div>
-              <div style={{ fontFamily: rj, fontSize: 11, color: '#7a8a72' }}>as of {latest.date}</div>
+              <div style={{ fontFamily: rj, fontSize: 11, color: 'var(--ink3)' }}>as of {latest.date}</div>
             </div>
             {prev && (
               <div style={{ textAlign: 'right' }}>
-                <div style={{ fontFamily: rj, fontSize: 16, fontWeight: 700, color: change >= 0 ? '#4caf76' : '#ff6b6b' }}>
+                <div style={{ fontFamily: rj, fontSize: 16, fontWeight: 700, color: change >= 0 ? 'var(--ok)' : 'var(--bad)' }}>
                   {change >= 0 ? '▲' : '▼'} {fmt(Math.abs(change))} ({fmt(Math.abs(changePct), 1)}%)
                 </div>
-                <div style={{ fontFamily: rj, fontSize: 10, color: '#7a8a72' }}>vs {prev.date}</div>
+                <div style={{ fontFamily: rj, fontSize: 10, color: 'var(--ink3)' }}>vs {prev.date}</div>
               </div>
             )}
           </div>
@@ -214,15 +214,15 @@ export default function IndicesPage() {
                 <path d={`${pathD} L ${px(series.length - 1)} ${H - pad} L ${px(0)} ${H - pad} Z`} fill={`${meta.color}1a`} />
                 <path d={pathD} fill="none" stroke={meta.color} strokeWidth={2} />
                 {series.map((r, i) => <circle key={r.id} cx={px(i)} cy={py(r.value)} r={2.5} fill={meta.color} />)}
-                <text x={pad} y={H - 8} fill="#7a8a72" fontSize={8} fontFamily={rj}>{series[0].date}</text>
-                <text x={W - pad} y={H - 8} fill="#7a8a72" fontSize={8} fontFamily={rj} textAnchor="end">{latest.date}</text>
-                <text x={pad} y={py(maxV) - 3} fill="#7a8a72" fontSize={8} fontFamily={rj}>{fmt(maxV)}</text>
-                <text x={pad} y={py(minV) + 10} fill="#7a8a72" fontSize={8} fontFamily={rj}>{fmt(minV)}</text>
+                <text x={pad} y={H - 8} fill="var(--ink3)" fontSize={8} fontFamily={rj}>{series[0].date}</text>
+                <text x={W - pad} y={H - 8} fill="var(--ink3)" fontSize={8} fontFamily={rj} textAnchor="end">{latest.date}</text>
+                <text x={pad} y={py(maxV) - 3} fill="var(--ink3)" fontSize={8} fontFamily={rj}>{fmt(maxV)}</text>
+                <text x={pad} y={py(minV) + 10} fill="var(--ink3)" fontSize={8} fontFamily={rj}>{fmt(minV)}</text>
               </svg>
-              <div style={{ display: 'flex', gap: 18, marginTop: 8, fontFamily: rj, fontSize: 11, color: '#7a8a72' }}>
-                <span>High: <b style={{ color: '#4caf76' }}>{fmt(high)}</b></span>
-                <span>Low: <b style={{ color: '#ff8a8a' }}>{fmt(low)}</b></span>
-                <span>Readings: <b style={{ color: '#f5f0e8' }}>{series.length}</b></span>
+              <div style={{ display: 'flex', gap: 18, marginTop: 8, fontFamily: rj, fontSize: 11, color: 'var(--ink3)' }}>
+                <span>High: <b style={{ color: 'var(--ok)' }}>{fmt(high)}</b></span>
+                <span>Low: <b style={{ color: 'var(--bad)' }}>{fmt(low)}</b></span>
+                <span>Readings: <b style={{ color: 'var(--ink)' }}>{series.length}</b></span>
               </div>
             </div>
           )}
@@ -231,8 +231,8 @@ export default function IndicesPage() {
 
       {/* Log */}
       {series.length === 0 && !showForm && (
-        <div style={{ ...card, textAlign: 'center', color: '#7a8a72', fontFamily: rj }}>
-          No {meta.label} readings yet. Tap <b style={{ color: '#c8a84b' }}>+ Add Reading</b> to start the trend.
+        <div style={{ ...card, textAlign: 'center', color: 'var(--ink3)', fontFamily: rj }}>
+          No {meta.label} readings yet. Tap <b style={{ color: 'var(--acc)' }}>+ Add Reading</b> to start the trend.
         </div>
       )}
 
@@ -243,13 +243,13 @@ export default function IndicesPage() {
             const prevR = arr[idx + 1];
             const d = prevR ? r.value - prevR.value : 0;
             return (
-              <div key={r.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 0', borderBottom: '1px dashed rgba(200,168,75,.1)', fontFamily: rj }}>
-                <span style={{ color: '#b0c0a4', fontSize: 12.5 }}>{r.date}</span>
+              <div key={r.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 0', borderBottom: '1px dashed color-mix(in srgb, var(--acc) 10%, transparent)', fontFamily: rj }}>
+                <span style={{ color: 'var(--ink2)', fontSize: 12.5 }}>{r.date}</span>
                 <span style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-                  {prevR && <span style={{ fontSize: 11, color: d >= 0 ? '#4caf76' : '#ff6b6b' }}>{d >= 0 ? '▲' : '▼'} {fmt(Math.abs(d))}</span>}
+                  {prevR && <span style={{ fontSize: 11, color: d >= 0 ? 'var(--ok)' : 'var(--bad)' }}>{d >= 0 ? '▲' : '▼'} {fmt(Math.abs(d))}</span>}
                   <span style={{ color: meta.color, fontWeight: 700, fontSize: 14, minWidth: 60, textAlign: 'right' }}>{fmt(r.value)}</span>
-                  <button onClick={() => openEdit(r)} style={miniBtn('#c8a84b')}>Edit</button>
-                  <button onClick={() => delReading(r.id)} style={miniBtn('#ff8a8a')}>✕</button>
+                  <button onClick={() => openEdit(r)} style={miniBtn('var(--acc)')}>Edit</button>
+                  <button onClick={() => delReading(r.id)} style={miniBtn('var(--bad)')}>✕</button>
                 </span>
               </div>
             );
@@ -258,11 +258,11 @@ export default function IndicesPage() {
       )}
 
       {/* Reference */}
-      <div style={{ ...card, background: 'rgba(122,138,114,.05)', borderColor: 'rgba(122,138,114,.15)' }}>
+      <div style={{ ...card, background: 'color-mix(in srgb, var(--ink3) 5%, transparent)', borderColor: 'color-mix(in srgb, var(--ink3) 15%, transparent)' }}>
         <div style={sectionTitle}>📖 The Baltic Indices</div>
-        <ul style={{ fontSize: 11.5, color: '#b0c0a4', lineHeight: 1.7, paddingLeft: 18, fontFamily: rj }}>
-          <li><b style={{ color: '#c8a84b' }}>BDI</b> — composite dry-bulk index (Capesize, Panamax, Supramax weighted).</li>
-          <li><b style={{ color: '#5aa6e8' }}>BCI / BPI / BSI / BHSI</b> — Capesize, Panamax, Supramax, Handysize sub-indices.</li>
+        <ul style={{ fontSize: 11.5, color: 'var(--ink2)', lineHeight: 1.7, paddingLeft: 18, fontFamily: rj }}>
+          <li><b style={{ color: 'var(--acc)' }}>BDI</b> — composite dry-bulk index (Capesize, Panamax, Supramax weighted).</li>
+          <li><b style={{ color: 'var(--info)' }}>BCI / BPI / BSI / BHSI</b> — Capesize, Panamax, Supramax, Handysize sub-indices.</li>
           <li>Use <b>Custom</b> to track your own route TCE or freight rate alongside the published indices.</li>
           <li>Figures are published each London business day by the Baltic Exchange — enter them manually here.</li>
         </ul>

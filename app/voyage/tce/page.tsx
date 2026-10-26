@@ -3,9 +3,9 @@ import { useState, useEffect, useMemo } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { saveItem, loadItem, genId } from '@/lib/voyage-storage';
 
-const lb = "'Libre Bodoni', serif";
-const rj = "'Rajdhani', sans-serif";
-const g = { color: '#c8a84b', fontStyle: 'italic' };
+const lb = 'var(--font-display)';
+const rj = 'var(--font-ui)';
+const g = { color: 'var(--acc)' };
 
 // ============================================================
 // TYPES
@@ -191,8 +191,8 @@ function fmtMoney(n: number): string {
 // STYLES
 // ============================================================
 const card: React.CSSProperties = {
-  background: '#111c13',
-  border: '1px solid rgba(200,168,75,.18)',
+  background: 'var(--card)',
+  border: '1px solid color-mix(in srgb, var(--acc) 18%, transparent)',
   padding: '20px 18px',
   borderRadius: 4,
   marginBottom: 16,
@@ -202,11 +202,11 @@ const sectionTitle: React.CSSProperties = {
   fontSize: 11,
   letterSpacing: '2px',
   textTransform: 'uppercase',
-  color: '#c8a84b',
+  color: 'var(--acc)',
   fontWeight: 700,
   marginBottom: 14,
   paddingBottom: 8,
-  borderBottom: '1px solid rgba(200,168,75,.12)',
+  borderBottom: '1px solid color-mix(in srgb, var(--acc) 12%, transparent)',
 };
 const label: React.CSSProperties = {
   display: 'block',
@@ -214,15 +214,15 @@ const label: React.CSSProperties = {
   fontSize: 10.5,
   letterSpacing: '.5px',
   textTransform: 'uppercase',
-  color: '#7a8a72',
+  color: 'var(--ink3)',
   fontWeight: 600,
   marginBottom: 5,
 };
 const inputStyle: React.CSSProperties = {
   width: '100%',
-  background: '#0c1610',
-  border: '1px solid rgba(200,168,75,.2)',
-  color: '#f5f0e8',
+  background: 'var(--bg2)',
+  border: '1px solid color-mix(in srgb, var(--acc) 20%, transparent)',
+  color: 'var(--ink)',
   padding: '8px 10px',
   fontFamily: rj,
   fontSize: 13,
@@ -231,8 +231,8 @@ const inputStyle: React.CSSProperties = {
 };
 const ghostBtn: React.CSSProperties = {
   background: 'transparent',
-  color: '#c8a84b',
-  border: '1px solid rgba(200,168,75,.4)',
+  color: 'var(--acc)',
+  border: '1px solid color-mix(in srgb, var(--acc) 40%, transparent)',
   padding: '8px 14px',
   fontFamily: rj,
   fontSize: 11,
@@ -309,13 +309,13 @@ export default function TCECalculatorPage() {
     <div>
       {/* Header */}
       <div style={{ marginBottom: 24 }}>
-        <div style={{ fontFamily: rj, fontSize: 10, letterSpacing: '2px', textTransform: 'uppercase', color: '#c8a84b', fontWeight: 700, marginBottom: 8 }}>
+        <div style={{ fontFamily: rj, fontSize: 10, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--acc)', fontWeight: 700, marginBottom: 8 }}>
           💵 Voyage Hub · TCE Calculator
         </div>
         <h1 style={{ fontFamily: lb, fontSize: 'clamp(22px,3vw,32px)', fontWeight: 700, lineHeight: 1.1, marginBottom: 8 }}>
           Time Charter <em style={g}>Equivalent</em> & Voyage Estimation
         </h1>
-        <p style={{ fontSize: 13, color: '#b0c0a4', lineHeight: 1.6, maxWidth: 720 }}>
+        <p style={{ fontSize: 13, color: 'var(--ink2)', lineHeight: 1.6, maxWidth: 720 }}>
           Calculate TCE for voyage charters, compare with time charter rates, and analyze profit per
           day. Supports lump sum, $/MT, and Worldscale freight structures.
         </p>
@@ -326,9 +326,9 @@ export default function TCECalculatorPage() {
         <button
           onClick={() => setView(view === 'input' ? 'report' : 'input')}
           style={{
-            background: view === 'report' ? 'transparent' : '#c8a84b',
-            color: view === 'report' ? '#c8a84b' : '#08100a',
-            border: '1px solid #c8a84b',
+            background: view === 'report' ? 'transparent' : 'var(--acc)',
+            color: view === 'report' ? 'var(--acc)' : 'var(--bg)',
+            border: '1px solid var(--acc)',
             padding: '8px 16px',
             fontFamily: rj,
             fontSize: 11,
@@ -343,24 +343,24 @@ export default function TCECalculatorPage() {
         </button>
         <button onClick={() => setShowSave(true)} style={ghostBtn}>💾 Save</button>
         <button onClick={handlePrint} style={ghostBtn}>🖨️ Print / PDF</button>
-        <button onClick={handleReset} style={{ ...ghostBtn, color: '#ff8a8a', borderColor: 'rgba(255,138,138,.3)' }}>🗑️ Reset</button>
-        {saveMsg && <span style={{ color: '#4caf76', fontFamily: rj, fontSize: 12, fontWeight: 600 }}>{saveMsg}</span>}
-        {recordName && <span style={{ color: '#7a8a72', fontFamily: rj, fontSize: 11, marginLeft: 'auto' }}>📂 {recordName}</span>}
+        <button onClick={handleReset} style={{ ...ghostBtn, color: 'var(--bad)', borderColor: 'color-mix(in srgb, var(--bad) 30%, transparent)' }}>🗑️ Reset</button>
+        {saveMsg && <span style={{ color: 'var(--ok)', fontFamily: rj, fontSize: 12, fontWeight: 600 }}>{saveMsg}</span>}
+        {recordName && <span style={{ color: 'var(--ink3)', fontFamily: rj, fontSize: 11, marginLeft: 'auto' }}>📂 {recordName}</span>}
       </div>
 
       {/* Save Dialog */}
       {showSave && (
-        <div style={{ ...card, background: 'rgba(200,168,75,.05)', borderColor: 'rgba(200,168,75,.4)' }}>
+        <div style={{ ...card, background: 'color-mix(in srgb, var(--acc) 5%, transparent)', borderColor: 'color-mix(in srgb, var(--acc) 40%, transparent)' }}>
           <label style={label}>Name</label>
           <input
             type="text"
             value={recordName}
             onChange={(e) => setRecordName(e.target.value)}
-            placeholder="e.g. MV NEURONAI — Tubarão/Qingdao Voyage"
+            placeholder="e.g. MV OCEAN PIONEER — Tubarão/Qingdao Voyage"
             style={{ ...inputStyle, marginBottom: 10 }}
           />
           <div style={{ display: 'flex', gap: 8 }}>
-            <button onClick={handleSave} style={{ background: '#c8a84b', color: '#08100a', border: 'none', padding: '8px 14px', fontFamily: rj, fontSize: 11, letterSpacing: '1px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 3 }}>
+            <button onClick={handleSave} style={{ background: 'var(--acc)', color: 'var(--bg)', border: 'none', padding: '8px 14px', fontFamily: rj, fontSize: 11, letterSpacing: '1px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 3 }}>
               Save
             </button>
             <button onClick={() => setShowSave(false)} style={ghostBtn}>Cancel</button>
@@ -376,7 +376,7 @@ export default function TCECalculatorPage() {
             <div className="g3" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 12 }}>
               <div>
                 <label style={label}>Vessel Name</label>
-                <input style={inputStyle} type="text" value={data.vesselName} onChange={(e) => update('vesselName', e.target.value)} placeholder="MV NEURONAI" />
+                <input style={inputStyle} type="text" value={data.vesselName} onChange={(e) => update('vesselName', e.target.value)} placeholder="MV OCEAN PIONEER" />
               </div>
               <div>
                 <label style={label}>Vessel Type</label>
@@ -412,9 +412,9 @@ export default function TCECalculatorPage() {
                   key={opt.v}
                   onClick={() => update('freightStructure', opt.v as 'lumpsum' | 'per_mt' | 'ws')}
                   style={{
-                    background: data.freightStructure === opt.v ? '#c8a84b' : 'transparent',
-                    color: data.freightStructure === opt.v ? '#08100a' : '#7a8a72',
-                    border: `1px solid ${data.freightStructure === opt.v ? '#c8a84b' : 'rgba(200,168,75,.25)'}`,
+                    background: data.freightStructure === opt.v ? 'var(--acc)' : 'transparent',
+                    color: data.freightStructure === opt.v ? 'var(--bg)' : 'var(--ink3)',
+                    border: `1px solid ${data.freightStructure === opt.v ? 'var(--acc)' : 'color-mix(in srgb, var(--acc) 25%, transparent)'}`,
                     padding: '7px 14px',
                     fontFamily: rj,
                     fontSize: 11,
@@ -472,10 +472,10 @@ export default function TCECalculatorPage() {
             </div>
 
             {/* Quick Preview */}
-            <div style={{ marginTop: 14, padding: '10px 12px', background: 'rgba(76,175,118,.05)', border: '1px solid rgba(76,175,118,.2)', borderRadius: 3, fontSize: 12, fontFamily: rj, color: '#b0c0a4' }}>
-              💰 Gross Freight: <strong style={{ color: '#4caf76' }}>{fmtMoney(calc.grossFreight)}</strong>
-              {' · '}Commission ({data.commission}%): <strong style={{ color: '#ff8a8a' }}>-{fmtMoney(calc.commissionAmount)}</strong>
-              {' · '}Net: <strong style={{ color: '#c8a84b' }}>{fmtMoney(calc.netFreight)}</strong>
+            <div style={{ marginTop: 14, padding: '10px 12px', background: 'color-mix(in srgb, var(--ok) 5%, transparent)', border: '1px solid color-mix(in srgb, var(--ok) 20%, transparent)', borderRadius: 3, fontSize: 12, fontFamily: rj, color: 'var(--ink2)' }}>
+              💰 Gross Freight: <strong style={{ color: 'var(--ok)' }}>{fmtMoney(calc.grossFreight)}</strong>
+              {' · '}Commission ({data.commission}%): <strong style={{ color: 'var(--bad)' }}>-{fmtMoney(calc.commissionAmount)}</strong>
+              {' · '}Net: <strong style={{ color: 'var(--acc)' }}>{fmtMoney(calc.netFreight)}</strong>
             </div>
           </div>
 
@@ -486,7 +486,7 @@ export default function TCECalculatorPage() {
               <div>
                 <label style={label}>Ballast Distance — nm</label>
                 <input style={inputStyle} type="number" step="10" value={data.ballastDistance || ''} onChange={(e) => update('ballastDistance', parseFloat(e.target.value) || 0)} placeholder="0" />
-                <span style={{ fontSize: 10, color: '#7a8a72', fontFamily: rj }}>Sailing to load port</span>
+                <span style={{ fontSize: 10, color: 'var(--ink3)', fontFamily: rj }}>Sailing to load port</span>
               </div>
               <div>
                 <label style={label}>Laden Distance — nm</label>
@@ -522,28 +522,28 @@ export default function TCECalculatorPage() {
               </div>
             </div>
 
-            <div style={{ marginTop: 14, padding: '10px 12px', background: 'rgba(200,168,75,.05)', border: '1px solid rgba(200,168,75,.15)', borderRadius: 3, fontSize: 12, fontFamily: rj, color: '#b0c0a4' }}>
-              ⏱️ Sea Days: <strong style={{ color: '#f5f0e8' }}>{fmt(calc.seaDays, 2)}</strong>
-              {' · '}⛽ Main Fuel: <strong style={{ color: '#f5f0e8' }}>{fmt(calc.totalMainFuel, 1)} MT</strong>
-              {' · '}💰 Bunker Cost: <strong style={{ color: '#c8a84b' }}>{fmtMoney(calc.bunkerCost)}</strong>
+            <div style={{ marginTop: 14, padding: '10px 12px', background: 'color-mix(in srgb, var(--acc) 5%, transparent)', border: '1px solid color-mix(in srgb, var(--acc) 15%, transparent)', borderRadius: 3, fontSize: 12, fontFamily: rj, color: 'var(--ink2)' }}>
+              ⏱️ Sea Days: <strong style={{ color: 'var(--ink)' }}>{fmt(calc.seaDays, 2)}</strong>
+              {' · '}⛽ Main Fuel: <strong style={{ color: 'var(--ink)' }}>{fmt(calc.totalMainFuel, 1)} MT</strong>
+              {' · '}💰 Bunker Cost: <strong style={{ color: 'var(--acc)' }}>{fmtMoney(calc.bunkerCost)}</strong>
             </div>
           </div>
 
           {/* 4. Ports */}
           <div style={card}>
             <div style={sectionTitle}>4. Port Costs & Time</div>
-            <p style={{ fontSize: 11, color: '#7a8a72', marginBottom: 12, fontFamily: rj }}>
+            <p style={{ fontSize: 11, color: 'var(--ink3)', marginBottom: 12, fontFamily: rj }}>
               Add each port call with disbursement cost and stay duration.
             </p>
 
             {data.ports.length === 0 ? (
-              <div style={{ padding: '20px 14px', textAlign: 'center', border: '1px dashed rgba(200,168,75,.25)', borderRadius: 3, color: '#7a8a72', fontSize: 12 }}>
+              <div style={{ padding: '20px 14px', textAlign: 'center', border: '1px dashed color-mix(in srgb, var(--acc) 25%, transparent)', borderRadius: 3, color: 'var(--ink3)', fontSize: 12 }}>
                 No ports added yet.
               </div>
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                 {data.ports.map((p) => (
-                  <div key={p.id} style={{ background: '#0c1610', border: '1px solid rgba(200,168,75,.15)', padding: '10px 12px', borderRadius: 3 }}>
+                  <div key={p.id} style={{ background: 'var(--bg2)', border: '1px solid color-mix(in srgb, var(--acc) 15%, transparent)', padding: '10px 12px', borderRadius: 3 }}>
                     <div className="port-grid" style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr auto', gap: 10, alignItems: 'end' }}>
                       <div>
                         <label style={label}>Port Name</label>
@@ -559,7 +559,7 @@ export default function TCECalculatorPage() {
                       </div>
                       <button
                         onClick={() => deletePort(p.id)}
-                        style={{ background: 'transparent', border: '1px solid rgba(255,138,138,.3)', color: '#ff8a8a', padding: '8px 10px', fontFamily: rj, fontSize: 11, cursor: 'pointer', borderRadius: 3 }}
+                        style={{ background: 'transparent', border: '1px solid color-mix(in srgb, var(--bad) 30%, transparent)', color: 'var(--bad)', padding: '8px 10px', fontFamily: rj, fontSize: 11, cursor: 'pointer', borderRadius: 3 }}
                       >
                         ✕
                       </button>
@@ -574,8 +574,8 @@ export default function TCECalculatorPage() {
               style={{
                 marginTop: 12,
                 background: 'transparent',
-                color: '#c8a84b',
-                border: '1px solid rgba(200,168,75,.4)',
+                color: 'var(--acc)',
+                border: '1px solid color-mix(in srgb, var(--acc) 40%, transparent)',
                 padding: '7px 14px',
                 fontFamily: rj,
                 fontSize: 11,
@@ -590,9 +590,9 @@ export default function TCECalculatorPage() {
             </button>
 
             {data.ports.length > 0 && (
-              <div style={{ marginTop: 12, padding: '10px 12px', background: 'rgba(255,138,138,.05)', border: '1px solid rgba(255,138,138,.2)', borderRadius: 3, fontSize: 12, fontFamily: rj, color: '#b0c0a4' }}>
-                🏴 Total Port Cost: <strong style={{ color: '#ff8a8a' }}>{fmtMoney(calc.totalPortCost)}</strong>
-                {' · '}Port Days: <strong style={{ color: '#f5f0e8' }}>{fmt(calc.portDays, 1)}</strong>
+              <div style={{ marginTop: 12, padding: '10px 12px', background: 'color-mix(in srgb, var(--bad) 5%, transparent)', border: '1px solid color-mix(in srgb, var(--bad) 20%, transparent)', borderRadius: 3, fontSize: 12, fontFamily: rj, color: 'var(--ink2)' }}>
+                🏴 Total Port Cost: <strong style={{ color: 'var(--bad)' }}>{fmtMoney(calc.totalPortCost)}</strong>
+                {' · '}Port Days: <strong style={{ color: 'var(--ink)' }}>{fmt(calc.portDays, 1)}</strong>
               </div>
             )}
           </div>
@@ -658,20 +658,20 @@ export default function TCECalculatorPage() {
 
           {/* Quick Preview */}
           {calc.totalDays > 0 && calc.grossFreight > 0 && (
-            <div style={{ ...card, background: 'linear-gradient(135deg,rgba(200,168,75,.08),transparent)', borderColor: 'rgba(200,168,75,.4)' }}>
+            <div style={{ ...card, background: 'linear-gradient(135deg,color-mix(in srgb, var(--acc) 8%, transparent),transparent)', borderColor: 'color-mix(in srgb, var(--acc) 40%, transparent)' }}>
               <div style={sectionTitle}>⚡ Quick Result Preview</div>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(170px,1fr))', gap: 14 }}>
-                <KpiBox label="Total Days" value={fmt(calc.totalDays, 1)} color="#f5f0e8" sub={`${fmt(calc.seaDays, 1)} sea + ${fmt(calc.portDays, 1)} port`} />
-                <KpiBox label="Net Revenue" value={fmtMoney(calc.netFreight)} color="#4caf76" sub="After commission" />
-                <KpiBox label="Total Costs" value={fmtMoney(calc.totalVoyageCost)} color="#ff8a8a" sub="Bunker + Port + Canal + Misc" />
-                <KpiBox label="TCE / Day" value={fmtMoney(calc.tce)} color="#c8a84b" sub={calc.tce > data.hireRate ? '↑ Above TC' : '↓ Below TC'} big />
+                <KpiBox label="Total Days" value={fmt(calc.totalDays, 1)} color="var(--ink)" sub={`${fmt(calc.seaDays, 1)} sea + ${fmt(calc.portDays, 1)} port`} />
+                <KpiBox label="Net Revenue" value={fmtMoney(calc.netFreight)} color="var(--ok)" sub="After commission" />
+                <KpiBox label="Total Costs" value={fmtMoney(calc.totalVoyageCost)} color="var(--bad)" sub="Bunker + Port + Canal + Misc" />
+                <KpiBox label="TCE / Day" value={fmtMoney(calc.tce)} color="var(--acc)" sub={calc.tce > data.hireRate ? '↑ Above TC' : '↓ Below TC'} big />
               </div>
               <button
                 onClick={() => setView('report')}
                 style={{
                   marginTop: 16,
-                  background: '#c8a84b',
-                  color: '#08100a',
+                  background: 'var(--acc)',
+                  color: 'var(--bg)',
                   border: 'none',
                   padding: '10px 22px',
                   fontFamily: rj,
@@ -716,7 +716,7 @@ function ReportView({ data, calc }: { data: TCEData; calc: ReturnType<typeof cal
     display: 'flex',
     justifyContent: 'space-between',
     padding: '8px 0',
-    borderBottom: '1px dashed rgba(200,168,75,.1)',
+    borderBottom: '1px dashed color-mix(in srgb, var(--acc) 10%, transparent)',
     fontFamily: rj,
     fontSize: 13,
   };
@@ -726,18 +726,18 @@ function ReportView({ data, calc }: { data: TCEData; calc: ReturnType<typeof cal
   return (
     <div>
       {/* Header */}
-      <div style={{ ...card, background: 'linear-gradient(135deg,rgba(200,168,75,.08),transparent)', borderColor: '#c8a84b', textAlign: 'center', padding: '24px 20px' }}>
-        <div style={{ fontFamily: rj, fontSize: 11, letterSpacing: '3px', textTransform: 'uppercase', color: '#c8a84b', fontWeight: 700, marginBottom: 12 }}>
+      <div style={{ ...card, background: 'linear-gradient(135deg,color-mix(in srgb, var(--acc) 8%, transparent),transparent)', borderColor: 'var(--acc)', textAlign: 'center', padding: '24px 20px' }}>
+        <div style={{ fontFamily: rj, fontSize: 11, letterSpacing: '3px', textTransform: 'uppercase', color: 'var(--acc)', fontWeight: 700, marginBottom: 12 }}>
           💵 Voyage Estimation & TCE Report
         </div>
         <h2 style={{ fontFamily: lb, fontSize: 24, fontWeight: 700, marginBottom: 6 }}>
           {data.vesselName || 'Vessel'}
         </h2>
-        <div style={{ fontSize: 13, color: '#b0c0a4', marginBottom: 4 }}>
+        <div style={{ fontSize: 13, color: 'var(--ink2)', marginBottom: 4 }}>
           {data.vesselType} · {data.dwt > 0 && `${data.dwt.toLocaleString()} DWT`}
         </div>
         {data.cargoQty > 0 && (
-          <div style={{ fontSize: 11, color: '#7a8a72', fontFamily: rj, marginTop: 4 }}>
+          <div style={{ fontSize: 11, color: 'var(--ink3)', fontFamily: rj, marginTop: 4 }}>
             Cargo: {data.cargoQty.toLocaleString()} MT
           </div>
         )}
@@ -747,19 +747,19 @@ function ReportView({ data, calc }: { data: TCEData; calc: ReturnType<typeof cal
       <div
         style={{
           ...card,
-          background: `linear-gradient(135deg, ${profitable ? 'rgba(76,175,118,.12)' : 'rgba(255,138,138,.12)'}, transparent)`,
-          borderColor: profitable ? 'rgba(76,175,118,.4)' : 'rgba(255,138,138,.4)',
+          background: `linear-gradient(135deg, ${profitable ? 'color-mix(in srgb, var(--ok) 12%, transparent)' : 'color-mix(in srgb, var(--bad) 12%, transparent)'}, transparent)`,
+          borderColor: profitable ? 'color-mix(in srgb, var(--ok) 40%, transparent)' : 'color-mix(in srgb, var(--bad) 40%, transparent)',
           textAlign: 'center',
           padding: '32px 20px',
         }}
       >
-        <div style={{ fontFamily: rj, fontSize: 11, letterSpacing: '2px', textTransform: 'uppercase', color: '#7a8a72', fontWeight: 700, marginBottom: 8 }}>
+        <div style={{ fontFamily: rj, fontSize: 11, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--ink3)', fontWeight: 700, marginBottom: 8 }}>
           Time Charter Equivalent (TCE)
         </div>
-        <div style={{ fontFamily: lb, fontSize: 48, fontWeight: 700, color: profitable ? '#4caf76' : '#ff8a8a', lineHeight: 1, marginBottom: 8 }}>
-          {fmtMoney(calc.tce)}<span style={{ fontSize: 16, color: '#7a8a72' }}>/day</span>
+        <div style={{ fontFamily: lb, fontSize: 48, fontWeight: 700, color: profitable ? 'var(--ok)' : 'var(--bad)', lineHeight: 1, marginBottom: 8 }}>
+          {fmtMoney(calc.tce)}<span style={{ fontSize: 16, color: 'var(--ink3)' }}>/day</span>
         </div>
-        <div style={{ fontFamily: rj, fontSize: 12, color: '#b0c0a4' }}>
+        <div style={{ fontFamily: rj, fontSize: 12, color: 'var(--ink2)' }}>
           {profitable ? '✅ Profitable voyage' : '⚠ Loss-making voyage'}
           {' · '}Margin: {fmt(calc.profitMargin, 1)}%
         </div>
@@ -769,25 +769,25 @@ function ReportView({ data, calc }: { data: TCEData; calc: ReturnType<typeof cal
       <div style={card}>
         <div style={sectionTitle}>⏱️ Time Analysis</div>
         <div style={reportRow}>
-          <span style={{ color: '#7a8a72' }}>Ballast Sea Days</span>
+          <span style={{ color: 'var(--ink3)' }}>Ballast Sea Days</span>
           <strong>{fmt(calc.ballastSeaDays, 2)} days</strong>
         </div>
         <div style={reportRow}>
-          <span style={{ color: '#7a8a72' }}>Laden Sea Days</span>
+          <span style={{ color: 'var(--ink3)' }}>Laden Sea Days</span>
           <strong>{fmt(calc.ladenSeaDays, 2)} days</strong>
         </div>
         <div style={reportRow}>
-          <span style={{ color: '#7a8a72' }}>Port Days</span>
+          <span style={{ color: 'var(--ink3)' }}>Port Days</span>
           <strong>{fmt(calc.portDays, 2)} days</strong>
         </div>
         {data.canalDays > 0 && (
           <div style={reportRow}>
-            <span style={{ color: '#7a8a72' }}>Canal Transit Days</span>
+            <span style={{ color: 'var(--ink3)' }}>Canal Transit Days</span>
             <strong>{fmt(data.canalDays, 2)} days</strong>
           </div>
         )}
-        <div style={{ ...reportRow, borderBottom: 'none', borderTop: '2px solid rgba(200,168,75,.3)', paddingTop: 12, marginTop: 6 }}>
-          <span style={{ color: '#c8a84b', fontWeight: 700, fontSize: 14 }}>TOTAL VOYAGE DAYS</span>
+        <div style={{ ...reportRow, borderBottom: 'none', borderTop: '2px solid color-mix(in srgb, var(--acc) 30%, transparent)', paddingTop: 12, marginTop: 6 }}>
+          <span style={{ color: 'var(--acc)', fontWeight: 700, fontSize: 14 }}>TOTAL VOYAGE DAYS</span>
           <strong style={{ fontFamily: lb, fontSize: 18 }}>{fmt(calc.totalDays, 2)} days</strong>
         </div>
       </div>
@@ -796,7 +796,7 @@ function ReportView({ data, calc }: { data: TCEData; calc: ReturnType<typeof cal
       <div style={card}>
         <div style={sectionTitle}>💰 Revenue</div>
         <div style={reportRow}>
-          <span style={{ color: '#7a8a72' }}>Freight Structure</span>
+          <span style={{ color: 'var(--ink3)' }}>Freight Structure</span>
           <strong>
             {data.freightStructure === 'lumpsum' && 'Lump Sum'}
             {data.freightStructure === 'per_mt' && '$/MT'}
@@ -804,22 +804,22 @@ function ReportView({ data, calc }: { data: TCEData; calc: ReturnType<typeof cal
           </strong>
         </div>
         <div style={reportRow}>
-          <span style={{ color: '#7a8a72' }}>Gross Freight</span>
+          <span style={{ color: 'var(--ink3)' }}>Gross Freight</span>
           <strong>{fmtMoney(calc.grossFreight)}</strong>
         </div>
         <div style={reportRow}>
-          <span style={{ color: '#7a8a72' }}>Commission ({data.commission}%)</span>
-          <strong style={{ color: '#ff8a8a' }}>-{fmtMoney(calc.commissionAmount)}</strong>
+          <span style={{ color: 'var(--ink3)' }}>Commission ({data.commission}%)</span>
+          <strong style={{ color: 'var(--bad)' }}>-{fmtMoney(calc.commissionAmount)}</strong>
         </div>
         {data.demurrageEarned > 0 && (
           <div style={reportRow}>
-            <span style={{ color: '#7a8a72' }}>Demurrage Earned</span>
-            <strong style={{ color: '#4caf76' }}>+{fmtMoney(data.demurrageEarned)}</strong>
+            <span style={{ color: 'var(--ink3)' }}>Demurrage Earned</span>
+            <strong style={{ color: 'var(--ok)' }}>+{fmtMoney(data.demurrageEarned)}</strong>
           </div>
         )}
-        <div style={{ ...reportRow, borderBottom: 'none', borderTop: '2px solid #4caf76', paddingTop: 12, marginTop: 6 }}>
-          <span style={{ color: '#4caf76', fontWeight: 700, fontSize: 14 }}>NET FREIGHT</span>
-          <strong style={{ fontFamily: lb, fontSize: 18, color: '#4caf76' }}>{fmtMoney(calc.netFreight)}</strong>
+        <div style={{ ...reportRow, borderBottom: 'none', borderTop: '2px solid var(--ok)', paddingTop: 12, marginTop: 6 }}>
+          <span style={{ color: 'var(--ok)', fontWeight: 700, fontSize: 14 }}>NET FREIGHT</span>
+          <strong style={{ fontFamily: lb, fontSize: 18, color: 'var(--ok)' }}>{fmtMoney(calc.netFreight)}</strong>
         </div>
       </div>
 
@@ -827,38 +827,38 @@ function ReportView({ data, calc }: { data: TCEData; calc: ReturnType<typeof cal
       <div style={card}>
         <div style={sectionTitle}>💸 Costs Breakdown</div>
         <div style={reportRow}>
-          <span style={{ color: '#7a8a72' }}>Main Fuel ({fmt(calc.totalMainFuel, 1)} MT × ${data.bunkerPrice})</span>
+          <span style={{ color: 'var(--ink3)' }}>Main Fuel ({fmt(calc.totalMainFuel, 1)} MT × ${data.bunkerPrice})</span>
           <strong>{fmtMoney(calc.totalMainFuel * data.bunkerPrice)}</strong>
         </div>
         <div style={reportRow}>
-          <span style={{ color: '#7a8a72' }}>AE Fuel ({fmt(calc.totalAeFuel, 1)} MT × ${data.bunkerPriceAe})</span>
+          <span style={{ color: 'var(--ink3)' }}>AE Fuel ({fmt(calc.totalAeFuel, 1)} MT × ${data.bunkerPriceAe})</span>
           <strong>{fmtMoney(calc.totalAeFuel * data.bunkerPriceAe)}</strong>
         </div>
 
         {data.ports.map((p) => (
           <div key={p.id} style={reportRow}>
-            <span style={{ color: '#7a8a72' }}>Port: {p.name || 'Unnamed'}</span>
+            <span style={{ color: 'var(--ink3)' }}>Port: {p.name || 'Unnamed'}</span>
             <strong>{fmtMoney(p.cost)}</strong>
           </div>
         ))}
 
         {data.canalCost > 0 && (
           <div style={reportRow}>
-            <span style={{ color: '#7a8a72' }}>{data.canalName || 'Canal'} Transit</span>
+            <span style={{ color: 'var(--ink3)' }}>{data.canalName || 'Canal'} Transit</span>
             <strong>{fmtMoney(data.canalCost)}</strong>
           </div>
         )}
 
         {data.miscCost > 0 && (
           <div style={reportRow}>
-            <span style={{ color: '#7a8a72' }}>Other Costs (insurance, war risk, etc.)</span>
+            <span style={{ color: 'var(--ink3)' }}>Other Costs (insurance, war risk, etc.)</span>
             <strong>{fmtMoney(data.miscCost)}</strong>
           </div>
         )}
 
-        <div style={{ ...reportRow, borderBottom: 'none', borderTop: '2px solid #ff8a8a', paddingTop: 12, marginTop: 6 }}>
-          <span style={{ color: '#ff8a8a', fontWeight: 700, fontSize: 14 }}>TOTAL COSTS</span>
-          <strong style={{ fontFamily: lb, fontSize: 18, color: '#ff8a8a' }}>{fmtMoney(calc.totalVoyageCost)}</strong>
+        <div style={{ ...reportRow, borderBottom: 'none', borderTop: '2px solid var(--bad)', paddingTop: 12, marginTop: 6 }}>
+          <span style={{ color: 'var(--bad)', fontWeight: 700, fontSize: 14 }}>TOTAL COSTS</span>
+          <strong style={{ fontFamily: lb, fontSize: 18, color: 'var(--bad)' }}>{fmtMoney(calc.totalVoyageCost)}</strong>
         </div>
       </div>
 
@@ -866,26 +866,26 @@ function ReportView({ data, calc }: { data: TCEData; calc: ReturnType<typeof cal
       <div
         style={{
           ...card,
-          background: profitable ? 'linear-gradient(135deg,rgba(76,175,118,.08),transparent)' : 'linear-gradient(135deg,rgba(255,138,138,.08),transparent)',
-          borderColor: profitable ? 'rgba(76,175,118,.4)' : 'rgba(255,138,138,.4)',
+          background: profitable ? 'linear-gradient(135deg,color-mix(in srgb, var(--ok) 8%, transparent),transparent)' : 'linear-gradient(135deg,color-mix(in srgb, var(--bad) 8%, transparent),transparent)',
+          borderColor: profitable ? 'color-mix(in srgb, var(--ok) 40%, transparent)' : 'color-mix(in srgb, var(--bad) 40%, transparent)',
         }}
       >
         <div style={sectionTitle}>📊 Profit & Loss</div>
         <div style={reportRow}>
           <span>Net Revenue</span>
-          <strong style={{ color: '#4caf76' }}>{fmtMoney(calc.netFreight)}</strong>
+          <strong style={{ color: 'var(--ok)' }}>{fmtMoney(calc.netFreight)}</strong>
         </div>
         <div style={reportRow}>
           <span>Total Costs</span>
-          <strong style={{ color: '#ff8a8a' }}>-{fmtMoney(calc.totalVoyageCost)}</strong>
+          <strong style={{ color: 'var(--bad)' }}>-{fmtMoney(calc.totalVoyageCost)}</strong>
         </div>
-        <div style={{ ...reportRow, borderBottom: 'none', borderTop: '2px solid', borderTopColor: profitable ? '#4caf76' : '#ff8a8a', paddingTop: 14, marginTop: 10 }}>
+        <div style={{ ...reportRow, borderBottom: 'none', borderTop: '2px solid', borderTopColor: profitable ? 'var(--ok)' : 'var(--bad)', paddingTop: 14, marginTop: 10 }}>
           <span style={{ fontSize: 16, fontWeight: 700 }}>
             {profitable ? 'PROFIT' : 'LOSS'}
           </span>
-          <strong style={{ fontFamily: lb, fontSize: 24, color: profitable ? '#4caf76' : '#ff8a8a' }}>{fmtMoney(calc.netVoyageResult)}</strong>
+          <strong style={{ fontFamily: lb, fontSize: 24, color: profitable ? 'var(--ok)' : 'var(--bad)' }}>{fmtMoney(calc.netVoyageResult)}</strong>
         </div>
-        <p style={{ fontSize: 12, color: '#b0c0a4', marginTop: 10, fontStyle: 'italic', textAlign: 'center' }}>
+        <p style={{ fontSize: 12, color: 'var(--ink2)', marginTop: 10, fontStyle: 'italic', textAlign: 'center' }}>
           Margin: {fmt(calc.profitMargin, 1)}% of gross freight
         </p>
       </div>
@@ -895,26 +895,26 @@ function ReportView({ data, calc }: { data: TCEData; calc: ReturnType<typeof cal
         <div style={card}>
           <div style={sectionTitle}>⚖️ Voyage vs Time Charter Comparison</div>
           <div style={reportRow}>
-            <span style={{ color: '#7a8a72' }}>TC Hire Rate</span>
+            <span style={{ color: 'var(--ink3)' }}>TC Hire Rate</span>
             <strong>{fmtMoney(data.hireRate)}/day</strong>
           </div>
           <div style={reportRow}>
-            <span style={{ color: '#7a8a72' }}>TC Total Revenue (same days)</span>
+            <span style={{ color: 'var(--ink3)' }}>TC Total Revenue (same days)</span>
             <strong>{fmtMoney(calc.tcRevenue)}</strong>
           </div>
           <div style={reportRow}>
-            <span style={{ color: '#7a8a72' }}>Voyage Net Result</span>
+            <span style={{ color: 'var(--ink3)' }}>Voyage Net Result</span>
             <strong>{fmtMoney(calc.netVoyageResult)}</strong>
           </div>
-          <div style={{ ...reportRow, borderBottom: 'none', borderTop: '2px solid #c8a84b', paddingTop: 12, marginTop: 6 }}>
-            <span style={{ color: '#c8a84b', fontWeight: 700 }}>
+          <div style={{ ...reportRow, borderBottom: 'none', borderTop: '2px solid var(--acc)', paddingTop: 12, marginTop: 6 }}>
+            <span style={{ color: 'var(--acc)', fontWeight: 700 }}>
               {calc.tcVsVoyageDiff > 0 ? 'TC would be BETTER' : 'VOYAGE is BETTER'}
             </span>
-            <strong style={{ fontFamily: lb, fontSize: 18, color: calc.tcVsVoyageDiff > 0 ? '#ff8a8a' : '#4caf76' }}>
+            <strong style={{ fontFamily: lb, fontSize: 18, color: calc.tcVsVoyageDiff > 0 ? 'var(--bad)' : 'var(--ok)' }}>
               {calc.tcVsVoyageDiff > 0 ? '+' : ''}{fmtMoney(calc.tcVsVoyageDiff)}
             </strong>
           </div>
-          <p style={{ fontSize: 11.5, color: '#7a8a72', marginTop: 10, fontStyle: 'italic' }}>
+          <p style={{ fontSize: 11.5, color: 'var(--ink3)', marginTop: 10, fontStyle: 'italic' }}>
             {calc.tcVsVoyageDiff > 0
               ? `Time charter would yield ${fmtMoney(Math.abs(calc.tcVsVoyageDiff))} more for the same period.`
               : `Voyage charter yields ${fmtMoney(Math.abs(calc.tcVsVoyageDiff))} more than TC equivalent. TCE: ${fmtMoney(calc.tce)}/day > Hire ${fmtMoney(data.hireRate)}/day.`}
@@ -926,12 +926,12 @@ function ReportView({ data, calc }: { data: TCEData; calc: ReturnType<typeof cal
       {data.notes && (
         <div style={card}>
           <div style={sectionTitle}>📝 Notes</div>
-          <p style={{ fontSize: 13, color: '#b0c0a4', lineHeight: 1.7, whiteSpace: 'pre-wrap' }}>{data.notes}</p>
+          <p style={{ fontSize: 13, color: 'var(--ink2)', lineHeight: 1.7, whiteSpace: 'pre-wrap' }}>{data.notes}</p>
         </div>
       )}
 
       {/* Footer */}
-      <div style={{ marginTop: 20, padding: '14px 16px', background: 'rgba(200,168,75,.04)', border: '1px solid rgba(200,168,75,.12)', borderRadius: 4, textAlign: 'center', fontFamily: rj, fontSize: 11, color: '#7a8a72', letterSpacing: '.5px' }}>
+      <div style={{ marginTop: 20, padding: '14px 16px', background: 'color-mix(in srgb, var(--acc) 4%, transparent)', border: '1px solid color-mix(in srgb, var(--acc) 12%, transparent)', borderRadius: 4, textAlign: 'center', fontFamily: rj, fontSize: 11, color: 'var(--ink3)', letterSpacing: '.5px' }}>
         Generated by PortServiceFinder Voyage Hub · portservicefinder.com/voyage
         <br />
         <span style={{ fontSize: 10, marginTop: 4, display: 'inline-block' }}>
@@ -949,9 +949,9 @@ function KpiBox({ label, value, color, sub, big }: { label: string; value: strin
   return (
     <div
       style={{
-        background: '#0c1610',
+        background: 'var(--bg2)',
         padding: '12px 14px',
-        border: '1px solid rgba(200,168,75,.15)',
+        border: '1px solid color-mix(in srgb, var(--acc) 15%, transparent)',
         borderRadius: 3,
       }}
     >
@@ -959,7 +959,7 @@ function KpiBox({ label, value, color, sub, big }: { label: string; value: strin
         style={{
           fontFamily: rj,
           fontSize: 10,
-          color: '#7a8a72',
+          color: 'var(--ink3)',
           textTransform: 'uppercase',
           letterSpacing: '1px',
           marginBottom: 6,
@@ -972,7 +972,7 @@ function KpiBox({ label, value, color, sub, big }: { label: string; value: strin
         {value}
       </div>
       {sub && (
-        <div style={{ fontFamily: rj, fontSize: 10.5, color: '#b0c0a4', marginTop: 4, fontWeight: 500 }}>
+        <div style={{ fontFamily: rj, fontSize: 10.5, color: 'var(--ink2)', marginTop: 4, fontWeight: 500 }}>
           {sub}
         </div>
       )}

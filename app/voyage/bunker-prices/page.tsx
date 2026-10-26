@@ -2,9 +2,9 @@
 import { useState, useEffect, useMemo } from 'react';
 import { saveItem, loadItem, genId } from '@/lib/voyage-storage';
 
-const lb = "'Libre Bodoni', serif";
-const rj = "'Rajdhani', sans-serif";
-const g = { color: '#c8a84b', fontStyle: 'italic' } as React.CSSProperties;
+const lb = 'var(--font-display)';
+const rj = 'var(--font-ui)';
+const g = { color: 'var(--acc)' } as React.CSSProperties;
 
 // ============================================================
 // TYPES
@@ -30,7 +30,7 @@ interface BunkerData {
 
 const FUELS: Fuel[] = ['VLSFO', 'LSMGO', 'HSFO', 'B24', 'LNG'];
 const FUEL_COLOR: Record<Fuel, string> = {
-  VLSFO: '#c8a84b', LSMGO: '#5aa6e8', HSFO: '#e8b85a', B24: '#4caf76', LNG: '#8bc34a',
+  VLSFO: 'var(--acc)', LSMGO: 'var(--info)', HSFO: 'var(--warn)', B24: 'var(--ok)', LNG: 'var(--ok)',
 };
 
 function newEntry(fuel: Fuel = 'VLSFO'): PriceEntry {
@@ -42,12 +42,12 @@ const DEFAULT_DATA: BunkerData = { entries: [], stemQty: 0, stemFuel: 'VLSFO' };
 // ============================================================
 // STYLES
 // ============================================================
-const card: React.CSSProperties = { background: '#111c13', border: '1px solid rgba(200,168,75,.18)', padding: '20px 18px', borderRadius: 4, marginBottom: 16 };
-const sectionTitle: React.CSSProperties = { fontFamily: rj, fontSize: 11, letterSpacing: '2px', textTransform: 'uppercase', color: '#c8a84b', fontWeight: 700, marginBottom: 14, paddingBottom: 8, borderBottom: '1px solid rgba(200,168,75,.12)' };
-const labelS: React.CSSProperties = { display: 'block', fontFamily: rj, fontSize: 10, letterSpacing: '.5px', textTransform: 'uppercase', color: '#7a8a72', fontWeight: 600, marginBottom: 4 };
-const inputStyle: React.CSSProperties = { width: '100%', background: '#0c1610', border: '1px solid rgba(200,168,75,.2)', color: '#f5f0e8', padding: '7px 9px', fontFamily: rj, fontSize: 12.5, fontWeight: 500, borderRadius: 3, boxSizing: 'border-box' };
-const ghostBtn: React.CSSProperties = { background: 'transparent', color: '#c8a84b', border: '1px solid rgba(200,168,75,.4)', padding: '8px 14px', fontFamily: rj, fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 };
-const goldBtn: React.CSSProperties = { background: '#c8a84b', color: '#08100a', border: 'none', padding: '8px 16px', fontFamily: rj, fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 };
+const card: React.CSSProperties = { background: 'var(--card)', border: '1px solid color-mix(in srgb, var(--acc) 18%, transparent)', padding: '20px 18px', borderRadius: 4, marginBottom: 16 };
+const sectionTitle: React.CSSProperties = { fontFamily: rj, fontSize: 11, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--acc)', fontWeight: 700, marginBottom: 14, paddingBottom: 8, borderBottom: '1px solid color-mix(in srgb, var(--acc) 12%, transparent)' };
+const labelS: React.CSSProperties = { display: 'block', fontFamily: rj, fontSize: 10, letterSpacing: '.5px', textTransform: 'uppercase', color: 'var(--ink3)', fontWeight: 600, marginBottom: 4 };
+const inputStyle: React.CSSProperties = { width: '100%', background: 'var(--bg2)', border: '1px solid color-mix(in srgb, var(--acc) 20%, transparent)', color: 'var(--ink)', padding: '7px 9px', fontFamily: rj, fontSize: 12.5, fontWeight: 500, borderRadius: 3, boxSizing: 'border-box' };
+const ghostBtn: React.CSSProperties = { background: 'transparent', color: 'var(--acc)', border: '1px solid color-mix(in srgb, var(--acc) 40%, transparent)', padding: '8px 14px', fontFamily: rj, fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 };
+const goldBtn: React.CSSProperties = { background: 'var(--acc)', color: 'var(--bg)', border: 'none', padding: '8px 16px', fontFamily: rj, fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 };
 
 const STORAGE_KEY = 'bunkerprices';
 const SINGLETON_ID = 'bunkertracker';
@@ -121,21 +121,21 @@ export default function BunkerPricesPage() {
     <div>
       {/* Header */}
       <div style={{ marginBottom: 24 }}>
-        <div style={{ fontFamily: rj, fontSize: 10, letterSpacing: '2px', textTransform: 'uppercase', color: '#c8a84b', fontWeight: 700, marginBottom: 8 }}>
+        <div style={{ fontFamily: rj, fontSize: 10, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--acc)', fontWeight: 700, marginBottom: 8 }}>
           ⚓ Voyage Hub · Bunker Price Tracker
         </div>
         <h1 style={{ fontFamily: lb, fontSize: 'clamp(22px,3vw,32px)', fontWeight: 700, lineHeight: 1.1, marginBottom: 8 }}>
           Bunker <em style={g}>Price Tracker</em>
         </h1>
-        <p style={{ fontSize: 13, color: '#b0c0a4', lineHeight: 1.6, maxWidth: 720 }}>
+        <p style={{ fontSize: 13, color: 'var(--ink2)', lineHeight: 1.6, maxWidth: 720 }}>
           Log bunker quotes by port and fuel grade, compare ports for your next stem, and see how much a
           cheaper port saves. You enter the prices — no live feed.
         </p>
       </div>
 
       {/* Info */}
-      <div style={{ ...card, background: 'rgba(90,166,232,.06)', borderColor: 'rgba(90,166,232,.3)', padding: '12px 16px' }}>
-        <div style={{ fontFamily: rj, fontSize: 12, color: '#9fc6ef', lineHeight: 1.5 }}>
+      <div style={{ ...card, background: 'color-mix(in srgb, var(--info) 6%, transparent)', borderColor: 'color-mix(in srgb, var(--info) 30%, transparent)', padding: '12px 16px' }}>
+        <div style={{ fontFamily: rj, fontSize: 12, color: 'var(--info)', lineHeight: 1.5 }}>
           💡 Get quotes from your broker / supplier or a price service (Ship &amp; Bunker, Bunkerworld), enter them here,
           and the tracker ranks ports and estimates the stem-cost difference.
         </div>
@@ -144,7 +144,7 @@ export default function BunkerPricesPage() {
       <div className="action-bar" style={{ display: 'flex', gap: 10, marginBottom: 16, flexWrap: 'wrap', alignItems: 'center' }}>
         <button onClick={openNew} style={goldBtn}>+ Add Price</button>
         <button onClick={() => window.print()} style={ghostBtn}>🖨️ Print / PDF</button>
-        {saveMsg && <span style={{ color: '#4caf76', fontFamily: rj, fontSize: 12, fontWeight: 600 }}>{saveMsg}</span>}
+        {saveMsg && <span style={{ color: 'var(--ok)', fontFamily: rj, fontSize: 12, fontWeight: 600 }}>{saveMsg}</span>}
       </div>
 
       {/* Stem planning */}
@@ -163,23 +163,23 @@ export default function BunkerPricesPage() {
 
       {/* Comparison */}
       {comparison.length > 0 && (
-        <div style={{ ...card, background: 'linear-gradient(135deg,rgba(200,168,75,.08),transparent)', borderColor: 'rgba(200,168,75,.4)' }}>
+        <div style={{ ...card, background: 'linear-gradient(135deg,color-mix(in srgb, var(--acc) 8%, transparent),transparent)', borderColor: 'color-mix(in srgb, var(--acc) 40%, transparent)' }}>
           <div style={sectionTitle}>⚡ {data.stemFuel} — Port Comparison (latest per port)</div>
           <div className="bk-kpis" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 10, marginBottom: 14 }}>
-            <KPI label="Cheapest" value={cheapest ? `$${fmt(cheapest.price, 0)}` : '—'} sub={cheapest?.port} color="#4caf76" />
-            <KPI label="Spread" value={`$${fmt(spread, 0)}`} sub="per MT" color="#e8b85a" />
-            <KPI label="Stem Saving" value={data.stemQty > 0 ? `$${fmt(stemSaving, 0)}` : '—'} sub={data.stemQty > 0 ? `on ${data.stemQty} MT` : 'set qty'} color="#c8a84b" />
+            <KPI label="Cheapest" value={cheapest ? `$${fmt(cheapest.price, 0)}` : '—'} sub={cheapest?.port} color="var(--ok)" />
+            <KPI label="Spread" value={`$${fmt(spread, 0)}`} sub="per MT" color="var(--warn)" />
+            <KPI label="Stem Saving" value={data.stemQty > 0 ? `$${fmt(stemSaving, 0)}` : '—'} sub={data.stemQty > 0 ? `on ${data.stemQty} MT` : 'set qty'} color="var(--acc)" />
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
             {comparison.map((e, i) => {
               const isLow = i === 0;
               const stemCost = e.price * (data.stemQty || 0);
               return (
-                <div key={e.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 12px', background: '#0c1610', border: `1px solid ${isLow ? 'rgba(76,175,118,.4)' : 'rgba(200,168,75,.12)'}`, borderRadius: 3, fontFamily: rj }}>
-                  <span style={{ color: '#f5f0e8', fontWeight: 600, fontSize: 13 }}>{isLow && '🏆 '}{e.port || '—'} <span style={{ color: '#7a8a72', fontWeight: 400, fontSize: 11 }}>· {e.date}</span></span>
+                <div key={e.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 12px', background: 'var(--bg2)', border: `1px solid ${isLow ? 'color-mix(in srgb, var(--ok) 40%, transparent)' : 'color-mix(in srgb, var(--acc) 12%, transparent)'}`, borderRadius: 3, fontFamily: rj }}>
+                  <span style={{ color: 'var(--ink)', fontWeight: 600, fontSize: 13 }}>{isLow && '🏆 '}{e.port || '—'} <span style={{ color: 'var(--ink3)', fontWeight: 400, fontSize: 11 }}>· {e.date}</span></span>
                   <span style={{ display: 'flex', gap: 14, alignItems: 'center' }}>
-                    {data.stemQty > 0 && <span style={{ color: '#7a8a72', fontSize: 11 }}>${fmt(stemCost, 0)}</span>}
-                    <span style={{ color: isLow ? '#4caf76' : '#c8a84b', fontWeight: 700, fontSize: 14 }}>${fmt(e.price, 0)}/MT</span>
+                    {data.stemQty > 0 && <span style={{ color: 'var(--ink3)', fontSize: 11 }}>${fmt(stemCost, 0)}</span>}
+                    <span style={{ color: isLow ? 'var(--ok)' : 'var(--acc)', fontWeight: 700, fontSize: 14 }}>${fmt(e.price, 0)}/MT</span>
                   </span>
                 </div>
               );
@@ -190,7 +190,7 @@ export default function BunkerPricesPage() {
 
       {/* Form */}
       {showForm && editing && (
-        <div style={{ ...card, borderColor: 'rgba(200,168,75,.5)' }}>
+        <div style={{ ...card, borderColor: 'color-mix(in srgb, var(--acc) 50%, transparent)' }}>
           <div style={sectionTitle}>{data.entries.some((x) => x.id === editing.id) ? 'Edit Price' : 'New Price'}</div>
           <div className="bk-g3" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 10, marginBottom: 10 }}>
             <div><label style={labelS}>Port</label><input style={inputStyle} value={editing.port} onChange={(e) => setEditing({ ...editing, port: e.target.value })} placeholder="Singapore" /></div>
@@ -215,8 +215,8 @@ export default function BunkerPricesPage() {
       )}
 
       {/* PSF cross-sell */}
-      <div style={{ ...card, background: 'rgba(200,168,75,.05)', borderColor: 'rgba(200,168,75,.3)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
-        <div style={{ fontFamily: rj, fontSize: 12.5, color: '#b0c0a4' }}>⛽ <b style={{ color: '#c8a84b' }}>Find bunker suppliers &amp; barges on PortServiceFinder.</b></div>
+      <div style={{ ...card, background: 'color-mix(in srgb, var(--acc) 5%, transparent)', borderColor: 'color-mix(in srgb, var(--acc) 30%, transparent)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+        <div style={{ fontFamily: rj, fontSize: 12.5, color: 'var(--ink2)' }}>⛽ <b style={{ color: 'var(--acc)' }}>Find bunker suppliers &amp; barges on PortServiceFinder.</b></div>
         <a href="/" style={{ ...ghostBtn, textDecoration: 'none', display: 'inline-block' }}>Search Suppliers →</a>
       </div>
 
@@ -229,8 +229,8 @@ export default function BunkerPricesPage() {
       )}
 
       {data.entries.length === 0 && !showForm && (
-        <div style={{ ...card, textAlign: 'center', color: '#7a8a72', fontFamily: rj }}>
-          No prices yet. Tap <b style={{ color: '#c8a84b' }}>+ Add Price</b> to start tracking bunker quotes.
+        <div style={{ ...card, textAlign: 'center', color: 'var(--ink3)', fontFamily: rj }}>
+          No prices yet. Tap <b style={{ color: 'var(--acc)' }}>+ Add Price</b> to start tracking bunker quotes.
         </div>
       )}
 
@@ -240,15 +240,15 @@ export default function BunkerPricesPage() {
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <span style={{ fontSize: 9, background: `${FUEL_COLOR[e.fuel]}22`, color: FUEL_COLOR[e.fuel], padding: '2px 8px', borderRadius: 3, fontFamily: rj, fontWeight: 700, letterSpacing: '.5px' }}>{e.fuel}</span>
-                <span style={{ fontFamily: lb, fontSize: 15, fontWeight: 700, color: '#f5f0e8' }}>{e.port}</span>
-                <span style={{ fontFamily: rj, fontSize: 11, color: '#7a8a72' }}>{e.date}</span>
+                <span style={{ fontFamily: lb, fontSize: 15, fontWeight: 700, color: 'var(--ink)' }}>{e.port}</span>
+                <span style={{ fontFamily: rj, fontSize: 11, color: 'var(--ink3)' }}>{e.date}</span>
               </div>
-              {(e.supplier || e.notes) && <div style={{ fontFamily: rj, fontSize: 11, color: '#7a8a72', marginTop: 3 }}>{e.supplier}{e.supplier && e.notes ? ' · ' : ''}{e.notes}</div>}
+              {(e.supplier || e.notes) && <div style={{ fontFamily: rj, fontSize: 11, color: 'var(--ink3)', marginTop: 3 }}>{e.supplier}{e.supplier && e.notes ? ' · ' : ''}{e.notes}</div>}
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-              <span style={{ fontFamily: lb, fontSize: 18, fontWeight: 700, color: '#c8a84b' }}>${fmt(e.price, 0)}<span style={{ fontSize: 11, color: '#7a8a72' }}>/MT</span></span>
-              <button onClick={() => openEdit(e)} style={miniBtn('#c8a84b')}>Edit</button>
-              <button onClick={() => delEntry(e.id)} style={miniBtn('#ff8a8a')}>✕</button>
+              <span style={{ fontFamily: lb, fontSize: 18, fontWeight: 700, color: 'var(--acc)' }}>${fmt(e.price, 0)}<span style={{ fontSize: 11, color: 'var(--ink3)' }}>/MT</span></span>
+              <button onClick={() => openEdit(e)} style={miniBtn('var(--acc)')}>Edit</button>
+              <button onClick={() => delEntry(e.id)} style={miniBtn('var(--bad)')}>✕</button>
             </div>
           </div>
         </div>
@@ -271,17 +271,17 @@ export default function BunkerPricesPage() {
 }
 
 function chip(active: boolean): React.CSSProperties {
-  return { padding: '5px 12px', background: active ? '#c8a84b' : 'transparent', color: active ? '#08100a' : '#7a8a72', border: `1px solid ${active ? '#c8a84b' : 'rgba(200,168,75,.25)'}`, fontFamily: rj, fontSize: 10, letterSpacing: '.5px', fontWeight: 700, cursor: 'pointer', borderRadius: 4 };
+  return { padding: '5px 12px', background: active ? 'var(--acc)' : 'transparent', color: active ? 'var(--bg)' : 'var(--ink3)', border: `1px solid ${active ? 'var(--acc)' : 'color-mix(in srgb, var(--acc) 25%, transparent)'}`, fontFamily: rj, fontSize: 10, letterSpacing: '.5px', fontWeight: 700, cursor: 'pointer', borderRadius: 4 };
 }
 function miniBtn(color: string): React.CSSProperties {
   return { background: 'transparent', border: 'none', color, fontFamily: rj, fontSize: 10.5, cursor: 'pointer', letterSpacing: '.5px', textTransform: 'uppercase', fontWeight: 700, padding: 0 };
 }
 function KPI({ label: l, value, sub, color }: { label: string; value: string; sub?: string; color: string }) {
   return (
-    <div style={{ background: '#0c1610', border: '1px solid rgba(200,168,75,.2)', borderRadius: 4, padding: '12px 10px', textAlign: 'center' }}>
-      <div style={{ fontFamily: rj, fontSize: 9, letterSpacing: '1px', textTransform: 'uppercase', color: '#7a8a72', fontWeight: 700 }}>{l}</div>
+    <div style={{ background: 'var(--bg2)', border: '1px solid color-mix(in srgb, var(--acc) 20%, transparent)', borderRadius: 4, padding: '12px 10px', textAlign: 'center' }}>
+      <div style={{ fontFamily: rj, fontSize: 9, letterSpacing: '1px', textTransform: 'uppercase', color: 'var(--ink3)', fontWeight: 700 }}>{l}</div>
       <div style={{ fontFamily: lb, fontSize: 22, fontWeight: 700, color, marginTop: 4 }}>{value}</div>
-      {sub && <div style={{ fontFamily: rj, fontSize: 10, color: '#7a8a72', marginTop: 2 }}>{sub}</div>}
+      {sub && <div style={{ fontFamily: rj, fontSize: 10, color: 'var(--ink3)', marginTop: 2 }}>{sub}</div>}
     </div>
   );
 }

@@ -3,9 +3,9 @@ import { useState, useEffect, useMemo } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { saveItem, loadItem, genId } from '@/lib/voyage-storage';
 
-const lb = "'Libre Bodoni', serif";
-const rj = "'Rajdhani', sans-serif";
-const g = { color: '#c8a84b', fontStyle: 'italic' } as React.CSSProperties;
+const lb = 'var(--font-display)';
+const rj = 'var(--font-ui)';
+const g = { color: 'var(--acc)' } as React.CSSProperties;
 
 // ============================================================
 // Tidal height by the Rule of Twelfths between a known HW and LW.
@@ -76,12 +76,12 @@ function heightAt(min: number, events: { t: number; h: number }[]): number | nul
 // ============================================================
 // STYLES
 // ============================================================
-const card: React.CSSProperties = { background: '#111c13', border: '1px solid rgba(200,168,75,.18)', padding: '20px 18px', borderRadius: 4, marginBottom: 16 };
-const sectionTitle: React.CSSProperties = { fontFamily: rj, fontSize: 11, letterSpacing: '2px', textTransform: 'uppercase', color: '#c8a84b', fontWeight: 700, marginBottom: 14, paddingBottom: 8, borderBottom: '1px solid rgba(200,168,75,.12)' };
-const labelS: React.CSSProperties = { display: 'block', fontFamily: rj, fontSize: 10, letterSpacing: '.5px', textTransform: 'uppercase', color: '#7a8a72', fontWeight: 600, marginBottom: 4 };
-const inputStyle: React.CSSProperties = { width: '100%', background: '#0c1610', border: '1px solid rgba(200,168,75,.2)', color: '#f5f0e8', padding: '7px 9px', fontFamily: rj, fontSize: 12.5, fontWeight: 500, borderRadius: 3, boxSizing: 'border-box' };
-const ghostBtn: React.CSSProperties = { background: 'transparent', color: '#c8a84b', border: '1px solid rgba(200,168,75,.4)', padding: '8px 14px', fontFamily: rj, fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 };
-const goldBtn: React.CSSProperties = { background: '#c8a84b', color: '#08100a', border: 'none', padding: '8px 16px', fontFamily: rj, fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 };
+const card: React.CSSProperties = { background: 'var(--card)', border: '1px solid color-mix(in srgb, var(--acc) 18%, transparent)', padding: '20px 18px', borderRadius: 4, marginBottom: 16 };
+const sectionTitle: React.CSSProperties = { fontFamily: rj, fontSize: 11, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--acc)', fontWeight: 700, marginBottom: 14, paddingBottom: 8, borderBottom: '1px solid color-mix(in srgb, var(--acc) 12%, transparent)' };
+const labelS: React.CSSProperties = { display: 'block', fontFamily: rj, fontSize: 10, letterSpacing: '.5px', textTransform: 'uppercase', color: 'var(--ink3)', fontWeight: 600, marginBottom: 4 };
+const inputStyle: React.CSSProperties = { width: '100%', background: 'var(--bg2)', border: '1px solid color-mix(in srgb, var(--acc) 20%, transparent)', color: 'var(--ink)', padding: '7px 9px', fontFamily: rj, fontSize: 12.5, fontWeight: 500, borderRadius: 3, boxSizing: 'border-box' };
+const ghostBtn: React.CSSProperties = { background: 'transparent', color: 'var(--acc)', border: '1px solid color-mix(in srgb, var(--acc) 40%, transparent)', padding: '8px 14px', fontFamily: rj, fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 };
+const goldBtn: React.CSSProperties = { background: 'var(--acc)', color: 'var(--bg)', border: 'none', padding: '8px 16px', fontFamily: rj, fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 };
 
 function fmt(n: number, dec = 2): string {
   if (!isFinite(n)) return '–';
@@ -187,21 +187,21 @@ export default function TidePage() {
     <div>
       {/* Header */}
       <div style={{ marginBottom: 24 }}>
-        <div style={{ fontFamily: rj, fontSize: 10, letterSpacing: '2px', textTransform: 'uppercase', color: '#c8a84b', fontWeight: 700, marginBottom: 8 }}>
+        <div style={{ fontFamily: rj, fontSize: 10, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--acc)', fontWeight: 700, marginBottom: 8 }}>
           ⚓ Voyage Hub · Tide Calculator
         </div>
         <h1 style={{ fontFamily: lb, fontSize: 'clamp(22px,3vw,32px)', fontWeight: 700, lineHeight: 1.1, marginBottom: 8 }}>
           Tide <em style={g}>Calculator</em>
         </h1>
-        <p style={{ fontSize: 13, color: '#b0c0a4', lineHeight: 1.6, maxWidth: 720 }}>
+        <p style={{ fontSize: 13, color: 'var(--ink2)', lineHeight: 1.6, maxWidth: 720 }}>
           Enter the day&apos;s HW/LW from your tide table; the tool interpolates the height of tide at any time
           and finds the window where you have enough water for your draft and under-keel clearance.
         </p>
       </div>
 
       {/* Disclaimer */}
-      <div style={{ ...card, background: 'rgba(232,184,90,.06)', borderColor: 'rgba(232,184,90,.3)', padding: '12px 16px' }}>
-        <div style={{ fontFamily: rj, fontSize: 12, color: '#e8c87a', lineHeight: 1.5 }}>
+      <div style={{ ...card, background: 'color-mix(in srgb, var(--warn) 6%, transparent)', borderColor: 'color-mix(in srgb, var(--warn) 30%, transparent)', padding: '12px 16px' }}>
+        <div style={{ fontFamily: rj, fontSize: 12, color: 'var(--warn)', lineHeight: 1.5 }}>
           ⚠ <b>Interpolation aid only.</b> Use official predictions (Admiralty TotalTide / ATT, NOAA, hydrographic
           office). This uses a smooth curve between HW/LW and ignores surge, met effects and secondary-port corrections.
         </div>
@@ -211,13 +211,13 @@ export default function TidePage() {
       <div className="action-bar" style={{ display: 'flex', gap: 10, marginBottom: 22, flexWrap: 'wrap', alignItems: 'center' }}>
         <button onClick={() => setShowSave(true)} style={goldBtn}>💾 Save</button>
         <button onClick={() => window.print()} style={ghostBtn}>🖨️ Print / PDF</button>
-        <button onClick={handleReset} style={{ ...ghostBtn, color: '#ff8a8a', borderColor: 'rgba(255,138,138,.3)' }}>🗑️ Reset</button>
-        {saveMsg && <span style={{ color: '#4caf76', fontFamily: rj, fontSize: 12, fontWeight: 600 }}>{saveMsg}</span>}
-        {recordName && <span style={{ color: '#7a8a72', fontFamily: rj, fontSize: 11, marginLeft: 'auto' }}>📂 {recordName}</span>}
+        <button onClick={handleReset} style={{ ...ghostBtn, color: 'var(--bad)', borderColor: 'color-mix(in srgb, var(--bad) 30%, transparent)' }}>🗑️ Reset</button>
+        {saveMsg && <span style={{ color: 'var(--ok)', fontFamily: rj, fontSize: 12, fontWeight: 600 }}>{saveMsg}</span>}
+        {recordName && <span style={{ color: 'var(--ink3)', fontFamily: rj, fontSize: 11, marginLeft: 'auto' }}>📂 {recordName}</span>}
       </div>
 
       {showSave && (
-        <div style={{ ...card, background: 'rgba(200,168,75,.05)', borderColor: 'rgba(200,168,75,.4)' }}>
+        <div style={{ ...card, background: 'color-mix(in srgb, var(--acc) 5%, transparent)', borderColor: 'color-mix(in srgb, var(--acc) 40%, transparent)' }}>
           <label style={labelS}>Name</label>
           <input type="text" value={recordName} onChange={(e) => setRecordName(e.target.value)} placeholder="e.g. Hamburg — 14 Jul" style={{ ...inputStyle, marginBottom: 10 }} />
           <div style={{ display: 'flex', gap: 8 }}>
@@ -237,7 +237,7 @@ export default function TidePage() {
         <div style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 360 }}>
             <thead>
-              <tr style={{ color: '#7a8a72', fontFamily: rj, fontSize: 9.5, letterSpacing: '.5px', textTransform: 'uppercase' }}>
+              <tr style={{ color: 'var(--ink3)', fontFamily: rj, fontSize: 9.5, letterSpacing: '.5px', textTransform: 'uppercase' }}>
                 <th style={{ ...thd, textAlign: 'left' }}>Type</th>
                 <th style={thd}>Time (HH:MM)</th>
                 <th style={thd}>Height (m)</th>
@@ -246,7 +246,7 @@ export default function TidePage() {
             </thead>
             <tbody>
               {data.events.map((e) => (
-                <tr key={e.id} style={{ borderTop: '1px solid rgba(200,168,75,.08)' }}>
+                <tr key={e.id} style={{ borderTop: '1px solid color-mix(in srgb, var(--acc) 8%, transparent)' }}>
                   <td style={{ padding: '4px 6px' }}>
                     <select style={{ ...inputStyle, padding: '5px 7px', fontSize: 12 }} value={e.type} onChange={(ev) => updEvent(e.id, { type: ev.target.value as 'HW' | 'LW' })}>
                       <option value="HW">HW</option>
@@ -255,14 +255,14 @@ export default function TidePage() {
                   </td>
                   <td style={{ padding: '4px 4px' }}><input style={{ ...inputStyle, padding: '5px 7px', fontSize: 12, textAlign: 'center' }} value={e.time} onChange={(ev) => updEvent(e.id, { time: ev.target.value })} placeholder="04:30" /></td>
                   <td style={{ padding: '4px 4px' }}><input style={{ ...inputStyle, padding: '5px 7px', fontSize: 12, textAlign: 'right' }} type="number" step="0.01" value={e.height || ''} onChange={(ev) => updEvent(e.id, { height: num(ev.target.value) })} placeholder="0.0" /></td>
-                  <td style={{ padding: '4px 4px', textAlign: 'center' }}><button onClick={() => delEvent(e.id)} style={{ background: 'transparent', border: 'none', color: '#ff8a8a', cursor: 'pointer', fontSize: 12 }}>✕</button></td>
+                  <td style={{ padding: '4px 4px', textAlign: 'center' }}><button onClick={() => delEvent(e.id)} style={{ background: 'transparent', border: 'none', color: 'var(--bad)', cursor: 'pointer', fontSize: 12 }}>✕</button></td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
         <button onClick={addEvent} style={{ ...ghostBtn, marginTop: 12, fontSize: 10 }}>+ Add HW/LW</button>
-        <p style={{ fontSize: 10, color: '#7a8a72', fontFamily: rj, marginTop: 8 }}>Enter in chronological order. Heights are above chart datum.</p>
+        <p style={{ fontSize: 10, color: 'var(--ink3)', fontFamily: rj, marginTop: 8 }}>Enter in chronological order. Heights are above chart datum.</p>
       </div>
 
       {/* Tide curve */}
@@ -271,18 +271,18 @@ export default function TidePage() {
           <div style={sectionTitle}>📈 Tide Curve</div>
           <svg viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', height: 'auto' }}>
             {/* required-water line (as tide height needed) */}
-            <path d={pathD} fill="none" stroke="#5aa6e8" strokeWidth={2} />
+            <path d={pathD} fill="none" stroke="var(--info)" strokeWidth={2} />
             {/* fill under curve */}
-            <path d={`${pathD} L ${px(tMax)} ${H - pad} L ${px(tMin)} ${H - pad} Z`} fill="rgba(90,166,232,.12)" />
+            <path d={`${pathD} L ${px(tMax)} ${H - pad} L ${px(tMin)} ${H - pad} Z`} fill="color-mix(in srgb, var(--info) 12%, transparent)" />
             {/* HW/LW markers */}
             {sorted.map((e, i) => (
               <g key={i}>
-                <circle cx={px(e.t)} cy={py(e.h)} r={3} fill={e.type === 'HW' ? '#4caf76' : '#e8b85a'} />
-                <text x={px(e.t)} y={py(e.h) - 6} fill="#b0c0a4" fontSize={8} fontFamily={rj} textAnchor="middle">{e.type} {fmt(e.h, 1)}</text>
+                <circle cx={px(e.t)} cy={py(e.h)} r={3} fill={e.type === 'HW' ? 'var(--ok)' : 'var(--warn)'} />
+                <text x={px(e.t)} y={py(e.h) - 6} fill="var(--ink2)" fontSize={8} fontFamily={rj} textAnchor="middle">{e.type} {fmt(e.h, 1)}</text>
               </g>
             ))}
-            <text x={pad} y={H - 6} fill="#7a8a72" fontSize={8} fontFamily={rj}>{fromMin(tMin)}</text>
-            <text x={W - pad} y={H - 6} fill="#7a8a72" fontSize={8} fontFamily={rj} textAnchor="end">{fromMin(tMax)}</text>
+            <text x={pad} y={H - 6} fill="var(--ink3)" fontSize={8} fontFamily={rj}>{fromMin(tMin)}</text>
+            <text x={W - pad} y={H - 6} fill="var(--ink3)" fontSize={8} fontFamily={rj} textAnchor="end">{fromMin(tMax)}</text>
           </svg>
         </div>
       )}
@@ -295,9 +295,9 @@ export default function TidePage() {
           <div><label style={labelS}>Required UKC (m)</label><input style={inputStyle} type="number" step="0.01" value={data.requiredUkc || ''} onChange={(e) => update('requiredUkc', num(e.target.value))} placeholder="1.0" /></div>
           <div><label style={labelS}>Charted Depth (m, CD)</label><input style={inputStyle} type="number" step="0.01" value={data.chartedDepth || ''} onChange={(e) => update('chartedDepth', num(e.target.value))} placeholder="11.0" /></div>
         </div>
-        <div style={{ padding: '10px 12px', background: 'rgba(200,168,75,.05)', border: '1px solid rgba(200,168,75,.15)', borderRadius: 3, fontFamily: rj, fontSize: 12, color: '#b0c0a4' }}>
-          Water needed = draft + UKC = <b style={{ color: '#c8a84b' }}>{fmt(required, 2)} m</b>. Available = charted depth + height of tide.
-          {data.chartedDepth > 0 && <> Min tide height required = <b style={{ color: '#c8a84b' }}>{fmt(required - data.chartedDepth, 2)} m</b>.</>}
+        <div style={{ padding: '10px 12px', background: 'color-mix(in srgb, var(--acc) 5%, transparent)', border: '1px solid color-mix(in srgb, var(--acc) 15%, transparent)', borderRadius: 3, fontFamily: rj, fontSize: 12, color: 'var(--ink2)' }}>
+          Water needed = draft + UKC = <b style={{ color: 'var(--acc)' }}>{fmt(required, 2)} m</b>. Available = charted depth + height of tide.
+          {data.chartedDepth > 0 && <> Min tide height required = <b style={{ color: 'var(--acc)' }}>{fmt(required - data.chartedDepth, 2)} m</b>.</>}
         </div>
       </div>
 
@@ -311,10 +311,10 @@ export default function TidePage() {
           </div>
           {queryHeight != null && (
             <div style={{ display: 'flex', gap: 18, flexWrap: 'wrap', fontFamily: rj, fontSize: 13 }}>
-              <span style={{ color: '#7a8a72' }}>Tide height: <b style={{ color: '#5aa6e8' }}>{fmt(queryHeight, 2)} m</b></span>
-              {queryAvailable != null && <span style={{ color: '#7a8a72' }}>Total water: <b style={{ color: '#f5f0e8' }}>{fmt(queryAvailable, 2)} m</b></span>}
+              <span style={{ color: 'var(--ink3)' }}>Tide height: <b style={{ color: 'var(--info)' }}>{fmt(queryHeight, 2)} m</b></span>
+              {queryAvailable != null && <span style={{ color: 'var(--ink3)' }}>Total water: <b style={{ color: 'var(--ink)' }}>{fmt(queryAvailable, 2)} m</b></span>}
               {queryOk != null && required > 0 && (
-                <span style={{ color: queryOk ? '#4caf76' : '#ff6b6b', fontWeight: 700 }}>{queryOk ? '✓ Sufficient' : '✕ Insufficient'}</span>
+                <span style={{ color: queryOk ? 'var(--ok)' : 'var(--bad)', fontWeight: 700 }}>{queryOk ? '✓ Sufficient' : '✕ Insufficient'}</span>
               )}
             </div>
           )}
@@ -323,18 +323,18 @@ export default function TidePage() {
 
       {/* Windows */}
       {required > 0 && data.chartedDepth > 0 && (
-        <div style={{ ...card, background: 'linear-gradient(135deg,rgba(200,168,75,.08),transparent)', borderColor: 'rgba(200,168,75,.4)' }}>
+        <div style={{ ...card, background: 'linear-gradient(135deg,color-mix(in srgb, var(--acc) 8%, transparent),transparent)', borderColor: 'color-mix(in srgb, var(--acc) 40%, transparent)' }}>
           <div style={sectionTitle}>⚡ Tidal Windows (enough water)</div>
           {windows.length === 0 ? (
-            <div style={{ fontFamily: rj, fontSize: 13, color: '#ff6b6b' }}>
+            <div style={{ fontFamily: rj, fontSize: 13, color: 'var(--bad)' }}>
               ✕ No period within the entered HW/LW range provides {fmt(required, 2)} m of water. Wait for a higher tide or reduce draft.
             </div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
               {windows.map((w, i) => (
-                <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 14px', background: '#0c1610', border: '1px solid rgba(76,175,118,.4)', borderRadius: 4, fontFamily: rj }}>
-                  <span style={{ color: '#4caf76', fontWeight: 700, fontSize: 14 }}>✓ {fromMin(w.from)} – {fromMin(w.to)}</span>
-                  <span style={{ color: '#7a8a72', fontSize: 12 }}>{Math.round((w.to - w.from) / 60 * 10) / 10} h window</span>
+                <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 14px', background: 'var(--bg2)', border: '1px solid color-mix(in srgb, var(--ok) 40%, transparent)', borderRadius: 4, fontFamily: rj }}>
+                  <span style={{ color: 'var(--ok)', fontWeight: 700, fontSize: 14 }}>✓ {fromMin(w.from)} – {fromMin(w.to)}</span>
+                  <span style={{ color: 'var(--ink3)', fontSize: 12 }}>{Math.round((w.to - w.from) / 60 * 10) / 10} h window</span>
                 </div>
               ))}
             </div>
@@ -343,12 +343,12 @@ export default function TidePage() {
       )}
 
       {/* Reference */}
-      <div style={{ ...card, background: 'rgba(122,138,114,.05)', borderColor: 'rgba(122,138,114,.15)' }}>
+      <div style={{ ...card, background: 'color-mix(in srgb, var(--ink3) 5%, transparent)', borderColor: 'color-mix(in srgb, var(--ink3) 15%, transparent)' }}>
         <div style={sectionTitle}>📖 Method &amp; Sources</div>
-        <ul style={{ fontSize: 11.5, color: '#b0c0a4', lineHeight: 1.7, paddingLeft: 18, fontFamily: rj }}>
-          <li>Height is interpolated with a smooth cosine curve between each HW and LW — close to the <b style={{ color: '#c8a84b' }}>rule of twelfths</b> but continuous for any minute.</li>
+        <ul style={{ fontSize: 11.5, color: 'var(--ink2)', lineHeight: 1.7, paddingLeft: 18, fontFamily: rj }}>
+          <li>Height is interpolated with a smooth cosine curve between each HW and LW — close to the <b style={{ color: 'var(--acc)' }}>rule of twelfths</b> but continuous for any minute.</li>
           <li>Total water = charted depth (at chart datum) + height of tide. Window = where total water ≥ draft + required UKC.</li>
-          <li>Official sources: <a href="https://www.admiralty.co.uk/" target="_blank" rel="noopener noreferrer" style={{ color: '#5aa6e8' }}>Admiralty (ATT / TotalTide)</a>, <a href="https://tidesandcurrents.noaa.gov/" target="_blank" rel="noopener noreferrer" style={{ color: '#5aa6e8' }}>NOAA Tides &amp; Currents</a>, your hydrographic office.</li>
+          <li>Official sources: <a href="https://www.admiralty.co.uk/" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--info)' }}>Admiralty (ATT / TotalTide)</a>, <a href="https://tidesandcurrents.noaa.gov/" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--info)' }}>NOAA Tides &amp; Currents</a>, your hydrographic office.</li>
           <li>Surge, barometric &amp; wind effects and secondary-port time/height differences are NOT applied — use official predictions for decisions.</li>
         </ul>
       </div>

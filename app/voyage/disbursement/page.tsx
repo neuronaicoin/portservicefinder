@@ -3,9 +3,9 @@ import { useState, useEffect, useMemo } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { saveItem, loadItem, genId } from '@/lib/voyage-storage';
 
-const lb = "'Libre Bodoni', serif";
-const rj = "'Rajdhani', sans-serif";
-const g = { color: '#c8a84b', fontStyle: 'italic' } as React.CSSProperties;
+const lb = 'var(--font-display)';
+const rj = 'var(--font-ui)';
+const g = { color: 'var(--acc)' } as React.CSSProperties;
 
 // ============================================================
 // TYPES
@@ -75,13 +75,13 @@ function fmt(n: number, dec = 2): string {
 // ============================================================
 // STYLES
 // ============================================================
-const card: React.CSSProperties = { background: '#111c13', border: '1px solid rgba(200,168,75,.18)', padding: '20px 18px', borderRadius: 4, marginBottom: 16 };
-const sectionTitle: React.CSSProperties = { fontFamily: rj, fontSize: 11, letterSpacing: '2px', textTransform: 'uppercase', color: '#c8a84b', fontWeight: 700, marginBottom: 14, paddingBottom: 8, borderBottom: '1px solid rgba(200,168,75,.12)' };
-const label: React.CSSProperties = { display: 'block', fontFamily: rj, fontSize: 10, letterSpacing: '.5px', textTransform: 'uppercase', color: '#7a8a72', fontWeight: 600, marginBottom: 4 };
-const inputStyle: React.CSSProperties = { width: '100%', background: '#0c1610', border: '1px solid rgba(200,168,75,.2)', color: '#f5f0e8', padding: '7px 9px', fontFamily: rj, fontSize: 12.5, fontWeight: 500, borderRadius: 3, boxSizing: 'border-box' };
+const card: React.CSSProperties = { background: 'var(--card)', border: '1px solid color-mix(in srgb, var(--acc) 18%, transparent)', padding: '20px 18px', borderRadius: 4, marginBottom: 16 };
+const sectionTitle: React.CSSProperties = { fontFamily: rj, fontSize: 11, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--acc)', fontWeight: 700, marginBottom: 14, paddingBottom: 8, borderBottom: '1px solid color-mix(in srgb, var(--acc) 12%, transparent)' };
+const label: React.CSSProperties = { display: 'block', fontFamily: rj, fontSize: 10, letterSpacing: '.5px', textTransform: 'uppercase', color: 'var(--ink3)', fontWeight: 600, marginBottom: 4 };
+const inputStyle: React.CSSProperties = { width: '100%', background: 'var(--bg2)', border: '1px solid color-mix(in srgb, var(--acc) 20%, transparent)', color: 'var(--ink)', padding: '7px 9px', fontFamily: rj, fontSize: 12.5, fontWeight: 500, borderRadius: 3, boxSizing: 'border-box' };
 const numCell: React.CSSProperties = { ...inputStyle, padding: '5px 7px', fontSize: 12, textAlign: 'right' };
-const ghostBtn: React.CSSProperties = { background: 'transparent', color: '#c8a84b', border: '1px solid rgba(200,168,75,.4)', padding: '8px 14px', fontFamily: rj, fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 };
-const goldBtn: React.CSSProperties = { background: '#c8a84b', color: '#08100a', border: 'none', padding: '8px 16px', fontFamily: rj, fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 };
+const ghostBtn: React.CSSProperties = { background: 'transparent', color: 'var(--acc)', border: '1px solid color-mix(in srgb, var(--acc) 40%, transparent)', padding: '8px 14px', fontFamily: rj, fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 };
+const goldBtn: React.CSSProperties = { background: 'var(--acc)', color: 'var(--bg)', border: 'none', padding: '8px 16px', fontFamily: rj, fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 };
 
 const CALL_LABEL: Record<PortCall['callType'], string> = { load: 'Loading', discharge: 'Discharge', bunker: 'Bunker', transit: 'Transit', repair: 'Repair', other: 'Other' };
 
@@ -158,13 +158,13 @@ export default function DisbursementPage() {
     <div>
       {/* Header */}
       <div style={{ marginBottom: 24 }}>
-        <div style={{ fontFamily: rj, fontSize: 10, letterSpacing: '2px', textTransform: 'uppercase', color: '#c8a84b', fontWeight: 700, marginBottom: 8 }}>
+        <div style={{ fontFamily: rj, fontSize: 10, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--acc)', fontWeight: 700, marginBottom: 8 }}>
           ⚓ Voyage Hub · Disbursement Tracker
         </div>
         <h1 style={{ fontFamily: lb, fontSize: 'clamp(22px,3vw,32px)', fontWeight: 700, lineHeight: 1.1, marginBottom: 8 }}>
           Disbursement <em style={g}>Tracker</em>
         </h1>
-        <p style={{ fontSize: 13, color: '#b0c0a4', lineHeight: 1.6, maxWidth: 720 }}>
+        <p style={{ fontSize: 13, color: 'var(--ink2)', lineHeight: 1.6, maxWidth: 720 }}>
           Compare estimate, pro-forma and final DA for every port call. Spot variances item-by-item
           before you settle the agent&apos;s account.
         </p>
@@ -174,15 +174,15 @@ export default function DisbursementPage() {
       <div className="action-bar" style={{ display: 'flex', gap: 10, marginBottom: 22, flexWrap: 'wrap', alignItems: 'center' }}>
         <button onClick={() => setShowSave(true)} style={goldBtn}>💾 Save</button>
         <button onClick={() => window.print()} style={ghostBtn}>🖨️ Print / PDF</button>
-        <button onClick={handleReset} style={{ ...ghostBtn, color: '#ff8a8a', borderColor: 'rgba(255,138,138,.3)' }}>🗑️ Reset</button>
-        {saveMsg && <span style={{ color: '#4caf76', fontFamily: rj, fontSize: 12, fontWeight: 600 }}>{saveMsg}</span>}
-        {recordName && <span style={{ color: '#7a8a72', fontFamily: rj, fontSize: 11, marginLeft: 'auto' }}>📂 {recordName}</span>}
+        <button onClick={handleReset} style={{ ...ghostBtn, color: 'var(--bad)', borderColor: 'color-mix(in srgb, var(--bad) 30%, transparent)' }}>🗑️ Reset</button>
+        {saveMsg && <span style={{ color: 'var(--ok)', fontFamily: rj, fontSize: 12, fontWeight: 600 }}>{saveMsg}</span>}
+        {recordName && <span style={{ color: 'var(--ink3)', fontFamily: rj, fontSize: 11, marginLeft: 'auto' }}>📂 {recordName}</span>}
       </div>
 
       {showSave && (
-        <div style={{ ...card, background: 'rgba(200,168,75,.05)', borderColor: 'rgba(200,168,75,.4)' }}>
+        <div style={{ ...card, background: 'color-mix(in srgb, var(--acc) 5%, transparent)', borderColor: 'color-mix(in srgb, var(--acc) 40%, transparent)' }}>
           <label style={label}>Name</label>
-          <input type="text" value={recordName} onChange={(e) => setRecordName(e.target.value)} placeholder="e.g. MV NEURONAI — Voyage 12 DAs" style={{ ...inputStyle, marginBottom: 10 }} />
+          <input type="text" value={recordName} onChange={(e) => setRecordName(e.target.value)} placeholder="e.g. MV OCEAN PIONEER — Voyage 12 DAs" style={{ ...inputStyle, marginBottom: 10 }} />
           <div style={{ display: 'flex', gap: 8 }}>
             <button onClick={handleSave} style={{ ...goldBtn, padding: '8px 14px', letterSpacing: '1px' }}>Save</button>
             <button onClick={() => setShowSave(false)} style={ghostBtn}>Cancel</button>
@@ -194,7 +194,7 @@ export default function DisbursementPage() {
       <div style={card}>
         <div style={sectionTitle}>Voyage Reference</div>
         <div className="da-g4" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 12 }}>
-          <div><label style={label}>Vessel</label><input style={inputStyle} value={data.vesselName} onChange={(e) => update('vesselName', e.target.value)} placeholder="MV NEURONAI" /></div>
+          <div><label style={label}>Vessel</label><input style={inputStyle} value={data.vesselName} onChange={(e) => update('vesselName', e.target.value)} placeholder="MV OCEAN PIONEER" /></div>
           <div><label style={label}>IMO</label><input style={inputStyle} value={data.imo} onChange={(e) => update('imo', e.target.value)} placeholder="9876543" /></div>
           <div><label style={label}>Voyage No.</label><input style={inputStyle} value={data.voyageNo} onChange={(e) => update('voyageNo', e.target.value)} placeholder="V-12" /></div>
           <div>
@@ -212,13 +212,13 @@ export default function DisbursementPage() {
 
       {/* Grand totals */}
       {data.calls.length > 0 && (
-        <div style={{ ...card, background: 'linear-gradient(135deg,rgba(200,168,75,.08),transparent)', borderColor: 'rgba(200,168,75,.4)' }}>
+        <div style={{ ...card, background: 'linear-gradient(135deg,color-mix(in srgb, var(--acc) 8%, transparent),transparent)', borderColor: 'color-mix(in srgb, var(--acc) 40%, transparent)' }}>
           <div style={sectionTitle}>💰 Voyage DA Summary ({data.calls.length} call{data.calls.length !== 1 ? 's' : ''})</div>
           <div className="da-totals" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 10 }}>
-            <Tot label="Estimate" value={grand.est} cur={cur} color="#7a8a72" />
-            <Tot label="Pro-forma" value={grand.pro} cur={cur} color="#5aa6e8" />
-            <Tot label="Final DA" value={grand.fin} cur={cur} color="#c8a84b" />
-            <Tot label="Final vs Pro-forma" value={grand.fin - grand.pro} cur={cur} signed color={grand.fin > grand.pro ? '#ff8a8a' : '#4caf76'} pct={grand.pro > 0 ? ((grand.fin - grand.pro) / grand.pro) * 100 : null} />
+            <Tot label="Estimate" value={grand.est} cur={cur} color="var(--ink3)" />
+            <Tot label="Pro-forma" value={grand.pro} cur={cur} color="var(--info)" />
+            <Tot label="Final DA" value={grand.fin} cur={cur} color="var(--acc)" />
+            <Tot label="Final vs Pro-forma" value={grand.fin - grand.pro} cur={cur} signed color={grand.fin > grand.pro ? 'var(--bad)' : 'var(--ok)'} pct={grand.pro > 0 ? ((grand.fin - grand.pro) / grand.pro) * 100 : null} />
           </div>
         </div>
       )}
@@ -233,18 +233,18 @@ export default function DisbursementPage() {
           <div key={c.id} style={card}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer' }} onClick={() => setOpenCall(open ? null : c.id)}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-                <span style={{ fontFamily: lb, fontSize: 16, fontWeight: 700, color: '#c8a84b' }}>{c.port || `Port Call ${ci + 1}`}</span>
-                <span style={{ fontSize: 9.5, background: 'rgba(122,138,114,.14)', color: '#b0c0a4', padding: '2px 7px', borderRadius: 3, fontFamily: rj, fontWeight: 700 }}>{CALL_LABEL[c.callType]}</span>
-                {c.agent && <span style={{ fontFamily: rj, fontSize: 11, color: '#7a8a72' }}>· {c.agent}</span>}
+                <span style={{ fontFamily: lb, fontSize: 16, fontWeight: 700, color: 'var(--acc)' }}>{c.port || `Port Call ${ci + 1}`}</span>
+                <span style={{ fontSize: 9.5, background: 'color-mix(in srgb, var(--ink3) 14%, transparent)', color: 'var(--ink2)', padding: '2px 7px', borderRadius: 3, fontFamily: rj, fontWeight: 700 }}>{CALL_LABEL[c.callType]}</span>
+                {c.agent && <span style={{ fontFamily: rj, fontSize: 11, color: 'var(--ink3)' }}>· {c.agent}</span>}
                 {t.fin > 0 && (
-                  <span style={{ fontFamily: rj, fontSize: 12, color: diff > 0 ? '#ff8a8a' : '#4caf76' }}>
+                  <span style={{ fontFamily: rj, fontSize: 12, color: diff > 0 ? 'var(--bad)' : 'var(--ok)' }}>
                     Final {cur} {fmt(t.fin, 0)} ({diff >= 0 ? '+' : ''}{fmt(diffPct, 1)}%)
                   </span>
                 )}
               </div>
               <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-                <span style={{ fontFamily: rj, fontSize: 11, color: '#c8a84b' }}>{open ? '▲' : '▼'}</span>
-                <button onClick={(e) => { e.stopPropagation(); delCall(c.id); }} style={{ background: 'transparent', border: 'none', color: '#ff8a8a', fontFamily: rj, fontSize: 11, cursor: 'pointer' }}>✕</button>
+                <span style={{ fontFamily: rj, fontSize: 11, color: 'var(--acc)' }}>{open ? '▲' : '▼'}</span>
+                <button onClick={(e) => { e.stopPropagation(); delCall(c.id); }} style={{ background: 'transparent', border: 'none', color: 'var(--bad)', fontFamily: rj, fontSize: 11, cursor: 'pointer' }}>✕</button>
               </div>
             </div>
 
@@ -269,7 +269,7 @@ export default function DisbursementPage() {
                 <div style={{ overflowX: 'auto' }}>
                   <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 560 }}>
                     <thead>
-                      <tr style={{ color: '#7a8a72', fontFamily: rj, fontSize: 9.5, letterSpacing: '.5px', textTransform: 'uppercase' }}>
+                      <tr style={{ color: 'var(--ink3)', fontFamily: rj, fontSize: 9.5, letterSpacing: '.5px', textTransform: 'uppercase' }}>
                         <th style={{ ...thd, textAlign: 'left' }}>Item</th>
                         <th style={thd}>Estimate</th>
                         <th style={thd}>Pro-forma</th>
@@ -284,28 +284,28 @@ export default function DisbursementPage() {
                         const dpct = it.proforma > 0 ? (d / it.proforma) * 100 : (it.final > 0 ? 100 : 0);
                         const flagged = it.final > 0 && it.proforma > 0 && Math.abs(dpct) > data.tolerancePct;
                         return (
-                          <tr key={it.id} style={{ borderTop: '1px solid rgba(200,168,75,.08)' }}>
+                          <tr key={it.id} style={{ borderTop: '1px solid color-mix(in srgb, var(--acc) 8%, transparent)' }}>
                             <td style={{ padding: '4px 6px' }}>
                               <input style={{ ...inputStyle, padding: '5px 7px', fontSize: 12 }} value={it.label} onChange={(e) => updItem(c.id, it.id, { label: e.target.value })} placeholder="Item" />
                             </td>
                             <td style={{ padding: '4px 4px' }}><input style={numCell} type="number" value={it.estimate || ''} onChange={(e) => updItem(c.id, it.id, { estimate: num(e.target.value) })} placeholder="0" /></td>
                             <td style={{ padding: '4px 4px' }}><input style={numCell} type="number" value={it.proforma || ''} onChange={(e) => updItem(c.id, it.id, { proforma: num(e.target.value) })} placeholder="0" /></td>
-                            <td style={{ padding: '4px 4px' }}><input style={{ ...numCell, borderColor: flagged ? 'rgba(255,138,138,.5)' : 'rgba(200,168,75,.2)' }} type="number" value={it.final || ''} onChange={(e) => updItem(c.id, it.id, { final: num(e.target.value) })} placeholder="0" /></td>
-                            <td style={{ padding: '4px 6px', textAlign: 'right', fontFamily: rj, fontSize: 11.5, color: d > 0 ? '#ff8a8a' : d < 0 ? '#4caf76' : '#7a8a72', whiteSpace: 'nowrap' }}>
+                            <td style={{ padding: '4px 4px' }}><input style={{ ...numCell, borderColor: flagged ? 'color-mix(in srgb, var(--bad) 50%, transparent)' : 'color-mix(in srgb, var(--acc) 20%, transparent)' }} type="number" value={it.final || ''} onChange={(e) => updItem(c.id, it.id, { final: num(e.target.value) })} placeholder="0" /></td>
+                            <td style={{ padding: '4px 6px', textAlign: 'right', fontFamily: rj, fontSize: 11.5, color: d > 0 ? 'var(--bad)' : d < 0 ? 'var(--ok)' : 'var(--ink3)', whiteSpace: 'nowrap' }}>
                               {it.final || it.proforma ? <>{d >= 0 ? '+' : ''}{fmt(d, 0)}{flagged && ' ⚠'}</> : '—'}
                             </td>
                             <td style={{ padding: '4px 4px', textAlign: 'center' }}>
-                              <button onClick={() => delItem(c.id, it.id)} style={{ background: 'transparent', border: 'none', color: '#ff8a8a', cursor: 'pointer', fontSize: 12 }}>✕</button>
+                              <button onClick={() => delItem(c.id, it.id)} style={{ background: 'transparent', border: 'none', color: 'var(--bad)', cursor: 'pointer', fontSize: 12 }}>✕</button>
                             </td>
                           </tr>
                         );
                       })}
-                      <tr style={{ borderTop: '2px solid rgba(200,168,75,.4)' }}>
-                        <td style={{ padding: '8px 6px', fontFamily: rj, fontWeight: 700, color: '#c8a84b', fontSize: 12, letterSpacing: '.5px', textTransform: 'uppercase' }}>Total {cur}</td>
+                      <tr style={{ borderTop: '2px solid color-mix(in srgb, var(--acc) 40%, transparent)' }}>
+                        <td style={{ padding: '8px 6px', fontFamily: rj, fontWeight: 700, color: 'var(--acc)', fontSize: 12, letterSpacing: '.5px', textTransform: 'uppercase' }}>Total {cur}</td>
                         <td style={tdTot}>{fmt(t.est, 0)}</td>
                         <td style={tdTot}>{fmt(t.pro, 0)}</td>
-                        <td style={{ ...tdTot, color: '#c8a84b' }}>{fmt(t.fin, 0)}</td>
-                        <td style={{ ...tdTot, color: diff > 0 ? '#ff8a8a' : '#4caf76' }}>{diff >= 0 ? '+' : ''}{fmt(diff, 0)}</td>
+                        <td style={{ ...tdTot, color: 'var(--acc)' }}>{fmt(t.fin, 0)}</td>
+                        <td style={{ ...tdTot, color: diff > 0 ? 'var(--bad)' : 'var(--ok)' }}>{diff >= 0 ? '+' : ''}{fmt(diff, 0)}</td>
                         <td></td>
                       </tr>
                     </tbody>
@@ -322,13 +322,13 @@ export default function DisbursementPage() {
       <button onClick={addCall} style={{ ...goldBtn, width: '100%', padding: '12px', marginBottom: 16 }}>+ Add Port Call</button>
 
       {/* Reference */}
-      <div style={{ ...card, background: 'rgba(122,138,114,.05)', borderColor: 'rgba(122,138,114,.15)' }}>
+      <div style={{ ...card, background: 'color-mix(in srgb, var(--ink3) 5%, transparent)', borderColor: 'color-mix(in srgb, var(--ink3) 15%, transparent)' }}>
         <div style={sectionTitle}>📖 About Disbursement Accounts</div>
-        <ul style={{ fontSize: 11.5, color: '#b0c0a4', lineHeight: 1.7, paddingLeft: 18, fontFamily: rj }}>
-          <li><b style={{ color: '#7a8a72' }}>Estimate</b> — your own budget figure set before the call.</li>
-          <li><b style={{ color: '#5aa6e8' }}>Pro-forma DA</b> — the agent&apos;s advance estimate, usually paid before arrival.</li>
-          <li><b style={{ color: '#c8a84b' }}>Final DA</b> — the agent&apos;s actual account after the call, with supporting vouchers.</li>
-          <li>Items where the final exceeds pro-forma by more than your threshold are flagged <b style={{ color: '#ff8a8a' }}>⚠</b> — ask the agent for vouchers before settling.</li>
+        <ul style={{ fontSize: 11.5, color: 'var(--ink2)', lineHeight: 1.7, paddingLeft: 18, fontFamily: rj }}>
+          <li><b style={{ color: 'var(--ink3)' }}>Estimate</b> — your own budget figure set before the call.</li>
+          <li><b style={{ color: 'var(--info)' }}>Pro-forma DA</b> — the agent&apos;s advance estimate, usually paid before arrival.</li>
+          <li><b style={{ color: 'var(--acc)' }}>Final DA</b> — the agent&apos;s actual account after the call, with supporting vouchers.</li>
+          <li>Items where the final exceeds pro-forma by more than your threshold are flagged <b style={{ color: 'var(--bad)' }}>⚠</b> — ask the agent for vouchers before settling.</li>
           <li>Keep all vouchers; query large variances in writing within the agency agreement&apos;s time limit.</li>
         </ul>
       </div>
@@ -349,12 +349,12 @@ export default function DisbursementPage() {
 }
 
 const thd: React.CSSProperties = { padding: '6px 6px', textAlign: 'right', fontWeight: 700, whiteSpace: 'nowrap' };
-const tdTot: React.CSSProperties = { padding: '8px 6px', textAlign: 'right', fontFamily: rj, fontWeight: 700, color: '#f5f0e8', fontSize: 12.5 };
+const tdTot: React.CSSProperties = { padding: '8px 6px', textAlign: 'right', fontFamily: rj, fontWeight: 700, color: 'var(--ink)', fontSize: 12.5 };
 
 function Tot({ label: l, value, cur, color, signed, pct }: { label: string; value: number; cur: string; color: string; signed?: boolean; pct?: number | null }) {
   return (
-    <div style={{ background: '#0c1610', border: '1px solid rgba(200,168,75,.2)', borderRadius: 4, padding: '12px 10px', textAlign: 'center' }}>
-      <div style={{ fontFamily: rj, fontSize: 9, letterSpacing: '1px', textTransform: 'uppercase', color: '#7a8a72', fontWeight: 700 }}>{l}</div>
+    <div style={{ background: 'var(--bg2)', border: '1px solid color-mix(in srgb, var(--acc) 20%, transparent)', borderRadius: 4, padding: '12px 10px', textAlign: 'center' }}>
+      <div style={{ fontFamily: rj, fontSize: 9, letterSpacing: '1px', textTransform: 'uppercase', color: 'var(--ink3)', fontWeight: 700 }}>{l}</div>
       <div style={{ fontFamily: lb, fontSize: 19, fontWeight: 700, color, marginTop: 4 }}>
         {signed && value > 0 ? '+' : ''}{cur} {fmt(value, 0)}
       </div>

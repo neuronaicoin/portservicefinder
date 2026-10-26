@@ -6,7 +6,7 @@ import { siteConfig, getKeywordsString, getOrganizationSchema, getWebsiteSchema 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
   title: {
-    default: `${siteConfig.name} — Global Maritime Services Directory | PSF`,
+    default: `${siteConfig.name}: Ship Agents, Shipchandlers & Marine Services Worldwide`,
     template: `%s | ${siteConfig.name}`,
   },
   description: siteConfig.description,
@@ -46,9 +46,7 @@ export const metadata: Metadata = {
   verification: {
     google: siteConfig.googleVerification,
   },
-  alternates: {
-    canonical: siteConfig.url,
-  },
+  // no site-wide canonical: every page states its own (a shared one would point all pages at the homepage)
   category: "maritime",
   other: {
     // Additional meta tags for AI crawlers (ChatGPT, Perplexity, Claude, Gemini)
@@ -102,25 +100,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
-        {/* Preconnect to Google Fonts — saves 200-300ms */}
+        {/* Theme before first paint: the visitor's choice, else their system setting */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{var t=localStorage.getItem('psf-theme');if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)}catch(e){}`,
+          }}
+        />
+        <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+        <meta name="theme-color" content="#07111c" media="(prefers-color-scheme: dark)" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-
-        {/* Load Google Fonts directly as stylesheet with display=swap — no render block */}
-        <link
-          rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;500;600;700&family=Rajdhani:wght@500;600;700&display=swap"
-        />
-
-        {/* Preload hero image for faster LCP on homepage */}
-        <link
-          rel="preload"
-          as="image"
-          href="/hero-bg.jpg"
-          fetchPriority="high"
-        />
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Libre+Baskerville:wght@700&display=swap" />
 
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-CFQV3SY7LX"

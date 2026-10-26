@@ -3,9 +3,9 @@ import { useState, useEffect, useMemo } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { saveItem, loadItem, genId } from '@/lib/voyage-storage';
 
-const lb = "'Libre Bodoni', serif";
-const rj = "'Rajdhani', sans-serif";
-const g = { color: '#c8a84b', fontStyle: 'italic' };
+const lb = 'var(--font-display)';
+const rj = 'var(--font-ui)';
+const g = { color: 'var(--acc)' };
 
 // ============================================================
 // TYPES
@@ -36,13 +36,13 @@ interface BunkerPlanData {
   voyageFrom: string;
   voyageTo: string;
 
-  // ROB on Delivery (Kiraya giriş)
+  // ROB on Delivery (delivery into the charter)
   robInitialMe: number;
   robInitialAe: number;
   robInitialUlsfo: number; // ECA fuel
   fuelTypeMain: string;
 
-  // Target ROB on Redelivery (Kiradan çıkış)
+  // Target ROB on Redelivery (redelivery to owners)
   robTargetMe: number;
   robTargetAe: number;
   robTargetUlsfo: number;
@@ -232,8 +232,8 @@ function fmtMoney(n: number): string {
 // STYLES
 // ============================================================
 const card: React.CSSProperties = {
-  background: '#111c13',
-  border: '1px solid rgba(200,168,75,.18)',
+  background: 'var(--card)',
+  border: '1px solid color-mix(in srgb, var(--acc) 18%, transparent)',
   padding: '20px 18px',
   borderRadius: 4,
   marginBottom: 16,
@@ -243,11 +243,11 @@ const sectionTitle: React.CSSProperties = {
   fontSize: 11,
   letterSpacing: '2px',
   textTransform: 'uppercase',
-  color: '#c8a84b',
+  color: 'var(--acc)',
   fontWeight: 700,
   marginBottom: 14,
   paddingBottom: 8,
-  borderBottom: '1px solid rgba(200,168,75,.12)',
+  borderBottom: '1px solid color-mix(in srgb, var(--acc) 12%, transparent)',
 };
 const label: React.CSSProperties = {
   display: 'block',
@@ -255,15 +255,15 @@ const label: React.CSSProperties = {
   fontSize: 10.5,
   letterSpacing: '.5px',
   textTransform: 'uppercase',
-  color: '#7a8a72',
+  color: 'var(--ink3)',
   fontWeight: 600,
   marginBottom: 5,
 };
 const inputStyle: React.CSSProperties = {
   width: '100%',
-  background: '#0c1610',
-  border: '1px solid rgba(200,168,75,.2)',
-  color: '#f5f0e8',
+  background: 'var(--bg2)',
+  border: '1px solid color-mix(in srgb, var(--acc) 20%, transparent)',
+  color: 'var(--ink)',
   padding: '8px 10px',
   fontFamily: rj,
   fontSize: 13,
@@ -272,8 +272,8 @@ const inputStyle: React.CSSProperties = {
 };
 const ghostBtn: React.CSSProperties = {
   background: 'transparent',
-  color: '#c8a84b',
-  border: '1px solid rgba(200,168,75,.4)',
+  color: 'var(--acc)',
+  border: '1px solid color-mix(in srgb, var(--acc) 40%, transparent)',
   padding: '8px 14px',
   fontFamily: rj,
   fontSize: 11,
@@ -394,13 +394,13 @@ export default function BunkerPlannerPage() {
     <div>
       {/* Header */}
       <div style={{ marginBottom: 24 }}>
-        <div style={{ fontFamily: rj, fontSize: 10, letterSpacing: '2px', textTransform: 'uppercase', color: '#c8a84b', fontWeight: 700, marginBottom: 8 }}>
+        <div style={{ fontFamily: rj, fontSize: 10, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--acc)', fontWeight: 700, marginBottom: 8 }}>
           ⛽ Voyage Hub · Bunker Planner
         </div>
         <h1 style={{ fontFamily: lb, fontSize: 'clamp(22px,3vw,32px)', fontWeight: 700, lineHeight: 1.1, marginBottom: 8 }}>
           Bunker <em style={g}>Planner</em> & ROB Management
         </h1>
-        <p style={{ fontSize: 13, color: '#b0c0a4', lineHeight: 1.6, maxWidth: 720 }}>
+        <p style={{ fontSize: 13, color: 'var(--ink2)', lineHeight: 1.6, maxWidth: 720 }}>
           Plan voyage bunker requirements — from ROB on delivery to redelivery target. Add legs (sea,
           port, canal, anchorage, bunker stops) and see total fuel needed with safety margins.
         </p>
@@ -408,22 +408,22 @@ export default function BunkerPlannerPage() {
 
       {/* Action Bar */}
       <div className="action-bar" style={{ display: 'flex', gap: 10, marginBottom: 22, flexWrap: 'wrap', alignItems: 'center' }}>
-        <button onClick={() => setShowSave(true)} style={{ background: '#c8a84b', color: '#08100a', border: 'none', padding: '8px 16px', fontFamily: rj, fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 }}>
+        <button onClick={() => setShowSave(true)} style={{ background: 'var(--acc)', color: 'var(--bg)', border: 'none', padding: '8px 16px', fontFamily: rj, fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 }}>
           💾 Save
         </button>
         <button onClick={handlePrint} style={ghostBtn}>🖨️ Print / PDF</button>
-        <button onClick={handleReset} style={{ ...ghostBtn, color: '#ff8a8a', borderColor: 'rgba(255,138,138,.3)' }}>🗑️ Reset</button>
-        {saveMsg && <span style={{ color: '#4caf76', fontFamily: rj, fontSize: 12, fontWeight: 600 }}>{saveMsg}</span>}
-        {recordName && <span style={{ color: '#7a8a72', fontFamily: rj, fontSize: 11, marginLeft: 'auto' }}>📂 {recordName}</span>}
+        <button onClick={handleReset} style={{ ...ghostBtn, color: 'var(--bad)', borderColor: 'color-mix(in srgb, var(--bad) 30%, transparent)' }}>🗑️ Reset</button>
+        {saveMsg && <span style={{ color: 'var(--ok)', fontFamily: rj, fontSize: 12, fontWeight: 600 }}>{saveMsg}</span>}
+        {recordName && <span style={{ color: 'var(--ink3)', fontFamily: rj, fontSize: 11, marginLeft: 'auto' }}>📂 {recordName}</span>}
       </div>
 
       {/* Save Dialog */}
       {showSave && (
-        <div style={{ ...card, background: 'rgba(200,168,75,.05)', borderColor: 'rgba(200,168,75,.4)' }}>
+        <div style={{ ...card, background: 'color-mix(in srgb, var(--acc) 5%, transparent)', borderColor: 'color-mix(in srgb, var(--acc) 40%, transparent)' }}>
           <label style={label}>Name</label>
-          <input type="text" value={recordName} onChange={(e) => setRecordName(e.target.value)} placeholder="e.g. MV NEURONAI — Singapore→Rotterdam Bunker Plan" style={{ ...inputStyle, marginBottom: 10 }} />
+          <input type="text" value={recordName} onChange={(e) => setRecordName(e.target.value)} placeholder="e.g. MV OCEAN PIONEER — Singapore→Rotterdam Bunker Plan" style={{ ...inputStyle, marginBottom: 10 }} />
           <div style={{ display: 'flex', gap: 8 }}>
-            <button onClick={handleSave} style={{ background: '#c8a84b', color: '#08100a', border: 'none', padding: '8px 14px', fontFamily: rj, fontSize: 11, letterSpacing: '1px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 3 }}>
+            <button onClick={handleSave} style={{ background: 'var(--acc)', color: 'var(--bg)', border: 'none', padding: '8px 14px', fontFamily: rj, fontSize: 11, letterSpacing: '1px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 3 }}>
               Save
             </button>
             <button onClick={() => setShowSave(false)} style={ghostBtn}>Cancel</button>
@@ -437,7 +437,7 @@ export default function BunkerPlannerPage() {
         <div className="g3" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 12 }}>
           <div>
             <label style={label}>Vessel Name</label>
-            <input style={inputStyle} type="text" value={data.vesselName} onChange={(e) => update('vesselName', e.target.value)} placeholder="MV NEURONAI" />
+            <input style={inputStyle} type="text" value={data.vesselName} onChange={(e) => update('vesselName', e.target.value)} placeholder="MV OCEAN PIONEER" />
           </div>
           <div>
             <label style={label}>Vessel Type</label>
@@ -482,8 +482,8 @@ export default function BunkerPlannerPage() {
 
       {/* 2. ROB on Delivery */}
       <div style={card}>
-        <div style={sectionTitle}>2. ROB on Delivery (Kiraya Giriş)</div>
-        <p style={{ fontSize: 11.5, color: '#7a8a72', marginBottom: 12, fontFamily: rj }}>
+        <div style={sectionTitle}>2. ROB on Delivery</div>
+        <p style={{ fontSize: 11.5, color: 'var(--ink3)', marginBottom: 12, fontFamily: rj }}>
           Bunker quantities on board when charter starts.
         </p>
         <div className="g3" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 12 }}>
@@ -504,8 +504,8 @@ export default function BunkerPlannerPage() {
 
       {/* 3. Target ROB on Redelivery */}
       <div style={card}>
-        <div style={sectionTitle}>3. Target ROB on Redelivery (Kiradan Çıkış)</div>
-        <p style={{ fontSize: 11.5, color: '#7a8a72', marginBottom: 12, fontFamily: rj }}>
+        <div style={sectionTitle}>3. Target ROB on Redelivery</div>
+        <p style={{ fontSize: 11.5, color: 'var(--ink3)', marginBottom: 12, fontFamily: rj }}>
           Bunker quantities required when redelivering vessel (typically same as on delivery for TC).
         </p>
         <div className="g3" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 12 }}>
@@ -522,7 +522,7 @@ export default function BunkerPlannerPage() {
             <input style={inputStyle} type="number" step="0.1" value={data.robTargetUlsfo || ''} onChange={(e) => update('robTargetUlsfo', parseFloat(e.target.value) || 0)} placeholder="0" />
           </div>
         </div>
-        <div style={{ marginTop: 10, padding: '8px 12px', background: 'rgba(200,168,75,.05)', border: '1px solid rgba(200,168,75,.15)', borderRadius: 3, fontSize: 11, color: '#b0c0a4', fontFamily: rj }}>
+        <div style={{ marginTop: 10, padding: '8px 12px', background: 'color-mix(in srgb, var(--acc) 5%, transparent)', border: '1px solid color-mix(in srgb, var(--acc) 15%, transparent)', borderRadius: 3, fontSize: 11, color: 'var(--ink2)', fontFamily: rj }}>
           💡 <strong>Tip:</strong> For Time Charter, target ROB usually equals delivery ROB. For Voyage
           Charter, only sailing buffer needed (e.g. 30 MT minimum).
         </div>
@@ -531,7 +531,7 @@ export default function BunkerPlannerPage() {
       {/* 4. Voyage Legs */}
       <div style={card}>
         <div style={sectionTitle}>4. Voyage Plan (Add Legs in Order)</div>
-        <p style={{ fontSize: 11.5, color: '#7a8a72', marginBottom: 12, fontFamily: rj }}>
+        <p style={{ fontSize: 11.5, color: 'var(--ink3)', marginBottom: 12, fontFamily: rj }}>
           Add each part of the voyage — sea legs, port stays, canal transits, bunker stops.
         </p>
 
@@ -544,7 +544,7 @@ export default function BunkerPlannerPage() {
         </div>
 
         {data.legs.length === 0 ? (
-          <div style={{ padding: 30, textAlign: 'center', color: '#7a8a72', border: '1px dashed rgba(200,168,75,.2)', borderRadius: 4 }}>
+          <div style={{ padding: 30, textAlign: 'center', color: 'var(--ink3)', border: '1px dashed color-mix(in srgb, var(--acc) 20%, transparent)', borderRadius: 4 }}>
             <div style={{ fontSize: 32, marginBottom: 10 }}>📋</div>
             <p style={{ fontSize: 12 }}>No legs added yet. Click a button above to add the first leg.</p>
           </div>
@@ -575,12 +575,12 @@ export default function BunkerPlannerPage() {
           <div>
             <label style={label}>Reserve Margin — %</label>
             <input style={inputStyle} type="number" step="1" value={data.reserveMarginPct || ''} onChange={(e) => update('reserveMarginPct', parseFloat(e.target.value) || 0)} placeholder="10" />
-            <span style={{ fontSize: 10, color: '#7a8a72', fontFamily: rj }}>Mandatory safety reserve</span>
+            <span style={{ fontSize: 10, color: 'var(--ink3)', fontFamily: rj }}>Mandatory safety reserve</span>
           </div>
           <div>
             <label style={label}>Weather Margin — %</label>
             <input style={inputStyle} type="number" step="1" value={data.weatherMarginPct || ''} onChange={(e) => update('weatherMarginPct', parseFloat(e.target.value) || 0)} placeholder="5" />
-            <span style={{ fontSize: 10, color: '#7a8a72', fontFamily: rj }}>Adverse weather buffer</span>
+            <span style={{ fontSize: 10, color: 'var(--ink3)', fontFamily: rj }}>Adverse weather buffer</span>
           </div>
         </div>
       </div>
@@ -614,13 +614,13 @@ export default function BunkerPlannerPage() {
       {data.legs.length > 0 && (
         <>
           {/* Quick Summary */}
-          <div style={{ ...card, background: 'linear-gradient(135deg,rgba(200,168,75,.08),transparent)', borderColor: 'rgba(200,168,75,.4)' }}>
+          <div style={{ ...card, background: 'linear-gradient(135deg,color-mix(in srgb, var(--acc) 8%, transparent),transparent)', borderColor: 'color-mix(in srgb, var(--acc) 40%, transparent)' }}>
             <div style={sectionTitle}>⚡ Voyage Summary</div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(170px,1fr))', gap: 14 }}>
-              <KpiBox label="Total Days" value={fmt(calc.totalDays, 1)} color="#f5f0e8" sub={`${fmt(calc.totalSeaDays, 1)} sea + ${fmt(calc.totalPortDays + calc.totalAnchorDays, 1)} port`} />
-              <KpiBox label="Distance" value={`${fmt(calc.totalDistance, 0)} nm`} color="#f5f0e8" sub="Total" />
-              <KpiBox label={`${data.fuelTypeMain} Need`} value={`${fmt(calc.meNeeded, 1)} MT`} color="#c8a84b" sub="Consumption" />
-              <KpiBox label="MGO/AE Need" value={`${fmt(calc.aeNeeded, 1)} MT`} color="#c8a84b" sub="Consumption" />
+              <KpiBox label="Total Days" value={fmt(calc.totalDays, 1)} color="var(--ink)" sub={`${fmt(calc.totalSeaDays, 1)} sea + ${fmt(calc.totalPortDays + calc.totalAnchorDays, 1)} port`} />
+              <KpiBox label="Distance" value={`${fmt(calc.totalDistance, 0)} nm`} color="var(--ink)" sub="Total" />
+              <KpiBox label={`${data.fuelTypeMain} Need`} value={`${fmt(calc.meNeeded, 1)} MT`} color="var(--acc)" sub="Consumption" />
+              <KpiBox label="MGO/AE Need" value={`${fmt(calc.aeNeeded, 1)} MT`} color="var(--acc)" sub="Consumption" />
             </div>
           </div>
 
@@ -629,36 +629,36 @@ export default function BunkerPlannerPage() {
             <div style={sectionTitle}>💰 Bunker Required to Lift</div>
 
             <div style={{ ...rowStyle }}>
-              <span style={{ color: '#7a8a72' }}>Initial ROB ({data.fuelTypeMain})</span>
+              <span style={{ color: 'var(--ink3)' }}>Initial ROB ({data.fuelTypeMain})</span>
               <strong>{fmt(data.robInitialMe, 1)} MT</strong>
             </div>
             <div style={rowStyle}>
-              <span style={{ color: '#7a8a72' }}>Total Consumption ({data.fuelTypeMain})</span>
-              <strong style={{ color: '#ff8a8a' }}>-{fmt(calc.meNeeded, 1)} MT</strong>
+              <span style={{ color: 'var(--ink3)' }}>Total Consumption ({data.fuelTypeMain})</span>
+              <strong style={{ color: 'var(--bad)' }}>-{fmt(calc.meNeeded, 1)} MT</strong>
             </div>
             {calc.totalBunkerLifted > 0 && (
               <div style={rowStyle}>
-                <span style={{ color: '#7a8a72' }}>Already Planned (Bunker Stops)</span>
-                <strong style={{ color: '#4caf76' }}>+{fmt(calc.totalBunkerLifted, 1)} MT</strong>
+                <span style={{ color: 'var(--ink3)' }}>Already Planned (Bunker Stops)</span>
+                <strong style={{ color: 'var(--ok)' }}>+{fmt(calc.totalBunkerLifted, 1)} MT</strong>
               </div>
             )}
             <div style={rowStyle}>
-              <span style={{ color: '#7a8a72' }}>Target ROB on Redelivery</span>
+              <span style={{ color: 'var(--ink3)' }}>Target ROB on Redelivery</span>
               <strong>{fmt(data.robTargetMe, 1)} MT</strong>
             </div>
-            <div style={{ ...rowStyle, borderTop: '2px solid #c8a84b', paddingTop: 12, marginTop: 10, borderBottom: 'none' }}>
-              <span style={{ color: '#c8a84b', fontWeight: 700, fontSize: 14 }}>
+            <div style={{ ...rowStyle, borderTop: '2px solid var(--acc)', paddingTop: 12, marginTop: 10, borderBottom: 'none' }}>
+              <span style={{ color: 'var(--acc)', fontWeight: 700, fontSize: 14 }}>
                 {data.fuelTypeMain} TO LIFT (without safety)
               </span>
-              <strong style={{ fontFamily: lb, fontSize: 22, color: '#c8a84b' }}>
+              <strong style={{ fontFamily: lb, fontSize: 22, color: 'var(--acc)' }}>
                 {fmt(Math.max(0, calc.meDeficit - calc.totalBunkerLifted), 1)} MT
               </strong>
             </div>
             <div style={{ ...rowStyle, borderBottom: 'none', paddingTop: 12 }}>
-              <span style={{ color: '#c8a84b', fontWeight: 700, fontSize: 14 }}>
+              <span style={{ color: 'var(--acc)', fontWeight: 700, fontSize: 14 }}>
                 {data.fuelTypeMain} TO LIFT (with safety +{data.reserveMarginPct + data.weatherMarginPct}%)
               </span>
-              <strong style={{ fontFamily: lb, fontSize: 22, color: '#4caf76' }}>
+              <strong style={{ fontFamily: lb, fontSize: 22, color: 'var(--ok)' }}>
                 {fmt(Math.max(0, calc.meDeficit - calc.totalBunkerLifted + calc.meSafetyReserve), 1)} MT
               </strong>
             </div>
@@ -668,71 +668,71 @@ export default function BunkerPlannerPage() {
           <div style={card}>
             <div style={sectionTitle}>💧 MGO/AE Required</div>
             <div style={rowStyle}>
-              <span style={{ color: '#7a8a72' }}>Initial ROB (AE)</span>
+              <span style={{ color: 'var(--ink3)' }}>Initial ROB (AE)</span>
               <strong>{fmt(data.robInitialAe, 1)} MT</strong>
             </div>
             <div style={rowStyle}>
-              <span style={{ color: '#7a8a72' }}>Total AE Consumption</span>
-              <strong style={{ color: '#ff8a8a' }}>-{fmt(calc.aeNeeded, 1)} MT</strong>
+              <span style={{ color: 'var(--ink3)' }}>Total AE Consumption</span>
+              <strong style={{ color: 'var(--bad)' }}>-{fmt(calc.aeNeeded, 1)} MT</strong>
             </div>
             <div style={rowStyle}>
-              <span style={{ color: '#7a8a72' }}>Target ROB AE</span>
+              <span style={{ color: 'var(--ink3)' }}>Target ROB AE</span>
               <strong>{fmt(data.robTargetAe, 1)} MT</strong>
             </div>
-            <div style={{ ...rowStyle, borderBottom: 'none', borderTop: '2px solid #c8a84b', paddingTop: 12, marginTop: 6 }}>
-              <span style={{ color: '#c8a84b', fontWeight: 700 }}>MGO TO LIFT (with safety)</span>
-              <strong style={{ fontFamily: lb, fontSize: 18, color: '#4caf76' }}>
+            <div style={{ ...rowStyle, borderBottom: 'none', borderTop: '2px solid var(--acc)', paddingTop: 12, marginTop: 6 }}>
+              <span style={{ color: 'var(--acc)', fontWeight: 700 }}>MGO TO LIFT (with safety)</span>
+              <strong style={{ fontFamily: lb, fontSize: 18, color: 'var(--ok)' }}>
                 {fmt(Math.max(0, calc.aeDeficit + calc.aeSafetyReserve), 1)} MT
               </strong>
             </div>
           </div>
 
           {/* Final ROB at Voyage End */}
-          <div style={{ ...card, background: calc.finalRobMe >= data.robTargetMe ? 'linear-gradient(135deg,rgba(76,175,118,.05),transparent)' : 'linear-gradient(135deg,rgba(255,138,138,.05),transparent)', borderColor: calc.finalRobMe >= data.robTargetMe ? 'rgba(76,175,118,.4)' : 'rgba(255,138,138,.4)' }}>
+          <div style={{ ...card, background: calc.finalRobMe >= data.robTargetMe ? 'linear-gradient(135deg,color-mix(in srgb, var(--ok) 5%, transparent),transparent)' : 'linear-gradient(135deg,color-mix(in srgb, var(--bad) 5%, transparent),transparent)', borderColor: calc.finalRobMe >= data.robTargetMe ? 'color-mix(in srgb, var(--ok) 40%, transparent)' : 'color-mix(in srgb, var(--bad) 40%, transparent)' }}>
             <div style={sectionTitle}>🏁 Final ROB Projection</div>
             <div style={rowStyle}>
-              <span style={{ color: '#7a8a72' }}>Final {data.fuelTypeMain} (without new lifts)</span>
-              <strong style={{ color: calc.finalRobMe >= data.robTargetMe ? '#4caf76' : '#ff8a8a' }}>
+              <span style={{ color: 'var(--ink3)' }}>Final {data.fuelTypeMain} (without new lifts)</span>
+              <strong style={{ color: calc.finalRobMe >= data.robTargetMe ? 'var(--ok)' : 'var(--bad)' }}>
                 {fmt(calc.finalRobMe, 1)} MT
                 {calc.finalRobMe < data.robTargetMe && ' ⚠'}
               </strong>
             </div>
             <div style={rowStyle}>
-              <span style={{ color: '#7a8a72' }}>Final MGO/AE (without new lifts)</span>
-              <strong style={{ color: calc.finalRobAe >= data.robTargetAe ? '#4caf76' : '#ff8a8a' }}>
+              <span style={{ color: 'var(--ink3)' }}>Final MGO/AE (without new lifts)</span>
+              <strong style={{ color: calc.finalRobAe >= data.robTargetAe ? 'var(--ok)' : 'var(--bad)' }}>
                 {fmt(calc.finalRobAe, 1)} MT
                 {calc.finalRobAe < data.robTargetAe && ' ⚠'}
               </strong>
             </div>
             <div style={rowStyle}>
-              <span style={{ color: '#7a8a72' }}>Minimum ROB during voyage</span>
-              <strong style={{ color: calc.minRobMe > 0 ? '#4caf76' : '#ff8a8a' }}>
+              <span style={{ color: 'var(--ink3)' }}>Minimum ROB during voyage</span>
+              <strong style={{ color: calc.minRobMe > 0 ? 'var(--ok)' : 'var(--bad)' }}>
                 {fmt(calc.minRobMe, 1)} MT
                 {calc.minRobMe <= 0 && ' ❌ FUEL SHORTAGE!'}
               </strong>
             </div>
             <div style={{ ...rowStyle, borderBottom: 'none' }}>
-              <span style={{ color: '#7a8a72' }}>Tank Capacity Check</span>
-              <strong style={{ color: data.robInitialMe + calc.meDeficit <= data.tankCapacityMe ? '#4caf76' : '#ff8a8a' }}>
+              <span style={{ color: 'var(--ink3)' }}>Tank Capacity Check</span>
+              <strong style={{ color: data.robInitialMe + calc.meDeficit <= data.tankCapacityMe ? 'var(--ok)' : 'var(--bad)' }}>
                 Max lift possible: {fmt(calc.meMaxPossibleLift, 0)} MT
               </strong>
             </div>
           </div>
 
           {/* Cost */}
-          <div style={{ ...card, background: 'linear-gradient(135deg,rgba(200,168,75,.12),transparent)', borderColor: '#c8a84b' }}>
+          <div style={{ ...card, background: 'linear-gradient(135deg,color-mix(in srgb, var(--acc) 12%, transparent),transparent)', borderColor: 'var(--acc)' }}>
             <div style={{ ...sectionTitle, borderBottom: 'none' }}>💵 Total Bunker Cost</div>
             <div style={rowStyle}>
-              <span style={{ color: '#7a8a72' }}>{data.fuelTypeMain} Cost ({fmt(calc.meNeeded, 1)} MT × ${data.defaultPriceMe})</span>
+              <span style={{ color: 'var(--ink3)' }}>{data.fuelTypeMain} Cost ({fmt(calc.meNeeded, 1)} MT × ${data.defaultPriceMe})</span>
               <strong>{fmtMoney(calc.meNeeded * data.defaultPriceMe)}</strong>
             </div>
             <div style={rowStyle}>
-              <span style={{ color: '#7a8a72' }}>MGO/AE Cost ({fmt(calc.aeNeeded, 1)} MT × ${data.defaultPriceAe})</span>
+              <span style={{ color: 'var(--ink3)' }}>MGO/AE Cost ({fmt(calc.aeNeeded, 1)} MT × ${data.defaultPriceAe})</span>
               <strong>{fmtMoney(calc.aeNeeded * data.defaultPriceAe)}</strong>
             </div>
-            <div style={{ ...rowStyle, borderTop: '2px solid #c8a84b', paddingTop: 14, marginTop: 6, borderBottom: 'none' }}>
-              <span style={{ color: '#c8a84b', fontWeight: 700, fontSize: 16 }}>TOTAL VOYAGE BUNKER COST</span>
-              <strong style={{ fontFamily: lb, fontSize: 24, color: '#c8a84b' }}>
+            <div style={{ ...rowStyle, borderTop: '2px solid var(--acc)', paddingTop: 14, marginTop: 6, borderBottom: 'none' }}>
+              <span style={{ color: 'var(--acc)', fontWeight: 700, fontSize: 16 }}>TOTAL VOYAGE BUNKER COST</span>
+              <strong style={{ fontFamily: lb, fontSize: 24, color: 'var(--acc)' }}>
                 {fmtMoney(calc.totalVoyageBunkerCost)}
               </strong>
             </div>
@@ -740,14 +740,14 @@ export default function BunkerPlannerPage() {
 
           {/* Warnings */}
           {(calc.meAtRiskOfShortage || calc.finalRobMe < data.robTargetMe || calc.minRobMe < 0) && (
-            <div style={{ ...card, background: 'rgba(255,138,138,.06)', borderColor: 'rgba(255,138,138,.4)' }}>
-              <div style={{ fontFamily: rj, fontSize: 11, letterSpacing: '2px', textTransform: 'uppercase', color: '#ff8a8a', fontWeight: 700, marginBottom: 10 }}>
+            <div style={{ ...card, background: 'color-mix(in srgb, var(--bad) 6%, transparent)', borderColor: 'color-mix(in srgb, var(--bad) 40%, transparent)' }}>
+              <div style={{ fontFamily: rj, fontSize: 11, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--bad)', fontWeight: 700, marginBottom: 10 }}>
                 ⚠ Warnings
               </div>
-              <ul style={{ fontSize: 12.5, color: '#b0c0a4', lineHeight: 1.7, paddingLeft: 18 }}>
+              <ul style={{ fontSize: 12.5, color: 'var(--ink2)', lineHeight: 1.7, paddingLeft: 18 }}>
                 {calc.minRobMe <= 0 && (
                   <li>
-                    <strong style={{ color: '#ff8a8a' }}>FUEL SHORTAGE!</strong> Minimum ROB during voyage goes to {fmt(calc.minRobMe, 1)} MT. Add a bunker stop before this point.
+                    <strong style={{ color: 'var(--bad)' }}>FUEL SHORTAGE!</strong> Minimum ROB during voyage goes to {fmt(calc.minRobMe, 1)} MT. Add a bunker stop before this point.
                   </li>
                 )}
                 {calc.finalRobMe < data.robTargetMe && calc.minRobMe > 0 && (
@@ -822,13 +822,13 @@ function LegCard({
   fuelType: string;
 }) {
   return (
-    <div style={{ background: '#0c1610', border: '1px solid rgba(200,168,75,.18)', borderRadius: 4, padding: 14 }}>
+    <div style={{ background: 'var(--bg2)', border: '1px solid color-mix(in srgb, var(--acc) 18%, transparent)', borderRadius: 4, padding: 14 }}>
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10, flexWrap: 'wrap' }}>
         <div
           style={{
-            background: 'rgba(200,168,75,.15)',
-            color: '#c8a84b',
+            background: 'color-mix(in srgb, var(--acc) 15%, transparent)',
+            color: 'var(--acc)',
             padding: '4px 10px',
             borderRadius: 3,
             fontFamily: 'monospace',
@@ -843,9 +843,9 @@ function LegCard({
           value={leg.type}
           onChange={(e) => onUpdate({ type: e.target.value as LegType })}
           style={{
-            background: '#0c1610',
-            border: '1px solid rgba(200,168,75,.2)',
-            color: '#f5f0e8',
+            background: 'var(--bg2)',
+            border: '1px solid color-mix(in srgb, var(--acc) 20%, transparent)',
+            color: 'var(--ink)',
             padding: '4px 8px',
             fontFamily: rj,
             fontSize: 12,
@@ -869,7 +869,7 @@ function LegCard({
           <button onClick={onMoveDown} disabled={isLast} style={moveBtn(isLast)}>↓</button>
           <button
             onClick={onDelete}
-            style={{ background: 'transparent', border: '1px solid rgba(255,138,138,.3)', color: '#ff8a8a', padding: '4px 10px', fontFamily: rj, fontSize: 11, cursor: 'pointer', borderRadius: 3 }}
+            style={{ background: 'transparent', border: '1px solid color-mix(in srgb, var(--bad) 30%, transparent)', color: 'var(--bad)', padding: '4px 10px', fontFamily: rj, fontSize: 11, cursor: 'pointer', borderRadius: 3 }}
           >
             ✕
           </button>
@@ -939,13 +939,13 @@ function LegCard({
       </div>
 
       {/* Computed values */}
-      <div style={{ marginTop: 10, padding: '8px 12px', background: 'rgba(200,168,75,.05)', border: '1px solid rgba(200,168,75,.15)', borderRadius: 3, fontSize: 11, fontFamily: rj, color: '#b0c0a4' }}>
-        ⏱️ <strong style={{ color: '#f5f0e8' }}>{fmt(leg.computedDays, 2)} days</strong>
-        {' · '}⛽ {fuelType}: <strong style={{ color: '#f5f0e8' }}>{fmt(leg.computedMeCons, 1)} MT</strong>
-        {' · '}AE: <strong style={{ color: '#f5f0e8' }}>{fmt(leg.computedAeCons, 1)} MT</strong>
-        {' · '}🏁 ROB after: <strong style={{ color: leg.runningRobMe > 0 ? '#4caf76' : '#ff8a8a' }}>{fmt(leg.runningRobMe, 1)} MT</strong>
+      <div style={{ marginTop: 10, padding: '8px 12px', background: 'color-mix(in srgb, var(--acc) 5%, transparent)', border: '1px solid color-mix(in srgb, var(--acc) 15%, transparent)', borderRadius: 3, fontSize: 11, fontFamily: rj, color: 'var(--ink2)' }}>
+        ⏱️ <strong style={{ color: 'var(--ink)' }}>{fmt(leg.computedDays, 2)} days</strong>
+        {' · '}⛽ {fuelType}: <strong style={{ color: 'var(--ink)' }}>{fmt(leg.computedMeCons, 1)} MT</strong>
+        {' · '}AE: <strong style={{ color: 'var(--ink)' }}>{fmt(leg.computedAeCons, 1)} MT</strong>
+        {' · '}🏁 ROB after: <strong style={{ color: leg.runningRobMe > 0 ? 'var(--ok)' : 'var(--bad)' }}>{fmt(leg.runningRobMe, 1)} MT</strong>
         {leg.bunkerLifted > 0 && (
-          <span style={{ color: '#4caf76', fontWeight: 700 }}> {' · '}+{fmt(leg.bunkerLifted, 0)} MT lifted ({fmtMoney(leg.bunkerLifted * (leg.bunkerPrice || 0))})</span>
+          <span style={{ color: 'var(--ok)', fontWeight: 700 }}> {' · '}+{fmt(leg.bunkerLifted, 0)} MT lifted ({fmtMoney(leg.bunkerLifted * (leg.bunkerPrice || 0))})</span>
         )}
       </div>
     </div>
@@ -959,15 +959,15 @@ const rowStyle: React.CSSProperties = {
   display: 'flex',
   justifyContent: 'space-between',
   padding: '8px 0',
-  borderBottom: '1px dashed rgba(200,168,75,.1)',
+  borderBottom: '1px dashed color-mix(in srgb, var(--acc) 10%, transparent)',
   fontFamily: rj,
   fontSize: 13,
 };
 
 const addBtn: React.CSSProperties = {
   background: 'transparent',
-  color: '#c8a84b',
-  border: '1px solid rgba(200,168,75,.3)',
+  color: 'var(--acc)',
+  border: '1px solid color-mix(in srgb, var(--acc) 30%, transparent)',
   padding: '7px 12px',
   fontFamily: rj,
   fontSize: 11,
@@ -979,8 +979,8 @@ const addBtn: React.CSSProperties = {
 
 const moveBtn = (disabled: boolean): React.CSSProperties => ({
   background: 'transparent',
-  border: '1px solid rgba(200,168,75,.2)',
-  color: disabled ? '#7a8a72' : '#c8a84b',
+  border: '1px solid color-mix(in srgb, var(--acc) 20%, transparent)',
+  color: disabled ? 'var(--ink3)' : 'var(--acc)',
   padding: '4px 8px',
   fontFamily: rj,
   fontSize: 12,
@@ -991,12 +991,12 @@ const moveBtn = (disabled: boolean): React.CSSProperties => ({
 
 function KpiBox({ label, value, color, sub }: { label: string; value: string; color: string; sub?: string }) {
   return (
-    <div style={{ background: '#0c1610', padding: '12px 14px', border: '1px solid rgba(200,168,75,.15)', borderRadius: 3 }}>
-      <div style={{ fontFamily: rj, fontSize: 10, color: '#7a8a72', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: 6, fontWeight: 600 }}>
+    <div style={{ background: 'var(--bg2)', padding: '12px 14px', border: '1px solid color-mix(in srgb, var(--acc) 15%, transparent)', borderRadius: 3 }}>
+      <div style={{ fontFamily: rj, fontSize: 10, color: 'var(--ink3)', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: 6, fontWeight: 600 }}>
         {label}
       </div>
       <div style={{ fontFamily: lb, fontSize: 18, fontWeight: 700, color, lineHeight: 1.1 }}>{value}</div>
-      {sub && <div style={{ fontFamily: rj, fontSize: 10.5, color: '#b0c0a4', marginTop: 4, fontWeight: 500 }}>{sub}</div>}
+      {sub && <div style={{ fontFamily: rj, fontSize: 10.5, color: 'var(--ink2)', marginTop: 4, fontWeight: 500 }}>{sub}</div>}
     </div>
   );
 }

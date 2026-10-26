@@ -5,7 +5,8 @@ import {
   BLOG_POSTS as LEGACY_BLOG_POSTS,
   formatBlogDate as legacyFormatBlogDate,
 } from '../blog-posts';
-export type { BlogPost } from '../blog-posts';
+export type { BlogPost, BlogCategory } from '../blog-posts';
+import type { BlogPost } from '../blog-posts';
 import { shanghai } from './shanghai';
 import { hongKong } from './hong-kong';
 import { hamburg } from './hamburg';
@@ -45,7 +46,6 @@ import { howToStartCrewChange } from './how-to-start-crew-change';
 import { howToStartShipRepair } from './how-to-start-ship-repair';
 import { howToStartMarineSurveying } from './how-to-start-marine-surveying';
 import { howToStartMarinePainting } from './how-to-start-marine-painting';
-import { howToChooseShipAgent } from './how-to-choose-ship-agent';
 import { howProvidersReachOperators } from './how-providers-reach-operators';
 import { losAngelesVsNewYorkVsHouston } from './los-angeles-vs-new-york-vs-houston';
 import { maritimeRegulationsChanges2026 } from './maritime-regulations-changes-2026';
@@ -125,7 +125,6 @@ import { singaporeShipyardsMarineService } from './singapore-shipyards-marine-se
 import { singaporeShipchandlersScale } from './singapore-shipchandler-provisioning-demand-visibility-2026';
 import { amsterdam } from './amsterdam-port-netherlands-complete-guide-2026';
 import { howToVetProviders } from './how-vessel-operators-vet-choose-ship-agents-shipchandlers-marine-services-2026';
-import { panama } from './panama-canal-ports-complete-guide-2026';
 import { regulationsProviderOpportunity } from './how-2026-maritime-regulations-create-business-ship-agents-chandlers-marine-services';
 import { whatIsMarineServiceProvider } from './what-is-a-marine-service-provider-complete-guide-2026';
 import { marineServicesCompleteDirectory } from './marine-service-categories-complete-directory-singapore-worldwide-2026';
@@ -168,7 +167,6 @@ import { usingAisVesselTrackingBusinessDevelopment } from './using-ais-vessel-tr
 import { multiCurrencyPaymentRiskMarineProviders } from './multi-currency-international-payment-risk-marine-service-providers-2026';
 import { buildingCaseStudyPortfolioMarineServices } from './building-case-study-portfolio-win-larger-marine-service-contracts-2026';
 import { redFlagsChoosingShipAgent } from './red-flags-choosing-ship-agent-2026';
-import { ballastWaterTreatmentOpportunity } from './ballast-water-treatment-service-business-opportunity-2026';
 import { colomboSriLankaGuide } from './colombo-sri-lanka-ship-agents-chandlers-marine-services-2026';
 import { howToPriceMarineServices } from './how-to-price-marine-services-competing-with-cheaper-providers-2026';
 import { reviewsTrustSignalsMarineServices } from './how-to-collect-reviews-build-trust-ship-agents-chandlers-2026';
@@ -180,12 +178,9 @@ import { singaporePortCallCostGuide } from './singapore-port-call-cost-guide-202
 import { singaporeEmergencyRepairSalvage } from './singapore-emergency-repair-salvage-2026';
 import { seafarerShortage2026OperatorImpact } from './seafarer-shortage-2026-operator-impact';
 import { imoNetZeroFramework2026 } from './imo-net-zero-framework-2026-operator-guide';
-import { panamaProviderOpportunity } from './panama-canal-ship-agents-chandlers-marine-services-opportunity-2026';
 import { amsterdamProviderOpportunity } from './amsterdam-ship-agents-chandlers-marine-services-specialist-opportunity-2026';
 import { rotterdamProviderOpportunity } from './rotterdam-europe-largest-port-ship-agents-chandlers-marine-services-2026';
 import { dubaiProviderOpportunity } from './dubai-jebel-ali-ship-agents-chandlers-marine-services-gateway-opportunity-2026';
-import { suezProviderOpportunity } from './suez-canal-ship-agents-chandlers-marine-services-opportunity-2026';
-import { hamburgProviderOpportunity } from './hamburg-ship-agents-chandlers-marine-services-central-europe-gateway-2026';
 import { indiaProviderOpportunity } from './india-ports-ship-agents-chandlers-marine-services-opportunity-2026';
 import { chinaProviderOpportunity } from './china-ports-ship-agents-chandlers-marine-services-opportunity-2026';
 import { indonesiaProviderListicle } from './indonesia-ship-agents-shipchandlers-marine-services-7-reasons-invisible-2026';
@@ -195,16 +190,12 @@ import { lasPalmasProviderOpportunity } from './las-palmas-canary-islands-ship-a
 import { shipHusbandryGuide } from './what-is-ship-husbandry-complete-guide-2026';
 import { marineSurveyorGuide } from './what-is-marine-surveyor-when-you-need-one-2026';
 import { aiSearchVisibilityGuide } from './ai-search-visibility-maritime-service-providers-chatgpt-2026';
-import { denmarkProviderOpportunity } from './denmark-danish-straits-ship-agents-chandlers-marine-services-2026';
 import { greeceProviderOpportunity } from './greece-piraeus-ship-agents-chandlers-marine-services-shipowning-nation-2026';
 import { southKoreaProviderOpportunity } from './south-korea-busan-ship-agents-chandlers-marine-services-shipbuilding-2026';
 import { germanyProviderOpportunity } from './germany-bremerhaven-ship-agents-chandlers-marine-services-export-engine-2026';
 import { ukProviderOpportunity } from './uk-london-ship-agents-chandlers-marine-services-legal-insurance-hub-2026';
-import { howProvidersGetFoundPillarGuide } from './how-ship-agents-shipchandlers-marine-services-get-found-by-operators-2026';
 import { philippinesProviderOpportunity } from './philippines-ship-agents-shipchandlers-marine-services-seafarer-nation-2026';
-import { malaysiaProviderOpportunity } from './malaysia-strait-malacca-ship-agents-chandlers-marine-services-2026';
 import { southAfricaProviderOpportunity } from './south-africa-durban-cape-town-ship-agents-chandlers-marine-services-cape-route-2026';
-import { sriLankaProviderOpportunity } from './sri-lanka-colombo-ship-agents-chandlers-marine-services-transshipment-2026';
 import { buenosAiresProviderOpportunity } from './buenos-aires-argentina-ship-agents-chandlers-marine-services-grain-export-2026';
 import { gdanskProviderOpportunity } from './gdansk-poland-ship-agents-chandlers-marine-services-baltic-growth-2026';
 import { ukMegaGuide } from './uk-britain-ship-agents-shipchandlers-marine-services-complete-guide-2026';
@@ -215,7 +206,6 @@ import { norwayProviderOpportunity } from './norway-ship-agents-chandlers-marine
 import { italyProviderOpportunity } from './italy-genoa-gioia-tauro-ship-agents-chandlers-marine-services-2026';
 import { spainProviderOpportunity } from './spain-algeciras-valencia-ship-agents-chandlers-marine-services-2026';
 import { moroccoProviderOpportunity } from './morocco-tanger-med-ship-agents-chandlers-marine-services-growth-2026';
-import { belgiumProviderOpportunity } from './belgium-antwerp-ship-agents-chandlers-marine-services-chemical-cluster-2026';
 import { franceProviderOpportunity } from './france-marseille-le-havre-ship-agents-chandlers-marine-services-2026';
 import { saudiProviderOpportunity } from './saudi-arabia-jeddah-ship-agents-chandlers-marine-services-2026';
 import { australiaProviderOpportunity } from './australia-ports-ship-agents-chandlers-marine-services-bulk-export-2026';
@@ -233,21 +223,31 @@ import { vesselPreArrivalInformationChecklist2026 } from './vessel-pre-arrival-i
 import { laytimeDemurrageAgentDocumentation2026 } from './laytime-demurrage-explained-ship-agent-documentation-role-2026';
 import { mlc2006CrewWelfareChandlerRole2026 } from './mlc-2006-crew-welfare-requirements-ship-chandlers-agents-guide-2026';
 import { piClubExplainedAgentRole2026 } from './pi-club-protection-indemnity-insurance-explained-ship-agent-role-2026';
-import { underwaterHullCleaningDivingBusiness2026 } from './how-to-start-underwater-hull-cleaning-diving-services-business-complete-guide-2026';
 import { marineEngineeringRepairServicesBusiness2026 } from './how-to-start-marine-engineering-mechanical-repair-services-business-complete-guide-2026';
 import { noticeOfReadinessExplained2026 } from './notice-of-readiness-nor-explained-ship-agent-role-2026';
 import { letterOfProtestExplained2026 } from './letter-of-protest-shipping-explained-when-how-2026';
 import { marineSurveyorTypesCompared2026 } from './marine-surveyor-types-compared-draft-bunker-condition-cargo-2026';
 import { ismCodeExplainedAgentRole2026 } from './ism-code-explained-safety-management-ship-agent-role-2026';
 import { stevedoringServicesBusinessGuide2026 } from './how-to-start-stevedoring-cargo-handling-services-business-complete-guide-2026';
-export const BLOG_POSTS = [
+import { howToAppointShipAgentChecklist2026 } from './how-to-appoint-a-ship-agent-checklist-2026';
+import { proformaVsFinalDisbursementAccount2026 } from './proforma-vs-final-disbursement-account-port-costs-disputes-2026';
+import { crewChange2026CostsVisasTimelines } from './crew-change-2026-costs-visas-timelines-agents';
+import { shipSupplyDeliveryAnchorage2026 } from './ship-supply-delivery-anchorage-chandlers-guide-2026';
+import { howMarineServiceCompaniesWinMorePortCalls2026 } from './how-marine-service-companies-win-more-port-calls-2026';
+import { BLOG_REDIRECTS } from './redirects';
+export { BLOG_REDIRECTS } from './redirects';
+const ALL_POSTS: BlogPost[] = [
+  howToAppointShipAgentChecklist2026,
+  proformaVsFinalDisbursementAccount2026,
+  crewChange2026CostsVisasTimelines,
+  shipSupplyDeliveryAnchorage2026,
+  howMarineServiceCompaniesWinMorePortCalls2026,
   noticeOfReadinessExplained2026,
   letterOfProtestExplained2026,
   marineSurveyorTypesCompared2026,
   ismCodeExplainedAgentRole2026,
   stevedoringServicesBusinessGuide2026,
   marineEngineeringRepairServicesBusiness2026,
-  underwaterHullCleaningDivingBusiness2026,
   piClubExplainedAgentRole2026,
   mlc2006CrewWelfareChandlerRole2026,
   laytimeDemurrageAgentDocumentation2026,
@@ -293,7 +293,6 @@ export const BLOG_POSTS = [
   howToStartWasteManagement,
   howToStartTankCleaning,
   reviewsTrustSignalsMarineServices,
-  howProvidersGetFoundPillarGuide,
   ukMegaGuide,
   usaProviderOpportunity,
   canadaProviderOpportunity,
@@ -302,7 +301,6 @@ export const BLOG_POSTS = [
   italyProviderOpportunity,
   spainProviderOpportunity,
   moroccoProviderOpportunity,
-  belgiumProviderOpportunity,
   franceProviderOpportunity,
   saudiProviderOpportunity,
   australiaProviderOpportunity,
@@ -315,16 +313,11 @@ export const BLOG_POSTS = [
   finlandProviderOpportunity,
   southAfricaProviderOpportunity,
   philippinesProviderOpportunity,
-  malaysiaProviderOpportunity,
-  sriLankaProviderOpportunity,
   buenosAiresProviderOpportunity,
   gdanskProviderOpportunity,
-  panamaProviderOpportunity,
   amsterdamProviderOpportunity,
   rotterdamProviderOpportunity,
   dubaiProviderOpportunity,
-  suezProviderOpportunity,
-  hamburgProviderOpportunity,
   indiaProviderOpportunity,
   chinaProviderOpportunity,
   indonesiaProviderListicle,
@@ -334,7 +327,6 @@ export const BLOG_POSTS = [
   shipHusbandryGuide,
   marineSurveyorGuide,
   aiSearchVisibilityGuide,
-  denmarkProviderOpportunity,
   greeceProviderOpportunity,
   southKoreaProviderOpportunity,
   germanyProviderOpportunity,
@@ -436,7 +428,6 @@ export const BLOG_POSTS = [
   howToStartShipRepair,
   howToStartMarineSurveying,
   howToStartMarinePainting,
-  howToChooseShipAgent,
   howProvidersReachOperators,
   losAngelesVsNewYorkVsHouston,
   maritimeRegulationsChanges2026,
@@ -467,25 +458,112 @@ export const BLOG_POSTS = [
   singaporeShipchandlersScale,
   amsterdam,
   howToVetProviders,
-  panama,
   regulationsProviderOpportunity,
   whatIsMarineServiceProvider,
   marineServicesCompleteDirectory,
   howToStartUnderwaterDiving,
   redFlagsChoosingShipAgent,
-  ballastWaterTreatmentOpportunity,
   colomboSriLankaGuide,
   howToPriceMarineServices,
 ];
+
+/** Every published post, de-duplicated by slug, with merged posts (see redirects.ts) left out. */
+export const BLOG_POSTS: BlogPost[] = (() => {
+  const seen = new Set<string>();
+  const out: BlogPost[] = [];
+  for (const p of ALL_POSTS) {
+    if (seen.has(p.slug) || BLOG_REDIRECTS[p.slug]) continue;
+    seen.add(p.slug);
+    out.push(p);
+  }
+  return out;
+})();
+
+const BY_SLUG = new Map(BLOG_POSTS.map((p) => [p.slug, p]));
+
 export function getAllBlogSlugs(): string[] {
   return BLOG_POSTS.map((p) => p.slug);
 }
-export function getBlogPost(slug: string) {
-  return BLOG_POSTS.find((p) => p.slug === slug) || null;
+
+export function getBlogPost(slug: string): BlogPost | null {
+  return BY_SLUG.get(slug) || null;
 }
-export function getRelatedPosts(currentSlug: string, limit: number = 3) {
-  return BLOG_POSTS.filter((p) => p.slug !== currentSlug).slice(0, limit);
+
+export function getWordCount(post: BlogPost): number {
+  return post.content.split(/\s+/).filter(Boolean).length;
 }
+
+/** Minutes to read: the post's own figure, or about 220 words a minute. */
+export function getReadingTime(post: BlogPost): number {
+  return post.readingTime ?? post.readMinutes ?? Math.max(1, Math.round(getWordCount(post) / 220));
+}
+
+/** Last-updated date (ISO), never earlier than the published date. */
+export function getUpdatedDate(post: BlogPost): string {
+  return post.updatedDate && post.updatedDate > post.publishedDate ? post.updatedDate : post.publishedDate;
+}
+
+// ------------------------------------------------------------
+// Categories: the raw category values are grouped into a few reader-facing sections.
+// ------------------------------------------------------------
+export const BLOG_CATEGORY_GROUPS: { key: string; label: string; categories: BlogPost['category'][] }[] = [
+  { key: 'port-guides', label: 'Port guides', categories: ['port-guide', 'port-guides', 'comparison'] },
+  { key: 'operations', label: 'Operations and how-to', categories: ['how-to', 'tips', 'maritime-fundamentals'] },
+  { key: 'regulations', label: 'Regulations', categories: ['regulations', 'regulatory', 'industry-regulations'] },
+  { key: 'insights', label: 'Industry insights', categories: ['industry-insights'] },
+  { key: 'providers', label: 'For service providers', categories: ['business', 'starting-a-business'] },
+];
+
+export function getCategoryGroup(category: BlogPost['category']) {
+  return BLOG_CATEGORY_GROUPS.find((g) => g.categories.includes(category)) || BLOG_CATEGORY_GROUPS[3];
+}
+
+// ------------------------------------------------------------
+// Related posts: same port and category first, then shared keywords, then newest.
+// ------------------------------------------------------------
+const GENERIC_PORTS = new Set([
+  'global', 'for providers', 'for operators', 'operations', 'global canals', 'asia-pacific', 'americas', 'northern europe',
+]);
+const STOP = new Set([
+  'with', 'from', 'that', 'this', 'what', 'your', 'guide', 'complete', '2026', 'ship', 'ships', 'port', 'ports', 'marine',
+  'maritime', 'services', 'service', 'vessel', 'operators', 'operator', 'providers', 'provider', 'about', 'they', 'their',
+  'how', 'and', 'for', 'the', 'into', 'when', 'where', 'which', 'more', 'than', 'explained', 'everything',
+]);
+
+function norm(s?: string) {
+  return (s || '').trim().toLowerCase();
+}
+
+function tokens(post: BlogPost): Set<string> {
+  const text = [post.title, ...(post.keywords || []), ...(post.tags || [])].join(' ').toLowerCase();
+  return new Set(text.split(/[^a-z0-9]+/).filter((t) => t.length >= 4 && !STOP.has(t)));
+}
+
+export function getRelatedPosts(current: BlogPost | string, limit: number = 4): BlogPost[] {
+  const post = typeof current === 'string' ? getBlogPost(current) : current;
+  if (!post) return BLOG_POSTS.slice(0, limit);
+  const port = norm(post.featuredPort);
+  const group = getCategoryGroup(post.category).key;
+  const keys = new Set((post.keywords || []).map(norm));
+  const toks = tokens(post);
+
+  const scored = BLOG_POSTS.filter((p) => p.slug !== post.slug).map((p) => {
+    let score = 0;
+    const pPort = norm(p.featuredPort);
+    if (port && pPort === port) score += GENERIC_PORTS.has(port) ? 2 : 6;
+    if (getCategoryGroup(p.category).key === group) score += 3;
+    if (p.category === post.category) score += 1;
+    for (const k of p.keywords || []) if (keys.has(norm(k))) score += 2;
+    let shared = 0;
+    for (const t of tokens(p)) if (toks.has(t)) shared++;
+    score += Math.min(shared, 8) * 0.75;
+    return { p, score };
+  });
+
+  scored.sort((a, b) => b.score - a.score || getUpdatedDate(b.p).localeCompare(getUpdatedDate(a.p)));
+  return scored.slice(0, limit).map((s) => s.p);
+}
+
 export function formatBlogDate(dateString: string): string {
   return legacyFormatBlogDate(dateString);
 }

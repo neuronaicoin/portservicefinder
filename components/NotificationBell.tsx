@@ -92,19 +92,19 @@ export function NotificationBell({ providerId }: Props) {
         alignItems: "center",
         justifyContent: "center",
         borderRadius: 10,
-        border: "1px solid rgba(200,168,75,.25)",
-        background: "#111c13",
+        border: "1px solid color-mix(in srgb, var(--acc) 25%, transparent)",
+        background: "var(--card)",
         cursor: "pointer",
       }}
     >
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
         <path
           d="M6 10a6 6 0 1 1 12 0c0 4 1.5 5.5 1.5 5.5h-15S6 14 6 10Z"
-          stroke="#d4dcc8"
+          stroke="var(--ink2)"
           strokeWidth="1.7"
           strokeLinejoin="round"
         />
-        <path d="M10 18a2 2 0 0 0 4 0" stroke="#d4dcc8" strokeWidth="1.7" strokeLinecap="round" />
+        <path d="M10 18a2 2 0 0 0 4 0" stroke="var(--ink2)" strokeWidth="1.7" strokeLinecap="round" />
       </svg>
       {unreadCount > 0 && (
         <span
@@ -116,7 +116,7 @@ export function NotificationBell({ providerId }: Props) {
             height: 18,
             padding: "0 4px",
             borderRadius: 9,
-            background: "#e05555",
+            background: "var(--bad)",
             color: "#fff",
             fontSize: 10,
             fontWeight: 700,

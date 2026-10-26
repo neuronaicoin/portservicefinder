@@ -11,9 +11,9 @@ import {
   type PortCoord,
 } from '@/lib/ports-data';
 
-const lb = "'Libre Bodoni', serif";
-const rj = "'Rajdhani', sans-serif";
-const g = { color: '#c8a84b', fontStyle: 'italic' };
+const lb = 'var(--font-display)';
+const rj = 'var(--font-ui)';
+const g = { color: 'var(--acc)' };
 
 interface DistData {
   fromPort: string;
@@ -55,8 +55,8 @@ function consumptionAtSpeed(baseRate: number, baseSpeed: number, targetSpeed: nu
 }
 
 const card: React.CSSProperties = {
-  background: '#111c13',
-  border: '1px solid rgba(200,168,75,.18)',
+  background: 'var(--card)',
+  border: '1px solid color-mix(in srgb, var(--acc) 18%, transparent)',
   padding: '20px 18px',
   borderRadius: 4,
   marginBottom: 16,
@@ -66,11 +66,11 @@ const sectionTitle: React.CSSProperties = {
   fontSize: 11,
   letterSpacing: '2px',
   textTransform: 'uppercase',
-  color: '#c8a84b',
+  color: 'var(--acc)',
   fontWeight: 700,
   marginBottom: 14,
   paddingBottom: 8,
-  borderBottom: '1px solid rgba(200,168,75,.12)',
+  borderBottom: '1px solid color-mix(in srgb, var(--acc) 12%, transparent)',
 };
 const label: React.CSSProperties = {
   display: 'block',
@@ -78,15 +78,15 @@ const label: React.CSSProperties = {
   fontSize: 10.5,
   letterSpacing: '.5px',
   textTransform: 'uppercase',
-  color: '#7a8a72',
+  color: 'var(--ink3)',
   fontWeight: 600,
   marginBottom: 5,
 };
 const inputStyle: React.CSSProperties = {
   width: '100%',
-  background: '#0c1610',
-  border: '1px solid rgba(200,168,75,.2)',
-  color: '#f5f0e8',
+  background: 'var(--bg2)',
+  border: '1px solid color-mix(in srgb, var(--acc) 20%, transparent)',
+  color: 'var(--ink)',
   padding: '8px 10px',
   fontFamily: rj,
   fontSize: 13,
@@ -241,7 +241,7 @@ export default function DistanceCalculatorPage() {
             fontSize: 10,
             letterSpacing: '2px',
             textTransform: 'uppercase',
-            color: '#c8a84b',
+            color: 'var(--acc)',
             fontWeight: 700,
             marginBottom: 8,
           }}
@@ -259,7 +259,7 @@ export default function DistanceCalculatorPage() {
         >
           Port-to-Port <em style={g}>Distance</em> & ETA
         </h1>
-        <p style={{ fontSize: 13, color: '#b0c0a4', lineHeight: 1.6, maxWidth: 720 }}>
+        <p style={{ fontSize: 13, color: 'var(--ink2)', lineHeight: 1.6, maxWidth: 720 }}>
           Great circle distance, voyage time at multiple speeds, fuel needed, and approximate cost.
           150+ major ports in database — or enter custom coordinates.
         </p>
@@ -273,8 +273,8 @@ export default function DistanceCalculatorPage() {
         <button
           onClick={() => setShowSave(true)}
           style={{
-            background: '#c8a84b',
-            color: '#08100a',
+            background: 'var(--acc)',
+            color: 'var(--bg)',
             border: 'none',
             padding: '8px 16px',
             fontFamily: rj,
@@ -292,8 +292,8 @@ export default function DistanceCalculatorPage() {
           onClick={handlePrint}
           style={{
             background: 'transparent',
-            color: '#7a8a72',
-            border: '1px solid rgba(200,168,75,.2)',
+            color: 'var(--ink3)',
+            border: '1px solid color-mix(in srgb, var(--acc) 20%, transparent)',
             padding: '8px 14px',
             fontFamily: rj,
             fontSize: 11,
@@ -310,8 +310,8 @@ export default function DistanceCalculatorPage() {
           onClick={handleReset}
           style={{
             background: 'transparent',
-            color: '#ff8a8a',
-            border: '1px solid rgba(255,138,138,.3)',
+            color: 'var(--bad)',
+            border: '1px solid color-mix(in srgb, var(--bad) 30%, transparent)',
             padding: '8px 14px',
             fontFamily: rj,
             fontSize: 11,
@@ -325,13 +325,13 @@ export default function DistanceCalculatorPage() {
           🗑️ Reset
         </button>
         {saveMsg && (
-          <span style={{ color: '#4caf76', fontFamily: rj, fontSize: 12, fontWeight: 600 }}>
+          <span style={{ color: 'var(--ok)', fontFamily: rj, fontSize: 12, fontWeight: 600 }}>
             {saveMsg}
           </span>
         )}
         {recordName && (
           <span
-            style={{ color: '#7a8a72', fontFamily: rj, fontSize: 11, marginLeft: 'auto' }}
+            style={{ color: 'var(--ink3)', fontFamily: rj, fontSize: 11, marginLeft: 'auto' }}
           >
             📂 {recordName}
           </span>
@@ -343,8 +343,8 @@ export default function DistanceCalculatorPage() {
         <div
           style={{
             ...card,
-            background: 'rgba(200,168,75,.05)',
-            borderColor: 'rgba(200,168,75,.4)',
+            background: 'color-mix(in srgb, var(--acc) 5%, transparent)',
+            borderColor: 'color-mix(in srgb, var(--acc) 40%, transparent)',
           }}
         >
           <label style={label}>Name for this calculation</label>
@@ -359,8 +359,8 @@ export default function DistanceCalculatorPage() {
             <button
               onClick={handleSave}
               style={{
-                background: '#c8a84b',
-                color: '#08100a',
+                background: 'var(--acc)',
+                color: 'var(--bg)',
                 border: 'none',
                 padding: '8px 14px',
                 fontFamily: rj,
@@ -378,8 +378,8 @@ export default function DistanceCalculatorPage() {
               onClick={() => setShowSave(false)}
               style={{
                 background: 'transparent',
-                color: '#7a8a72',
-                border: '1px solid rgba(200,168,75,.2)',
+                color: 'var(--ink3)',
+                border: '1px solid color-mix(in srgb, var(--acc) 20%, transparent)',
                 padding: '8px 14px',
                 fontFamily: rj,
                 fontSize: 11,
@@ -423,8 +423,8 @@ export default function DistanceCalculatorPage() {
                   top: '100%',
                   left: 0,
                   right: 0,
-                  background: '#0c1610',
-                  border: '1px solid rgba(200,168,75,.3)',
+                  background: 'var(--bg2)',
+                  border: '1px solid color-mix(in srgb, var(--acc) 30%, transparent)',
                   borderRadius: 3,
                   maxHeight: 240,
                   overflowY: 'auto',
@@ -439,13 +439,13 @@ export default function DistanceCalculatorPage() {
                     style={{
                       padding: '8px 12px',
                       cursor: 'pointer',
-                      borderBottom: '1px solid rgba(200,168,75,.08)',
+                      borderBottom: '1px solid color-mix(in srgb, var(--acc) 8%, transparent)',
                       fontFamily: rj,
                       fontSize: 12,
                     }}
                   >
-                    <div style={{ color: '#f5f0e8', fontWeight: 600 }}>{p.name}</div>
-                    <div style={{ color: '#7a8a72', fontSize: 10 }}>
+                    <div style={{ color: 'var(--ink)', fontWeight: 600 }}>{p.name}</div>
+                    <div style={{ color: 'var(--ink3)', fontSize: 10 }}>
                       {p.country} {p.unlocode ? `· ${p.unlocode}` : ''} · {fmt(p.lat, 2)}, {fmt(p.lon, 2)}
                     </div>
                   </div>
@@ -460,8 +460,8 @@ export default function DistanceCalculatorPage() {
             title="Swap from and to"
             style={{
               background: 'transparent',
-              border: '1px solid rgba(200,168,75,.3)',
-              color: '#c8a84b',
+              border: '1px solid color-mix(in srgb, var(--acc) 30%, transparent)',
+              color: 'var(--acc)',
               padding: '8px 12px',
               fontFamily: rj,
               fontSize: 16,
@@ -496,8 +496,8 @@ export default function DistanceCalculatorPage() {
                   top: '100%',
                   left: 0,
                   right: 0,
-                  background: '#0c1610',
-                  border: '1px solid rgba(200,168,75,.3)',
+                  background: 'var(--bg2)',
+                  border: '1px solid color-mix(in srgb, var(--acc) 30%, transparent)',
                   borderRadius: 3,
                   maxHeight: 240,
                   overflowY: 'auto',
@@ -512,13 +512,13 @@ export default function DistanceCalculatorPage() {
                     style={{
                       padding: '8px 12px',
                       cursor: 'pointer',
-                      borderBottom: '1px solid rgba(200,168,75,.08)',
+                      borderBottom: '1px solid color-mix(in srgb, var(--acc) 8%, transparent)',
                       fontFamily: rj,
                       fontSize: 12,
                     }}
                   >
-                    <div style={{ color: '#f5f0e8', fontWeight: 600 }}>{p.name}</div>
-                    <div style={{ color: '#7a8a72', fontSize: 10 }}>
+                    <div style={{ color: 'var(--ink)', fontWeight: 600 }}>{p.name}</div>
+                    <div style={{ color: 'var(--ink3)', fontSize: 10 }}>
                       {p.country} {p.unlocode ? `· ${p.unlocode}` : ''} · {fmt(p.lat, 2)}, {fmt(p.lon, 2)}
                     </div>
                   </div>
@@ -534,7 +534,7 @@ export default function DistanceCalculatorPage() {
             style={{
               fontFamily: rj,
               fontSize: 11,
-              color: '#7a8a72',
+              color: 'var(--ink3)',
               cursor: 'pointer',
               letterSpacing: '.5px',
             }}
@@ -594,7 +594,7 @@ export default function DistanceCalculatorPage() {
               />
             </div>
           </div>
-          <p style={{ fontSize: 10.5, color: '#7a8a72', marginTop: 6, fontStyle: 'italic' }}>
+          <p style={{ fontSize: 10.5, color: 'var(--ink3)', marginTop: 6, fontStyle: 'italic' }}>
             Great circle distance is theoretical (rhumb line / canal routing may differ). Use
             override for actual sea route distance.
           </p>
@@ -606,8 +606,8 @@ export default function DistanceCalculatorPage() {
         <div
           style={{
             ...card,
-            background: 'linear-gradient(135deg,rgba(200,168,75,.08),transparent)',
-            borderColor: 'rgba(200,168,75,.4)',
+            background: 'linear-gradient(135deg,color-mix(in srgb, var(--acc) 8%, transparent),transparent)',
+            borderColor: 'color-mix(in srgb, var(--acc) 40%, transparent)',
           }}
         >
           <div style={sectionTitle}>📏 Distance Result</div>
@@ -622,27 +622,27 @@ export default function DistanceCalculatorPage() {
               label="Distance"
               value={`${fmt(calc.distance, 0)} nm`}
               sub={calc.isOverride ? 'Custom override' : 'Great circle'}
-              color="#c8a84b"
+              color="var(--acc)"
               big
             />
             <KpiBox
               label="In KM"
               value={`${fmt(calc.distance * 1.852, 0)} km`}
               sub={`${fmt(calc.distance * 1.151, 0)} miles`}
-              color="#f5f0e8"
+              color="var(--ink)"
             />
             <KpiBox
               label="Initial Bearing"
               value={`${fmt(calc.bearing, 1)}°`}
               sub={calc.compass}
-              color="#f5f0e8"
+              color="var(--ink)"
             />
             {calc.isOverride && calc.greatCircleDist > 0 && (
               <KpiBox
                 label="GC Distance"
                 value={`${fmt(calc.greatCircleDist, 0)} nm`}
                 sub={`+${fmt(((calc.distance - calc.greatCircleDist) / calc.greatCircleDist) * 100, 1)}% routing`}
-                color="#7a8a72"
+                color="var(--ink3)"
               />
             )}
           </div>
@@ -694,7 +694,7 @@ export default function DistanceCalculatorPage() {
             />
           </div>
         </div>
-        <p style={{ fontSize: 10.5, color: '#7a8a72', marginTop: 10, fontStyle: 'italic' }}>
+        <p style={{ fontSize: 10.5, color: 'var(--ink3)', marginTop: 10, fontStyle: 'italic' }}>
           Fuel scales with speed using cube law (cons ∝ speed³). Adjust speeds below to compare.
         </p>
       </div>
@@ -724,7 +724,7 @@ export default function DistanceCalculatorPage() {
           <div style={{ overflowX: 'auto' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: rj, fontSize: 12 }}>
               <thead>
-                <tr style={{ borderBottom: '2px solid rgba(200,168,75,.3)' }}>
+                <tr style={{ borderBottom: '2px solid color-mix(in srgb, var(--acc) 30%, transparent)' }}>
                   <th style={th}>Speed (kts)</th>
                   <th style={th}>Sea Days</th>
                   <th style={th}>Total Days</th>
@@ -735,20 +735,20 @@ export default function DistanceCalculatorPage() {
               </thead>
               <tbody>
                 {calc.speedRows.map((row) => (
-                  <tr key={row.speed} style={{ borderBottom: '1px solid rgba(200,168,75,.1)' }}>
-                    <td style={{ ...td, color: '#c8a84b', fontWeight: 700 }}>{fmt(row.speed, 1)}</td>
+                  <tr key={row.speed} style={{ borderBottom: '1px solid color-mix(in srgb, var(--acc) 10%, transparent)' }}>
+                    <td style={{ ...td, color: 'var(--acc)', fontWeight: 700 }}>{fmt(row.speed, 1)}</td>
                     <td style={td}>{fmt(row.days, 2)}</td>
                     <td style={td}>{fmt(row.totalDays, 2)}</td>
                     <td style={td}>{fmt(row.consPerDay, 2)}</td>
                     <td style={td}>{fmt(row.totalFuel, 1)}</td>
-                    <td style={{ ...td, color: '#f5f0e8', fontWeight: 600 }}>{fmtMoney(row.fuelCost)}</td>
+                    <td style={{ ...td, color: 'var(--ink)', fontWeight: 600 }}>{fmtMoney(row.fuelCost)}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
         ) : (
-          <div style={{ padding: '20px', textAlign: 'center', color: '#7a8a72', fontSize: 12 }}>
+          <div style={{ padding: '20px', textAlign: 'center', color: 'var(--ink3)', fontSize: 12 }}>
             Select two ports above to see calculation results.
           </div>
         )}
@@ -770,16 +770,16 @@ export default function DistanceCalculatorPage() {
         style={{
           marginTop: 16,
           padding: '12px 14px',
-          background: 'rgba(200,168,75,.04)',
-          border: '1px solid rgba(200,168,75,.12)',
+          background: 'color-mix(in srgb, var(--acc) 4%, transparent)',
+          border: '1px solid color-mix(in srgb, var(--acc) 12%, transparent)',
           borderRadius: 4,
           fontFamily: rj,
           fontSize: 11,
-          color: '#7a8a72',
+          color: 'var(--ink3)',
           lineHeight: 1.6,
         }}
       >
-        💡 <strong style={{ color: '#c8a84b' }}>Note:</strong> Great circle distance is the
+        💡 <strong style={{ color: 'var(--acc)' }}>Note:</strong> Great circle distance is the
         theoretical shortest path. Actual sea routes vary by canal usage (Suez/Panama), traffic
         separation schemes, weather routing, and navigational restrictions. For commercial use,
         add 5–15% routing margin or use the override field with actual distance from your nautical
@@ -809,12 +809,12 @@ const th: React.CSSProperties = {
   fontSize: 10.5,
   letterSpacing: '1px',
   textTransform: 'uppercase',
-  color: '#c8a84b',
+  color: 'var(--acc)',
   fontWeight: 700,
 };
 const td: React.CSSProperties = {
   padding: '10px 8px',
-  color: '#b0c0a4',
+  color: 'var(--ink2)',
 };
 
 function KpiBox({
@@ -833,9 +833,9 @@ function KpiBox({
   return (
     <div
       style={{
-        background: '#0c1610',
+        background: 'var(--bg2)',
         padding: '12px 14px',
-        border: '1px solid rgba(200,168,75,.15)',
+        border: '1px solid color-mix(in srgb, var(--acc) 15%, transparent)',
         borderRadius: 3,
       }}
     >
@@ -843,7 +843,7 @@ function KpiBox({
         style={{
           fontFamily: rj,
           fontSize: 10,
-          color: '#7a8a72',
+          color: 'var(--ink3)',
           textTransform: 'uppercase',
           letterSpacing: '1px',
           marginBottom: 6,
@@ -856,7 +856,7 @@ function KpiBox({
         {value}
       </div>
       {sub && (
-        <div style={{ fontFamily: rj, fontSize: 10.5, color: '#b0c0a4', marginTop: 4, fontWeight: 500 }}>
+        <div style={{ fontFamily: rj, fontSize: 10.5, color: 'var(--ink2)', marginTop: 4, fontWeight: 500 }}>
           {sub}
         </div>
       )}

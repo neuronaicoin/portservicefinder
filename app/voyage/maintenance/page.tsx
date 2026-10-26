@@ -2,9 +2,9 @@
 import { useState, useEffect, useMemo } from 'react';
 import { saveItem, loadItem, genId } from '@/lib/voyage-storage';
 
-const lb = "'Libre Bodoni', serif";
-const rj = "'Rajdhani', sans-serif";
-const g = { color: '#c8a84b', fontStyle: 'italic' } as React.CSSProperties;
+const lb = 'var(--font-display)';
+const rj = 'var(--font-ui)';
+const g = { color: 'var(--acc)' } as React.CSSProperties;
 
 // ============================================================
 // TYPES
@@ -81,21 +81,21 @@ function taskStatus(t: Task, equipment: Equipment[]) {
 // ============================================================
 // STYLES
 // ============================================================
-const card: React.CSSProperties = { background: '#111c13', border: '1px solid rgba(200,168,75,.18)', padding: '20px 18px', borderRadius: 4, marginBottom: 16 };
-const sectionTitle: React.CSSProperties = { fontFamily: rj, fontSize: 11, letterSpacing: '2px', textTransform: 'uppercase', color: '#c8a84b', fontWeight: 700, marginBottom: 14, paddingBottom: 8, borderBottom: '1px solid rgba(200,168,75,.12)' };
-const labelS: React.CSSProperties = { display: 'block', fontFamily: rj, fontSize: 10, letterSpacing: '.5px', textTransform: 'uppercase', color: '#7a8a72', fontWeight: 600, marginBottom: 4 };
-const inputStyle: React.CSSProperties = { width: '100%', background: '#0c1610', border: '1px solid rgba(200,168,75,.2)', color: '#f5f0e8', padding: '7px 9px', fontFamily: rj, fontSize: 12.5, fontWeight: 500, borderRadius: 3, boxSizing: 'border-box' };
-const ghostBtn: React.CSSProperties = { background: 'transparent', color: '#c8a84b', border: '1px solid rgba(200,168,75,.4)', padding: '8px 14px', fontFamily: rj, fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 };
-const goldBtn: React.CSSProperties = { background: '#c8a84b', color: '#08100a', border: 'none', padding: '8px 16px', fontFamily: rj, fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 };
+const card: React.CSSProperties = { background: 'var(--card)', border: '1px solid color-mix(in srgb, var(--acc) 18%, transparent)', padding: '20px 18px', borderRadius: 4, marginBottom: 16 };
+const sectionTitle: React.CSSProperties = { fontFamily: rj, fontSize: 11, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--acc)', fontWeight: 700, marginBottom: 14, paddingBottom: 8, borderBottom: '1px solid color-mix(in srgb, var(--acc) 12%, transparent)' };
+const labelS: React.CSSProperties = { display: 'block', fontFamily: rj, fontSize: 10, letterSpacing: '.5px', textTransform: 'uppercase', color: 'var(--ink3)', fontWeight: 600, marginBottom: 4 };
+const inputStyle: React.CSSProperties = { width: '100%', background: 'var(--bg2)', border: '1px solid color-mix(in srgb, var(--acc) 20%, transparent)', color: 'var(--ink)', padding: '7px 9px', fontFamily: rj, fontSize: 12.5, fontWeight: 500, borderRadius: 3, boxSizing: 'border-box' };
+const ghostBtn: React.CSSProperties = { background: 'transparent', color: 'var(--acc)', border: '1px solid color-mix(in srgb, var(--acc) 40%, transparent)', padding: '8px 14px', fontFamily: rj, fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 };
+const goldBtn: React.CSSProperties = { background: 'var(--acc)', color: 'var(--bg)', border: 'none', padding: '8px 16px', fontFamily: rj, fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 };
 
 const STORAGE_KEY = 'pms';
 const SINGLETON_ID = 'pmsmini';
 
 const STATE_META: Record<string, { label: string; color: string; bg: string }> = {
-  overdue: { label: 'OVERDUE', color: '#ff6b6b', bg: 'rgba(255,107,107,.16)' },
-  soon: { label: 'DUE SOON', color: '#e8b85a', bg: 'rgba(232,184,90,.14)' },
-  ok: { label: 'OK', color: '#4caf76', bg: 'rgba(76,175,118,.14)' },
-  unset: { label: 'SET UP', color: '#7a8a72', bg: 'rgba(122,138,114,.14)' },
+  overdue: { label: 'OVERDUE', color: 'var(--bad)', bg: 'color-mix(in srgb, var(--bad) 16%, transparent)' },
+  soon: { label: 'DUE SOON', color: 'var(--warn)', bg: 'color-mix(in srgb, var(--warn) 14%, transparent)' },
+  ok: { label: 'OK', color: 'var(--ok)', bg: 'color-mix(in srgb, var(--ok) 14%, transparent)' },
+  unset: { label: 'SET UP', color: 'var(--ink3)', bg: 'color-mix(in srgb, var(--ink3) 14%, transparent)' },
 };
 
 // ============================================================
@@ -170,13 +170,13 @@ export default function PmsPage() {
     <div>
       {/* Header */}
       <div style={{ marginBottom: 24 }}>
-        <div style={{ fontFamily: rj, fontSize: 10, letterSpacing: '2px', textTransform: 'uppercase', color: '#c8a84b', fontWeight: 700, marginBottom: 8 }}>
+        <div style={{ fontFamily: rj, fontSize: 10, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--acc)', fontWeight: 700, marginBottom: 8 }}>
           ⚓ Voyage Hub · PMS Mini
         </div>
         <h1 style={{ fontFamily: lb, fontSize: 'clamp(22px,3vw,32px)', fontWeight: 700, lineHeight: 1.1, marginBottom: 8 }}>
           PMS <em style={g}>Mini</em>
         </h1>
-        <p style={{ fontSize: 13, color: '#b0c0a4', lineHeight: 1.6, maxWidth: 720 }}>
+        <p style={{ fontSize: 13, color: 'var(--ink2)', lineHeight: 1.6, maxWidth: 720 }}>
           A lightweight planned-maintenance tracker — running-hours and calendar tasks with automatic
           due dates. A working aid, not a class-approved PMS.
         </p>
@@ -185,7 +185,7 @@ export default function PmsPage() {
       {/* Vessel */}
       <div style={card}>
         <div className="pms-g3" style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 12 }}>
-          <div><label style={labelS}>Vessel</label><input style={inputStyle} value={data.vesselName} onChange={(e) => update('vesselName', e.target.value)} placeholder="MV NEURONAI" /></div>
+          <div><label style={labelS}>Vessel</label><input style={inputStyle} value={data.vesselName} onChange={(e) => update('vesselName', e.target.value)} placeholder="MV OCEAN PIONEER" /></div>
           <div><label style={labelS}>IMO</label><input style={inputStyle} value={data.imo} onChange={(e) => update('imo', e.target.value)} placeholder="9876543" /></div>
         </div>
       </div>
@@ -193,14 +193,14 @@ export default function PmsPage() {
       <div className="action-bar" style={{ display: 'flex', gap: 10, marginBottom: 16, flexWrap: 'wrap', alignItems: 'center' }}>
         <button onClick={openNew} style={goldBtn}>+ Add Task</button>
         <button onClick={() => window.print()} style={ghostBtn}>🖨️ Print / PDF</button>
-        {saveMsg && <span style={{ color: '#4caf76', fontFamily: rj, fontSize: 12, fontWeight: 600 }}>{saveMsg}</span>}
+        {saveMsg && <span style={{ color: 'var(--ok)', fontFamily: rj, fontSize: 12, fontWeight: 600 }}>{saveMsg}</span>}
       </div>
 
       {/* Summary */}
       <div className="pms-summary" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 10, marginBottom: 16 }}>
-        <KPI label="Overdue" value={String(summary.overdue)} color={summary.overdue > 0 ? '#ff6b6b' : '#4caf76'} />
-        <KPI label="Due Soon" value={String(summary.soon)} color={summary.soon > 0 ? '#e8b85a' : '#4caf76'} />
-        <KPI label="Total Tasks" value={String(summary.total)} color="#c8a84b" />
+        <KPI label="Overdue" value={String(summary.overdue)} color={summary.overdue > 0 ? 'var(--bad)' : 'var(--ok)'} />
+        <KPI label="Due Soon" value={String(summary.soon)} color={summary.soon > 0 ? 'var(--warn)' : 'var(--ok)'} />
+        <KPI label="Total Tasks" value={String(summary.total)} color="var(--acc)" />
       </div>
 
       {/* Tabs */}
@@ -211,7 +211,7 @@ export default function PmsPage() {
 
       {/* Task form */}
       {showForm && editing && tab === 'tasks' && (
-        <div style={{ ...card, borderColor: 'rgba(200,168,75,.5)' }}>
+        <div style={{ ...card, borderColor: 'color-mix(in srgb, var(--acc) 50%, transparent)' }}>
           <div style={sectionTitle}>{data.tasks.some((t) => t.id === editing.id) ? 'Edit Task' : 'New Task'}</div>
           <div className="pms-g3" style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 10, marginBottom: 10 }}>
             <div>
@@ -237,8 +237,8 @@ export default function PmsPage() {
             )}
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 10, flexWrap: 'wrap' }}>
-            <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', fontFamily: rj, fontSize: 12.5, color: editing.critical ? '#ff8a8a' : '#7a8a72' }}>
-              <input type="checkbox" checked={editing.critical} onChange={(e) => setEditing({ ...editing, critical: e.target.checked })} style={{ width: 16, height: 16, accentColor: '#ff8a8a' }} /> Critical equipment
+            <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', fontFamily: rj, fontSize: 12.5, color: editing.critical ? 'var(--bad)' : 'var(--ink3)' }}>
+              <input type="checkbox" checked={editing.critical} onChange={(e) => setEditing({ ...editing, critical: e.target.checked })} style={{ width: 16, height: 16, accentColor: 'var(--bad)' }} /> Critical equipment
             </label>
           </div>
           <div style={{ marginBottom: 12 }}><label style={labelS}>Notes</label><input style={inputStyle} value={editing.notes} onChange={(e) => setEditing({ ...editing, notes: e.target.value })} placeholder="Spares, procedure ref, class item..." /></div>
@@ -261,30 +261,30 @@ export default function PmsPage() {
           )}
 
           {data.tasks.length === 0 && !showForm && (
-            <div style={{ ...card, textAlign: 'center', color: '#7a8a72', fontFamily: rj }}>
-              No tasks yet. Tap <b style={{ color: '#c8a84b' }}>+ Add Task</b> to build your maintenance plan.
+            <div style={{ ...card, textAlign: 'center', color: 'var(--ink3)', fontFamily: rj }}>
+              No tasks yet. Tap <b style={{ color: 'var(--acc)' }}>+ Add Task</b> to build your maintenance plan.
             </div>
           )}
 
           {visible.map(({ t, st }) => {
             const sm = STATE_META[st.state];
             return (
-              <div key={t.id} style={{ ...card, padding: '14px 16px', borderColor: st.state === 'overdue' ? 'rgba(255,107,107,.4)' : 'rgba(200,168,75,.18)' }}>
+              <div key={t.id} style={{ ...card, padding: '14px 16px', borderColor: st.state === 'overdue' ? 'color-mix(in srgb, var(--bad) 40%, transparent)' : 'color-mix(in srgb, var(--acc) 18%, transparent)' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 10, flexWrap: 'wrap' }}>
                   <div style={{ minWidth: 200 }}>
-                    <div style={{ fontFamily: lb, fontSize: 14.5, fontWeight: 700, color: '#f5f0e8' }}>
+                    <div style={{ fontFamily: lb, fontSize: 14.5, fontWeight: 700, color: 'var(--ink)' }}>
                       {t.critical && '🔴 '}{t.task || 'Task'}
                     </div>
-                    <div style={{ fontFamily: rj, fontSize: 11, color: '#7a8a72', marginTop: 2 }}>
+                    <div style={{ fontFamily: rj, fontSize: 11, color: 'var(--ink3)', marginTop: 2 }}>
                       {t.equipment || 'no equipment'} · every {t.interval} {t.intervalType === 'hours' ? 'h' : 'days'}
                     </div>
-                    <div style={{ fontFamily: rj, fontSize: 11, color: '#b0c0a4', marginTop: 3 }}>{st.detail}</div>
-                    {t.notes && <div style={{ fontFamily: rj, fontSize: 11, color: '#7a8a72', marginTop: 3 }}>{t.notes}</div>}
+                    <div style={{ fontFamily: rj, fontSize: 11, color: 'var(--ink2)', marginTop: 3 }}>{st.detail}</div>
+                    {t.notes && <div style={{ fontFamily: rj, fontSize: 11, color: 'var(--ink3)', marginTop: 3 }}>{t.notes}</div>}
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 8 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                       {st.dueIn != null && (
-                        <span style={{ fontFamily: rj, fontSize: 12, color: st.state === 'overdue' ? '#ff6b6b' : st.state === 'soon' ? '#e8b85a' : '#4caf76', fontWeight: 700 }}>
+                        <span style={{ fontFamily: rj, fontSize: 12, color: st.state === 'overdue' ? 'var(--bad)' : st.state === 'soon' ? 'var(--warn)' : 'var(--ok)', fontWeight: 700 }}>
                           {st.kind === 'hours'
                             ? (st.dueIn < 0 ? `${Math.abs(st.dueIn).toLocaleString()}h over` : `${st.dueIn.toLocaleString()}h left`)
                             : (st.dueIn < 0 ? `${Math.abs(st.dueIn)}d over` : `${st.dueIn}d left`)}
@@ -293,9 +293,9 @@ export default function PmsPage() {
                       <span style={{ fontSize: 9, background: sm.bg, color: sm.color, padding: '3px 9px', borderRadius: 3, fontFamily: rj, fontWeight: 700, letterSpacing: '.5px', border: `1px solid ${sm.color}40`, whiteSpace: 'nowrap' }}>{sm.label}</span>
                     </div>
                     <div style={{ display: 'flex', gap: 10 }}>
-                      <button onClick={() => completeTask(t)} style={miniBtn('#4caf76')}>✓ Done now</button>
-                      <button onClick={() => openEdit(t)} style={miniBtn('#c8a84b')}>Edit</button>
-                      <button onClick={() => delTask(t.id)} style={miniBtn('#ff8a8a')}>Delete</button>
+                      <button onClick={() => completeTask(t)} style={miniBtn('var(--ok)')}>✓ Done now</button>
+                      <button onClick={() => openEdit(t)} style={miniBtn('var(--acc)')}>Edit</button>
+                      <button onClick={() => delTask(t.id)} style={miniBtn('var(--bad)')}>Delete</button>
                     </div>
                   </div>
                 </div>
@@ -309,12 +309,12 @@ export default function PmsPage() {
       {tab === 'equipment' && (
         <div style={card}>
           <div style={sectionTitle}>⚙️ Running Hours</div>
-          <p style={{ fontFamily: rj, fontSize: 11, color: '#7a8a72', marginBottom: 12 }}>Update current running hours; hour-based tasks recalculate automatically.</p>
+          <p style={{ fontFamily: rj, fontSize: 11, color: 'var(--ink3)', marginBottom: 12 }}>Update current running hours; hour-based tasks recalculate automatically.</p>
           {data.equipment.map((e) => (
             <div key={e.id} style={{ display: 'grid', gridTemplateColumns: '2fr 1fr auto', gap: 10, marginBottom: 10, alignItems: 'end' }}>
               <div><label style={labelS}>Equipment</label><input style={inputStyle} value={e.name} onChange={(ev) => updEquip(e.id, { name: ev.target.value })} placeholder="Main Engine" /></div>
               <div><label style={labelS}>Current Hours</label><input style={inputStyle} type="number" value={e.currentHours || ''} onChange={(ev) => updEquip(e.id, { currentHours: num(ev.target.value) })} placeholder="12500" /></div>
-              <button onClick={() => delEquip(e.id)} style={{ ...ghostBtn, color: '#ff8a8a', borderColor: 'rgba(255,138,138,.3)', padding: '8px 12px' }}>✕</button>
+              <button onClick={() => delEquip(e.id)} style={{ ...ghostBtn, color: 'var(--bad)', borderColor: 'color-mix(in srgb, var(--bad) 30%, transparent)', padding: '8px 12px' }}>✕</button>
             </div>
           ))}
           <button onClick={addEquip} style={{ ...ghostBtn, marginTop: 8, fontSize: 10 }}>+ Add Equipment</button>
@@ -338,18 +338,18 @@ export default function PmsPage() {
 }
 
 function tabBtn(active: boolean): React.CSSProperties {
-  return { flex: 1, padding: '10px', background: active ? '#c8a84b' : 'transparent', color: active ? '#08100a' : '#7a8a72', border: `1px solid ${active ? '#c8a84b' : 'rgba(200,168,75,.25)'}`, fontFamily: rj, fontSize: 11, letterSpacing: '1px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 };
+  return { flex: 1, padding: '10px', background: active ? 'var(--acc)' : 'transparent', color: active ? 'var(--bg)' : 'var(--ink3)', border: `1px solid ${active ? 'var(--acc)' : 'color-mix(in srgb, var(--acc) 25%, transparent)'}`, fontFamily: rj, fontSize: 11, letterSpacing: '1px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 };
 }
 function chip(active: boolean): React.CSSProperties {
-  return { padding: '5px 12px', background: active ? '#c8a84b' : 'transparent', color: active ? '#08100a' : '#7a8a72', border: `1px solid ${active ? '#c8a84b' : 'rgba(200,168,75,.25)'}`, fontFamily: rj, fontSize: 10, letterSpacing: '.5px', fontWeight: 700, cursor: 'pointer', borderRadius: 4 };
+  return { padding: '5px 12px', background: active ? 'var(--acc)' : 'transparent', color: active ? 'var(--bg)' : 'var(--ink3)', border: `1px solid ${active ? 'var(--acc)' : 'color-mix(in srgb, var(--acc) 25%, transparent)'}`, fontFamily: rj, fontSize: 10, letterSpacing: '.5px', fontWeight: 700, cursor: 'pointer', borderRadius: 4 };
 }
 function miniBtn(color: string): React.CSSProperties {
   return { background: 'transparent', border: 'none', color, fontFamily: rj, fontSize: 10.5, cursor: 'pointer', letterSpacing: '.5px', textTransform: 'uppercase', fontWeight: 700, padding: 0 };
 }
 function KPI({ label: l, value, color }: { label: string; value: string; color: string }) {
   return (
-    <div style={{ background: '#0c1610', border: '1px solid rgba(200,168,75,.2)', borderRadius: 4, padding: '12px 10px', textAlign: 'center' }}>
-      <div style={{ fontFamily: rj, fontSize: 9, letterSpacing: '1px', textTransform: 'uppercase', color: '#7a8a72', fontWeight: 700 }}>{l}</div>
+    <div style={{ background: 'var(--bg2)', border: '1px solid color-mix(in srgb, var(--acc) 20%, transparent)', borderRadius: 4, padding: '12px 10px', textAlign: 'center' }}>
+      <div style={{ fontFamily: rj, fontSize: 9, letterSpacing: '1px', textTransform: 'uppercase', color: 'var(--ink3)', fontWeight: 700 }}>{l}</div>
       <div style={{ fontFamily: lb, fontSize: 24, fontWeight: 700, color, marginTop: 4 }}>{value}</div>
     </div>
   );

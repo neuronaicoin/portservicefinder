@@ -2,9 +2,9 @@
 import { useState, useEffect, useMemo } from 'react';
 import { saveItem, loadItem, genId } from '@/lib/voyage-storage';
 
-const lb = "'Libre Bodoni', serif";
-const rj = "'Rajdhani', sans-serif";
-const g = { color: '#c8a84b', fontStyle: 'italic' } as React.CSSProperties;
+const lb = 'var(--font-display)';
+const rj = 'var(--font-ui)';
+const g = { color: 'var(--acc)' } as React.CSSProperties;
 
 // ============================================================
 // TYPES
@@ -86,22 +86,22 @@ function prettyDate(s: string): string {
 // ============================================================
 // STYLES
 // ============================================================
-const card: React.CSSProperties = { background: '#111c13', border: '1px solid rgba(200,168,75,.18)', padding: '20px 18px', borderRadius: 4, marginBottom: 16 };
-const sectionTitle: React.CSSProperties = { fontFamily: rj, fontSize: 11, letterSpacing: '2px', textTransform: 'uppercase', color: '#c8a84b', fontWeight: 700, marginBottom: 14, paddingBottom: 8, borderBottom: '1px solid rgba(200,168,75,.12)' };
-const labelS: React.CSSProperties = { display: 'block', fontFamily: rj, fontSize: 10, letterSpacing: '.5px', textTransform: 'uppercase', color: '#7a8a72', fontWeight: 600, marginBottom: 4 };
-const inputStyle: React.CSSProperties = { width: '100%', background: '#0c1610', border: '1px solid rgba(200,168,75,.2)', color: '#f5f0e8', padding: '7px 9px', fontFamily: rj, fontSize: 12.5, fontWeight: 500, borderRadius: 3, boxSizing: 'border-box' };
-const ghostBtn: React.CSSProperties = { background: 'transparent', color: '#c8a84b', border: '1px solid rgba(200,168,75,.4)', padding: '8px 14px', fontFamily: rj, fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 };
-const goldBtn: React.CSSProperties = { background: '#c8a84b', color: '#08100a', border: 'none', padding: '8px 16px', fontFamily: rj, fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 };
+const card: React.CSSProperties = { background: 'var(--card)', border: '1px solid color-mix(in srgb, var(--acc) 18%, transparent)', padding: '20px 18px', borderRadius: 4, marginBottom: 16 };
+const sectionTitle: React.CSSProperties = { fontFamily: rj, fontSize: 11, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--acc)', fontWeight: 700, marginBottom: 14, paddingBottom: 8, borderBottom: '1px solid color-mix(in srgb, var(--acc) 12%, transparent)' };
+const labelS: React.CSSProperties = { display: 'block', fontFamily: rj, fontSize: 10, letterSpacing: '.5px', textTransform: 'uppercase', color: 'var(--ink3)', fontWeight: 600, marginBottom: 4 };
+const inputStyle: React.CSSProperties = { width: '100%', background: 'var(--bg2)', border: '1px solid color-mix(in srgb, var(--acc) 20%, transparent)', color: 'var(--ink)', padding: '7px 9px', fontFamily: rj, fontSize: 12.5, fontWeight: 500, borderRadius: 3, boxSizing: 'border-box' };
+const ghostBtn: React.CSSProperties = { background: 'transparent', color: 'var(--acc)', border: '1px solid color-mix(in srgb, var(--acc) 40%, transparent)', padding: '8px 14px', fontFamily: rj, fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 };
+const goldBtn: React.CSSProperties = { background: 'var(--acc)', color: 'var(--bg)', border: 'none', padding: '8px 16px', fontFamily: rj, fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 };
 
 const STORAGE_KEY = 'vault';
 const SINGLETON_ID = 'docvault';
 
 const STATE_META: Record<string, { label: string; color: string; bg: string }> = {
-  expired: { label: 'EXPIRED', color: '#ff6b6b', bg: 'rgba(255,107,107,.16)' },
-  critical: { label: '≤30 DAYS', color: '#ff8a8a', bg: 'rgba(255,138,138,.14)' },
-  warning: { label: '≤90 DAYS', color: '#e8b85a', bg: 'rgba(232,184,90,.14)' },
-  ok: { label: 'VALID', color: '#4caf76', bg: 'rgba(76,175,118,.14)' },
-  none: { label: 'NO DATE', color: '#7a8a72', bg: 'rgba(122,138,114,.14)' },
+  expired: { label: 'EXPIRED', color: 'var(--bad)', bg: 'color-mix(in srgb, var(--bad) 16%, transparent)' },
+  critical: { label: '≤30 DAYS', color: 'var(--bad)', bg: 'color-mix(in srgb, var(--bad) 14%, transparent)' },
+  warning: { label: '≤90 DAYS', color: 'var(--warn)', bg: 'color-mix(in srgb, var(--warn) 14%, transparent)' },
+  ok: { label: 'VALID', color: 'var(--ok)', bg: 'color-mix(in srgb, var(--ok) 14%, transparent)' },
+  none: { label: 'NO DATE', color: 'var(--ink3)', bg: 'color-mix(in srgb, var(--ink3) 14%, transparent)' },
 };
 
 // ============================================================
@@ -172,13 +172,13 @@ export default function VaultPage() {
     <div>
       {/* Header */}
       <div style={{ marginBottom: 24 }}>
-        <div style={{ fontFamily: rj, fontSize: 10, letterSpacing: '2px', textTransform: 'uppercase', color: '#c8a84b', fontWeight: 700, marginBottom: 8 }}>
+        <div style={{ fontFamily: rj, fontSize: 10, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--acc)', fontWeight: 700, marginBottom: 8 }}>
           ⚓ Voyage Hub · Document Vault
         </div>
         <h1 style={{ fontFamily: lb, fontSize: 'clamp(22px,3vw,32px)', fontWeight: 700, lineHeight: 1.1, marginBottom: 8 }}>
           Document <em style={g}>Vault</em>
         </h1>
-        <p style={{ fontSize: 13, color: '#b0c0a4', lineHeight: 1.6, maxWidth: 720 }}>
+        <p style={{ fontSize: 13, color: 'var(--ink2)', lineHeight: 1.6, maxWidth: 720 }}>
           Track certificate validity and expiry dates with automatic alerts at 90 and 30 days. Records
           only — no files are uploaded. Stored in your browser.
         </p>
@@ -187,7 +187,7 @@ export default function VaultPage() {
       {/* Vessel */}
       <div style={card}>
         <div className="vt-g3" style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 12 }}>
-          <div><label style={labelS}>Vessel</label><input style={inputStyle} value={data.vesselName} onChange={(e) => update('vesselName', e.target.value)} placeholder="MV NEURONAI" /></div>
+          <div><label style={labelS}>Vessel</label><input style={inputStyle} value={data.vesselName} onChange={(e) => update('vesselName', e.target.value)} placeholder="MV OCEAN PIONEER" /></div>
           <div><label style={labelS}>IMO</label><input style={inputStyle} value={data.imo} onChange={(e) => update('imo', e.target.value)} placeholder="9876543" /></div>
         </div>
       </div>
@@ -196,16 +196,16 @@ export default function VaultPage() {
         <button onClick={openNew} style={goldBtn}>+ Add Document</button>
         <button onClick={() => { setShowTemplates(!showTemplates); setShowForm(false); }} style={ghostBtn}>📋 From Template</button>
         <button onClick={() => window.print()} style={ghostBtn}>🖨️ Print / PDF</button>
-        {saveMsg && <span style={{ color: '#4caf76', fontFamily: rj, fontSize: 12, fontWeight: 600 }}>{saveMsg}</span>}
+        {saveMsg && <span style={{ color: 'var(--ok)', fontFamily: rj, fontSize: 12, fontWeight: 600 }}>{saveMsg}</span>}
       </div>
 
       {/* Templates */}
       {showTemplates && (
-        <div style={{ ...card, borderColor: 'rgba(200,168,75,.4)' }}>
+        <div style={{ ...card, borderColor: 'color-mix(in srgb, var(--acc) 40%, transparent)' }}>
           <div style={sectionTitle}>📋 Add from Template</div>
           <div className="vt-templates" style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 8 }}>
             {TEMPLATES.map((t) => (
-              <button key={t.name} onClick={() => addTemplate(t)} style={{ textAlign: 'left', background: '#0c1610', border: '1px solid rgba(200,168,75,.2)', color: '#f5f0e8', padding: '8px 12px', borderRadius: 3, fontFamily: rj, fontSize: 12, cursor: 'pointer' }}>
+              <button key={t.name} onClick={() => addTemplate(t)} style={{ textAlign: 'left', background: 'var(--bg2)', border: '1px solid color-mix(in srgb, var(--acc) 20%, transparent)', color: 'var(--ink)', padding: '8px 12px', borderRadius: 3, fontFamily: rj, fontSize: 12, cursor: 'pointer' }}>
                 {TYPE_META[t.type].icon} {t.name}
               </button>
             ))}
@@ -215,14 +215,14 @@ export default function VaultPage() {
 
       {/* Summary */}
       <div className="vt-summary" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 10, marginBottom: 16 }}>
-        <KPI label="Documents" value={String(summary.total)} color="#f5f0e8" />
-        <KPI label="Expired" value={String(summary.expired)} color={summary.expired > 0 ? '#ff6b6b' : '#4caf76'} />
-        <KPI label="Expiring ≤90d" value={String(summary.soon)} color={summary.soon > 0 ? '#e8b85a' : '#4caf76'} />
+        <KPI label="Documents" value={String(summary.total)} color="var(--ink)" />
+        <KPI label="Expired" value={String(summary.expired)} color={summary.expired > 0 ? 'var(--bad)' : 'var(--ok)'} />
+        <KPI label="Expiring ≤90d" value={String(summary.soon)} color={summary.soon > 0 ? 'var(--warn)' : 'var(--ok)'} />
       </div>
 
       {/* Form */}
       {showForm && editing && (
-        <div style={{ ...card, borderColor: 'rgba(200,168,75,.5)' }}>
+        <div style={{ ...card, borderColor: 'color-mix(in srgb, var(--acc) 50%, transparent)' }}>
           <div style={sectionTitle}>{data.docs.some((d) => d.id === editing.id) ? 'Edit Document' : 'New Document'}</div>
           <div className="vt-g3" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 10, marginBottom: 10 }}>
             <div><label style={labelS}>Document Name</label><input style={inputStyle} value={editing.name} onChange={(e) => setEditing({ ...editing, name: e.target.value })} placeholder="Safety Management Certificate" /></div>
@@ -257,8 +257,8 @@ export default function VaultPage() {
 
       {/* List */}
       {data.docs.length === 0 && !showForm && !showTemplates && (
-        <div style={{ ...card, textAlign: 'center', color: '#7a8a72', fontFamily: rj }}>
-          No documents yet. Add one or use <b style={{ color: '#c8a84b' }}>From Template</b> for standard certificates.
+        <div style={{ ...card, textAlign: 'center', color: 'var(--ink3)', fontFamily: rj }}>
+          No documents yet. Add one or use <b style={{ color: 'var(--acc)' }}>From Template</b> for standard certificates.
         </div>
       )}
 
@@ -266,18 +266,18 @@ export default function VaultPage() {
         const sm = STATE_META[st];
         const tm = TYPE_META[d.type];
         return (
-          <div key={d.id} style={{ ...card, padding: '14px 16px', borderColor: st === 'expired' ? 'rgba(255,107,107,.5)' : st === 'critical' ? 'rgba(255,138,138,.3)' : 'rgba(200,168,75,.18)' }}>
+          <div key={d.id} style={{ ...card, padding: '14px 16px', borderColor: st === 'expired' ? 'color-mix(in srgb, var(--bad) 50%, transparent)' : st === 'critical' ? 'color-mix(in srgb, var(--bad) 30%, transparent)' : 'color-mix(in srgb, var(--acc) 18%, transparent)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 10, flexWrap: 'wrap' }}>
               <div style={{ minWidth: 200 }}>
-                <div style={{ fontFamily: lb, fontSize: 14.5, fontWeight: 700, color: '#f5f0e8' }}>{tm.icon} {d.name}</div>
-                <div style={{ fontFamily: rj, fontSize: 11, color: '#7a8a72', marginTop: 2, display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                <div style={{ fontFamily: lb, fontSize: 14.5, fontWeight: 700, color: 'var(--ink)' }}>{tm.icon} {d.name}</div>
+                <div style={{ fontFamily: rj, fontSize: 11, color: 'var(--ink3)', marginTop: 2, display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                   {d.number && <span>No. {d.number}</span>}
                   {d.authority && <span>· {d.authority}</span>}
                 </div>
-                <div style={{ fontFamily: rj, fontSize: 11, color: '#b0c0a4', marginTop: 3 }}>
+                <div style={{ fontFamily: rj, fontSize: 11, color: 'var(--ink2)', marginTop: 3 }}>
                   Issued {prettyDate(d.issueDate)} · Expires {prettyDate(d.expiryDate)}
                 </div>
-                {d.notes && <div style={{ fontFamily: rj, fontSize: 11, color: '#7a8a72', marginTop: 3 }}>{d.notes}</div>}
+                {d.notes && <div style={{ fontFamily: rj, fontSize: 11, color: 'var(--ink3)', marginTop: 3 }}>{d.notes}</div>}
               </div>
               <div style={{ textAlign: 'right' }}>
                 <span style={{ fontSize: 9, background: sm.bg, color: sm.color, padding: '3px 9px', borderRadius: 3, fontFamily: rj, fontWeight: 700, letterSpacing: '.5px', border: `1px solid ${sm.color}40`, whiteSpace: 'nowrap' }}>{sm.label}</span>
@@ -288,9 +288,9 @@ export default function VaultPage() {
                 )}
               </div>
             </div>
-            <div style={{ display: 'flex', gap: 14, marginTop: 10, paddingTop: 8, borderTop: '1px dashed rgba(200,168,75,.12)' }}>
-              <button onClick={() => openEdit(d)} style={miniBtn('#c8a84b')}>Edit</button>
-              <button onClick={() => delDoc(d.id)} style={miniBtn('#ff8a8a')}>Delete</button>
+            <div style={{ display: 'flex', gap: 14, marginTop: 10, paddingTop: 8, borderTop: '1px dashed color-mix(in srgb, var(--acc) 12%, transparent)' }}>
+              <button onClick={() => openEdit(d)} style={miniBtn('var(--acc)')}>Edit</button>
+              <button onClick={() => delDoc(d.id)} style={miniBtn('var(--bad)')}>Delete</button>
             </div>
           </div>
         );
@@ -314,15 +314,15 @@ export default function VaultPage() {
 }
 
 function chip(active: boolean): React.CSSProperties {
-  return { padding: '5px 12px', background: active ? '#c8a84b' : 'transparent', color: active ? '#08100a' : '#7a8a72', border: `1px solid ${active ? '#c8a84b' : 'rgba(200,168,75,.25)'}`, fontFamily: rj, fontSize: 10, letterSpacing: '.5px', fontWeight: 700, cursor: 'pointer', borderRadius: 4, whiteSpace: 'nowrap' };
+  return { padding: '5px 12px', background: active ? 'var(--acc)' : 'transparent', color: active ? 'var(--bg)' : 'var(--ink3)', border: `1px solid ${active ? 'var(--acc)' : 'color-mix(in srgb, var(--acc) 25%, transparent)'}`, fontFamily: rj, fontSize: 10, letterSpacing: '.5px', fontWeight: 700, cursor: 'pointer', borderRadius: 4, whiteSpace: 'nowrap' };
 }
 function miniBtn(color: string): React.CSSProperties {
   return { background: 'transparent', border: 'none', color, fontFamily: rj, fontSize: 10.5, cursor: 'pointer', letterSpacing: '.5px', textTransform: 'uppercase', fontWeight: 700, padding: 0 };
 }
 function KPI({ label: l, value, color }: { label: string; value: string; color: string }) {
   return (
-    <div style={{ background: '#0c1610', border: '1px solid rgba(200,168,75,.2)', borderRadius: 4, padding: '12px 10px', textAlign: 'center' }}>
-      <div style={{ fontFamily: rj, fontSize: 9, letterSpacing: '1px', textTransform: 'uppercase', color: '#7a8a72', fontWeight: 700 }}>{l}</div>
+    <div style={{ background: 'var(--bg2)', border: '1px solid color-mix(in srgb, var(--acc) 20%, transparent)', borderRadius: 4, padding: '12px 10px', textAlign: 'center' }}>
+      <div style={{ fontFamily: rj, fontSize: 9, letterSpacing: '1px', textTransform: 'uppercase', color: 'var(--ink3)', fontWeight: 700 }}>{l}</div>
       <div style={{ fontFamily: lb, fontSize: 24, fontWeight: 700, color, marginTop: 4 }}>{value}</div>
     </div>
   );

@@ -3,9 +3,9 @@ import { useState, useEffect, useMemo } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { saveItem, loadItem, genId } from '@/lib/voyage-storage';
 
-const lb = "'Libre Bodoni', serif";
-const rj = "'Rajdhani', sans-serif";
-const g = { color: '#c8a84b', fontStyle: 'italic' };
+const lb = 'var(--font-display)';
+const rj = 'var(--font-ui)';
+const g = { color: 'var(--acc)' };
 
 // ============================================================
 // FUEL DATA (IMO / EU Regulation)
@@ -73,10 +73,11 @@ const CII_REDUCTION: Record<number, number> = {
   2024: 0.07,
   2025: 0.09,
   2026: 0.11,
-  2027: 0.135,
-  2028: 0.16,
-  2029: 0.185,
-  2030: 0.21,
+  // MEPC 83 (2025): 13.625% in 2027 rising by 2.625 points a year to 21.5% in 2030
+  2027: 0.13625,
+  2028: 0.1625,
+  2029: 0.18875,
+  2030: 0.215,
 };
 
 // CII rating thresholds (vector multipliers d1-d4 from MEPC.339(76))
@@ -328,8 +329,8 @@ function fmtMoney(n: number, cur = '€'): string {
 // STYLES
 // ============================================================
 const card: React.CSSProperties = {
-  background: '#111c13',
-  border: '1px solid rgba(200,168,75,.18)',
+  background: 'var(--card)',
+  border: '1px solid color-mix(in srgb, var(--acc) 18%, transparent)',
   padding: '20px 18px',
   borderRadius: 4,
   marginBottom: 16,
@@ -339,11 +340,11 @@ const sectionTitle: React.CSSProperties = {
   fontSize: 11,
   letterSpacing: '2px',
   textTransform: 'uppercase',
-  color: '#c8a84b',
+  color: 'var(--acc)',
   fontWeight: 700,
   marginBottom: 14,
   paddingBottom: 8,
-  borderBottom: '1px solid rgba(200,168,75,.12)',
+  borderBottom: '1px solid color-mix(in srgb, var(--acc) 12%, transparent)',
 };
 const label: React.CSSProperties = {
   display: 'block',
@@ -351,15 +352,15 @@ const label: React.CSSProperties = {
   fontSize: 10.5,
   letterSpacing: '.5px',
   textTransform: 'uppercase',
-  color: '#7a8a72',
+  color: 'var(--ink3)',
   fontWeight: 600,
   marginBottom: 5,
 };
 const inputStyle: React.CSSProperties = {
   width: '100%',
-  background: '#0c1610',
-  border: '1px solid rgba(200,168,75,.2)',
-  color: '#f5f0e8',
+  background: 'var(--bg2)',
+  border: '1px solid color-mix(in srgb, var(--acc) 20%, transparent)',
+  color: 'var(--ink)',
   padding: '8px 10px',
   fontFamily: rj,
   fontSize: 13,
@@ -368,8 +369,8 @@ const inputStyle: React.CSSProperties = {
 };
 const ghostBtn: React.CSSProperties = {
   background: 'transparent',
-  color: '#c8a84b',
-  border: '1px solid rgba(200,168,75,.4)',
+  color: 'var(--acc)',
+  border: '1px solid color-mix(in srgb, var(--acc) 40%, transparent)',
   padding: '8px 14px',
   fontFamily: rj,
   fontSize: 11,
@@ -381,11 +382,11 @@ const ghostBtn: React.CSSProperties = {
 };
 
 const GRADE_COLORS: Record<string, string> = {
-  A: '#4caf76',
-  B: '#7ec47d',
-  C: '#c8a84b',
-  D: '#e89c5a',
-  E: '#ff8a8a',
+  A: 'var(--ok)',
+  B: 'var(--ok)',
+  C: 'var(--acc)',
+  D: 'var(--warn)',
+  E: 'var(--bad)',
 };
 
 // ============================================================
@@ -458,13 +459,13 @@ export default function CIICalculatorPage() {
     <div>
       {/* Header */}
       <div style={{ marginBottom: 24 }}>
-        <div style={{ fontFamily: rj, fontSize: 10, letterSpacing: '2px', textTransform: 'uppercase', color: '#c8a84b', fontWeight: 700, marginBottom: 8 }}>
+        <div style={{ fontFamily: rj, fontSize: 10, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--acc)', fontWeight: 700, marginBottom: 8 }}>
           🌍 Voyage Hub · Compliance Calculator
         </div>
         <h1 style={{ fontFamily: lb, fontSize: 'clamp(22px,3vw,32px)', fontWeight: 700, lineHeight: 1.1, marginBottom: 8 }}>
           CII · EU ETS · <em style={g}>FuelEU</em> Maritime
         </h1>
-        <p style={{ fontSize: 13, color: '#b0c0a4', lineHeight: 1.6, maxWidth: 720 }}>
+        <p style={{ fontSize: 13, color: 'var(--ink2)', lineHeight: 1.6, maxWidth: 720 }}>
           Carbon Intensity Indicator (A–E rating), EU ETS allowance cost, and FuelEU Maritime
           compliance. Based on IMO MEPC, EU regulation 2023/957, and FuelEU Regulation 2023/1805.
         </p>
@@ -475,9 +476,9 @@ export default function CIICalculatorPage() {
         <button
           onClick={() => setView(view === 'input' ? 'report' : 'input')}
           style={{
-            background: view === 'report' ? 'transparent' : '#c8a84b',
-            color: view === 'report' ? '#c8a84b' : '#08100a',
-            border: '1px solid #c8a84b',
+            background: view === 'report' ? 'transparent' : 'var(--acc)',
+            color: view === 'report' ? 'var(--acc)' : 'var(--bg)',
+            border: '1px solid var(--acc)',
             padding: '8px 16px',
             fontFamily: rj,
             fontSize: 11,
@@ -492,14 +493,14 @@ export default function CIICalculatorPage() {
         </button>
         <button onClick={() => setShowSave(true)} style={ghostBtn}>💾 Save</button>
         <button onClick={handlePrint} style={ghostBtn}>🖨️ Print / PDF</button>
-        <button onClick={handleReset} style={{ ...ghostBtn, color: '#ff8a8a', borderColor: 'rgba(255,138,138,.3)' }}>🗑️ Reset</button>
-        {saveMsg && <span style={{ color: '#4caf76', fontFamily: rj, fontSize: 12, fontWeight: 600 }}>{saveMsg}</span>}
-        {recordName && <span style={{ color: '#7a8a72', fontFamily: rj, fontSize: 11, marginLeft: 'auto' }}>📂 {recordName}</span>}
+        <button onClick={handleReset} style={{ ...ghostBtn, color: 'var(--bad)', borderColor: 'color-mix(in srgb, var(--bad) 30%, transparent)' }}>🗑️ Reset</button>
+        {saveMsg && <span style={{ color: 'var(--ok)', fontFamily: rj, fontSize: 12, fontWeight: 600 }}>{saveMsg}</span>}
+        {recordName && <span style={{ color: 'var(--ink3)', fontFamily: rj, fontSize: 11, marginLeft: 'auto' }}>📂 {recordName}</span>}
       </div>
 
       {/* Save Dialog */}
       {showSave && (
-        <div style={{ ...card, background: 'rgba(200,168,75,.05)', borderColor: 'rgba(200,168,75,.4)' }}>
+        <div style={{ ...card, background: 'color-mix(in srgb, var(--acc) 5%, transparent)', borderColor: 'color-mix(in srgb, var(--acc) 40%, transparent)' }}>
           <label style={label}>Name</label>
           <input
             type="text"
@@ -512,8 +513,8 @@ export default function CIICalculatorPage() {
             <button
               onClick={handleSave}
               style={{
-                background: '#c8a84b',
-                color: '#08100a',
+                background: 'var(--acc)',
+                color: 'var(--bg)',
                 border: 'none',
                 padding: '8px 14px',
                 fontFamily: rj,
@@ -540,7 +541,7 @@ export default function CIICalculatorPage() {
             <div className="g3" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 12 }}>
               <div>
                 <label style={label}>Vessel Name</label>
-                <input style={inputStyle} type="text" value={data.vesselName} onChange={(e) => update('vesselName', e.target.value)} placeholder="MV NEURONAI" />
+                <input style={inputStyle} type="text" value={data.vesselName} onChange={(e) => update('vesselName', e.target.value)} placeholder="MV OCEAN PIONEER" />
               </div>
               <div>
                 <label style={label}>IMO Number</label>
@@ -573,8 +574,8 @@ export default function CIICalculatorPage() {
                 <input style={inputStyle} type="number" step="100" value={data.gt || ''} onChange={(e) => update('gt', parseFloat(e.target.value) || 0)} placeholder="42500" />
               </div>
             </div>
-            <p style={{ fontSize: 10.5, color: '#7a8a72', marginTop: 8, fontFamily: rj }}>
-              CII uses <strong style={{ color: '#c8a84b' }}>{vType?.capacityType}</strong> for {vType?.name} ({capacity ? capacity.toLocaleString() : '0'})
+            <p style={{ fontSize: 10.5, color: 'var(--ink3)', marginTop: 8, fontFamily: rj }}>
+              CII uses <strong style={{ color: 'var(--acc)' }}>{vType?.capacityType}</strong> for {vType?.name} ({capacity ? capacity.toLocaleString() : '0'})
             </p>
           </div>
 
@@ -585,14 +586,14 @@ export default function CIICalculatorPage() {
               <div>
                 <label style={label}>Voyage Distance — nm (this voyage)</label>
                 <input style={inputStyle} type="number" step="1" value={data.voyageDistance || ''} onChange={(e) => update('voyageDistance', parseFloat(e.target.value) || 0)} placeholder="8432" />
-                <span style={{ fontSize: 10, color: '#7a8a72', fontFamily: rj }}>
+                <span style={{ fontSize: 10, color: 'var(--ink3)', fontFamily: rj }}>
                   Leave 0 for full-year analysis
                 </span>
               </div>
               <div>
                 <label style={label}>Annual Distance — nm</label>
                 <input style={inputStyle} type="number" step="1000" value={data.annualDistance || ''} onChange={(e) => update('annualDistance', parseFloat(e.target.value) || 0)} placeholder="60000" />
-                <span style={{ fontSize: 10, color: '#7a8a72', fontFamily: rj }}>
+                <span style={{ fontSize: 10, color: 'var(--ink3)', fontFamily: rj }}>
                   For CII annual rating
                 </span>
               </div>
@@ -606,7 +607,7 @@ export default function CIICalculatorPage() {
           {/* 3. Fuel Consumption */}
           <div style={card}>
             <div style={sectionTitle}>3. Fuel Consumption</div>
-            <p style={{ fontSize: 11, color: '#7a8a72', marginBottom: 12, fontFamily: rj }}>
+            <p style={{ fontSize: 11, color: 'var(--ink3)', marginBottom: 12, fontFamily: rj }}>
               Add all fuels consumed during the voyage/period (Metric Tonnes). System automatically
               applies IMO CO2 factors and EU FuelEU well-to-wake values.
             </p>
@@ -617,8 +618,8 @@ export default function CIICalculatorPage() {
                   <div
                     key={f.id}
                     style={{
-                      background: '#0c1610',
-                      border: '1px solid rgba(200,168,75,.15)',
+                      background: 'var(--bg2)',
+                      border: '1px solid color-mix(in srgb, var(--acc) 15%, transparent)',
                       padding: '10px 12px',
                       borderRadius: 3,
                     }}
@@ -650,8 +651,8 @@ export default function CIICalculatorPage() {
                         disabled={data.fuels.length <= 1}
                         style={{
                           background: 'transparent',
-                          border: '1px solid rgba(255,138,138,.3)',
-                          color: '#ff8a8a',
+                          border: '1px solid color-mix(in srgb, var(--bad) 30%, transparent)',
+                          color: 'var(--bad)',
                           padding: '6px 10px',
                           fontFamily: rj,
                           fontSize: 11,
@@ -664,8 +665,8 @@ export default function CIICalculatorPage() {
                       </button>
                     </div>
                     {fuel && f.consumption > 0 && (
-                      <div style={{ fontSize: 10.5, color: '#7a8a72', marginTop: 6, fontFamily: rj }}>
-                        → CO2: <strong style={{ color: '#f5f0e8' }}>{fmt(f.consumption * fuel.co2Factor, 1)} MT</strong> · Energy: <strong style={{ color: '#f5f0e8' }}>{fmt(f.consumption * fuel.lcv, 0)} GJ</strong>
+                      <div style={{ fontSize: 10.5, color: 'var(--ink3)', marginTop: 6, fontFamily: rj }}>
+                        → CO2: <strong style={{ color: 'var(--ink)' }}>{fmt(f.consumption * fuel.co2Factor, 1)} MT</strong> · Energy: <strong style={{ color: 'var(--ink)' }}>{fmt(f.consumption * fuel.lcv, 0)} GJ</strong>
                       </div>
                     )}
                   </div>
@@ -677,8 +678,8 @@ export default function CIICalculatorPage() {
               style={{
                 marginTop: 12,
                 background: 'transparent',
-                color: '#c8a84b',
-                border: '1px solid rgba(200,168,75,.4)',
+                color: 'var(--acc)',
+                border: '1px solid color-mix(in srgb, var(--acc) 40%, transparent)',
                 padding: '7px 14px',
                 fontFamily: rj,
                 fontSize: 11,
@@ -696,7 +697,7 @@ export default function CIICalculatorPage() {
           {/* 4. EU ETS */}
           <div style={card}>
             <div style={sectionTitle}>4. EU ETS Maritime</div>
-            <p style={{ fontSize: 11, color: '#7a8a72', marginBottom: 12, fontFamily: rj }}>
+            <p style={{ fontSize: 11, color: 'var(--ink3)', marginBottom: 12, fontFamily: rj }}>
               Applicable for vessels &gt;5,000 GT calling at EU/EEA ports. Phase-in: {(ETS_PHASE_IN[data.reportingYear] || 1) * 100}% of CO2 in {data.reportingYear}.
             </p>
             <div className="g3" style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 12 }}>
@@ -713,7 +714,7 @@ export default function CIICalculatorPage() {
               <div>
                 <label style={label}>Current EUA Price — €/tCO2</label>
                 <input style={inputStyle} type="number" step="0.1" value={data.euaPrice || ''} onChange={(e) => update('euaPrice', parseFloat(e.target.value) || 0)} placeholder="78" />
-                <span style={{ fontSize: 10, color: '#7a8a72', fontFamily: rj }}>
+                <span style={{ fontSize: 10, color: 'var(--ink3)', fontFamily: rj }}>
                   Check ember-climate.org for live
                 </span>
               </div>
@@ -725,9 +726,9 @@ export default function CIICalculatorPage() {
             <div style={sectionTitle}>5. FuelEU Maritime</div>
             <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontFamily: rj, fontSize: 13, cursor: 'pointer' }}>
               <input type="checkbox" checked={data.applyFuelEU} onChange={(e) => update('applyFuelEU', e.target.checked)} style={{ cursor: 'pointer' }} />
-              <span style={{ color: '#f5f0e8' }}>Apply FuelEU Maritime regulation (2025+)</span>
+              <span style={{ color: 'var(--ink)' }}>Apply FuelEU Maritime regulation (2025+)</span>
             </label>
-            <p style={{ fontSize: 11, color: '#7a8a72', marginTop: 8, fontFamily: rj }}>
+            <p style={{ fontSize: 11, color: 'var(--ink3)', marginTop: 8, fontFamily: rj }}>
               Baseline: {FUELEU_BASELINE} gCO2eq/MJ (2020) · {data.reportingYear} target reduction: {((FUELEU_REDUCTION[data.reportingYear] || 0.02) * 100).toFixed(1)}% · Penalty: €{FUELEU_PENALTY}/MT VLSFO-eq
             </p>
           </div>
@@ -746,10 +747,10 @@ export default function CIICalculatorPage() {
 
           {/* Quick Preview */}
           {calc.totalCo2Mt > 0 && (
-            <div style={{ ...card, background: 'linear-gradient(135deg,rgba(200,168,75,.08),transparent)', borderColor: 'rgba(200,168,75,.4)' }}>
+            <div style={{ ...card, background: 'linear-gradient(135deg,color-mix(in srgb, var(--acc) 8%, transparent),transparent)', borderColor: 'color-mix(in srgb, var(--acc) 40%, transparent)' }}>
               <div style={sectionTitle}>⚡ Quick Result Preview</div>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(170px,1fr))', gap: 14 }}>
-                <KpiBox label="Total CO2" value={fmt(calc.totalCo2Mt, 1) + ' MT'} color="#f5f0e8" sub="Tank-to-Wake" />
+                <KpiBox label="Total CO2" value={fmt(calc.totalCo2Mt, 1) + ' MT'} color="var(--ink)" sub="Tank-to-Wake" />
                 <KpiBox
                   label="CII Rating"
                   value={calc.ciiGrade}
@@ -757,12 +758,12 @@ export default function CIICalculatorPage() {
                   sub={calc.attainedCII > 0 ? `${fmt(calc.attainedCII, 2)} gCO2/dwt.nm` : 'No data'}
                   big
                 />
-                <KpiBox label="EU ETS Cost" value={fmtMoney(calc.etsCost)} color="#c8a84b" sub={`${fmt(calc.etsCoveredCo2, 1)} tCO2 covered`} />
+                <KpiBox label="EU ETS Cost" value={fmtMoney(calc.etsCost)} color="var(--acc)" sub={`${fmt(calc.etsCoveredCo2, 1)} tCO2 covered`} />
                 {data.applyFuelEU && (
                   <KpiBox
                     label="FuelEU"
                     value={calc.fuelEuStatus === 'compliant' ? '✓ OK' : calc.fuelEuStatus === 'deficit' ? fmtMoney(calc.fuelEuPenalty) : '–'}
-                    color={calc.fuelEuStatus === 'compliant' ? '#4caf76' : '#ff8a8a'}
+                    color={calc.fuelEuStatus === 'compliant' ? 'var(--ok)' : 'var(--bad)'}
                     sub={calc.fuelEuStatus === 'compliant' ? 'Compliant' : 'Penalty due'}
                   />
                 )}
@@ -771,8 +772,8 @@ export default function CIICalculatorPage() {
                 onClick={() => setView('report')}
                 style={{
                   marginTop: 16,
-                  background: '#c8a84b',
-                  color: '#08100a',
+                  background: 'var(--acc)',
+                  color: 'var(--bg)',
                   border: 'none',
                   padding: '10px 22px',
                   fontFamily: rj,
@@ -818,7 +819,7 @@ function ReportView({ data, calc }: { data: CIIData; calc: ReturnType<typeof cal
     display: 'flex',
     justifyContent: 'space-between',
     padding: '8px 0',
-    borderBottom: '1px dashed rgba(200,168,75,.1)',
+    borderBottom: '1px dashed color-mix(in srgb, var(--acc) 10%, transparent)',
     fontFamily: rj,
     fontSize: 13,
   };
@@ -826,17 +827,17 @@ function ReportView({ data, calc }: { data: CIIData; calc: ReturnType<typeof cal
   return (
     <div>
       {/* Header */}
-      <div style={{ ...card, background: 'linear-gradient(135deg,rgba(200,168,75,.08),transparent)', borderColor: '#c8a84b', textAlign: 'center', padding: '24px 20px' }}>
-        <div style={{ fontFamily: rj, fontSize: 11, letterSpacing: '3px', textTransform: 'uppercase', color: '#c8a84b', fontWeight: 700, marginBottom: 12 }}>
+      <div style={{ ...card, background: 'linear-gradient(135deg,color-mix(in srgb, var(--acc) 8%, transparent),transparent)', borderColor: 'var(--acc)', textAlign: 'center', padding: '24px 20px' }}>
+        <div style={{ fontFamily: rj, fontSize: 11, letterSpacing: '3px', textTransform: 'uppercase', color: 'var(--acc)', fontWeight: 700, marginBottom: 12 }}>
           🌍 Compliance Report · {data.reportingYear}
         </div>
         <h2 style={{ fontFamily: lb, fontSize: 24, fontWeight: 700, marginBottom: 6 }}>
           {data.vesselName || 'Vessel Name'}
         </h2>
-        <div style={{ fontSize: 13, color: '#b0c0a4', marginBottom: 4 }}>
+        <div style={{ fontSize: 13, color: 'var(--ink2)', marginBottom: 4 }}>
           {vType?.name} · {data.dwt > 0 && `${data.dwt.toLocaleString()} DWT`} {data.gt > 0 && `· ${data.gt.toLocaleString()} GT`}
         </div>
-        {data.imo && <div style={{ fontSize: 11, color: '#7a8a72', fontFamily: rj }}>IMO: {data.imo}</div>}
+        {data.imo && <div style={{ fontSize: 11, color: 'var(--ink3)', fontFamily: rj }}>IMO: {data.imo}</div>}
       </div>
 
       {/* CO2 Summary */}
@@ -844,14 +845,14 @@ function ReportView({ data, calc }: { data: CIIData; calc: ReturnType<typeof cal
         <div style={sectionTitle}>🔥 Fuel & CO2 Summary</div>
         {calc.fuelBreakdown.map((fb) => (
           <div key={fb.fuel?.key} style={reportRow}>
-            <span style={{ color: '#7a8a72' }}>{fb.fuel?.name}</span>
+            <span style={{ color: 'var(--ink3)' }}>{fb.fuel?.name}</span>
             <strong>
               {fmt(fb.mt, 2)} MT → {fmt(fb.co2Mt, 2)} MT CO2
             </strong>
           </div>
         ))}
-        <div style={{ ...reportRow, borderBottom: 'none', borderTop: '2px solid rgba(200,168,75,.3)', paddingTop: 12, marginTop: 6 }}>
-          <span style={{ color: '#c8a84b', fontWeight: 700, fontSize: 14 }}>TOTAL CO2 (Tank-to-Wake)</span>
+        <div style={{ ...reportRow, borderBottom: 'none', borderTop: '2px solid color-mix(in srgb, var(--acc) 30%, transparent)', paddingTop: 12, marginTop: 6 }}>
+          <span style={{ color: 'var(--acc)', fontWeight: 700, fontSize: 14 }}>TOTAL CO2 (Tank-to-Wake)</span>
           <strong style={{ fontFamily: lb, fontSize: 18 }}>{fmt(calc.totalCo2Mt, 2)} MT</strong>
         </div>
       </div>
@@ -875,7 +876,7 @@ function ReportView({ data, calc }: { data: CIIData; calc: ReturnType<typeof cal
               height: 100,
               borderRadius: '50%',
               background: GRADE_COLORS[calc.ciiGrade],
-              color: '#08100a',
+              color: 'var(--bg)',
               fontFamily: lb,
               fontSize: 56,
               fontWeight: 700,
@@ -885,7 +886,7 @@ function ReportView({ data, calc }: { data: CIIData; calc: ReturnType<typeof cal
           >
             {calc.ciiGrade}
           </div>
-          <div style={{ fontFamily: rj, fontSize: 12, color: '#7a8a72', marginTop: 12, letterSpacing: '1px' }}>
+          <div style={{ fontFamily: rj, fontSize: 12, color: 'var(--ink3)', marginTop: 12, letterSpacing: '1px' }}>
             {calc.ciiGrade === 'A' && 'SUPERIOR — Best performance'}
             {calc.ciiGrade === 'B' && 'GOOD — Better than required'}
             {calc.ciiGrade === 'C' && 'AVERAGE — Compliant'}
@@ -895,35 +896,35 @@ function ReportView({ data, calc }: { data: CIIData; calc: ReturnType<typeof cal
         </div>
 
         <div style={reportRow}>
-          <span style={{ color: '#7a8a72' }}>Reference CII (vessel type baseline)</span>
+          <span style={{ color: 'var(--ink3)' }}>Reference CII (vessel type baseline)</span>
           <strong>{fmt(calc.ciiRef, 2)} gCO2/{vType?.capacityType.toLowerCase()}.nm</strong>
         </div>
         <div style={reportRow}>
-          <span style={{ color: '#7a8a72' }}>Required CII ({data.reportingYear} target)</span>
+          <span style={{ color: 'var(--ink3)' }}>Required CII ({data.reportingYear} target)</span>
           <strong>{fmt(calc.requiredCII, 2)} gCO2/{vType?.capacityType.toLowerCase()}.nm</strong>
         </div>
         <div style={reportRow}>
-          <span style={{ color: '#7a8a72' }}>Attained CII</span>
+          <span style={{ color: 'var(--ink3)' }}>Attained CII</span>
           <strong style={{ color: GRADE_COLORS[calc.ciiGrade] }}>
             {fmt(calc.attainedCII, 2)} gCO2/{vType?.capacityType.toLowerCase()}.nm
           </strong>
         </div>
         <div style={reportRow}>
-          <span style={{ color: '#7a8a72' }}>Performance Ratio (Attained/Required)</span>
+          <span style={{ color: 'var(--ink3)' }}>Performance Ratio (Attained/Required)</span>
           <strong style={{ color: GRADE_COLORS[calc.ciiGrade] }}>{fmt(calc.ciiRatio, 3)}</strong>
         </div>
         <div style={reportRow}>
-          <span style={{ color: '#7a8a72' }}>Annual CO2 (estimated)</span>
+          <span style={{ color: 'var(--ink3)' }}>Annual CO2 (estimated)</span>
           <strong>{fmt(calc.annualCo2Mt, 0)} MT/year</strong>
         </div>
         <div style={{ ...reportRow, borderBottom: 'none' }}>
-          <span style={{ color: '#7a8a72' }}>Annual Distance</span>
+          <span style={{ color: 'var(--ink3)' }}>Annual Distance</span>
           <strong>{fmt(data.annualDistance, 0)} nm</strong>
         </div>
 
         {/* Rating Scale */}
         <div style={{ marginTop: 16, padding: '12px', background: 'rgba(0,0,0,.2)', borderRadius: 3 }}>
-          <div style={{ fontFamily: rj, fontSize: 10.5, color: '#7a8a72', marginBottom: 8, letterSpacing: '.5px' }}>
+          <div style={{ fontFamily: rj, fontSize: 10.5, color: 'var(--ink3)', marginBottom: 8, letterSpacing: '.5px' }}>
             RATING THRESHOLDS (Ratio = Attained / Required)
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5,1fr)', gap: 4 }}>
@@ -932,7 +933,7 @@ function ReportView({ data, calc }: { data: CIIData; calc: ReturnType<typeof cal
                 key={grade}
                 style={{
                   background: calc.ciiGrade === grade ? GRADE_COLORS[grade] : 'transparent',
-                  color: calc.ciiGrade === grade ? '#08100a' : GRADE_COLORS[grade],
+                  color: calc.ciiGrade === grade ? 'var(--bg)' : GRADE_COLORS[grade],
                   border: `1px solid ${GRADE_COLORS[grade]}`,
                   padding: '8px 4px',
                   textAlign: 'center',
@@ -954,11 +955,11 @@ function ReportView({ data, calc }: { data: CIIData; calc: ReturnType<typeof cal
         </div>
 
         {(calc.ciiGrade === 'D' || calc.ciiGrade === 'E') && (
-          <div style={{ marginTop: 14, padding: '12px 14px', background: 'rgba(255,138,138,.08)', border: '1px solid rgba(255,138,138,.3)', borderRadius: 3 }}>
-            <div style={{ fontFamily: rj, fontSize: 11, fontWeight: 700, color: '#ff8a8a', marginBottom: 6, letterSpacing: '.5px' }}>
+          <div style={{ marginTop: 14, padding: '12px 14px', background: 'color-mix(in srgb, var(--bad) 8%, transparent)', border: '1px solid color-mix(in srgb, var(--bad) 30%, transparent)', borderRadius: 3 }}>
+            <div style={{ fontFamily: rj, fontSize: 11, fontWeight: 700, color: 'var(--bad)', marginBottom: 6, letterSpacing: '.5px' }}>
               ⚠ CORRECTIVE ACTION REQUIRED
             </div>
-            <div style={{ fontSize: 11.5, color: '#b0c0a4', lineHeight: 1.6 }}>
+            <div style={{ fontSize: 11.5, color: 'var(--ink2)', lineHeight: 1.6 }}>
               {calc.ciiGrade === 'D' &&
                 'Vessel rated D for 3 consecutive years requires a corrective action plan in the SEEMP Part III. Consider: slow steaming, hull/propeller cleaning, energy-saving devices, fuel switching.'}
               {calc.ciiGrade === 'E' &&
@@ -973,35 +974,35 @@ function ReportView({ data, calc }: { data: CIIData; calc: ReturnType<typeof cal
         <div style={card}>
           <div style={sectionTitle}>💶 EU ETS Maritime — {data.reportingYear}</div>
           <div style={reportRow}>
-            <span style={{ color: '#7a8a72' }}>Voyage Type</span>
+            <span style={{ color: 'var(--ink3)' }}>Voyage Type</span>
             <strong>{data.voyageType.replace(/_/g, ' ')}</strong>
           </div>
           <div style={reportRow}>
-            <span style={{ color: '#7a8a72' }}>EU Coverage</span>
+            <span style={{ color: 'var(--ink3)' }}>EU Coverage</span>
             <strong>{(calc.etsCoveragePct * 100).toFixed(0)}%</strong>
           </div>
           <div style={reportRow}>
-            <span style={{ color: '#7a8a72' }}>Phase-in ({data.reportingYear})</span>
+            <span style={{ color: 'var(--ink3)' }}>Phase-in ({data.reportingYear})</span>
             <strong>{(calc.etsPhaseIn * 100).toFixed(0)}%</strong>
           </div>
           <div style={reportRow}>
-            <span style={{ color: '#7a8a72' }}>CO2 Covered by ETS</span>
+            <span style={{ color: 'var(--ink3)' }}>CO2 Covered by ETS</span>
             <strong>{fmt(calc.etsCoveredCo2, 2)} MT</strong>
           </div>
           <div style={reportRow}>
-            <span style={{ color: '#7a8a72' }}>EUA Allowances Needed</span>
+            <span style={{ color: 'var(--ink3)' }}>EUA Allowances Needed</span>
             <strong>{fmt(calc.etsCoveredCo2, 0)} EUAs</strong>
           </div>
           <div style={reportRow}>
-            <span style={{ color: '#7a8a72' }}>Current EUA Price</span>
+            <span style={{ color: 'var(--ink3)' }}>Current EUA Price</span>
             <strong>€{fmt(data.euaPrice, 2)}/tonne</strong>
           </div>
-          <div style={{ ...reportRow, borderBottom: 'none', borderTop: '2px solid #c8a84b', paddingTop: 14, marginTop: 10 }}>
-            <span style={{ fontSize: 15, fontWeight: 700, color: '#c8a84b' }}>EU ETS COST (this voyage)</span>
+          <div style={{ ...reportRow, borderBottom: 'none', borderTop: '2px solid var(--acc)', paddingTop: 14, marginTop: 10 }}>
+            <span style={{ fontSize: 15, fontWeight: 700, color: 'var(--acc)' }}>EU ETS COST (this voyage)</span>
             <strong style={{ fontFamily: lb, fontSize: 22 }}>{fmtMoney(calc.etsCost)}</strong>
           </div>
           {data.cargoCarried > 0 && (
-            <p style={{ fontSize: 11, color: '#7a8a72', marginTop: 8, fontFamily: rj, textAlign: 'right' }}>
+            <p style={{ fontSize: 11, color: 'var(--ink3)', marginTop: 8, fontFamily: rj, textAlign: 'right' }}>
               = €{(calc.etsCost / data.cargoCarried).toFixed(2)}/tonne cargo
             </p>
           )}
@@ -1015,45 +1016,45 @@ function ReportView({ data, calc }: { data: CIIData; calc: ReturnType<typeof cal
             ...card,
             background:
               calc.fuelEuStatus === 'compliant'
-                ? 'linear-gradient(135deg,rgba(76,175,118,.06),transparent)'
+                ? 'linear-gradient(135deg,color-mix(in srgb, var(--ok) 6%, transparent),transparent)'
                 : calc.fuelEuStatus === 'deficit'
-                ? 'linear-gradient(135deg,rgba(255,138,138,.06),transparent)'
+                ? 'linear-gradient(135deg,color-mix(in srgb, var(--bad) 6%, transparent),transparent)'
                 : undefined,
             borderColor:
               calc.fuelEuStatus === 'compliant'
-                ? 'rgba(76,175,118,.4)'
+                ? 'color-mix(in srgb, var(--ok) 40%, transparent)'
                 : calc.fuelEuStatus === 'deficit'
-                ? 'rgba(255,138,138,.4)'
+                ? 'color-mix(in srgb, var(--bad) 40%, transparent)'
                 : undefined,
           }}
         >
           <div style={sectionTitle}>🌫️ FuelEU Maritime — {data.reportingYear}</div>
           <div style={reportRow}>
-            <span style={{ color: '#7a8a72' }}>Baseline (2020)</span>
+            <span style={{ color: 'var(--ink3)' }}>Baseline (2020)</span>
             <strong>{FUELEU_BASELINE} gCO2eq/MJ</strong>
           </div>
           <div style={reportRow}>
-            <span style={{ color: '#7a8a72' }}>Required Intensity ({data.reportingYear})</span>
+            <span style={{ color: 'var(--ink3)' }}>Required Intensity ({data.reportingYear})</span>
             <strong>{fmt(calc.fuelEuRequiredIntensity, 2)} gCO2eq/MJ</strong>
           </div>
           <div style={reportRow}>
-            <span style={{ color: '#7a8a72' }}>Actual Intensity (Well-to-Wake)</span>
-            <strong style={{ color: calc.fuelEuStatus === 'compliant' ? '#4caf76' : '#ff8a8a' }}>
+            <span style={{ color: 'var(--ink3)' }}>Actual Intensity (Well-to-Wake)</span>
+            <strong style={{ color: calc.fuelEuStatus === 'compliant' ? 'var(--ok)' : 'var(--bad)' }}>
               {fmt(calc.fuelEuActualIntensity, 2)} gCO2eq/MJ
             </strong>
           </div>
           <div style={reportRow}>
-            <span style={{ color: '#7a8a72' }}>Compliance Position</span>
-            <strong style={{ color: calc.fuelEuStatus === 'compliant' ? '#4caf76' : '#ff8a8a' }}>
+            <span style={{ color: 'var(--ink3)' }}>Compliance Position</span>
+            <strong style={{ color: calc.fuelEuStatus === 'compliant' ? 'var(--ok)' : 'var(--bad)' }}>
               {calc.fuelEuCompliance >= 0 ? '+' : ''}
               {fmt(calc.fuelEuCompliance, 2)} gCO2eq/MJ
             </strong>
           </div>
-          <div style={{ ...reportRow, borderBottom: 'none', borderTop: '2px solid', borderTopColor: calc.fuelEuStatus === 'compliant' ? '#4caf76' : '#ff8a8a', paddingTop: 14, marginTop: 10 }}>
+          <div style={{ ...reportRow, borderBottom: 'none', borderTop: '2px solid', borderTopColor: calc.fuelEuStatus === 'compliant' ? 'var(--ok)' : 'var(--bad)', paddingTop: 14, marginTop: 10 }}>
             <span style={{ fontSize: 15, fontWeight: 700 }}>
               {calc.fuelEuStatus === 'compliant' ? 'COMPLIANT' : 'PENALTY DUE'}
             </span>
-            <strong style={{ fontFamily: lb, fontSize: 20, color: calc.fuelEuStatus === 'compliant' ? '#4caf76' : '#ff8a8a' }}>
+            <strong style={{ fontFamily: lb, fontSize: 20, color: calc.fuelEuStatus === 'compliant' ? 'var(--ok)' : 'var(--bad)' }}>
               {calc.fuelEuStatus === 'compliant' ? '✓ €0' : fmtMoney(calc.fuelEuPenalty)}
             </strong>
           </div>
@@ -1061,7 +1062,7 @@ function ReportView({ data, calc }: { data: CIIData; calc: ReturnType<typeof cal
       )}
 
       {/* Total Cost Summary */}
-      <div style={{ ...card, background: 'linear-gradient(135deg,rgba(200,168,75,.12),transparent)', borderColor: '#c8a84b' }}>
+      <div style={{ ...card, background: 'linear-gradient(135deg,color-mix(in srgb, var(--acc) 12%, transparent),transparent)', borderColor: 'var(--acc)' }}>
         <div style={{ ...sectionTitle, borderBottom: 'none' }}>💰 Total Compliance Cost</div>
         <div style={reportRow}>
           <span>EU ETS Cost</span>
@@ -1070,12 +1071,12 @@ function ReportView({ data, calc }: { data: CIIData; calc: ReturnType<typeof cal
         {data.applyFuelEU && (
           <div style={reportRow}>
             <span>FuelEU Penalty</span>
-            <strong style={{ color: calc.fuelEuPenalty > 0 ? '#ff8a8a' : '#4caf76' }}>{fmtMoney(calc.fuelEuPenalty)}</strong>
+            <strong style={{ color: calc.fuelEuPenalty > 0 ? 'var(--bad)' : 'var(--ok)' }}>{fmtMoney(calc.fuelEuPenalty)}</strong>
           </div>
         )}
-        <div style={{ ...reportRow, borderBottom: 'none', borderTop: '2px solid #c8a84b', paddingTop: 14, marginTop: 10 }}>
+        <div style={{ ...reportRow, borderBottom: 'none', borderTop: '2px solid var(--acc)', paddingTop: 14, marginTop: 10 }}>
           <span style={{ fontSize: 16, fontWeight: 700 }}>TOTAL COMPLIANCE COST</span>
-          <strong style={{ fontFamily: lb, fontSize: 24, color: '#c8a84b' }}>
+          <strong style={{ fontFamily: lb, fontSize: 24, color: 'var(--acc)' }}>
             {fmtMoney(calc.etsCost + (data.applyFuelEU ? calc.fuelEuPenalty : 0))}
           </strong>
         </div>
@@ -1085,41 +1086,41 @@ function ReportView({ data, calc }: { data: CIIData; calc: ReturnType<typeof cal
       {(calc.ciiGrade === 'D' || calc.ciiGrade === 'E' || calc.fuelEuPenalty > 0) && (
         <div style={card}>
           <div style={sectionTitle}>💡 Optimization Suggestions</div>
-          <ul style={{ fontSize: 12.5, color: '#b0c0a4', lineHeight: 1.8, paddingLeft: 18 }}>
+          <ul style={{ fontSize: 12.5, color: 'var(--ink2)', lineHeight: 1.8, paddingLeft: 18 }}>
             <li>
-              <strong style={{ color: '#c8a84b' }}>Slow steaming:</strong> Reducing speed by 10% can reduce
+              <strong style={{ color: 'var(--acc)' }}>Slow steaming:</strong> Reducing speed by 10% can reduce
               fuel by ~20% and CO2 proportionally. Most cost-effective short-term measure.
             </li>
             <li>
-              <strong style={{ color: '#c8a84b' }}>Biofuel blend (B30):</strong> Reduces lifecycle CO2 by ~30%
+              <strong style={{ color: 'var(--acc)' }}>Biofuel blend (B30):</strong> Reduces lifecycle CO2 by ~30%
               with minimal infrastructure change. ~10–20% premium on price.
             </li>
             <li>
-              <strong style={{ color: '#c8a84b' }}>Hull / propeller cleaning:</strong> 3–8% fuel savings.
+              <strong style={{ color: 'var(--acc)' }}>Hull / propeller cleaning:</strong> 3–8% fuel savings.
               Best ROI for older vessels.
             </li>
             <li>
-              <strong style={{ color: '#c8a84b' }}>Weather routing:</strong> 2–5% fuel savings on long voyages.
+              <strong style={{ color: 'var(--acc)' }}>Weather routing:</strong> 2–5% fuel savings on long voyages.
             </li>
             <li>
-              <strong style={{ color: '#c8a84b' }}>Trim optimization:</strong> 2–4% fuel savings via proper
+              <strong style={{ color: 'var(--acc)' }}>Trim optimization:</strong> 2–4% fuel savings via proper
               ballast and trim.
             </li>
             <li>
-              <strong style={{ color: '#c8a84b' }}>LNG / methanol retrofit:</strong> Long-term solution.
+              <strong style={{ color: 'var(--acc)' }}>LNG / methanol retrofit:</strong> Long-term solution.
               Methanol = ~10% TtW CO2 reduction; bio-methanol = up to 95%.
             </li>
             <li>
-              <strong style={{ color: '#c8a84b' }}>Cold ironing at port:</strong> Eliminates port-stay emissions.
+              <strong style={{ color: 'var(--acc)' }}>Cold ironing at port:</strong> Eliminates port-stay emissions.
             </li>
           </ul>
         </div>
       )}
 
       {/* Methodology */}
-      <div style={{ ...card, background: 'rgba(122,138,114,.05)', borderColor: 'rgba(122,138,114,.15)' }}>
+      <div style={{ ...card, background: 'color-mix(in srgb, var(--ink3) 5%, transparent)', borderColor: 'color-mix(in srgb, var(--ink3) 15%, transparent)' }}>
         <div style={sectionTitle}>📖 Methodology</div>
-        <ul style={{ fontSize: 11.5, color: '#b0c0a4', lineHeight: 1.7, paddingLeft: 18 }}>
+        <ul style={{ fontSize: 11.5, color: 'var(--ink2)', lineHeight: 1.7, paddingLeft: 18 }}>
           <li>CII based on <strong>IMO MEPC.353(78)</strong> and MEPC.339(76) rating system.</li>
           <li>CO2 emission factors per <strong>IMO MEPC.364(79)</strong> (Tank-to-Wake).</li>
           <li>EU ETS per <strong>Directive (EU) 2023/959</strong> — phase-in 40%/70%/100% in 2024/25/26.</li>
@@ -1132,7 +1133,7 @@ function ReportView({ data, calc }: { data: CIIData; calc: ReturnType<typeof cal
       {data.notes && (
         <div style={card}>
           <div style={sectionTitle}>📝 Notes</div>
-          <p style={{ fontSize: 13, color: '#b0c0a4', lineHeight: 1.7, whiteSpace: 'pre-wrap' }}>{data.notes}</p>
+          <p style={{ fontSize: 13, color: 'var(--ink2)', lineHeight: 1.7, whiteSpace: 'pre-wrap' }}>{data.notes}</p>
         </div>
       )}
 
@@ -1140,13 +1141,13 @@ function ReportView({ data, calc }: { data: CIIData; calc: ReturnType<typeof cal
         style={{
           marginTop: 20,
           padding: '14px 16px',
-          background: 'rgba(200,168,75,.04)',
-          border: '1px solid rgba(200,168,75,.12)',
+          background: 'color-mix(in srgb, var(--acc) 4%, transparent)',
+          border: '1px solid color-mix(in srgb, var(--acc) 12%, transparent)',
           borderRadius: 4,
           textAlign: 'center',
           fontFamily: rj,
           fontSize: 11,
-          color: '#7a8a72',
+          color: 'var(--ink3)',
           letterSpacing: '.5px',
         }}
       >
@@ -1167,9 +1168,9 @@ function KpiBox({ label, value, color, sub, big }: { label: string; value: strin
   return (
     <div
       style={{
-        background: '#0c1610',
+        background: 'var(--bg2)',
         padding: '12px 14px',
-        border: '1px solid rgba(200,168,75,.15)',
+        border: '1px solid color-mix(in srgb, var(--acc) 15%, transparent)',
         borderRadius: 3,
       }}
     >
@@ -1177,7 +1178,7 @@ function KpiBox({ label, value, color, sub, big }: { label: string; value: strin
         style={{
           fontFamily: rj,
           fontSize: 10,
-          color: '#7a8a72',
+          color: 'var(--ink3)',
           textTransform: 'uppercase',
           letterSpacing: '1px',
           marginBottom: 6,
@@ -1190,7 +1191,7 @@ function KpiBox({ label, value, color, sub, big }: { label: string; value: strin
         {value}
       </div>
       {sub && (
-        <div style={{ fontFamily: rj, fontSize: 10.5, color: '#b0c0a4', marginTop: 4, fontWeight: 500 }}>
+        <div style={{ fontFamily: rj, fontSize: 10.5, color: 'var(--ink2)', marginTop: 4, fontWeight: 500 }}>
           {sub}
         </div>
       )}

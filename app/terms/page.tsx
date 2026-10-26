@@ -1,141 +1,44 @@
-'use client';
 import Link from 'next/link';
+import type { Metadata } from 'next';
+import { SiteHeader } from '@/components/SiteHeader';
+import { SiteFooter } from '@/components/SiteFooter';
+
+export const metadata: Metadata = {
+  title: 'Terms of Service for Operators and Providers',
+  description: 'Terms for using PortServiceFinder: free search for vessel operators, provider listings, launch-period pricing, cancellation and the law of England and Wales.',
+  alternates: { canonical: '/terms' },
+};
 
 export default function TermsOfService() {
-  const g = { color: '#c8a84b' } as React.CSSProperties;
-  const rj = "'Rajdhani',sans-serif";
-  const lb = "'Libre Baskerville',serif";
-
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;500;600;700&family=Rajdhani:wght@500;600;700&display=swap');
-        *{margin:0;padding:0;box-sizing:border-box;}
-        html{scroll-behavior:smooth;}
-        body{background:#08100a;overflow-x:hidden;}
-        .legal-content h2{
-          font-family:'Libre Baskerville',serif;
-          font-size:22px;
-          font-weight:700;
-          color:#f5f0e8;
-          margin:36px 0 14px;
-          padding-bottom:10px;
-          border-bottom:1px solid rgba(200,168,75,.2);
-        }
-        .legal-content h3{
-          font-family:'Libre Baskerville',serif;
-          font-size:17px;
-          font-weight:700;
-          color:#c8a84b;
-          margin:24px 0 10px;
-        }
-        .legal-content p{
-          color:#b0c0a4;
-          line-height:1.8;
-          margin-bottom:14px;
-          font-size:14px;
-        }
-        .legal-content ul{
-          list-style:none;
-          padding-left:0;
-          margin-bottom:14px;
-        }
-        .legal-content ul li{
-          color:#b0c0a4;
-          line-height:1.8;
-          font-size:14px;
-          padding-left:22px;
-          position:relative;
-          margin-bottom:7px;
-        }
-        .legal-content ul li::before{
-          content:'▸';
-          color:#c8a84b;
-          position:absolute;
-          left:6px;
-          font-weight:700;
-        }
-        .legal-content strong{color:#f5f0e8;font-weight:600;}
-        .legal-content em{color:#d4dcc8;font-style:italic;}
-        .legal-content a{color:#c8a84b;text-decoration:none;border-bottom:1px solid rgba(200,168,75,.3);transition:border-color .2s;}
-        .legal-content a:hover{border-bottom-color:#c8a84b;}
-        .legal-content .toc{
-          background:rgba(200,168,75,.04);
-          border:1px solid rgba(200,168,75,.15);
-          padding:22px 26px;
-          margin:24px 0;
-        }
-        .legal-content .toc a{
-          display:block;
-          padding:5px 0;
-          color:#c8a84b;
-          border-bottom:none;
-          font-family:'Rajdhani',sans-serif;
-          font-weight:600;
-          font-size:13px;
-        }
-        .legal-content .toc a:hover{
-          color:#e2c06a;
-        }
-        .legal-content .summary-box{
-          background:rgba(200,168,75,.05);
-          border-left:3px solid #c8a84b;
-          padding:14px 18px;
-          margin:16px 0;
-          font-size:13.5px;
-          color:#d4dcc8;
-          font-style:italic;
-          line-height:1.7;
-        }
-        .legal-content .summary-box strong{color:#c8a84b;font-style:normal;}
-        .legal-content .warning-box{
-          background:rgba(226,192,106,.06);
-          border:1px solid rgba(226,192,106,.25);
-          padding:14px 18px;
-          margin:16px 0;
-          font-size:13.5px;
-          color:#e2c06a;
-          line-height:1.7;
-        }
-        .legal-content .warning-box strong{color:#ffd76a;}
-        @media(max-width:768px){
-          .legal-content h2{font-size:18px;}
-          .legal-content h3{font-size:15px;}
-          .legal-content p,.legal-content ul li{font-size:13px;}
-        }
+        .legal{max-width:820px;margin:0 auto;padding:40px 20px 8px;color:var(--ink);font-family:var(--font-ui)}
+        .legal .eyebrow{font-size:13px;font-weight:600;color:var(--ink3);margin:0 0 8px}
+        .legal h1{font-size:clamp(28px,6vw,40px);font-weight:700;letter-spacing:-0.02em;line-height:1.15;margin:0 0 8px}
+        .legal .meta{font-size:14px;color:var(--ink3);margin:0 0 28px}
+        .legal-content h2{font-size:20px;font-weight:700;color:var(--ink);margin:36px 0 12px;padding-bottom:8px;border-bottom:1px solid var(--line);scroll-margin-top:84px;line-height:1.3}
+        .legal-content h3{font-size:16px;font-weight:650;color:var(--ink);margin:22px 0 8px}
+        .legal-content p{color:var(--ink2);line-height:1.75;margin:0 0 14px;font-size:15px}
+        .legal-content ul{padding-left:20px;margin:0 0 14px}
+        .legal-content li{color:var(--ink2);line-height:1.7;font-size:15px;margin-bottom:6px}
+        .legal-content strong{color:var(--ink);font-weight:600}
+        .legal-content a{color:var(--acc);text-underline-offset:2px;overflow-wrap:anywhere}
+        .legal-content .toc{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 20px;margin:20px 0}
+        .legal-content .toc-title{font-size:13px;font-weight:600;color:var(--ink3);margin-bottom:6px}
+        .legal-content .toc a{display:block;padding:6px 0;text-decoration:none;font-size:14.5px}
+        .legal-content .summary-box,.legal-content .warning-box,.legal-content .success-box{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--acc);border-radius:10px;padding:14px 16px;margin:16px 0;font-size:14.5px;color:var(--ink2);line-height:1.7}
+        .legal-content .warning-box{border-left-color:var(--warn)}
+        .legal-content .success-box{border-left-color:var(--ok)}
+        .legal-content .contact-box{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 20px;margin:16px 0;font-size:15px;line-height:1.8;color:var(--ink2)}
+        .legal-content .contact-box strong{display:block}
       `}</style>
-
-      <div style={{background:'#08100a',color:'#f5f0e8',fontFamily:"'Outfit',sans-serif",fontWeight:300,minHeight:'100vh'}}>
-        {/* NAV */}
-        <nav style={{position:'fixed',top:0,width:'100%',zIndex:300,height:62,display:'flex',alignItems:'center',justifyContent:'space-between',padding:'0 24px',background:'rgba(8,16,10,.97)',backdropFilter:'blur(20px)',borderBottom:'1px solid rgba(200,168,75,.2)'}}>
-          <Link href="/" style={{display:'flex',alignItems:'center',gap:10,textDecoration:'none',color:'#f5f0e8'}}>
-            <svg width="32" height="32" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="50" cy="50" r="44" fill="none" stroke="#c8a84b" strokeWidth="2.5"/>
-              <polygon points="50,15 56,50 50,50" fill="#f5f0e8"/>
-              <polygon points="50,15 44,50 50,50" fill="#c8a84b"/>
-              <polygon points="50,85 56,50 50,50" fill="#c8a84b"/>
-              <polygon points="50,85 44,50 50,50" fill="#f5f0e8"/>
-              <polygon points="85,50 50,44 50,50" fill="#c8a84b"/>
-              <polygon points="85,50 50,56 50,50" fill="#f5f0e8"/>
-              <polygon points="15,50 50,44 50,50" fill="#f5f0e8"/>
-              <polygon points="15,50 50,56 50,50" fill="#c8a84b"/>
-              <circle cx="50" cy="50" r="3.5" fill="#c8a84b"/>
-            </svg>
-            <span style={{fontFamily:lb,fontSize:20,fontWeight:700,letterSpacing:1}}>PortService<span style={g}>Finder</span></span>
-          </Link>
-          <Link href="/" style={{background:'#c8a84b',color:'#08100a',border:'none',padding:'7px 14px',fontFamily:rj,fontSize:11,letterSpacing:'1.5px',textTransform:'uppercase',fontWeight:700,textDecoration:'none'}}>← Back to Home</Link>
-        </nav>
-
-        {/* HEADER */}
-        <section style={{paddingTop:130,paddingBottom:40,paddingLeft:24,paddingRight:24,textAlign:'center',background:'linear-gradient(180deg,rgba(200,168,75,.04) 0%,transparent 100%)'}}>
-          <div style={{fontFamily:rj,fontSize:11,letterSpacing:'4px',textTransform:'uppercase',color:'#c8a84b',marginBottom:14,fontWeight:700}}>⚖️ Legal Document</div>
-          <h1 style={{fontFamily:lb,fontSize:'clamp(28px,4vw,46px)',fontWeight:700,lineHeight:1.1,letterSpacing:-1,marginBottom:14}}>Terms of <em style={g}>Service</em></h1>
-          <p style={{fontFamily:rj,fontSize:13,color:'#7a8a72',letterSpacing:'2px',textTransform:'uppercase',fontWeight:600}}>Last Updated: May 23, 2026</p>
-        </section>
-
-        {/* CONTENT */}
-        <section style={{padding:'10px 24px 80px',maxWidth:880,margin:'0 auto'}}>
-          <div className="legal-content">
+      <SiteHeader />
+      <main className="legal">
+        <p className="eyebrow">Legal</p>
+        <h1>Terms of Service</h1>
+        <p className="meta">Last updated: October 26, 2026</p>
+        <div className="legal-content">
 
             <div className="summary-box">
               <strong>Welcome to PortServiceFinder.</strong> These Terms of Service (&ldquo;Terms&rdquo;) govern your access to and use of PortServiceFinder&apos;s website, services, and applications (the &ldquo;Services&rdquo;). By accessing or using the Services, you agree to be bound by these Terms.
@@ -146,13 +49,13 @@ export default function TermsOfService() {
             <p>You agree that by accessing the Services, you have read, understood, and agreed to be bound by all of these Terms. <strong>IF YOU DO NOT AGREE WITH ALL OF THESE TERMS, THEN YOU ARE EXPRESSLY PROHIBITED FROM USING THE SERVICES AND YOU MUST DISCONTINUE USE IMMEDIATELY.</strong></p>
 
             <div className="toc">
-              <div style={{fontFamily:rj,fontSize:11,letterSpacing:'2px',textTransform:'uppercase',color:'#c8a84b',marginBottom:12,fontWeight:700}}>📑 Table of Contents</div>
+              <div className="toc-title">Contents</div>
               <a href="#section1">1. Our Services</a>
               <a href="#section2">2. Intellectual Property Rights</a>
               <a href="#section3">3. User Representations</a>
               <a href="#section4">4. User Registration</a>
               <a href="#section5">5. Subscriptions and Payments</a>
-              <a href="#section6">6. Free Trial Period</a>
+              <a href="#section6">6. Launch Period</a>
               <a href="#section7">7. Cancellation</a>
               <a href="#section8">8. Prohibited Activities</a>
               <a href="#section9">9. User-Generated Contributions</a>
@@ -176,7 +79,7 @@ export default function TermsOfService() {
             <p>PortServiceFinder is a global maritime services directory that connects vessel operators with verified ship agents, shipchandlers, and marine service providers at ports worldwide. We provide an online platform where:</p>
             <ul>
               <li>Vessel operators, captains, charterers, and maritime professionals can search and discover service providers free of charge.</li>
-              <li>Maritime service providers can list their businesses through a paid subscription model.</li>
+              <li>Maritime service providers can list their businesses (free during our launch period, then by paid subscription).</li>
             </ul>
             <p>The information provided when using the Services is not intended for distribution to or use by any person or entity in any jurisdiction or country where such distribution or use would be contrary to law or regulation.</p>
 
@@ -200,25 +103,17 @@ export default function TermsOfService() {
             <p>You may be required to register with the Services to access certain features (e.g., provider listing). You agree to keep your password confidential and will be responsible for all use of your account and password. We reserve the right to remove, reclaim, or change a username you select if we determine, in our sole discretion, that such username is inappropriate, obscene, or otherwise objectionable.</p>
 
             <h2 id="section5">5. Subscriptions and Payments</h2>
-            <p>Service providers may subscribe to list their businesses on the Services through one of the following plans:</p>
-            <ul>
-              <li><strong>Monthly Subscription:</strong> $99 USD per month, billed monthly</li>
-              <li><strong>Annual Subscription:</strong> $1,000 USD per year, billed annually (saves $188 vs monthly)</li>
-            </ul>
-            <p>By submitting payment information, you authorize us (or our designated payment processor) to charge your payment method for the applicable subscription fee. Subscriptions automatically renew at the end of each billing cycle unless cancelled before the renewal date.</p>
-            <p><strong>Refund Policy:</strong> All subscription fees are non-refundable. You may cancel your subscription at any time, and your access will continue until the end of the current billing period. No partial refunds are provided for unused portions of any billing period.</p>
+            <p>Searching the directory and contacting providers is free for vessel operators.</p>
+            <p>For service providers: <strong>listing is free during our launch period. After the launch period, listings will cost $49.90/month or $499.90/year.</strong> Prices are in US dollars.</p>
+            <p>We will email every listed provider before the launch period ends and before any paid plan starts. No payment details are collected during the launch period, and nothing is charged unless you choose a paid plan.</p>
+            <p>Once you choose a paid plan, you authorize us (or our designated payment processor) to charge your payment method for that plan. Paid subscriptions renew automatically at the end of each billing period unless you cancel before the renewal date. Refunds for paid subscriptions are covered by our <Link href="/refund-policy">Refund Policy</Link>.</p>
 
-            <h2 id="section6">6. Free Trial Period</h2>
-            <p>We offer a one (1) month free trial period to new providers after verification. The free trial begins only after our team has verified your application and listing details.</p>
-
-            <div className="warning-box">
-              <strong>⚠️ Important:</strong> The free trial period is offered only once per company or business entity. Multiple attempts to claim the free trial using different details, email addresses, or business identities will result in account suspension and forfeit of any active subscription, without refund.
-            </div>
-
-            <p>You may cancel your subscription at any time during the free trial period without incurring any charges. If you do not cancel before the end of the free trial, your subscription will automatically convert to a paid subscription at the rate of the plan you selected.</p>
+            <h2 id="section6">6. Launch Period</h2>
+            <p>The launch period is the period during which provider listings are free. We decide when it ends and will give listed providers notice by email in advance. If you do not choose a paid plan when the launch period ends, your listing may be paused or removed; you will not be charged.</p>
+            <p>One free listing is allowed per company or business entity. Creating several accounts for the same business may lead to those accounts being merged, suspended or removed.</p>
 
             <h2 id="section7">7. Cancellation</h2>
-            <p>You can cancel your subscription at any time by contacting us at <a href="mailto:contact@portservicefinder.com">contact@portservicefinder.com</a>. Your cancellation will take effect at the end of the current paid term. Your listing will be removed from the directory within 24 hours of cancellation.</p>
+            <p>You can remove your listing or cancel a paid subscription at any time by contacting us at <a href="mailto:contact@portservicefinder.com">contact@portservicefinder.com</a>. A paid subscription stays active until the end of the current billing period and is not renewed. If you ask us to remove your listing, we will do so within 24 hours.</p>
 
             <h2 id="section8">8. Prohibited Activities</h2>
             <p>You may not access or use the Services for any purpose other than that for which we make the Services available. The Services may not be used in connection with any commercial endeavors except those that are specifically endorsed or approved by us.</p>
@@ -260,10 +155,10 @@ export default function TermsOfService() {
               <li>You will maintain the quality of service represented in your listing.</li>
               <li>You will not use the listing to engage in fraudulent or deceptive practices.</li>
             </ul>
-            <p>We reserve the right to suspend or terminate any listing that violates these requirements, without refund.</p>
+            <p>We may suspend or remove any listing that breaks these requirements. Fees already paid for a listing removed for a breach are not refunded.</p>
 
             <h2 id="section12">12. No Commission Policy</h2>
-            <p>PortServiceFinder operates on a flat subscription model. We do not take any commission, finder&apos;s fee, or percentage from transactions or contracts that result from connections made through the Services. All business dealings between vessel operators and service providers are conducted directly between those parties, and we are not a party to those transactions.</p>
+            <p>PortServiceFinder is funded by provider listing fees only. We do not take any commission, finder&apos;s fee, or percentage from transactions or contracts that result from connections made through the Services. All business dealings between vessel operators and service providers are conducted directly between those parties, and we are not a party to those transactions.</p>
 
             <h2 id="section13">13. Third-Party Websites and Content</h2>
             <p>The Services may contain links to other websites, as well as content originating from third parties. Such third-party links and content are not investigated, monitored, or checked for accuracy, appropriateness, or completeness by us, and we are not responsible for any third-party websites accessed through the Services or any third-party content posted on, available through, or installed from the Services.</p>
@@ -309,26 +204,14 @@ export default function TermsOfService() {
             <h2 id="section23">23. Contact Us</h2>
             <p>In order to resolve a complaint regarding the Services or to receive further information regarding use of the Services, please contact us at:</p>
 
-            <div style={{background:'rgba(200,168,75,.06)',border:'1px solid rgba(200,168,75,.2)',padding:'18px 22px',margin:'16px 0',fontFamily:rj,fontSize:14,lineHeight:1.8,color:'#d4dcc8'}}>
-              <strong style={{color:'#c8a84b',display:'block',marginBottom:6,letterSpacing:1}}>PortServiceFinder</strong>
+            <div className="contact-box">
+              <strong>PortServiceFinder</strong>
               London, England<br/>
-              <a href="mailto:contact@portservicefinder.com" style={{color:'#c8a84b'}}>contact@portservicefinder.com</a>
+              <a href="mailto:contact@portservicefinder.com">contact@portservicefinder.com</a>
             </div>
-
-          </div>
-        </section>
-
-        {/* FOOTER */}
-        <footer style={{borderTop:'1px solid rgba(200,168,75,.15)',padding:'30px 24px',textAlign:'center'}}>
-          <div style={{display:'flex',justifyContent:'center',gap:24,marginBottom:14,flexWrap:'wrap'}}>
-            <Link href="/" style={{color:'#7a8a72',textDecoration:'none',fontSize:12,fontFamily:rj,letterSpacing:'1.5px',textTransform:'uppercase',fontWeight:600}}>Home</Link>
-            <Link href="/terms" style={{color:'#c8a84b',textDecoration:'none',fontSize:12,fontFamily:rj,letterSpacing:'1.5px',textTransform:'uppercase',fontWeight:600}}>Terms</Link>
-            <Link href="/privacy" style={{color:'#7a8a72',textDecoration:'none',fontSize:12,fontFamily:rj,letterSpacing:'1.5px',textTransform:'uppercase',fontWeight:600}}>Privacy</Link>
-            <Link href="/listing-rules" style={{color:'#7a8a72',textDecoration:'none',fontSize:12,fontFamily:rj,letterSpacing:'1.5px',textTransform:'uppercase',fontWeight:600}}>Listing Rules</Link>
-          </div>
-          <div style={{fontFamily:rj,fontSize:10,color:'#3a3a2a',letterSpacing:1,fontWeight:600}}>© 2026 PortServiceFinder. All rights reserved.</div>
-        </footer>
-      </div>
+        </div>
+      </main>
+      <SiteFooter />
     </>
   );
 }

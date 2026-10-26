@@ -3,9 +3,9 @@ import { useState, useEffect, useMemo } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { saveItem, loadItem, genId } from '@/lib/voyage-storage';
 
-const lb = "'Libre Bodoni', serif";
-const rj = "'Rajdhani', sans-serif";
-const g = { color: '#c8a84b', fontStyle: 'italic' } as React.CSSProperties;
+const lb = 'var(--font-display)';
+const rj = 'var(--font-ui)';
+const g = { color: 'var(--acc)' } as React.CSSProperties;
 
 // ============================================================
 // CSS Code (IMO) — simplified "rule of thumb" advanced method
@@ -147,13 +147,13 @@ function fmt(n: number, dec = 1): string {
 // ============================================================
 // STYLES
 // ============================================================
-const card: React.CSSProperties = { background: '#111c13', border: '1px solid rgba(200,168,75,.18)', padding: '20px 18px', borderRadius: 4, marginBottom: 16 };
-const sectionTitle: React.CSSProperties = { fontFamily: rj, fontSize: 11, letterSpacing: '2px', textTransform: 'uppercase', color: '#c8a84b', fontWeight: 700, marginBottom: 14, paddingBottom: 8, borderBottom: '1px solid rgba(200,168,75,.12)' };
-const labelS: React.CSSProperties = { display: 'block', fontFamily: rj, fontSize: 10, letterSpacing: '.5px', textTransform: 'uppercase', color: '#7a8a72', fontWeight: 600, marginBottom: 4 };
-const inputStyle: React.CSSProperties = { width: '100%', background: '#0c1610', border: '1px solid rgba(200,168,75,.2)', color: '#f5f0e8', padding: '7px 9px', fontFamily: rj, fontSize: 12.5, fontWeight: 500, borderRadius: 3, boxSizing: 'border-box' };
+const card: React.CSSProperties = { background: 'var(--card)', border: '1px solid color-mix(in srgb, var(--acc) 18%, transparent)', padding: '20px 18px', borderRadius: 4, marginBottom: 16 };
+const sectionTitle: React.CSSProperties = { fontFamily: rj, fontSize: 11, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--acc)', fontWeight: 700, marginBottom: 14, paddingBottom: 8, borderBottom: '1px solid color-mix(in srgb, var(--acc) 12%, transparent)' };
+const labelS: React.CSSProperties = { display: 'block', fontFamily: rj, fontSize: 10, letterSpacing: '.5px', textTransform: 'uppercase', color: 'var(--ink3)', fontWeight: 600, marginBottom: 4 };
+const inputStyle: React.CSSProperties = { width: '100%', background: 'var(--bg2)', border: '1px solid color-mix(in srgb, var(--acc) 20%, transparent)', color: 'var(--ink)', padding: '7px 9px', fontFamily: rj, fontSize: 12.5, fontWeight: 500, borderRadius: 3, boxSizing: 'border-box' };
 const numCell: React.CSSProperties = { ...inputStyle, padding: '5px 7px', fontSize: 12, textAlign: 'right' };
-const ghostBtn: React.CSSProperties = { background: 'transparent', color: '#c8a84b', border: '1px solid rgba(200,168,75,.4)', padding: '8px 14px', fontFamily: rj, fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 };
-const goldBtn: React.CSSProperties = { background: '#c8a84b', color: '#08100a', border: 'none', padding: '8px 16px', fontFamily: rj, fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 };
+const ghostBtn: React.CSSProperties = { background: 'transparent', color: 'var(--acc)', border: '1px solid color-mix(in srgb, var(--acc) 40%, transparent)', padding: '8px 14px', fontFamily: rj, fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 };
+const goldBtn: React.CSSProperties = { background: 'var(--acc)', color: 'var(--bg)', border: 'none', padding: '8px 16px', fontFamily: rj, fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 };
 
 // ============================================================
 // COMPONENT
@@ -202,21 +202,21 @@ export default function LashingPage() {
     <div>
       {/* Header */}
       <div style={{ marginBottom: 24 }}>
-        <div style={{ fontFamily: rj, fontSize: 10, letterSpacing: '2px', textTransform: 'uppercase', color: '#c8a84b', fontWeight: 700, marginBottom: 8 }}>
+        <div style={{ fontFamily: rj, fontSize: 10, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--acc)', fontWeight: 700, marginBottom: 8 }}>
           ⚓ Voyage Hub · Lashing Calculator
         </div>
         <h1 style={{ fontFamily: lb, fontSize: 'clamp(22px,3vw,32px)', fontWeight: 700, lineHeight: 1.1, marginBottom: 8 }}>
           Lashing <em style={g}>Calculator</em>
         </h1>
-        <p style={{ fontSize: 13, color: '#b0c0a4', lineHeight: 1.6, maxWidth: 720 }}>
+        <p style={{ fontSize: 13, color: 'var(--ink2)', lineHeight: 1.6, maxWidth: 720 }}>
           A simplified heavy-weather cargo securing check in the spirit of the CSS Code (Annex 13).
           Indicative only — the vessel&apos;s approved Cargo Securing Manual governs.
         </p>
       </div>
 
       {/* Disclaimer */}
-      <div style={{ ...card, background: 'rgba(255,138,138,.06)', borderColor: 'rgba(255,138,138,.3)', padding: '12px 16px' }}>
-        <div style={{ fontFamily: rj, fontSize: 12, color: '#ffb0b0', lineHeight: 1.5 }}>
+      <div style={{ ...card, background: 'color-mix(in srgb, var(--bad) 6%, transparent)', borderColor: 'color-mix(in srgb, var(--bad) 30%, transparent)', padding: '12px 16px' }}>
+        <div style={{ fontFamily: rj, fontSize: 12, color: 'var(--bad)', lineHeight: 1.5 }}>
           ⚠ <b>Indicative only.</b> Uses simplified CSS-Code accelerations and a balance-of-forces check. The
           approved Cargo Securing Manual and class-approved methods always govern actual securing.
         </div>
@@ -226,13 +226,13 @@ export default function LashingPage() {
       <div className="action-bar" style={{ display: 'flex', gap: 10, marginBottom: 22, flexWrap: 'wrap', alignItems: 'center' }}>
         <button onClick={() => setShowSave(true)} style={goldBtn}>💾 Save</button>
         <button onClick={() => window.print()} style={ghostBtn}>🖨️ Print / PDF</button>
-        <button onClick={handleReset} style={{ ...ghostBtn, color: '#ff8a8a', borderColor: 'rgba(255,138,138,.3)' }}>🗑️ Reset</button>
-        {saveMsg && <span style={{ color: '#4caf76', fontFamily: rj, fontSize: 12, fontWeight: 600 }}>{saveMsg}</span>}
-        {recordName && <span style={{ color: '#7a8a72', fontFamily: rj, fontSize: 11, marginLeft: 'auto' }}>📂 {recordName}</span>}
+        <button onClick={handleReset} style={{ ...ghostBtn, color: 'var(--bad)', borderColor: 'color-mix(in srgb, var(--bad) 30%, transparent)' }}>🗑️ Reset</button>
+        {saveMsg && <span style={{ color: 'var(--ok)', fontFamily: rj, fontSize: 12, fontWeight: 600 }}>{saveMsg}</span>}
+        {recordName && <span style={{ color: 'var(--ink3)', fontFamily: rj, fontSize: 11, marginLeft: 'auto' }}>📂 {recordName}</span>}
       </div>
 
       {showSave && (
-        <div style={{ ...card, background: 'rgba(200,168,75,.05)', borderColor: 'rgba(200,168,75,.4)' }}>
+        <div style={{ ...card, background: 'color-mix(in srgb, var(--acc) 5%, transparent)', borderColor: 'color-mix(in srgb, var(--acc) 40%, transparent)' }}>
           <label style={labelS}>Name</label>
           <input type="text" value={recordName} onChange={(e) => setRecordName(e.target.value)} placeholder="e.g. Transformer 80MT — main deck" style={{ ...inputStyle, marginBottom: 10 }} />
           <div style={{ display: 'flex', gap: 8 }}>
@@ -278,7 +278,7 @@ export default function LashingPage() {
           <div><label style={labelS}>Speed (kts)</label><input style={inputStyle} type="number" value={data.speed || ''} onChange={(e) => update('speed', num(e.target.value))} placeholder="14" /></div>
           <div><label style={labelS}>GM (m)</label><input style={inputStyle} type="number" step="0.01" value={data.gm || ''} onChange={(e) => update('gm', num(e.target.value))} placeholder="1.0" /></div>
         </div>
-        <p style={{ fontSize: 10, color: '#7a8a72', fontFamily: rj, marginTop: 10 }}>A higher GM (stiffer ship) increases transverse acceleration. Left blank, base CSS accelerations are used.</p>
+        <p style={{ fontSize: 10, color: 'var(--ink3)', fontFamily: rj, marginTop: 10 }}>A higher GM (stiffer ship) increases transverse acceleration. Left blank, base CSS accelerations are used.</p>
       </div>
 
       {/* 3. Lashings */}
@@ -287,7 +287,7 @@ export default function LashingPage() {
         <div style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 560 }}>
             <thead>
-              <tr style={{ color: '#7a8a72', fontFamily: rj, fontSize: 9.5, letterSpacing: '.5px', textTransform: 'uppercase' }}>
+              <tr style={{ color: 'var(--ink3)', fontFamily: rj, fontSize: 9.5, letterSpacing: '.5px', textTransform: 'uppercase' }}>
                 <th style={{ ...thd, textAlign: 'left' }}>Type</th>
                 <th style={thd}>MSL (kN)</th>
                 <th style={thd}>Vert ∠ (°)</th>
@@ -298,67 +298,67 @@ export default function LashingPage() {
             </thead>
             <tbody>
               {data.lashings.map((l) => (
-                <tr key={l.id} style={{ borderTop: '1px solid rgba(200,168,75,.08)' }}>
+                <tr key={l.id} style={{ borderTop: '1px solid color-mix(in srgb, var(--acc) 8%, transparent)' }}>
                   <td style={{ padding: '4px 6px' }}><input style={{ ...inputStyle, padding: '5px 7px', fontSize: 12 }} value={l.label} onChange={(e) => updLash(l.id, { label: e.target.value })} placeholder="Wire / chain / web" /></td>
                   <td style={{ padding: '4px 4px' }}><input style={numCell} type="number" value={l.msl || ''} onChange={(e) => updLash(l.id, { msl: num(e.target.value) })} placeholder="100" /></td>
                   <td style={{ padding: '4px 4px' }}><input style={numCell} type="number" value={l.angleV || ''} onChange={(e) => updLash(l.id, { angleV: num(e.target.value) })} placeholder="30" /></td>
                   <td style={{ padding: '4px 4px' }}><input style={numCell} type="number" value={l.angleH || ''} onChange={(e) => updLash(l.id, { angleH: num(e.target.value) })} placeholder="0" /></td>
                   <td style={{ padding: '4px 4px' }}><input style={numCell} type="number" value={l.count || ''} onChange={(e) => updLash(l.id, { count: num(e.target.value) })} placeholder="2" /></td>
-                  <td style={{ padding: '4px 4px', textAlign: 'center' }}><button onClick={() => delLash(l.id)} style={{ background: 'transparent', border: 'none', color: '#ff8a8a', cursor: 'pointer', fontSize: 12 }}>✕</button></td>
+                  <td style={{ padding: '4px 4px', textAlign: 'center' }}><button onClick={() => delLash(l.id)} style={{ background: 'transparent', border: 'none', color: 'var(--bad)', cursor: 'pointer', fontSize: 12 }}>✕</button></td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
         <button onClick={addLash} style={{ ...ghostBtn, marginTop: 12, fontSize: 10 }}>+ Add Lashing</button>
-        <p style={{ fontSize: 10, color: '#7a8a72', fontFamily: rj, marginTop: 8 }}>MSL = Maximum Securing Load (≈ half the breaking load for wire/chain). Vertical angle measured from deck; horizontal angle from the transverse direction.</p>
+        <p style={{ fontSize: 10, color: 'var(--ink3)', fontFamily: rj, marginTop: 8 }}>MSL = Maximum Securing Load (≈ half the breaking load for wire/chain). Vertical angle measured from deck; horizontal angle from the transverse direction.</p>
       </div>
 
       {/* RESULTS */}
       {hasInput && (
-        <div style={{ ...card, background: 'linear-gradient(135deg,rgba(200,168,75,.08),transparent)', borderColor: c.slidingOk ? 'rgba(76,175,118,.5)' : 'rgba(255,138,138,.6)' }}>
+        <div style={{ ...card, background: 'linear-gradient(135deg,color-mix(in srgb, var(--acc) 8%, transparent),transparent)', borderColor: c.slidingOk ? 'color-mix(in srgb, var(--ok) 50%, transparent)' : 'color-mix(in srgb, var(--bad) 60%, transparent)' }}>
           <div style={sectionTitle}>⚡ Transverse Sliding Check</div>
 
           <div className="la-kpis" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 10, marginBottom: 16 }}>
-            <KPI label="Transverse Force" value={fmt(c.Ft, 0)} sub="kN" color="#ff8a8a" />
-            <KPI label="Friction Hold" value={fmt(c.frictionHold, 0)} sub="kN" color="#5aa6e8" />
-            <KPI label="Lashing Hold" value={fmt(c.lashingTransverse, 0)} sub="kN" color="#5aa6e8" />
-            <KPI label="Total Resistance" value={fmt(c.totalTransverseResistance, 0)} sub="kN" color={c.slidingOk ? '#4caf76' : '#ff8a8a'} big />
+            <KPI label="Transverse Force" value={fmt(c.Ft, 0)} sub="kN" color="var(--bad)" />
+            <KPI label="Friction Hold" value={fmt(c.frictionHold, 0)} sub="kN" color="var(--info)" />
+            <KPI label="Lashing Hold" value={fmt(c.lashingTransverse, 0)} sub="kN" color="var(--info)" />
+            <KPI label="Total Resistance" value={fmt(c.totalTransverseResistance, 0)} sub="kN" color={c.slidingOk ? 'var(--ok)' : 'var(--bad)'} big />
           </div>
 
           <RowR label="Transverse acceleration used" value={`${fmt(c.accT, 2)} g`} />
           <RowR label="Friction coefficient μ" value={fmt(c.mu, 2)} />
           <RowR label="Total MSL deployed" value={`${fmt(c.totalMsl, 0)} kN`} />
-          <RowR label="Resistance ÷ Force" value={`${fmt(c.slidingRatio, 2)} ×`} color={c.slidingRatio >= 1 ? '#4caf76' : '#ff8a8a'} />
+          <RowR label="Resistance ÷ Force" value={`${fmt(c.slidingRatio, 2)} ×`} color={c.slidingRatio >= 1 ? 'var(--ok)' : 'var(--bad)'} />
 
-          <div style={{ marginTop: 14, padding: '14px 16px', background: '#0c1610', border: `1px solid ${c.slidingOk ? 'rgba(76,175,118,.5)' : 'rgba(255,138,138,.6)'}`, borderRadius: 4 }}>
+          <div style={{ marginTop: 14, padding: '14px 16px', background: 'var(--bg2)', border: `1px solid ${c.slidingOk ? 'color-mix(in srgb, var(--ok) 50%, transparent)' : 'color-mix(in srgb, var(--bad) 60%, transparent)'}`, borderRadius: 4 }}>
             {c.slidingOk ? (
-              <div style={{ fontFamily: rj, color: '#4caf76', fontSize: 13.5, lineHeight: 1.5 }}>
+              <div style={{ fontFamily: rj, color: 'var(--ok)', fontSize: 13.5, lineHeight: 1.5 }}>
                 ✅ <b>Transverse securing adequate</b> — resistance {fmt(c.totalTransverseResistance, 0)} kN ≥ force {fmt(c.Ft, 0)} kN (margin {fmt(c.slidingMargin, 0)} kN). Verify against the Cargo Securing Manual and check tipping separately.
               </div>
             ) : (
-              <div style={{ fontFamily: rj, color: '#ff8a8a', fontSize: 13.5, lineHeight: 1.5 }}>
+              <div style={{ fontFamily: rj, color: 'var(--bad)', fontSize: 13.5, lineHeight: 1.5 }}>
                 ❌ <b>Insufficient transverse securing</b> — short by {fmt(Math.abs(c.slidingMargin), 0)} kN.
                 {c.suggested != null && <> Add about <b>{c.suggested}</b> more lashing(s) of the first type, or use higher-MSL devices / anti-slip mats.</>}
               </div>
             )}
           </div>
 
-          <div style={{ marginTop: 10, fontFamily: rj, fontSize: 12, color: c.longOk ? '#4caf76' : '#e8b85a' }}>
+          <div style={{ marginTop: 10, fontFamily: rj, fontSize: 12, color: c.longOk ? 'var(--ok)' : 'var(--warn)' }}>
             Longitudinal: force {fmt(c.Fl, 0)} kN vs friction {fmt(c.longResistance, 0)} kN — {c.longOk ? 'OK by friction' : 'add fore/aft lashings'}
           </div>
         </div>
       )}
 
       {/* Methodology */}
-      <div style={{ ...card, background: 'rgba(122,138,114,.05)', borderColor: 'rgba(122,138,114,.15)' }}>
+      <div style={{ ...card, background: 'color-mix(in srgb, var(--ink3) 5%, transparent)', borderColor: 'color-mix(in srgb, var(--ink3) 15%, transparent)' }}>
         <div style={sectionTitle}>📖 Method &amp; Limits</div>
-        <ul style={{ fontSize: 11.5, color: '#b0c0a4', lineHeight: 1.7, paddingLeft: 18, fontFamily: rj }}>
+        <ul style={{ fontSize: 11.5, color: 'var(--ink2)', lineHeight: 1.7, paddingLeft: 18, fontFamily: rj }}>
           <li>Transverse force F = m × g × a<sub>t</sub>, with base CSS accelerations scaled by position and GM.</li>
           <li>Resistance = friction (μ × weight) + Σ lashing transverse components (MSL × cos∠ + μ × MSL × sin∠).</li>
           <li>Securing is adequate when resistance ≥ external force (balance-of-forces method).</li>
           <li>This is the simplified method. It does <b>not</b> compute tipping/overturning, racking, or the full Annex-13 advanced calculation.</li>
-          <li>Always follow the approved <b style={{ color: '#c8a84b' }}>Cargo Securing Manual</b> and class requirements.</li>
+          <li>Always follow the approved <b style={{ color: 'var(--acc)' }}>Cargo Securing Manual</b> and class requirements.</li>
         </ul>
       </div>
 
@@ -382,17 +382,17 @@ const thd: React.CSSProperties = { padding: '6px 6px', textAlign: 'right', fontW
 
 function KPI({ label: l, value, sub, color, big }: { label: string; value: string; sub?: string; color: string; big?: boolean }) {
   return (
-    <div style={{ background: '#0c1610', border: '1px solid rgba(200,168,75,.2)', borderRadius: 4, padding: '12px 10px', textAlign: 'center' }}>
-      <div style={{ fontFamily: rj, fontSize: 9, letterSpacing: '1px', textTransform: 'uppercase', color: '#7a8a72', fontWeight: 700 }}>{l}</div>
-      <div style={{ fontFamily: lb, fontSize: big ? 27 : 21, fontWeight: 700, color, marginTop: 4 }}>{value} {sub && <span style={{ fontSize: 11, color: '#7a8a72' }}>{sub}</span>}</div>
+    <div style={{ background: 'var(--bg2)', border: '1px solid color-mix(in srgb, var(--acc) 20%, transparent)', borderRadius: 4, padding: '12px 10px', textAlign: 'center' }}>
+      <div style={{ fontFamily: rj, fontSize: 9, letterSpacing: '1px', textTransform: 'uppercase', color: 'var(--ink3)', fontWeight: 700 }}>{l}</div>
+      <div style={{ fontFamily: lb, fontSize: big ? 27 : 21, fontWeight: 700, color, marginTop: 4 }}>{value} {sub && <span style={{ fontSize: 11, color: 'var(--ink3)' }}>{sub}</span>}</div>
     </div>
   );
 }
 function RowR({ label: l, value, color }: { label: string; value: string; color?: string }) {
   return (
-    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '7px 0', borderBottom: '1px dashed rgba(200,168,75,.1)', fontFamily: rj, fontSize: 13 }}>
-      <span style={{ color: '#7a8a72' }}>{l}</span>
-      <span style={{ color: color || '#f5f0e8', fontWeight: 600 }}>{value}</span>
+    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '7px 0', borderBottom: '1px dashed color-mix(in srgb, var(--acc) 10%, transparent)', fontFamily: rj, fontSize: 13 }}>
+      <span style={{ color: 'var(--ink3)' }}>{l}</span>
+      <span style={{ color: color || 'var(--ink)', fontWeight: 600 }}>{value}</span>
     </div>
   );
 }

@@ -3,9 +3,9 @@ import { useState, useEffect, useMemo } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { saveItem, loadItem, genId } from '@/lib/voyage-storage';
 
-const lb = "'Libre Bodoni', serif";
-const rj = "'Rajdhani', sans-serif";
-const g = { color: '#c8a84b', fontStyle: 'italic' } as React.CSSProperties;
+const lb = 'var(--font-display)';
+const rj = 'var(--font-ui)';
+const g = { color: 'var(--acc)' } as React.CSSProperties;
 
 // ============================================================
 // TYPES
@@ -135,12 +135,12 @@ function fmt(n: number, dec = 1): string {
 // ============================================================
 // STYLES
 // ============================================================
-const card: React.CSSProperties = { background: '#111c13', border: '1px solid rgba(200,168,75,.18)', padding: '20px 18px', borderRadius: 4, marginBottom: 16 };
-const sectionTitle: React.CSSProperties = { fontFamily: rj, fontSize: 11, letterSpacing: '2px', textTransform: 'uppercase', color: '#c8a84b', fontWeight: 700, marginBottom: 14, paddingBottom: 8, borderBottom: '1px solid rgba(200,168,75,.12)' };
-const label: React.CSSProperties = { display: 'block', fontFamily: rj, fontSize: 10, letterSpacing: '.5px', textTransform: 'uppercase', color: '#7a8a72', fontWeight: 600, marginBottom: 4 };
-const inputStyle: React.CSSProperties = { width: '100%', background: '#0c1610', border: '1px solid rgba(200,168,75,.2)', color: '#f5f0e8', padding: '7px 9px', fontFamily: rj, fontSize: 12.5, fontWeight: 500, borderRadius: 3, boxSizing: 'border-box' };
-const ghostBtn: React.CSSProperties = { background: 'transparent', color: '#c8a84b', border: '1px solid rgba(200,168,75,.4)', padding: '8px 14px', fontFamily: rj, fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 };
-const goldBtn: React.CSSProperties = { background: '#c8a84b', color: '#08100a', border: 'none', padding: '8px 16px', fontFamily: rj, fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 };
+const card: React.CSSProperties = { background: 'var(--card)', border: '1px solid color-mix(in srgb, var(--acc) 18%, transparent)', padding: '20px 18px', borderRadius: 4, marginBottom: 16 };
+const sectionTitle: React.CSSProperties = { fontFamily: rj, fontSize: 11, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--acc)', fontWeight: 700, marginBottom: 14, paddingBottom: 8, borderBottom: '1px solid color-mix(in srgb, var(--acc) 12%, transparent)' };
+const label: React.CSSProperties = { display: 'block', fontFamily: rj, fontSize: 10, letterSpacing: '.5px', textTransform: 'uppercase', color: 'var(--ink3)', fontWeight: 600, marginBottom: 4 };
+const inputStyle: React.CSSProperties = { width: '100%', background: 'var(--bg2)', border: '1px solid color-mix(in srgb, var(--acc) 20%, transparent)', color: 'var(--ink)', padding: '7px 9px', fontFamily: rj, fontSize: 12.5, fontWeight: 500, borderRadius: 3, boxSizing: 'border-box' };
+const ghostBtn: React.CSSProperties = { background: 'transparent', color: 'var(--acc)', border: '1px solid color-mix(in srgb, var(--acc) 40%, transparent)', padding: '8px 14px', fontFamily: rj, fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 };
+const goldBtn: React.CSSProperties = { background: 'var(--acc)', color: 'var(--bg)', border: 'none', padding: '8px 16px', fontFamily: rj, fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 };
 
 const STATUS_LABEL: Record<NoonReport['status'], string> = { sea: 'At Sea', port: 'In Port', anchor: 'At Anchor', canal: 'Canal Transit', drifting: 'Drifting' };
 
@@ -203,13 +203,13 @@ export default function NoonReportPage() {
     <div>
       {/* Header */}
       <div style={{ marginBottom: 24 }}>
-        <div style={{ fontFamily: rj, fontSize: 10, letterSpacing: '2px', textTransform: 'uppercase', color: '#c8a84b', fontWeight: 700, marginBottom: 8 }}>
+        <div style={{ fontFamily: rj, fontSize: 10, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--acc)', fontWeight: 700, marginBottom: 8 }}>
           ⚓ Voyage Hub · Noon Report Manager
         </div>
         <h1 style={{ fontFamily: lb, fontSize: 'clamp(22px,3vw,32px)', fontWeight: 700, lineHeight: 1.1, marginBottom: 8 }}>
           Noon Report <em style={g}>Manager</em>
         </h1>
-        <p style={{ fontSize: 13, color: '#b0c0a4', lineHeight: 1.6, maxWidth: 720 }}>
+        <p style={{ fontSize: 13, color: 'var(--ink2)', lineHeight: 1.6, maxWidth: 720 }}>
           Log daily noon reports and see speed, consumption and ROB against charter-party warranties,
           with an updating ETA. For full performance/claim reports, use CP Performance.
         </p>
@@ -219,15 +219,15 @@ export default function NoonReportPage() {
       <div className="action-bar" style={{ display: 'flex', gap: 10, marginBottom: 22, flexWrap: 'wrap', alignItems: 'center' }}>
         <button onClick={() => setShowSave(true)} style={goldBtn}>💾 Save</button>
         <button onClick={() => window.print()} style={ghostBtn}>🖨️ Print / PDF</button>
-        <button onClick={handleReset} style={{ ...ghostBtn, color: '#ff8a8a', borderColor: 'rgba(255,138,138,.3)' }}>🗑️ Reset</button>
-        {saveMsg && <span style={{ color: '#4caf76', fontFamily: rj, fontSize: 12, fontWeight: 600 }}>{saveMsg}</span>}
-        {recordName && <span style={{ color: '#7a8a72', fontFamily: rj, fontSize: 11, marginLeft: 'auto' }}>📂 {recordName}</span>}
+        <button onClick={handleReset} style={{ ...ghostBtn, color: 'var(--bad)', borderColor: 'color-mix(in srgb, var(--bad) 30%, transparent)' }}>🗑️ Reset</button>
+        {saveMsg && <span style={{ color: 'var(--ok)', fontFamily: rj, fontSize: 12, fontWeight: 600 }}>{saveMsg}</span>}
+        {recordName && <span style={{ color: 'var(--ink3)', fontFamily: rj, fontSize: 11, marginLeft: 'auto' }}>📂 {recordName}</span>}
       </div>
 
       {showSave && (
-        <div style={{ ...card, background: 'rgba(200,168,75,.05)', borderColor: 'rgba(200,168,75,.4)' }}>
+        <div style={{ ...card, background: 'color-mix(in srgb, var(--acc) 5%, transparent)', borderColor: 'color-mix(in srgb, var(--acc) 40%, transparent)' }}>
           <label style={label}>Name</label>
-          <input type="text" value={recordName} onChange={(e) => setRecordName(e.target.value)} placeholder="e.g. MV NEURONAI — Tubarão→Qingdao" style={{ ...inputStyle, marginBottom: 10 }} />
+          <input type="text" value={recordName} onChange={(e) => setRecordName(e.target.value)} placeholder="e.g. MV OCEAN PIONEER — Tubarão→Qingdao" style={{ ...inputStyle, marginBottom: 10 }} />
           <div style={{ display: 'flex', gap: 8 }}>
             <button onClick={handleSave} style={{ ...goldBtn, padding: '8px 14px', letterSpacing: '1px' }}>Save</button>
             <button onClick={() => setShowSave(false)} style={ghostBtn}>Cancel</button>
@@ -239,7 +239,7 @@ export default function NoonReportPage() {
       <div style={card}>
         <div style={sectionTitle}>Voyage Setup &amp; CP Warranties</div>
         <div className="noon-g4" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 12 }}>
-          <div><label style={label}>Vessel</label><input style={inputStyle} value={data.vesselName} onChange={(e) => update('vesselName', e.target.value)} placeholder="MV NEURONAI" /></div>
+          <div><label style={label}>Vessel</label><input style={inputStyle} value={data.vesselName} onChange={(e) => update('vesselName', e.target.value)} placeholder="MV OCEAN PIONEER" /></div>
           <div><label style={label}>IMO</label><input style={inputStyle} value={data.imo} onChange={(e) => update('imo', e.target.value)} placeholder="9876543" /></div>
           <div><label style={label}>From</label><input style={inputStyle} value={data.from} onChange={(e) => update('from', e.target.value)} placeholder="Tubarão" /></div>
           <div><label style={label}>To</label><input style={inputStyle} value={data.to} onChange={(e) => update('to', e.target.value)} placeholder="Qingdao" /></div>
@@ -255,21 +255,21 @@ export default function NoonReportPage() {
       {/* Progress strip */}
       {data.totalDistance > 0 && (
         <div style={{ ...card }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6, fontFamily: rj, fontSize: 11, color: '#7a8a72' }}>
-            <span>Progress: <b style={{ color: '#c8a84b' }}>{fmt(c.progressPct, 1)}%</b></span>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6, fontFamily: rj, fontSize: 11, color: 'var(--ink3)' }}>
+            <span>Progress: <b style={{ color: 'var(--acc)' }}>{fmt(c.progressPct, 1)}%</b></span>
             <span>{fmt(c.totalDist, 0)} / {fmt(data.totalDistance, 0)} nm · {fmt(c.remainingDist, 0)} nm to go</span>
           </div>
-          <div style={{ height: 10, background: '#0c1610', borderRadius: 5, overflow: 'hidden', border: '1px solid rgba(200,168,75,.2)' }}>
-            <div style={{ width: `${c.progressPct}%`, height: '100%', background: 'linear-gradient(90deg,#c8a84b,#4caf76)', transition: 'width .3s ease' }} />
+          <div style={{ height: 10, background: 'var(--bg2)', borderRadius: 5, overflow: 'hidden', border: '1px solid color-mix(in srgb, var(--acc) 20%, transparent)' }}>
+            <div style={{ width: `${c.progressPct}%`, height: '100%', background: 'linear-gradient(90deg,var(--acc),var(--ok))', transition: 'width .3s ease' }} />
           </div>
-          {c.predictedEta && <div style={{ marginTop: 8, fontFamily: rj, fontSize: 12, color: '#b0c0a4' }}>📅 Predicted ETA: <b style={{ color: '#c8a84b' }}>{c.predictedEta}</b> <span style={{ color: '#7a8a72' }}>(~{fmt(c.remainingDays, 1)} days at {fmt(c.avgSpeed > 0 ? c.avgSpeed : data.cpSpeed, 1)} kts)</span></div>}
+          {c.predictedEta && <div style={{ marginTop: 8, fontFamily: rj, fontSize: 12, color: 'var(--ink2)' }}>📅 Predicted ETA: <b style={{ color: 'var(--acc)' }}>{c.predictedEta}</b> <span style={{ color: 'var(--ink3)' }}>(~{fmt(c.remainingDays, 1)} days at {fmt(c.avgSpeed > 0 ? c.avgSpeed : data.cpSpeed, 1)} kts)</span></div>}
         </div>
       )}
 
       {/* Tabs */}
       <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
-        <button onClick={() => setTab('reports')} style={{ flex: 1, padding: '10px', background: tab === 'reports' ? '#c8a84b' : 'transparent', color: tab === 'reports' ? '#08100a' : '#7a8a72', border: `1px solid ${tab === 'reports' ? '#c8a84b' : 'rgba(200,168,75,.25)'}`, fontFamily: rj, fontSize: 11, letterSpacing: '1px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 }}>📝 Reports ({data.reports.length})</button>
-        <button onClick={() => setTab('analysis')} style={{ flex: 1, padding: '10px', background: tab === 'analysis' ? '#c8a84b' : 'transparent', color: tab === 'analysis' ? '#08100a' : '#7a8a72', border: `1px solid ${tab === 'analysis' ? '#c8a84b' : 'rgba(200,168,75,.25)'}`, fontFamily: rj, fontSize: 11, letterSpacing: '1px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 }}>📊 Analysis</button>
+        <button onClick={() => setTab('reports')} style={{ flex: 1, padding: '10px', background: tab === 'reports' ? 'var(--acc)' : 'transparent', color: tab === 'reports' ? 'var(--bg)' : 'var(--ink3)', border: `1px solid ${tab === 'reports' ? 'var(--acc)' : 'color-mix(in srgb, var(--acc) 25%, transparent)'}`, fontFamily: rj, fontSize: 11, letterSpacing: '1px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 }}>📝 Reports ({data.reports.length})</button>
+        <button onClick={() => setTab('analysis')} style={{ flex: 1, padding: '10px', background: tab === 'analysis' ? 'var(--acc)' : 'transparent', color: tab === 'analysis' ? 'var(--bg)' : 'var(--ink3)', border: `1px solid ${tab === 'analysis' ? 'var(--acc)' : 'color-mix(in srgb, var(--acc) 25%, transparent)'}`, fontFamily: rj, fontSize: 11, letterSpacing: '1px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 }}>📊 Analysis</button>
       </div>
 
       {/* REPORTS TAB */}
@@ -285,14 +285,14 @@ export default function NoonReportPage() {
               <div key={r.id} style={{ ...card, padding: open ? '18px' : '12px 16px', marginBottom: 10 }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer' }} onClick={() => setOpenId(open ? null : r.id)}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-                    <span style={{ fontFamily: lb, fontSize: 14, fontWeight: 700, color: '#c8a84b' }}>Day {i + 1}</span>
-                    <span style={{ fontFamily: rj, fontSize: 12, color: '#f5f0e8' }}>{r.date || 'no date'} {r.timeUtc} UTC</span>
-                    <span style={{ fontSize: 9.5, background: 'rgba(122,138,114,.14)', color: '#b0c0a4', padding: '2px 7px', borderRadius: 3, fontFamily: rj, fontWeight: 700 }}>{STATUS_LABEL[r.status]}</span>
-                    <span style={{ fontFamily: rj, fontSize: 12, color: speedOk ? '#4caf76' : '#ff8a8a' }}>{fmt(sp, 1)} kts</span>
-                    <span style={{ fontFamily: rj, fontSize: 12, color: consOk ? '#4caf76' : '#ff8a8a' }}>ME {fmt(r.meCons, 1)}</span>
+                    <span style={{ fontFamily: lb, fontSize: 14, fontWeight: 700, color: 'var(--acc)' }}>Day {i + 1}</span>
+                    <span style={{ fontFamily: rj, fontSize: 12, color: 'var(--ink)' }}>{r.date || 'no date'} {r.timeUtc} UTC</span>
+                    <span style={{ fontSize: 9.5, background: 'color-mix(in srgb, var(--ink3) 14%, transparent)', color: 'var(--ink2)', padding: '2px 7px', borderRadius: 3, fontFamily: rj, fontWeight: 700 }}>{STATUS_LABEL[r.status]}</span>
+                    <span style={{ fontFamily: rj, fontSize: 12, color: speedOk ? 'var(--ok)' : 'var(--bad)' }}>{fmt(sp, 1)} kts</span>
+                    <span style={{ fontFamily: rj, fontSize: 12, color: consOk ? 'var(--ok)' : 'var(--bad)' }}>ME {fmt(r.meCons, 1)}</span>
                     <span title={gw ? 'Good weather' : 'Adverse weather'} style={{ fontSize: 11 }}>{gw ? '🟢' : '🔴'} BF{r.bf}</span>
                   </div>
-                  <button onClick={(e) => { e.stopPropagation(); delReport(r.id); }} style={{ background: 'transparent', border: 'none', color: '#ff8a8a', fontFamily: rj, fontSize: 11, cursor: 'pointer' }}>✕</button>
+                  <button onClick={(e) => { e.stopPropagation(); delReport(r.id); }} style={{ background: 'transparent', border: 'none', color: 'var(--bad)', fontFamily: rj, fontSize: 11, cursor: 'pointer' }}>✕</button>
                 </div>
 
                 {open && (
@@ -357,17 +357,17 @@ export default function NoonReportPage() {
       {tab === 'analysis' && (
         <>
           {data.reports.length === 0 ? (
-            <div style={{ ...card, textAlign: 'center', color: '#7a8a72', fontFamily: rj }}>Add noon reports to see the analysis.</div>
+            <div style={{ ...card, textAlign: 'center', color: 'var(--ink3)', fontFamily: rj }}>Add noon reports to see the analysis.</div>
           ) : (
             <>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 10, marginBottom: 16 }} className="noon-kpis">
-                <KPI label="Reports" value={String(c.days)} color="#f5f0e8" />
-                <KPI label="Total Distance" value={fmt(c.totalDist, 0)} sub="nm" color="#c8a84b" />
-                <KPI label="Avg Speed" value={fmt(c.avgSpeed, 2)} sub="kts" color={data.cpSpeed > 0 && c.avgSpeed < data.cpSpeed ? '#ff8a8a' : '#4caf76'} />
-                <KPI label="Good Wx Days" value={`${c.gwCount}/${c.days}`} color="#4caf76" />
+                <KPI label="Reports" value={String(c.days)} color="var(--ink)" />
+                <KPI label="Total Distance" value={fmt(c.totalDist, 0)} sub="nm" color="var(--acc)" />
+                <KPI label="Avg Speed" value={fmt(c.avgSpeed, 2)} sub="kts" color={data.cpSpeed > 0 && c.avgSpeed < data.cpSpeed ? 'var(--bad)' : 'var(--ok)'} />
+                <KPI label="Good Wx Days" value={`${c.gwCount}/${c.days}`} color="var(--ok)" />
               </div>
 
-              <div style={{ ...card, background: 'linear-gradient(135deg,rgba(200,168,75,.08),transparent)', borderColor: 'rgba(200,168,75,.4)' }}>
+              <div style={{ ...card, background: 'linear-gradient(135deg,color-mix(in srgb, var(--acc) 8%, transparent),transparent)', borderColor: 'color-mix(in srgb, var(--acc) 40%, transparent)' }}>
                 <div style={sectionTitle}>⚡ Performance vs Charter Party</div>
                 <Row label="Avg Speed" actual={`${fmt(c.avgSpeed, 2)} kts`} cp={data.cpSpeed > 0 ? `${fmt(data.cpSpeed, 1)} kts` : '—'} delta={data.cpSpeed > 0 ? c.speedVsCp : null} goodIfPositive />
                 <Row label="Avg ME Cons (sea)" actual={`${fmt(c.avgMe, 1)} MT/d`} cp={data.cpMeCons > 0 ? `${fmt(data.cpMeCons, 1)} MT/d` : '—'} delta={data.cpMeCons > 0 ? c.meVsCp : null} goodIfPositive={false} />
@@ -383,7 +383,7 @@ export default function NoonReportPage() {
                 <div style={{ overflowX: 'auto' }}>
                   <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: rj, fontSize: 11.5 }}>
                     <thead>
-                      <tr style={{ color: '#7a8a72', textAlign: 'left' }}>
+                      <tr style={{ color: 'var(--ink3)', textAlign: 'left' }}>
                         <th style={th}>Day</th><th style={th}>Date</th><th style={th}>Status</th><th style={th}>Dist</th><th style={th}>Speed</th><th style={th}>ME</th><th style={th}>AE</th><th style={th}>ROB VLSFO</th><th style={th}>Wx</th>
                       </tr>
                     </thead>
@@ -392,13 +392,13 @@ export default function NoonReportPage() {
                         const sp = reportSpeed(r);
                         const gw = isGoodWeather(r);
                         return (
-                          <tr key={r.id} style={{ borderTop: '1px solid rgba(200,168,75,.1)', color: '#f5f0e8' }}>
+                          <tr key={r.id} style={{ borderTop: '1px solid color-mix(in srgb, var(--acc) 10%, transparent)', color: 'var(--ink)' }}>
                             <td style={td}>{i + 1}</td>
                             <td style={td}>{r.date || '—'}</td>
                             <td style={td}>{STATUS_LABEL[r.status]}</td>
                             <td style={td}>{fmt(r.distance, 0)}</td>
-                            <td style={{ ...td, color: data.cpSpeed > 0 && sp < data.cpSpeed - 0.1 ? '#ff8a8a' : '#4caf76' }}>{fmt(sp, 1)}</td>
-                            <td style={{ ...td, color: data.cpMeCons > 0 && r.meCons > data.cpMeCons + 0.5 ? '#ff8a8a' : '#f5f0e8' }}>{fmt(r.meCons, 1)}</td>
+                            <td style={{ ...td, color: data.cpSpeed > 0 && sp < data.cpSpeed - 0.1 ? 'var(--bad)' : 'var(--ok)' }}>{fmt(sp, 1)}</td>
+                            <td style={{ ...td, color: data.cpMeCons > 0 && r.meCons > data.cpMeCons + 0.5 ? 'var(--bad)' : 'var(--ink)' }}>{fmt(r.meCons, 1)}</td>
                             <td style={td}>{fmt(r.aeCons, 1)}</td>
                             <td style={td}>{fmt(r.robVlsfo, 1)}</td>
                             <td style={td}>{gw ? '🟢' : '🔴'} {r.bf}</td>
@@ -435,25 +435,25 @@ const td: React.CSSProperties = { padding: '6px 8px', whiteSpace: 'nowrap' };
 
 function KPI({ label: l, value, sub, color }: { label: string; value: string; sub?: string; color: string }) {
   return (
-    <div style={{ background: '#0c1610', border: '1px solid rgba(200,168,75,.2)', borderRadius: 4, padding: '12px 10px', textAlign: 'center' }}>
-      <div style={{ fontFamily: rj, fontSize: 9, letterSpacing: '1px', textTransform: 'uppercase', color: '#7a8a72', fontWeight: 700 }}>{l}</div>
-      <div style={{ fontFamily: lb, fontSize: 22, fontWeight: 700, color, marginTop: 4 }}>{value} {sub && <span style={{ fontSize: 11, color: '#7a8a72' }}>{sub}</span>}</div>
+    <div style={{ background: 'var(--bg2)', border: '1px solid color-mix(in srgb, var(--acc) 20%, transparent)', borderRadius: 4, padding: '12px 10px', textAlign: 'center' }}>
+      <div style={{ fontFamily: rj, fontSize: 9, letterSpacing: '1px', textTransform: 'uppercase', color: 'var(--ink3)', fontWeight: 700 }}>{l}</div>
+      <div style={{ fontFamily: lb, fontSize: 22, fontWeight: 700, color, marginTop: 4 }}>{value} {sub && <span style={{ fontSize: 11, color: 'var(--ink3)' }}>{sub}</span>}</div>
     </div>
   );
 }
 
 function Row({ label: l, actual, cp, delta, goodIfPositive }: { label: string; actual: string; cp: string; delta: number | null; goodIfPositive?: boolean }) {
-  let color = '#f5f0e8';
+  let color = 'var(--ink)';
   if (delta != null && goodIfPositive != null) {
     const good = goodIfPositive ? delta >= 0 : delta <= 0;
-    color = good ? '#4caf76' : '#ff8a8a';
+    color = good ? 'var(--ok)' : 'var(--bad)';
   }
   return (
-    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 0', borderBottom: '1px dashed rgba(200,168,75,.1)', fontFamily: rj, fontSize: 13 }}>
-      <span style={{ color: '#7a8a72' }}>{l}</span>
+    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 0', borderBottom: '1px dashed color-mix(in srgb, var(--acc) 10%, transparent)', fontFamily: rj, fontSize: 13 }}>
+      <span style={{ color: 'var(--ink3)' }}>{l}</span>
       <span style={{ display: 'flex', gap: 12, alignItems: 'baseline' }}>
-        <span style={{ color: '#f5f0e8', fontWeight: 600 }}>{actual}</span>
-        <span style={{ color: '#7a8a72', fontSize: 11 }}>CP {cp}</span>
+        <span style={{ color: 'var(--ink)', fontWeight: 600 }}>{actual}</span>
+        <span style={{ color: 'var(--ink3)', fontSize: 11 }}>CP {cp}</span>
         {delta != null && <span style={{ color, fontWeight: 700, minWidth: 56, textAlign: 'right' }}>{delta > 0 ? '+' : ''}{fmt(delta, 1)}%</span>}
       </span>
     </div>

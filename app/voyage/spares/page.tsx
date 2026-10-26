@@ -2,9 +2,9 @@
 import { useState, useEffect, useMemo } from 'react';
 import { saveItem, loadItem, genId } from '@/lib/voyage-storage';
 
-const lb = "'Libre Bodoni', serif";
-const rj = "'Rajdhani', sans-serif";
-const g = { color: '#c8a84b', fontStyle: 'italic' } as React.CSSProperties;
+const lb = 'var(--font-display)';
+const rj = 'var(--font-ui)';
+const g = { color: 'var(--acc)' } as React.CSSProperties;
 
 // ============================================================
 // TYPES
@@ -38,21 +38,21 @@ function newSpare(): Spare {
 const DEFAULT_DATA: SparesData = { vesselName: '', imo: '', spares: [] };
 
 const ORDER_META: Record<OrderStatus, { label: string; color: string; bg: string }> = {
-  none: { label: '—', color: '#7a8a72', bg: 'transparent' },
-  requested: { label: 'REQUESTED', color: '#5aa6e8', bg: 'rgba(90,166,232,.14)' },
-  ordered: { label: 'ORDERED', color: '#e8b85a', bg: 'rgba(232,184,90,.14)' },
-  received: { label: 'RECEIVED', color: '#4caf76', bg: 'rgba(76,175,118,.14)' },
+  none: { label: '—', color: 'var(--ink3)', bg: 'transparent' },
+  requested: { label: 'REQUESTED', color: 'var(--info)', bg: 'color-mix(in srgb, var(--info) 14%, transparent)' },
+  ordered: { label: 'ORDERED', color: 'var(--warn)', bg: 'color-mix(in srgb, var(--warn) 14%, transparent)' },
+  received: { label: 'RECEIVED', color: 'var(--ok)', bg: 'color-mix(in srgb, var(--ok) 14%, transparent)' },
 };
 
 // ============================================================
 // STYLES
 // ============================================================
-const card: React.CSSProperties = { background: '#111c13', border: '1px solid rgba(200,168,75,.18)', padding: '20px 18px', borderRadius: 4, marginBottom: 16 };
-const sectionTitle: React.CSSProperties = { fontFamily: rj, fontSize: 11, letterSpacing: '2px', textTransform: 'uppercase', color: '#c8a84b', fontWeight: 700, marginBottom: 14, paddingBottom: 8, borderBottom: '1px solid rgba(200,168,75,.12)' };
-const labelS: React.CSSProperties = { display: 'block', fontFamily: rj, fontSize: 10, letterSpacing: '.5px', textTransform: 'uppercase', color: '#7a8a72', fontWeight: 600, marginBottom: 4 };
-const inputStyle: React.CSSProperties = { width: '100%', background: '#0c1610', border: '1px solid rgba(200,168,75,.2)', color: '#f5f0e8', padding: '7px 9px', fontFamily: rj, fontSize: 12.5, fontWeight: 500, borderRadius: 3, boxSizing: 'border-box' };
-const ghostBtn: React.CSSProperties = { background: 'transparent', color: '#c8a84b', border: '1px solid rgba(200,168,75,.4)', padding: '8px 14px', fontFamily: rj, fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 };
-const goldBtn: React.CSSProperties = { background: '#c8a84b', color: '#08100a', border: 'none', padding: '8px 16px', fontFamily: rj, fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 };
+const card: React.CSSProperties = { background: 'var(--card)', border: '1px solid color-mix(in srgb, var(--acc) 18%, transparent)', padding: '20px 18px', borderRadius: 4, marginBottom: 16 };
+const sectionTitle: React.CSSProperties = { fontFamily: rj, fontSize: 11, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--acc)', fontWeight: 700, marginBottom: 14, paddingBottom: 8, borderBottom: '1px solid color-mix(in srgb, var(--acc) 12%, transparent)' };
+const labelS: React.CSSProperties = { display: 'block', fontFamily: rj, fontSize: 10, letterSpacing: '.5px', textTransform: 'uppercase', color: 'var(--ink3)', fontWeight: 600, marginBottom: 4 };
+const inputStyle: React.CSSProperties = { width: '100%', background: 'var(--bg2)', border: '1px solid color-mix(in srgb, var(--acc) 20%, transparent)', color: 'var(--ink)', padding: '7px 9px', fontFamily: rj, fontSize: 12.5, fontWeight: 500, borderRadius: 3, boxSizing: 'border-box' };
+const ghostBtn: React.CSSProperties = { background: 'transparent', color: 'var(--acc)', border: '1px solid color-mix(in srgb, var(--acc) 40%, transparent)', padding: '8px 14px', fontFamily: rj, fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 };
+const goldBtn: React.CSSProperties = { background: 'var(--acc)', color: 'var(--bg)', border: 'none', padding: '8px 16px', fontFamily: rj, fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 };
 
 const STORAGE_KEY = 'spares';
 const SINGLETON_ID = 'sparesinv';
@@ -138,13 +138,13 @@ export default function SparesPage() {
     <div>
       {/* Header */}
       <div style={{ marginBottom: 24 }}>
-        <div style={{ fontFamily: rj, fontSize: 10, letterSpacing: '2px', textTransform: 'uppercase', color: '#c8a84b', fontWeight: 700, marginBottom: 8 }}>
+        <div style={{ fontFamily: rj, fontSize: 10, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--acc)', fontWeight: 700, marginBottom: 8 }}>
           ⚓ Voyage Hub · Spares Inventory
         </div>
         <h1 style={{ fontFamily: lb, fontSize: 'clamp(22px,3vw,32px)', fontWeight: 700, lineHeight: 1.1, marginBottom: 8 }}>
           Spares <em style={g}>Inventory</em>
         </h1>
-        <p style={{ fontSize: 13, color: '#b0c0a4', lineHeight: 1.6, maxWidth: 720 }}>
+        <p style={{ fontSize: 13, color: 'var(--ink2)', lineHeight: 1.6, maxWidth: 720 }}>
           Track critical spares, stock on board and minimum levels. Items below minimum are flagged for
           reorder. Stored in your browser.
         </p>
@@ -153,7 +153,7 @@ export default function SparesPage() {
       {/* Vessel */}
       <div style={card}>
         <div className="sp-g3" style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 12 }}>
-          <div><label style={labelS}>Vessel</label><input style={inputStyle} value={data.vesselName} onChange={(e) => update('vesselName', e.target.value)} placeholder="MV NEURONAI" /></div>
+          <div><label style={labelS}>Vessel</label><input style={inputStyle} value={data.vesselName} onChange={(e) => update('vesselName', e.target.value)} placeholder="MV OCEAN PIONEER" /></div>
           <div><label style={labelS}>IMO</label><input style={inputStyle} value={data.imo} onChange={(e) => update('imo', e.target.value)} placeholder="9876543" /></div>
         </div>
       </div>
@@ -161,26 +161,26 @@ export default function SparesPage() {
       <div className="action-bar" style={{ display: 'flex', gap: 10, marginBottom: 16, flexWrap: 'wrap', alignItems: 'center' }}>
         <button onClick={openNew} style={goldBtn}>+ Add Spare</button>
         <button onClick={() => window.print()} style={ghostBtn}>🖨️ Print / PDF</button>
-        {saveMsg && <span style={{ color: '#4caf76', fontFamily: rj, fontSize: 12, fontWeight: 600 }}>{saveMsg}</span>}
+        {saveMsg && <span style={{ color: 'var(--ok)', fontFamily: rj, fontSize: 12, fontWeight: 600 }}>{saveMsg}</span>}
       </div>
 
       {/* Summary */}
       <div className="sp-summary" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 10, marginBottom: 16 }}>
-        <KPI label="Items" value={String(summary.total)} color="#f5f0e8" />
-        <KPI label="Below Min" value={String(summary.low)} color={summary.low > 0 ? '#ff8a8a' : '#4caf76'} />
-        <KPI label="Critical Low" value={String(summary.critLow)} color={summary.critLow > 0 ? '#ff6b6b' : '#4caf76'} />
-        <KPI label="Stock Value" value={`$${fmt(summary.value)}`} color="#c8a84b" />
+        <KPI label="Items" value={String(summary.total)} color="var(--ink)" />
+        <KPI label="Below Min" value={String(summary.low)} color={summary.low > 0 ? 'var(--bad)' : 'var(--ok)'} />
+        <KPI label="Critical Low" value={String(summary.critLow)} color={summary.critLow > 0 ? 'var(--bad)' : 'var(--ok)'} />
+        <KPI label="Stock Value" value={`$${fmt(summary.value)}`} color="var(--acc)" />
       </div>
 
       {/* PSF cross-sell */}
-      <div style={{ ...card, background: 'rgba(200,168,75,.05)', borderColor: 'rgba(200,168,75,.3)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
-        <div style={{ fontFamily: rj, fontSize: 12.5, color: '#b0c0a4' }}>🔎 Need to reorder? <b style={{ color: '#c8a84b' }}>Find chandlers & suppliers on PortServiceFinder.</b></div>
+      <div style={{ ...card, background: 'color-mix(in srgb, var(--acc) 5%, transparent)', borderColor: 'color-mix(in srgb, var(--acc) 30%, transparent)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+        <div style={{ fontFamily: rj, fontSize: 12.5, color: 'var(--ink2)' }}>🔎 Need to reorder? <b style={{ color: 'var(--acc)' }}>Find chandlers & suppliers on PortServiceFinder.</b></div>
         <a href="/" style={{ ...ghostBtn, textDecoration: 'none', display: 'inline-block' }}>Search Suppliers →</a>
       </div>
 
       {/* Form */}
       {showForm && editing && (
-        <div style={{ ...card, borderColor: 'rgba(200,168,75,.5)' }}>
+        <div style={{ ...card, borderColor: 'color-mix(in srgb, var(--acc) 50%, transparent)' }}>
           <div style={sectionTitle}>{data.spares.some((s) => s.id === editing.id) ? 'Edit Spare' : 'New Spare'}</div>
           <div className="sp-g3" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 10, marginBottom: 10 }}>
             <div><label style={labelS}>Part Name</label><input style={inputStyle} value={editing.name} onChange={(e) => setEditing({ ...editing, name: e.target.value })} placeholder="Fuel injector" /></div>
@@ -196,8 +196,8 @@ export default function SparesPage() {
           <div className="sp-g3" style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 10, marginBottom: 10 }}>
             <div><label style={labelS}>Supplier</label><input style={inputStyle} value={editing.supplier} onChange={(e) => setEditing({ ...editing, supplier: e.target.value })} placeholder="MAN PrimeServ" /></div>
             <div style={{ display: 'flex', alignItems: 'flex-end' }}>
-              <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', fontFamily: rj, fontSize: 12.5, color: editing.critical ? '#ff8a8a' : '#7a8a72', padding: '7px 0' }}>
-                <input type="checkbox" checked={editing.critical} onChange={(e) => setEditing({ ...editing, critical: e.target.checked })} style={{ width: 16, height: 16, accentColor: '#ff8a8a' }} /> Critical spare
+              <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', fontFamily: rj, fontSize: 12.5, color: editing.critical ? 'var(--bad)' : 'var(--ink3)', padding: '7px 0' }}>
+                <input type="checkbox" checked={editing.critical} onChange={(e) => setEditing({ ...editing, critical: e.target.checked })} style={{ width: 16, height: 16, accentColor: 'var(--bad)' }} /> Critical spare
               </label>
             </div>
           </div>
@@ -225,46 +225,46 @@ export default function SparesPage() {
 
       {/* List */}
       {data.spares.length === 0 && !showForm && (
-        <div style={{ ...card, textAlign: 'center', color: '#7a8a72', fontFamily: rj }}>
-          No spares yet. Tap <b style={{ color: '#c8a84b' }}>+ Add Spare</b> to build your inventory.
+        <div style={{ ...card, textAlign: 'center', color: 'var(--ink3)', fontFamily: rj }}>
+          No spares yet. Tap <b style={{ color: 'var(--acc)' }}>+ Add Spare</b> to build your inventory.
         </div>
       )}
       {data.spares.length > 0 && visible.length === 0 && (
-        <div style={{ ...card, textAlign: 'center', color: '#7a8a72', fontFamily: rj }}>No spares match your filters.</div>
+        <div style={{ ...card, textAlign: 'center', color: 'var(--ink3)', fontFamily: rj }}>No spares match your filters.</div>
       )}
 
       {visible.map((s) => {
         const low = isLow(s);
         const om = ORDER_META[s.order];
         return (
-          <div key={s.id} style={{ ...card, padding: '14px 16px', borderColor: low && s.critical ? 'rgba(255,107,107,.5)' : low ? 'rgba(255,138,138,.3)' : 'rgba(200,168,75,.18)' }}>
+          <div key={s.id} style={{ ...card, padding: '14px 16px', borderColor: low && s.critical ? 'color-mix(in srgb, var(--bad) 50%, transparent)' : low ? 'color-mix(in srgb, var(--bad) 30%, transparent)' : 'color-mix(in srgb, var(--acc) 18%, transparent)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 10, flexWrap: 'wrap' }}>
               <div style={{ minWidth: 200 }}>
-                <div style={{ fontFamily: lb, fontSize: 14.5, fontWeight: 700, color: '#f5f0e8' }}>{s.critical && '🔴 '}{s.name}</div>
-                <div style={{ fontFamily: rj, fontSize: 11, color: '#7a8a72', marginTop: 2, display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                <div style={{ fontFamily: lb, fontSize: 14.5, fontWeight: 700, color: 'var(--ink)' }}>{s.critical && '🔴 '}{s.name}</div>
+                <div style={{ fontFamily: rj, fontSize: 11, color: 'var(--ink3)', marginTop: 2, display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                   {s.equipment && <span>{s.equipment}</span>}
                   {s.partNo && <span>· {s.partNo}</span>}
                   {s.location && <span>· 📍 {s.location}</span>}
                 </div>
-                {s.supplier && <div style={{ fontFamily: rj, fontSize: 10.5, color: '#7a8a72', marginTop: 2 }}>Supplier: {s.supplier}{s.unitPrice ? ` · $${fmt(s.unitPrice)}/unit` : ''}</div>}
+                {s.supplier && <div style={{ fontFamily: rj, fontSize: 10.5, color: 'var(--ink3)', marginTop: 2 }}>Supplier: {s.supplier}{s.unitPrice ? ` · $${fmt(s.unitPrice)}/unit` : ''}</div>}
               </div>
               <div style={{ textAlign: 'right' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 6, justifyContent: 'flex-end' }}>
                   <button onClick={() => quickAdjust(s.id, -1)} style={adjBtn}>−</button>
-                  <span style={{ fontFamily: lb, fontSize: 20, fontWeight: 700, color: low ? '#ff8a8a' : '#4caf76', minWidth: 30, textAlign: 'center' }}>{s.rob}</span>
+                  <span style={{ fontFamily: lb, fontSize: 20, fontWeight: 700, color: low ? 'var(--bad)' : 'var(--ok)', minWidth: 30, textAlign: 'center' }}>{s.rob}</span>
                   <button onClick={() => quickAdjust(s.id, 1)} style={adjBtn}>+</button>
                 </div>
-                <div style={{ fontFamily: rj, fontSize: 10, color: '#7a8a72' }}>min {s.minStock}{low ? ' · ⚠ reorder' : ''}</div>
+                <div style={{ fontFamily: rj, fontSize: 10, color: 'var(--ink3)' }}>min {s.minStock}{low ? ' · ⚠ reorder' : ''}</div>
               </div>
             </div>
 
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 10, marginTop: 10, paddingTop: 8, borderTop: '1px dashed rgba(200,168,75,.12)', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 10, marginTop: 10, paddingTop: 8, borderTop: '1px dashed color-mix(in srgb, var(--acc) 12%, transparent)', flexWrap: 'wrap' }}>
               <button onClick={() => cycleOrder(s.id)} style={{ fontSize: 9, background: om.bg, color: om.color, padding: '3px 10px', borderRadius: 3, fontFamily: rj, fontWeight: 700, letterSpacing: '.5px', border: `1px solid ${om.color}40`, cursor: 'pointer' }}>
                 {s.order === 'none' ? '+ Set order status' : om.label}
               </button>
               <div style={{ display: 'flex', gap: 14 }}>
-                <button onClick={() => openEdit(s)} style={miniBtn('#c8a84b')}>Edit</button>
-                <button onClick={() => delSpare(s.id)} style={miniBtn('#ff8a8a')}>Delete</button>
+                <button onClick={() => openEdit(s)} style={miniBtn('var(--acc)')}>Edit</button>
+                <button onClick={() => delSpare(s.id)} style={miniBtn('var(--bad)')}>Delete</button>
               </div>
             </div>
           </div>
@@ -287,17 +287,17 @@ export default function SparesPage() {
   );
 }
 
-const adjBtn: React.CSSProperties = { background: '#0c1610', border: '1px solid rgba(200,168,75,.25)', color: '#c8a84b', width: 26, height: 26, borderRadius: 3, fontSize: 16, fontWeight: 700, cursor: 'pointer', lineHeight: 1 };
+const adjBtn: React.CSSProperties = { background: 'var(--bg2)', border: '1px solid color-mix(in srgb, var(--acc) 25%, transparent)', color: 'var(--acc)', width: 26, height: 26, borderRadius: 3, fontSize: 16, fontWeight: 700, cursor: 'pointer', lineHeight: 1 };
 function chip(active: boolean): React.CSSProperties {
-  return { padding: '5px 12px', background: active ? '#c8a84b' : 'transparent', color: active ? '#08100a' : '#7a8a72', border: `1px solid ${active ? '#c8a84b' : 'rgba(200,168,75,.25)'}`, fontFamily: rj, fontSize: 10, letterSpacing: '.5px', fontWeight: 700, cursor: 'pointer', borderRadius: 4 };
+  return { padding: '5px 12px', background: active ? 'var(--acc)' : 'transparent', color: active ? 'var(--bg)' : 'var(--ink3)', border: `1px solid ${active ? 'var(--acc)' : 'color-mix(in srgb, var(--acc) 25%, transparent)'}`, fontFamily: rj, fontSize: 10, letterSpacing: '.5px', fontWeight: 700, cursor: 'pointer', borderRadius: 4 };
 }
 function miniBtn(color: string): React.CSSProperties {
   return { background: 'transparent', border: 'none', color, fontFamily: rj, fontSize: 10.5, cursor: 'pointer', letterSpacing: '.5px', textTransform: 'uppercase', fontWeight: 700, padding: 0 };
 }
 function KPI({ label: l, value, color }: { label: string; value: string; color: string }) {
   return (
-    <div style={{ background: '#0c1610', border: '1px solid rgba(200,168,75,.2)', borderRadius: 4, padding: '12px 10px', textAlign: 'center' }}>
-      <div style={{ fontFamily: rj, fontSize: 9, letterSpacing: '1px', textTransform: 'uppercase', color: '#7a8a72', fontWeight: 700 }}>{l}</div>
+    <div style={{ background: 'var(--bg2)', border: '1px solid color-mix(in srgb, var(--acc) 20%, transparent)', borderRadius: 4, padding: '12px 10px', textAlign: 'center' }}>
+      <div style={{ fontFamily: rj, fontSize: 9, letterSpacing: '1px', textTransform: 'uppercase', color: 'var(--ink3)', fontWeight: 700 }}>{l}</div>
       <div style={{ fontFamily: lb, fontSize: 22, fontWeight: 700, color, marginTop: 4 }}>{value}</div>
     </div>
   );

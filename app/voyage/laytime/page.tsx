@@ -3,9 +3,9 @@ import { useState, useEffect, useMemo } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { saveItem, loadItem, genId } from '@/lib/voyage-storage';
 
-const lb = "'Libre Bodoni', serif";
-const rj = "'Rajdhani', sans-serif";
-const g = { color: '#c8a84b', fontStyle: 'italic' };
+const lb = 'var(--font-display)';
+const rj = 'var(--font-ui)';
+const g = { color: 'var(--acc)' };
 
 // ============================================================
 // TYPES
@@ -226,8 +226,8 @@ function fmtMoney(n: number): string {
 // STYLES
 // ============================================================
 const card: React.CSSProperties = {
-  background: '#111c13',
-  border: '1px solid rgba(200,168,75,.18)',
+  background: 'var(--card)',
+  border: '1px solid color-mix(in srgb, var(--acc) 18%, transparent)',
   padding: '20px 18px',
   borderRadius: 4,
   marginBottom: 16,
@@ -237,11 +237,11 @@ const sectionTitle: React.CSSProperties = {
   fontSize: 11,
   letterSpacing: '2px',
   textTransform: 'uppercase',
-  color: '#c8a84b',
+  color: 'var(--acc)',
   fontWeight: 700,
   marginBottom: 14,
   paddingBottom: 8,
-  borderBottom: '1px solid rgba(200,168,75,.12)',
+  borderBottom: '1px solid color-mix(in srgb, var(--acc) 12%, transparent)',
 };
 const label: React.CSSProperties = {
   display: 'block',
@@ -249,15 +249,15 @@ const label: React.CSSProperties = {
   fontSize: 10.5,
   letterSpacing: '.5px',
   textTransform: 'uppercase',
-  color: '#7a8a72',
+  color: 'var(--ink3)',
   fontWeight: 600,
   marginBottom: 5,
 };
 const inputStyle: React.CSSProperties = {
   width: '100%',
-  background: '#0c1610',
-  border: '1px solid rgba(200,168,75,.2)',
-  color: '#f5f0e8',
+  background: 'var(--bg2)',
+  border: '1px solid color-mix(in srgb, var(--acc) 20%, transparent)',
+  color: 'var(--ink)',
   padding: '8px 10px',
   fontFamily: rj,
   fontSize: 13,
@@ -398,7 +398,7 @@ export default function LaytimeCalculatorPage() {
             fontSize: 10,
             letterSpacing: '2px',
             textTransform: 'uppercase',
-            color: '#c8a84b',
+            color: 'var(--acc)',
             fontWeight: 700,
             marginBottom: 8,
           }}
@@ -416,7 +416,7 @@ export default function LaytimeCalculatorPage() {
         >
           Laytime, Demurrage & <em style={g}>Despatch</em>
         </h1>
-        <p style={{ fontSize: 13, color: '#b0c0a4', lineHeight: 1.6, maxWidth: 720 }}>
+        <p style={{ fontSize: 13, color: 'var(--ink2)', lineHeight: 1.6, maxWidth: 720 }}>
           Track NOR, loading/discharge events, allowed laytime, and auto-calculate demurrage or
           despatch. Supports SHEX, SHINC, WIPON, and standard charter party terms.
         </p>
@@ -430,9 +430,9 @@ export default function LaytimeCalculatorPage() {
         <button
           onClick={() => setView(view === 'input' ? 'report' : 'input')}
           style={{
-            background: view === 'report' ? 'transparent' : '#c8a84b',
-            color: view === 'report' ? '#c8a84b' : '#08100a',
-            border: '1px solid #c8a84b',
+            background: view === 'report' ? 'transparent' : 'var(--acc)',
+            color: view === 'report' ? 'var(--acc)' : 'var(--bg)',
+            border: '1px solid var(--acc)',
             padding: '8px 16px',
             fontFamily: rj,
             fontSize: 11,
@@ -451,16 +451,16 @@ export default function LaytimeCalculatorPage() {
         <button onClick={handlePrint} style={ghostBtn}>
           🖨️ Print / PDF
         </button>
-        <button onClick={handleReset} style={{ ...ghostBtn, color: '#ff8a8a', borderColor: 'rgba(255,138,138,.3)' }}>
+        <button onClick={handleReset} style={{ ...ghostBtn, color: 'var(--bad)', borderColor: 'color-mix(in srgb, var(--bad) 30%, transparent)' }}>
           🗑️ Reset
         </button>
         {saveMsg && (
-          <span style={{ color: '#4caf76', fontFamily: rj, fontSize: 12, fontWeight: 600 }}>
+          <span style={{ color: 'var(--ok)', fontFamily: rj, fontSize: 12, fontWeight: 600 }}>
             {saveMsg}
           </span>
         )}
         {recordName && (
-          <span style={{ color: '#7a8a72', fontFamily: rj, fontSize: 11, marginLeft: 'auto' }}>
+          <span style={{ color: 'var(--ink3)', fontFamily: rj, fontSize: 11, marginLeft: 'auto' }}>
             📂 {recordName}
           </span>
         )}
@@ -468,21 +468,21 @@ export default function LaytimeCalculatorPage() {
 
       {/* Save Dialog */}
       {showSave && (
-        <div style={{ ...card, background: 'rgba(200,168,75,.05)', borderColor: 'rgba(200,168,75,.4)' }}>
+        <div style={{ ...card, background: 'color-mix(in srgb, var(--acc) 5%, transparent)', borderColor: 'color-mix(in srgb, var(--acc) 40%, transparent)' }}>
           <label style={label}>Name</label>
           <input
             type="text"
             value={recordName}
             onChange={(e) => setRecordName(e.target.value)}
-            placeholder="e.g. MV NEURONAI — Tubarão Loading"
+            placeholder="e.g. MV OCEAN PIONEER — Tubarão Loading"
             style={{ ...inputStyle, marginBottom: 10 }}
           />
           <div style={{ display: 'flex', gap: 8 }}>
             <button
               onClick={handleSave}
               style={{
-                background: '#c8a84b',
-                color: '#08100a',
+                background: 'var(--acc)',
+                color: 'var(--bg)',
                 border: 'none',
                 padding: '8px 14px',
                 fontFamily: rj,
@@ -519,7 +519,7 @@ export default function LaytimeCalculatorPage() {
                   type="text"
                   value={data.vesselName}
                   onChange={(e) => update('vesselName', e.target.value)}
-                  placeholder="MV NEURONAI"
+                  placeholder="MV OCEAN PIONEER"
                 />
               </div>
               <div>
@@ -594,7 +594,7 @@ export default function LaytimeCalculatorPage() {
                   onChange={(e) => update('allowedLaytimeHours', parseFloat(e.target.value) || 0)}
                   placeholder="72"
                 />
-                <span style={{ fontSize: 10, color: '#7a8a72', fontFamily: rj }}>
+                <span style={{ fontSize: 10, color: 'var(--ink3)', fontFamily: rj }}>
                   = {fmt(data.allowedLaytimeHours / 24, 2)} days
                 </span>
               </div>
@@ -662,8 +662,8 @@ export default function LaytimeCalculatorPage() {
               </div>
             </div>
             {data.despatchType !== 'none' && (
-              <p style={{ fontSize: 11, color: '#7a8a72', marginTop: 8, fontFamily: rj }}>
-                Despatch rate: <strong style={{ color: '#c8a84b' }}>
+              <p style={{ fontSize: 11, color: 'var(--ink3)', marginTop: 8, fontFamily: rj }}>
+                Despatch rate: <strong style={{ color: 'var(--acc)' }}>
                   {fmtMoney(data.despatchType === 'half' ? data.demurrageRate / 2 : data.demurrageRate)}/day
                 </strong>
               </p>
@@ -678,9 +678,9 @@ export default function LaytimeCalculatorPage() {
               <button
                 onClick={addStandardSequence}
                 style={{
-                  background: 'rgba(200,168,75,.12)',
-                  color: '#c8a84b',
-                  border: '1px solid rgba(200,168,75,.4)',
+                  background: 'color-mix(in srgb, var(--acc) 12%, transparent)',
+                  color: 'var(--acc)',
+                  border: '1px solid color-mix(in srgb, var(--acc) 40%, transparent)',
                   padding: '7px 12px',
                   fontFamily: rj,
                   fontSize: 11,
@@ -721,13 +721,13 @@ export default function LaytimeCalculatorPage() {
                 style={{
                   padding: '24px 14px',
                   textAlign: 'center',
-                  border: '1px dashed rgba(200,168,75,.25)',
+                  border: '1px dashed color-mix(in srgb, var(--acc) 25%, transparent)',
                   borderRadius: 4,
-                  color: '#7a8a72',
+                  color: 'var(--ink3)',
                   fontSize: 12,
                 }}
               >
-                No events yet. Click <strong style={{ color: '#c8a84b' }}>&quot;Add Standard Sequence&quot;</strong> for a quick start, or add individual events above.
+                No events yet. Click <strong style={{ color: 'var(--acc)' }}>&quot;Add Standard Sequence&quot;</strong> for a quick start, or add individual events above.
               </div>
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
@@ -737,8 +737,8 @@ export default function LaytimeCalculatorPage() {
                     <div
                       key={evt.id}
                       style={{
-                        background: '#0c1610',
-                        border: `1px solid ${evt.counts ? 'rgba(200,168,75,.18)' : 'rgba(255,138,138,.2)'}`,
+                        background: 'var(--bg2)',
+                        border: `1px solid ${evt.counts ? 'color-mix(in srgb, var(--acc) 18%, transparent)' : 'color-mix(in srgb, var(--bad) 20%, transparent)'}`,
                         padding: 12,
                         borderRadius: 3,
                       }}
@@ -778,8 +778,8 @@ export default function LaytimeCalculatorPage() {
                           onClick={() => deleteEvent(evt.id)}
                           style={{
                             background: 'transparent',
-                            border: '1px solid rgba(255,138,138,.3)',
-                            color: '#ff8a8a',
+                            border: '1px solid color-mix(in srgb, var(--bad) 30%, transparent)',
+                            color: 'var(--bad)',
                             padding: '6px 10px',
                             fontFamily: rj,
                             fontSize: 11,
@@ -800,7 +800,7 @@ export default function LaytimeCalculatorPage() {
                             cursor: 'pointer',
                             fontFamily: rj,
                             fontSize: 11,
-                            color: evt.counts ? '#4caf76' : '#ff8a8a',
+                            color: evt.counts ? 'var(--ok)' : 'var(--bad)',
                             fontWeight: 600,
                           }}
                         >
@@ -845,8 +845,8 @@ export default function LaytimeCalculatorPage() {
             <div
               style={{
                 ...card,
-                background: 'linear-gradient(135deg,rgba(200,168,75,.08),transparent)',
-                borderColor: 'rgba(200,168,75,.4)',
+                background: 'linear-gradient(135deg,color-mix(in srgb, var(--acc) 8%, transparent),transparent)',
+                borderColor: 'color-mix(in srgb, var(--acc) 40%, transparent)',
               }}
             >
               <div style={sectionTitle}>⚡ Quick Result Preview</div>
@@ -857,18 +857,18 @@ export default function LaytimeCalculatorPage() {
                   gap: 14,
                 }}
               >
-                <KpiBox label="Allowed" value={fmt(calc.allowedDays, 2) + ' days'} color="#f5f0e8" sub={`${data.allowedLaytimeHours} hours`} />
-                <KpiBox label="Used (Counted)" value={fmt(calc.countedDays, 2) + ' days'} color="#f5f0e8" sub={fmtDuration(calc.countedHours)} />
+                <KpiBox label="Allowed" value={fmt(calc.allowedDays, 2) + ' days'} color="var(--ink)" sub={`${data.allowedLaytimeHours} hours`} />
+                <KpiBox label="Used (Counted)" value={fmt(calc.countedDays, 2) + ' days'} color="var(--ink)" sub={fmtDuration(calc.countedHours)} />
                 <KpiBox
                   label={calc.isDemurrage ? 'Demurrage' : 'Despatch Saved'}
                   value={fmt(Math.abs(calc.balance), 2) + ' days'}
-                  color={calc.isDemurrage ? '#ff8a8a' : '#4caf76'}
+                  color={calc.isDemurrage ? 'var(--bad)' : 'var(--ok)'}
                   sub={calc.isDemurrage ? '(over allowed)' : '(under allowed)'}
                 />
                 <KpiBox
                   label={calc.isDemurrage ? 'Demurrage Due' : 'Despatch Due'}
                   value={fmtMoney(calc.claimAmount)}
-                  color="#c8a84b"
+                  color="var(--acc)"
                   sub={calc.isDemurrage ? 'Charterer pays' : 'Charterer earns'}
                   big
                 />
@@ -877,8 +877,8 @@ export default function LaytimeCalculatorPage() {
                 onClick={() => setView('report')}
                 style={{
                   marginTop: 16,
-                  background: '#c8a84b',
-                  color: '#08100a',
+                  background: 'var(--acc)',
+                  color: 'var(--bg)',
                   border: 'none',
                   padding: '10px 22px',
                   fontFamily: rj,
@@ -926,7 +926,7 @@ function ReportView({ data, calc }: { data: LaytimeData; calc: ReturnType<typeof
     display: 'flex',
     justifyContent: 'space-between',
     padding: '8px 0',
-    borderBottom: '1px dashed rgba(200,168,75,.1)',
+    borderBottom: '1px dashed color-mix(in srgb, var(--acc) 10%, transparent)',
     fontFamily: rj,
     fontSize: 13,
   };
@@ -934,17 +934,17 @@ function ReportView({ data, calc }: { data: LaytimeData; calc: ReturnType<typeof
   return (
     <div>
       {/* Header */}
-      <div style={{ ...card, background: 'linear-gradient(135deg,rgba(200,168,75,.08),transparent)', borderColor: '#c8a84b', textAlign: 'center', padding: '24px 20px' }}>
-        <div style={{ fontFamily: rj, fontSize: 11, letterSpacing: '3px', textTransform: 'uppercase', color: '#c8a84b', fontWeight: 700, marginBottom: 12 }}>
+      <div style={{ ...card, background: 'linear-gradient(135deg,color-mix(in srgb, var(--acc) 8%, transparent),transparent)', borderColor: 'var(--acc)', textAlign: 'center', padding: '24px 20px' }}>
+        <div style={{ fontFamily: rj, fontSize: 11, letterSpacing: '3px', textTransform: 'uppercase', color: 'var(--acc)', fontWeight: 700, marginBottom: 12 }}>
           ⏱️ Statement of Facts & Laytime Calculation
         </div>
         <h2 style={{ fontFamily: lb, fontSize: 24, fontWeight: 700, marginBottom: 6 }}>
           {data.vesselName || 'Vessel Name'}
         </h2>
-        <div style={{ fontSize: 13, color: '#b0c0a4', marginBottom: 4 }}>
+        <div style={{ fontSize: 13, color: 'var(--ink2)', marginBottom: 4 }}>
           {data.port || '—'} · {data.operation === 'loading' ? 'LOADING' : data.operation === 'discharging' ? 'DISCHARGING' : 'BOTH'} · {data.cargoType || '—'}
         </div>
-        <div style={{ fontSize: 11, color: '#7a8a72', fontFamily: rj }}>
+        <div style={{ fontSize: 11, color: 'var(--ink3)', fontFamily: rj }}>
           {data.cargoQty > 0 && `Cargo: ${data.cargoQty.toLocaleString()} MT · `}
           Voyage {data.voyage || '—'}
         </div>
@@ -954,30 +954,30 @@ function ReportView({ data, calc }: { data: LaytimeData; calc: ReturnType<typeof
       <div style={card}>
         <div style={sectionTitle}>📋 Charter Party Terms</div>
         <div style={reportRow}>
-          <span style={{ color: '#7a8a72' }}>Allowed Laytime</span>
+          <span style={{ color: 'var(--ink3)' }}>Allowed Laytime</span>
           <strong>{data.allowedLaytimeHours} hours ({fmt(calc.allowedDays, 2)} days)</strong>
         </div>
         <div style={reportRow}>
-          <span style={{ color: '#7a8a72' }}>Laytime Terms</span>
+          <span style={{ color: 'var(--ink3)' }}>Laytime Terms</span>
           <strong>{data.laytimeTerms}</strong>
         </div>
         <div style={reportRow}>
-          <span style={{ color: '#7a8a72' }}>NOR Conditions</span>
+          <span style={{ color: 'var(--ink3)' }}>NOR Conditions</span>
           <strong>{data.norConditions}</strong>
         </div>
         <div style={reportRow}>
-          <span style={{ color: '#7a8a72' }}>Demurrage Rate</span>
+          <span style={{ color: 'var(--ink3)' }}>Demurrage Rate</span>
           <strong>{fmtMoney(data.demurrageRate)}/day</strong>
         </div>
         <div style={reportRow}>
-          <span style={{ color: '#7a8a72' }}>Despatch Rate</span>
+          <span style={{ color: 'var(--ink3)' }}>Despatch Rate</span>
           <strong>
             {data.despatchType === 'none' ? 'None' : fmtMoney(data.despatchType === 'half' ? data.demurrageRate / 2 : data.demurrageRate) + '/day'}
             {data.despatchType !== 'none' && ` (${data.despatchType === 'half' ? '50%' : '100%'})`}
           </strong>
         </div>
         <div style={{ ...reportRow, borderBottom: 'none' }}>
-          <span style={{ color: '#7a8a72' }}>Time Bar for Claim</span>
+          <span style={{ color: 'var(--ink3)' }}>Time Bar for Claim</span>
           <strong>{data.timeBarDays} days from completion</strong>
         </div>
       </div>
@@ -986,13 +986,13 @@ function ReportView({ data, calc }: { data: LaytimeData; calc: ReturnType<typeof
       <div style={card}>
         <div style={sectionTitle}>📅 Statement of Facts (Events Timeline)</div>
         {calc.sortedEvents.length === 0 ? (
-          <p style={{ color: '#7a8a72', fontSize: 12, textAlign: 'center', padding: 20 }}>
+          <p style={{ color: 'var(--ink3)', fontSize: 12, textAlign: 'center', padding: 20 }}>
             No events recorded
           </p>
         ) : (
           <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: rj, fontSize: 12 }}>
             <thead>
-              <tr style={{ borderBottom: '2px solid rgba(200,168,75,.3)' }}>
+              <tr style={{ borderBottom: '2px solid color-mix(in srgb, var(--acc) 30%, transparent)' }}>
                 <th style={th}>Date / Time</th>
                 <th style={th}>Event</th>
                 <th style={th}>Description</th>
@@ -1001,13 +1001,13 @@ function ReportView({ data, calc }: { data: LaytimeData; calc: ReturnType<typeof
             </thead>
             <tbody>
               {calc.sortedEvents.map((evt) => (
-                <tr key={evt.id} style={{ borderBottom: '1px solid rgba(200,168,75,.08)' }}>
+                <tr key={evt.id} style={{ borderBottom: '1px solid color-mix(in srgb, var(--acc) 8%, transparent)' }}>
                   <td style={{ ...td, whiteSpace: 'nowrap' }}>
                     {evt.datetime ? new Date(evt.datetime).toLocaleString('en-GB', { dateStyle: 'short', timeStyle: 'short' }) : '—'}
                   </td>
-                  <td style={{ ...td, color: '#c8a84b', fontWeight: 600 }}>{EVENT_LABELS[evt.type]}</td>
+                  <td style={{ ...td, color: 'var(--acc)', fontWeight: 600 }}>{EVENT_LABELS[evt.type]}</td>
                   <td style={td}>{evt.description}</td>
-                  <td style={{ ...td, color: evt.counts ? '#4caf76' : '#ff8a8a', fontSize: 10.5, fontWeight: 600 }}>
+                  <td style={{ ...td, color: evt.counts ? 'var(--ok)' : 'var(--bad)', fontSize: 10.5, fontWeight: 600 }}>
                     {evt.counts ? '✓ COUNTS' : `✕ EXCLUDED${evt.excludedReason ? ` (${evt.excludedReason})` : ''}`}
                   </td>
                 </tr>
@@ -1022,45 +1022,45 @@ function ReportView({ data, calc }: { data: LaytimeData; calc: ReturnType<typeof
         style={{
           ...card,
           background: calc.isDemurrage
-            ? 'linear-gradient(135deg,rgba(255,138,138,.06),transparent)'
-            : 'linear-gradient(135deg,rgba(76,175,118,.06),transparent)',
-          borderColor: calc.isDemurrage ? 'rgba(255,138,138,.4)' : 'rgba(76,175,118,.4)',
+            ? 'linear-gradient(135deg,color-mix(in srgb, var(--bad) 6%, transparent),transparent)'
+            : 'linear-gradient(135deg,color-mix(in srgb, var(--ok) 6%, transparent),transparent)',
+          borderColor: calc.isDemurrage ? 'color-mix(in srgb, var(--bad) 40%, transparent)' : 'color-mix(in srgb, var(--ok) 40%, transparent)',
         }}
       >
         <div style={sectionTitle}>⏱️ Laytime Calculation Summary</div>
         <div style={reportRow}>
-          <span style={{ color: '#7a8a72' }}>Laytime Commenced</span>
+          <span style={{ color: 'var(--ink3)' }}>Laytime Commenced</span>
           <strong>{calc.laytimeStart ? new Date(calc.laytimeStart).toLocaleString('en-GB') : '—'}</strong>
         </div>
         <div style={reportRow}>
-          <span style={{ color: '#7a8a72' }}>Laytime Completed</span>
+          <span style={{ color: 'var(--ink3)' }}>Laytime Completed</span>
           <strong>{calc.laytimeEnd ? new Date(calc.laytimeEnd).toLocaleString('en-GB') : '—'}</strong>
         </div>
         <div style={reportRow}>
-          <span style={{ color: '#7a8a72' }}>Total Elapsed Time</span>
+          <span style={{ color: 'var(--ink3)' }}>Total Elapsed Time</span>
           <strong>{fmtDuration(calc.totalHours)}</strong>
         </div>
         <div style={reportRow}>
-          <span style={{ color: '#7a8a72' }}>Time Excluded</span>
-          <strong style={{ color: '#7a8a72' }}>{fmtDuration(calc.excludedHours)}</strong>
+          <span style={{ color: 'var(--ink3)' }}>Time Excluded</span>
+          <strong style={{ color: 'var(--ink3)' }}>{fmtDuration(calc.excludedHours)}</strong>
         </div>
         <div style={reportRow}>
-          <span style={{ color: '#7a8a72' }}>Time Counted</span>
+          <span style={{ color: 'var(--ink3)' }}>Time Counted</span>
           <strong>{fmtDuration(calc.countedHours)} ({fmt(calc.countedDays, 3)} days)</strong>
         </div>
         <div style={reportRow}>
-          <span style={{ color: '#7a8a72' }}>Allowed Laytime</span>
+          <span style={{ color: 'var(--ink3)' }}>Allowed Laytime</span>
           <strong>{fmt(calc.allowedDays, 2)} days</strong>
         </div>
         <div style={reportRow}>
-          <span style={{ color: '#7a8a72' }}>Loading Rate Achieved</span>
+          <span style={{ color: 'var(--ink3)' }}>Loading Rate Achieved</span>
           <strong>{calc.loadingRate > 0 ? `${fmt(calc.loadingRate, 0)} MT/day` : '—'}</strong>
         </div>
-        <div style={{ ...reportRow, borderBottom: 'none', borderTop: '2px solid', borderTopColor: calc.isDemurrage ? '#ff8a8a' : '#4caf76', paddingTop: 14, marginTop: 10 }}>
+        <div style={{ ...reportRow, borderBottom: 'none', borderTop: '2px solid', borderTopColor: calc.isDemurrage ? 'var(--bad)' : 'var(--ok)', paddingTop: 14, marginTop: 10 }}>
           <span style={{ fontSize: 15, fontWeight: 700 }}>
             {calc.isDemurrage ? 'TIME ON DEMURRAGE' : 'TIME SAVED (DESPATCH)'}
           </span>
-          <strong style={{ fontFamily: lb, fontSize: 20, color: calc.isDemurrage ? '#ff8a8a' : '#4caf76' }}>
+          <strong style={{ fontFamily: lb, fontSize: 20, color: calc.isDemurrage ? 'var(--bad)' : 'var(--ok)' }}>
             {fmt(Math.abs(calc.balance), 3)} days
           </strong>
         </div>
@@ -1070,8 +1070,8 @@ function ReportView({ data, calc }: { data: LaytimeData; calc: ReturnType<typeof
       <div
         style={{
           ...card,
-          background: 'linear-gradient(135deg,rgba(200,168,75,.12),transparent)',
-          borderColor: '#c8a84b',
+          background: 'linear-gradient(135deg,color-mix(in srgb, var(--acc) 12%, transparent),transparent)',
+          borderColor: 'var(--acc)',
           padding: '24px 20px',
           textAlign: 'center',
         }}
@@ -1087,16 +1087,16 @@ function ReportView({ data, calc }: { data: LaytimeData; calc: ReturnType<typeof
         >
           💰 {calc.isDemurrage ? 'Demurrage Due (Charterer Pays Owner)' : 'Despatch Due (Owner Pays Charterer)'}
         </div>
-        <div style={{ fontFamily: lb, fontSize: 36, fontWeight: 700, color: '#c8a84b', marginBottom: 8 }}>
+        <div style={{ fontFamily: lb, fontSize: 36, fontWeight: 700, color: 'var(--acc)', marginBottom: 8 }}>
           {fmtMoney(calc.claimAmount)}
         </div>
-        <p style={{ fontSize: 12, color: '#b0c0a4', fontFamily: rj }}>
+        <p style={{ fontSize: 12, color: 'var(--ink2)', fontFamily: rj }}>
           {calc.isDemurrage
             ? `${fmt(Math.abs(calc.balance), 3)} days × ${fmtMoney(data.demurrageRate)}/day`
             : `${fmt(calc.balance, 3)} days × ${fmtMoney(data.despatchType === 'half' ? data.demurrageRate / 2 : data.demurrageRate)}/day`}
         </p>
         {calc.laytimeEnd && (
-          <p style={{ fontSize: 11, color: '#ff8a8a', fontFamily: rj, marginTop: 10, fontWeight: 600 }}>
+          <p style={{ fontSize: 11, color: 'var(--bad)', fontFamily: rj, marginTop: 10, fontWeight: 600 }}>
             ⚠ Time bar:{' '}
             {new Date(new Date(calc.laytimeEnd).getTime() + data.timeBarDays * 24 * 3600 * 1000).toLocaleDateString('en-GB')}
             {' '}({data.timeBarDays} days from completion)
@@ -1108,7 +1108,7 @@ function ReportView({ data, calc }: { data: LaytimeData; calc: ReturnType<typeof
       {data.notes && (
         <div style={card}>
           <div style={sectionTitle}>📝 Notes</div>
-          <p style={{ fontSize: 13, color: '#b0c0a4', lineHeight: 1.7, whiteSpace: 'pre-wrap' }}>{data.notes}</p>
+          <p style={{ fontSize: 13, color: 'var(--ink2)', lineHeight: 1.7, whiteSpace: 'pre-wrap' }}>{data.notes}</p>
         </div>
       )}
 
@@ -1117,13 +1117,13 @@ function ReportView({ data, calc }: { data: LaytimeData; calc: ReturnType<typeof
         style={{
           marginTop: 20,
           padding: '14px 16px',
-          background: 'rgba(200,168,75,.04)',
-          border: '1px solid rgba(200,168,75,.12)',
+          background: 'color-mix(in srgb, var(--acc) 4%, transparent)',
+          border: '1px solid color-mix(in srgb, var(--acc) 12%, transparent)',
           borderRadius: 4,
           textAlign: 'center',
           fontFamily: rj,
           fontSize: 11,
-          color: '#7a8a72',
+          color: 'var(--ink3)',
           letterSpacing: '.5px',
         }}
       >
@@ -1141,8 +1141,8 @@ function ReportView({ data, calc }: { data: LaytimeData; calc: ReturnType<typeof
 // ============================================================
 const ghostBtn: React.CSSProperties = {
   background: 'transparent',
-  color: '#c8a84b',
-  border: '1px solid rgba(200,168,75,.4)',
+  color: 'var(--acc)',
+  border: '1px solid color-mix(in srgb, var(--acc) 40%, transparent)',
   padding: '8px 14px',
   fontFamily: rj,
   fontSize: 11,
@@ -1154,8 +1154,8 @@ const ghostBtn: React.CSSProperties = {
 };
 const addBtn: React.CSSProperties = {
   background: 'transparent',
-  color: '#7a8a72',
-  border: '1px solid rgba(200,168,75,.2)',
+  color: 'var(--ink3)',
+  border: '1px solid color-mix(in srgb, var(--acc) 20%, transparent)',
   padding: '7px 11px',
   fontFamily: rj,
   fontSize: 10.5,
@@ -1170,12 +1170,12 @@ const th: React.CSSProperties = {
   fontSize: 10.5,
   letterSpacing: '1px',
   textTransform: 'uppercase',
-  color: '#c8a84b',
+  color: 'var(--acc)',
   fontWeight: 700,
 };
 const td: React.CSSProperties = {
   padding: '10px 8px',
-  color: '#b0c0a4',
+  color: 'var(--ink2)',
 };
 
 function KpiBox({
@@ -1194,9 +1194,9 @@ function KpiBox({
   return (
     <div
       style={{
-        background: '#0c1610',
+        background: 'var(--bg2)',
         padding: '12px 14px',
-        border: '1px solid rgba(200,168,75,.15)',
+        border: '1px solid color-mix(in srgb, var(--acc) 15%, transparent)',
         borderRadius: 3,
       }}
     >
@@ -1204,7 +1204,7 @@ function KpiBox({
         style={{
           fontFamily: rj,
           fontSize: 10,
-          color: '#7a8a72',
+          color: 'var(--ink3)',
           textTransform: 'uppercase',
           letterSpacing: '1px',
           marginBottom: 6,
@@ -1217,7 +1217,7 @@ function KpiBox({
         {value}
       </div>
       {sub && (
-        <div style={{ fontFamily: rj, fontSize: 10.5, color: '#b0c0a4', marginTop: 4, fontWeight: 500 }}>
+        <div style={{ fontFamily: rj, fontSize: 10.5, color: 'var(--ink2)', marginTop: 4, fontWeight: 500 }}>
           {sub}
         </div>
       )}

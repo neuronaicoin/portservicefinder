@@ -3,9 +3,9 @@ import { useState, useEffect, useMemo } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { saveItem, loadItem, genId } from '@/lib/voyage-storage';
 
-const lb = "'Libre Bodoni', serif";
-const rj = "'Rajdhani', sans-serif";
-const g = { color: '#c8a84b', fontStyle: 'italic' };
+const lb = 'var(--font-display)';
+const rj = 'var(--font-ui)';
+const g = { color: 'var(--acc)' };
 
 // ============================================================
 // TYPES
@@ -220,8 +220,8 @@ function fmtMoney(n: number): string {
 // STYLES
 // ============================================================
 const card: React.CSSProperties = {
-  background: '#111c13',
-  border: '1px solid rgba(200,168,75,.18)',
+  background: 'var(--card)',
+  border: '1px solid color-mix(in srgb, var(--acc) 18%, transparent)',
   padding: '20px 18px',
   borderRadius: 4,
   marginBottom: 16,
@@ -231,11 +231,11 @@ const sectionTitle: React.CSSProperties = {
   fontSize: 11,
   letterSpacing: '2px',
   textTransform: 'uppercase',
-  color: '#c8a84b',
+  color: 'var(--acc)',
   fontWeight: 700,
   marginBottom: 14,
   paddingBottom: 8,
-  borderBottom: '1px solid rgba(200,168,75,.12)',
+  borderBottom: '1px solid color-mix(in srgb, var(--acc) 12%, transparent)',
 };
 const label: React.CSSProperties = {
   display: 'block',
@@ -243,15 +243,15 @@ const label: React.CSSProperties = {
   fontSize: 10.5,
   letterSpacing: '.5px',
   textTransform: 'uppercase',
-  color: '#7a8a72',
+  color: 'var(--ink3)',
   fontWeight: 600,
   marginBottom: 5,
 };
 const inputStyle: React.CSSProperties = {
   width: '100%',
-  background: '#0c1610',
-  border: '1px solid rgba(200,168,75,.2)',
-  color: '#f5f0e8',
+  background: 'var(--bg2)',
+  border: '1px solid color-mix(in srgb, var(--acc) 20%, transparent)',
+  color: 'var(--ink)',
   padding: '8px 10px',
   fontFamily: rj,
   fontSize: 13,
@@ -260,8 +260,8 @@ const inputStyle: React.CSSProperties = {
 };
 const ghostBtn: React.CSSProperties = {
   background: 'transparent',
-  color: '#c8a84b',
-  border: '1px solid rgba(200,168,75,.4)',
+  color: 'var(--acc)',
+  border: '1px solid color-mix(in srgb, var(--acc) 40%, transparent)',
   padding: '8px 14px',
   fontFamily: rj,
   fontSize: 11,
@@ -372,13 +372,13 @@ export default function VoyageTrackerPage() {
     <div>
       {/* Header */}
       <div style={{ marginBottom: 24 }}>
-        <div style={{ fontFamily: rj, fontSize: 10, letterSpacing: '2px', textTransform: 'uppercase', color: '#c8a84b', fontWeight: 700, marginBottom: 8 }}>
+        <div style={{ fontFamily: rj, fontSize: 10, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--acc)', fontWeight: 700, marginBottom: 8 }}>
           📈 Voyage Hub · Voyage Tracker
         </div>
         <h1 style={{ fontFamily: lb, fontSize: 'clamp(22px,3vw,32px)', fontWeight: 700, lineHeight: 1.1, marginBottom: 8 }}>
           Voyage <em style={g}>Performance</em> Tracker
         </h1>
-        <p style={{ fontSize: 13, color: '#b0c0a4', lineHeight: 1.6, maxWidth: 720 }}>
+        <p style={{ fontSize: 13, color: 'var(--ink2)', lineHeight: 1.6, maxWidth: 720 }}>
           Set up your voyage, add daily noon reports, and get automatic performance analysis vs
           Charter Party warranties. Predicted ETA updates with each report.
         </p>
@@ -386,28 +386,28 @@ export default function VoyageTrackerPage() {
 
       {/* Action Bar */}
       <div className="action-bar" style={{ display: 'flex', gap: 10, marginBottom: 22, flexWrap: 'wrap', alignItems: 'center' }}>
-        <button onClick={() => setShowSave(true)} style={{ background: '#c8a84b', color: '#08100a', border: 'none', padding: '8px 16px', fontFamily: rj, fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 }}>
+        <button onClick={() => setShowSave(true)} style={{ background: 'var(--acc)', color: 'var(--bg)', border: 'none', padding: '8px 16px', fontFamily: rj, fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 }}>
           💾 Save
         </button>
         <button onClick={handlePrint} style={ghostBtn}>🖨️ Print / PDF</button>
-        <button onClick={handleReset} style={{ ...ghostBtn, color: '#ff8a8a', borderColor: 'rgba(255,138,138,.3)' }}>🗑️ Reset</button>
-        {saveMsg && <span style={{ color: '#4caf76', fontFamily: rj, fontSize: 12, fontWeight: 600 }}>{saveMsg}</span>}
-        {recordName && <span style={{ color: '#7a8a72', fontFamily: rj, fontSize: 11, marginLeft: 'auto' }}>📂 {recordName}</span>}
+        <button onClick={handleReset} style={{ ...ghostBtn, color: 'var(--bad)', borderColor: 'color-mix(in srgb, var(--bad) 30%, transparent)' }}>🗑️ Reset</button>
+        {saveMsg && <span style={{ color: 'var(--ok)', fontFamily: rj, fontSize: 12, fontWeight: 600 }}>{saveMsg}</span>}
+        {recordName && <span style={{ color: 'var(--ink3)', fontFamily: rj, fontSize: 11, marginLeft: 'auto' }}>📂 {recordName}</span>}
       </div>
 
       {/* Save Dialog */}
       {showSave && (
-        <div style={{ ...card, background: 'rgba(200,168,75,.05)', borderColor: 'rgba(200,168,75,.4)' }}>
+        <div style={{ ...card, background: 'color-mix(in srgb, var(--acc) 5%, transparent)', borderColor: 'color-mix(in srgb, var(--acc) 40%, transparent)' }}>
           <label style={label}>Name</label>
           <input
             type="text"
             value={recordName}
             onChange={(e) => setRecordName(e.target.value)}
-            placeholder="e.g. MV NEURONAI — Tubarão→Qingdao Jan 2026"
+            placeholder="e.g. MV OCEAN PIONEER — Tubarão→Qingdao Jan 2026"
             style={{ ...inputStyle, marginBottom: 10 }}
           />
           <div style={{ display: 'flex', gap: 8 }}>
-            <button onClick={handleSave} style={{ background: '#c8a84b', color: '#08100a', border: 'none', padding: '8px 14px', fontFamily: rj, fontSize: 11, letterSpacing: '1px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 3 }}>
+            <button onClick={handleSave} style={{ background: 'var(--acc)', color: 'var(--bg)', border: 'none', padding: '8px 14px', fontFamily: rj, fontSize: 11, letterSpacing: '1px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 3 }}>
               Save
             </button>
             <button onClick={() => setShowSave(false)} style={ghostBtn}>Cancel</button>
@@ -426,9 +426,9 @@ export default function VoyageTrackerPage() {
             key={t.key}
             onClick={() => setTab(t.key)}
             style={{
-              background: tab === t.key ? '#c8a84b' : 'transparent',
-              color: tab === t.key ? '#08100a' : '#7a8a72',
-              border: `1px solid ${tab === t.key ? '#c8a84b' : 'rgba(200,168,75,.25)'}`,
+              background: tab === t.key ? 'var(--acc)' : 'transparent',
+              color: tab === t.key ? 'var(--bg)' : 'var(--ink3)',
+              border: `1px solid ${tab === t.key ? 'var(--acc)' : 'color-mix(in srgb, var(--acc) 25%, transparent)'}`,
               padding: '9px 16px',
               fontFamily: rj,
               fontSize: 12,
@@ -453,7 +453,7 @@ export default function VoyageTrackerPage() {
             <div className="g3" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 12 }}>
               <div>
                 <label style={label}>Vessel Name</label>
-                <input style={inputStyle} type="text" value={data.vesselName} onChange={(e) => update('vesselName', e.target.value)} placeholder="MV NEURONAI" />
+                <input style={inputStyle} type="text" value={data.vesselName} onChange={(e) => update('vesselName', e.target.value)} placeholder="MV OCEAN PIONEER" />
               </div>
               <div>
                 <label style={label}>IMO Number</label>
@@ -598,16 +598,16 @@ export default function VoyageTrackerPage() {
 
           {/* Continue */}
           {data.vesselName && data.portFrom && data.portTo && (
-            <div style={{ ...card, background: 'linear-gradient(135deg,rgba(200,168,75,.08),transparent)', borderColor: 'rgba(200,168,75,.4)' }}>
+            <div style={{ ...card, background: 'linear-gradient(135deg,color-mix(in srgb, var(--acc) 8%, transparent),transparent)', borderColor: 'color-mix(in srgb, var(--acc) 40%, transparent)' }}>
               <div style={sectionTitle}>✅ Setup Complete</div>
-              <p style={{ fontSize: 12, color: '#b0c0a4', marginBottom: 12 }}>
+              <p style={{ fontSize: 12, color: 'var(--ink2)', marginBottom: 12 }}>
                 Ready to start logging daily noon reports.
               </p>
               <button
                 onClick={() => setTab('reports')}
                 style={{
-                  background: '#c8a84b',
-                  color: '#08100a',
+                  background: 'var(--acc)',
+                  color: 'var(--bg)',
                   border: 'none',
                   padding: '10px 22px',
                   fontFamily: rj,
@@ -636,15 +636,15 @@ export default function VoyageTrackerPage() {
                 <h3 style={{ fontFamily: lb, fontSize: 16, fontWeight: 700, marginBottom: 4 }}>
                   Noon Reports ({data.reports.length})
                 </h3>
-                <p style={{ fontSize: 12, color: '#7a8a72' }}>
+                <p style={{ fontSize: 12, color: 'var(--ink3)' }}>
                   Add daily reports as voyage progresses. Each report updates the analysis.
                 </p>
               </div>
               <button
                 onClick={addReport}
                 style={{
-                  background: '#c8a84b',
-                  color: '#08100a',
+                  background: 'var(--acc)',
+                  color: 'var(--bg)',
                   border: 'none',
                   padding: '10px 18px',
                   fontFamily: rj,
@@ -665,30 +665,30 @@ export default function VoyageTrackerPage() {
                 style={{
                   marginTop: 14,
                   padding: '10px 12px',
-                  background: 'rgba(200,168,75,.05)',
-                  border: '1px solid rgba(200,168,75,.15)',
+                  background: 'color-mix(in srgb, var(--acc) 5%, transparent)',
+                  border: '1px solid color-mix(in srgb, var(--acc) 15%, transparent)',
                   borderRadius: 3,
                   fontSize: 12,
                   fontFamily: rj,
-                  color: '#b0c0a4',
+                  color: 'var(--ink2)',
                 }}
               >
-                ⏱️ Days: <strong style={{ color: '#f5f0e8' }}>{fmt(calc.voyageDays, 1)}</strong>
-                {' · '}📏 Distance: <strong style={{ color: '#f5f0e8' }}>{fmt(calc.totalDistanceRun, 0)} nm</strong>
-                {' · '}⚡ Avg Speed: <strong style={{ color: '#f5f0e8' }}>{fmt(calc.avgSpeedAll, 2)} kts</strong>
-                {' · '}⛽ ROB: <strong style={{ color: '#f5f0e8' }}>{fmt(calc.lastRob, 1)} MT</strong>
+                ⏱️ Days: <strong style={{ color: 'var(--ink)' }}>{fmt(calc.voyageDays, 1)}</strong>
+                {' · '}📏 Distance: <strong style={{ color: 'var(--ink)' }}>{fmt(calc.totalDistanceRun, 0)} nm</strong>
+                {' · '}⚡ Avg Speed: <strong style={{ color: 'var(--ink)' }}>{fmt(calc.avgSpeedAll, 2)} kts</strong>
+                {' · '}⛽ ROB: <strong style={{ color: 'var(--ink)' }}>{fmt(calc.lastRob, 1)} MT</strong>
               </div>
             )}
           </div>
 
           {/* Reports List */}
           {data.reports.length === 0 ? (
-            <div style={{ padding: 40, textAlign: 'center', color: '#7a8a72', border: '1px dashed rgba(200,168,75,.2)', borderRadius: 4 }}>
+            <div style={{ padding: 40, textAlign: 'center', color: 'var(--ink3)', border: '1px dashed color-mix(in srgb, var(--acc) 20%, transparent)', borderRadius: 4 }}>
               <div style={{ fontSize: 36, marginBottom: 10 }}>📝</div>
-              <h3 style={{ fontFamily: lb, fontSize: 16, fontWeight: 700, marginBottom: 6, color: '#f5f0e8' }}>
+              <h3 style={{ fontFamily: lb, fontSize: 16, fontWeight: 700, marginBottom: 6, color: 'var(--ink)' }}>
                 No noon reports yet
               </h3>
-              <p style={{ fontSize: 12 }}>Click <strong style={{ color: '#c8a84b' }}>+ Add Noon Report</strong> to start tracking.</p>
+              <p style={{ fontSize: 12 }}>Click <strong style={{ color: 'var(--acc)' }}>+ Add Noon Report</strong> to start tracking.</p>
             </div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
@@ -753,17 +753,17 @@ function ReportCard({
   const [expanded, setExpanded] = useState(true);
 
   const speedColor = report.avgSpeed > 0
-    ? (report.avgSpeed >= cpSpeed * 0.95 ? '#4caf76' : '#ff8a8a')
-    : '#7a8a72';
+    ? (report.avgSpeed >= cpSpeed * 0.95 ? 'var(--ok)' : 'var(--bad)')
+    : 'var(--ink3)';
   const meColor = report.meCons > 0
-    ? (report.meCons <= cpMe * 1.05 ? '#4caf76' : '#ff8a8a')
-    : '#7a8a72';
+    ? (report.meCons <= cpMe * 1.05 ? 'var(--ok)' : 'var(--bad)')
+    : 'var(--ink3)';
 
   return (
     <div
       style={{
-        background: '#111c13',
-        border: '1px solid rgba(200,168,75,.18)',
+        background: 'var(--card)',
+        border: '1px solid color-mix(in srgb, var(--acc) 18%, transparent)',
         borderRadius: 4,
         overflow: 'hidden',
       }}
@@ -783,8 +783,8 @@ function ReportCard({
       >
         <div
           style={{
-            background: 'rgba(200,168,75,.15)',
-            color: '#c8a84b',
+            background: 'color-mix(in srgb, var(--acc) 15%, transparent)',
+            color: 'var(--acc)',
             padding: '4px 12px',
             borderRadius: 3,
             fontFamily: 'monospace',
@@ -797,25 +797,25 @@ function ReportCard({
           #{index}
         </div>
         <div style={{ flex: 1, minWidth: 100 }}>
-          <div style={{ fontFamily: rj, fontSize: 12.5, color: '#f5f0e8', fontWeight: 600 }}>
+          <div style={{ fontFamily: rj, fontSize: 12.5, color: 'var(--ink)', fontWeight: 600 }}>
             {report.date || 'No date set'} {report.time && `· ${report.time} UTC`}
           </div>
-          <div style={{ fontSize: 10.5, color: '#7a8a72', marginTop: 2 }}>
+          <div style={{ fontSize: 10.5, color: 'var(--ink3)', marginTop: 2 }}>
             {report.status?.toUpperCase()} · {report.weatherCondition?.toUpperCase()} weather
           </div>
         </div>
         <div style={{ display: 'flex', gap: 12, fontSize: 11, fontFamily: rj }}>
           <div>
-            <span style={{ color: '#7a8a72' }}>Speed</span>{' '}
+            <span style={{ color: 'var(--ink3)' }}>Speed</span>{' '}
             <strong style={{ color: speedColor }}>{fmt(report.avgSpeed, 1)} kts</strong>
           </div>
           <div>
-            <span style={{ color: '#7a8a72' }}>ME</span>{' '}
+            <span style={{ color: 'var(--ink3)' }}>ME</span>{' '}
             <strong style={{ color: meColor }}>{fmt(report.meCons, 1)}</strong>
           </div>
           <div>
-            <span style={{ color: '#7a8a72' }}>ROB</span>{' '}
-            <strong style={{ color: '#f5f0e8' }}>{fmt(report.rob, 0)}</strong>
+            <span style={{ color: 'var(--ink3)' }}>ROB</span>{' '}
+            <strong style={{ color: 'var(--ink)' }}>{fmt(report.rob, 0)}</strong>
           </div>
         </div>
         <button
@@ -825,8 +825,8 @@ function ReportCard({
           }}
           style={{
             background: 'transparent',
-            border: '1px solid rgba(255,138,138,.3)',
-            color: '#ff8a8a',
+            border: '1px solid color-mix(in srgb, var(--bad) 30%, transparent)',
+            color: 'var(--bad)',
             padding: '4px 10px',
             fontFamily: rj,
             fontSize: 10,
@@ -836,7 +836,7 @@ function ReportCard({
         >
           ✕
         </button>
-        <span style={{ color: '#7a8a72', fontSize: 14 }}>{expanded ? '▾' : '▸'}</span>
+        <span style={{ color: 'var(--ink3)', fontSize: 14 }}>{expanded ? '▾' : '▸'}</span>
       </div>
 
       {/* Detail */}
@@ -967,9 +967,9 @@ function ReportCard({
 function AnalysisView({ data, calc }: { data: VoyageData; calc: ReturnType<typeof calculate> }) {
   if (data.reports.length === 0) {
     return (
-      <div style={{ padding: 40, textAlign: 'center', border: '1px dashed rgba(200,168,75,.2)', borderRadius: 4, color: '#7a8a72' }}>
+      <div style={{ padding: 40, textAlign: 'center', border: '1px dashed color-mix(in srgb, var(--acc) 20%, transparent)', borderRadius: 4, color: 'var(--ink3)' }}>
         <div style={{ fontSize: 36, marginBottom: 10 }}>📊</div>
-        <h3 style={{ fontFamily: lb, fontSize: 16, fontWeight: 700, marginBottom: 6, color: '#f5f0e8' }}>
+        <h3 style={{ fontFamily: lb, fontSize: 16, fontWeight: 700, marginBottom: 6, color: 'var(--ink)' }}>
           No analysis available yet
         </h3>
         <p style={{ fontSize: 12 }}>Add at least one noon report to see analysis.</p>
@@ -981,7 +981,7 @@ function AnalysisView({ data, calc }: { data: VoyageData; calc: ReturnType<typeo
     display: 'flex',
     justifyContent: 'space-between',
     padding: '8px 0',
-    borderBottom: '1px dashed rgba(200,168,75,.1)',
+    borderBottom: '1px dashed color-mix(in srgb, var(--acc) 10%, transparent)',
     fontFamily: rj,
     fontSize: 13,
   };
@@ -989,15 +989,15 @@ function AnalysisView({ data, calc }: { data: VoyageData; calc: ReturnType<typeo
   return (
     <div>
       {/* Voyage Header */}
-      <div style={{ ...card, background: 'linear-gradient(135deg,rgba(200,168,75,.08),transparent)', borderColor: '#c8a84b', textAlign: 'center', padding: '24px 20px' }}>
-        <div style={{ fontFamily: rj, fontSize: 11, letterSpacing: '3px', textTransform: 'uppercase', color: '#c8a84b', fontWeight: 700, marginBottom: 10 }}>
+      <div style={{ ...card, background: 'linear-gradient(135deg,color-mix(in srgb, var(--acc) 8%, transparent),transparent)', borderColor: 'var(--acc)', textAlign: 'center', padding: '24px 20px' }}>
+        <div style={{ fontFamily: rj, fontSize: 11, letterSpacing: '3px', textTransform: 'uppercase', color: 'var(--acc)', fontWeight: 700, marginBottom: 10 }}>
           📈 Voyage Performance Analysis
         </div>
         <h2 style={{ fontFamily: lb, fontSize: 24, fontWeight: 700, marginBottom: 6 }}>{data.vesselName || 'Vessel'}</h2>
-        <div style={{ fontSize: 13, color: '#b0c0a4', marginBottom: 4 }}>
+        <div style={{ fontSize: 13, color: 'var(--ink2)', marginBottom: 4 }}>
           {data.portFrom} → {data.portTo} · {data.cargo || '—'}
         </div>
-        <div style={{ fontSize: 11, color: '#7a8a72', fontFamily: rj }}>
+        <div style={{ fontSize: 11, color: 'var(--ink3)', fontFamily: rj }}>
           {data.voyageNo} · {data.vesselType} · {data.ladenOrBallast.toUpperCase()}
         </div>
       </div>
@@ -1006,30 +1006,30 @@ function AnalysisView({ data, calc }: { data: VoyageData; calc: ReturnType<typeo
       <div style={card}>
         <div style={sectionTitle}>🗺️ Voyage Progress</div>
         <div style={{ marginBottom: 14 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontFamily: rj, fontSize: 11, color: '#b0c0a4', marginBottom: 6 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontFamily: rj, fontSize: 11, color: 'var(--ink2)', marginBottom: 6 }}>
             <span>{fmt(calc.totalDistanceRun, 0)} nm completed</span>
             <span>{fmt(calc.distanceRemaining, 0)} nm to go</span>
           </div>
-          <div style={{ height: 14, background: '#0c1610', border: '1px solid rgba(200,168,75,.2)', borderRadius: 7, overflow: 'hidden' }}>
+          <div style={{ height: 14, background: 'var(--bg2)', border: '1px solid color-mix(in srgb, var(--acc) 20%, transparent)', borderRadius: 7, overflow: 'hidden' }}>
             <div
               style={{
                 width: `${Math.min(100, calc.distanceCompletePct)}%`,
                 height: '100%',
-                background: 'linear-gradient(90deg, #4caf76, #c8a84b)',
+                background: 'linear-gradient(90deg, var(--ok), var(--acc))',
                 transition: 'width .3s ease',
               }}
             />
           </div>
-          <div style={{ textAlign: 'center', fontFamily: rj, fontSize: 12, color: '#c8a84b', fontWeight: 700, marginTop: 8, letterSpacing: '.5px' }}>
+          <div style={{ textAlign: 'center', fontFamily: rj, fontSize: 12, color: 'var(--acc)', fontWeight: 700, marginTop: 8, letterSpacing: '.5px' }}>
             {fmt(calc.distanceCompletePct, 1)}% Complete
           </div>
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(170px,1fr))', gap: 14 }}>
-          <KpiBox label="Reports" value={fmt(calc.reportCount, 0)} color="#f5f0e8" sub="noon reports" />
-          <KpiBox label="Voyage Days" value={fmt(calc.voyageDays, 1)} color="#f5f0e8" sub="elapsed" />
-          <KpiBox label="Avg Speed" value={fmt(calc.avgSpeedAll, 2) + ' kts'} color={calc.avgSpeedAll >= data.cpSpeed * 0.95 ? '#4caf76' : '#ff8a8a'} sub={calc.speedVsCP >= 0 ? `+${fmt(calc.speedVsCP, 1)}%` : `${fmt(calc.speedVsCP, 1)}%`} />
-          <KpiBox label="Predicted ETA" value={calc.predictedEtaText} color="#c8a84b" sub="based on avg speed" />
+          <KpiBox label="Reports" value={fmt(calc.reportCount, 0)} color="var(--ink)" sub="noon reports" />
+          <KpiBox label="Voyage Days" value={fmt(calc.voyageDays, 1)} color="var(--ink)" sub="elapsed" />
+          <KpiBox label="Avg Speed" value={fmt(calc.avgSpeedAll, 2) + ' kts'} color={calc.avgSpeedAll >= data.cpSpeed * 0.95 ? 'var(--ok)' : 'var(--bad)'} sub={calc.speedVsCP >= 0 ? `+${fmt(calc.speedVsCP, 1)}%` : `${fmt(calc.speedVsCP, 1)}%`} />
+          <KpiBox label="Predicted ETA" value={calc.predictedEtaText} color="var(--acc)" sub="based on avg speed" />
         </div>
       </div>
 
@@ -1037,27 +1037,27 @@ function AnalysisView({ data, calc }: { data: VoyageData; calc: ReturnType<typeo
       <div style={card}>
         <div style={sectionTitle}>⚡ Performance vs Charter Party</div>
         <div style={reportRow}>
-          <span style={{ color: '#7a8a72' }}>CP Speed</span>
+          <span style={{ color: 'var(--ink3)' }}>CP Speed</span>
           <strong>{fmt(data.cpSpeed, 2)} kts</strong>
         </div>
         <div style={reportRow}>
-          <span style={{ color: '#7a8a72' }}>Actual Avg Speed</span>
-          <strong style={{ color: calc.avgSpeedAll >= data.cpSpeed * 0.95 ? '#4caf76' : '#ff8a8a' }}>
+          <span style={{ color: 'var(--ink3)' }}>Actual Avg Speed</span>
+          <strong style={{ color: calc.avgSpeedAll >= data.cpSpeed * 0.95 ? 'var(--ok)' : 'var(--bad)' }}>
             {fmt(calc.avgSpeedAll, 2)} kts ({calc.speedVsCP > 0 ? '+' : ''}{fmt(calc.speedVsCP, 1)}%)
           </strong>
         </div>
         <div style={reportRow}>
-          <span style={{ color: '#7a8a72' }}>CP ME Consumption</span>
+          <span style={{ color: 'var(--ink3)' }}>CP ME Consumption</span>
           <strong>{fmt(data.cpMe, 2)} MT/day</strong>
         </div>
         <div style={reportRow}>
-          <span style={{ color: '#7a8a72' }}>Actual Avg ME Consumption</span>
-          <strong style={{ color: calc.avgMe <= data.cpMe * 1.05 ? '#4caf76' : '#ff8a8a' }}>
+          <span style={{ color: 'var(--ink3)' }}>Actual Avg ME Consumption</span>
+          <strong style={{ color: calc.avgMe <= data.cpMe * 1.05 ? 'var(--ok)' : 'var(--bad)' }}>
             {fmt(calc.avgMe, 2)} MT/day ({calc.meVsCP > 0 ? '+' : ''}{fmt(calc.meVsCP, 1)}%)
           </strong>
         </div>
         <div style={{ ...reportRow, borderBottom: 'none' }}>
-          <span style={{ color: '#7a8a72' }}>Actual Avg AE Consumption</span>
+          <span style={{ color: 'var(--ink3)' }}>Actual Avg AE Consumption</span>
           <strong>{fmt(calc.avgAe, 2)} MT/day</strong>
         </div>
       </div>
@@ -1066,16 +1066,16 @@ function AnalysisView({ data, calc }: { data: VoyageData; calc: ReturnType<typeo
       <div style={card}>
         <div style={sectionTitle}>🌊 Weather Analysis</div>
         <div style={reportRow}>
-          <span style={{ color: '#7a8a72' }}>Good Weather Reports</span>
-          <strong style={{ color: '#4caf76' }}>{calc.goodWeatherReports} reports</strong>
+          <span style={{ color: 'var(--ink3)' }}>Good Weather Reports</span>
+          <strong style={{ color: 'var(--ok)' }}>{calc.goodWeatherReports} reports</strong>
         </div>
         <div style={reportRow}>
-          <span style={{ color: '#7a8a72' }}>Moderate Weather Reports</span>
-          <strong style={{ color: '#e89c5a' }}>{calc.moderateWeatherReports} reports</strong>
+          <span style={{ color: 'var(--ink3)' }}>Moderate Weather Reports</span>
+          <strong style={{ color: 'var(--warn)' }}>{calc.moderateWeatherReports} reports</strong>
         </div>
         <div style={{ ...reportRow, borderBottom: 'none' }}>
-          <span style={{ color: '#7a8a72' }}>Bad Weather Reports</span>
-          <strong style={{ color: '#ff8a8a' }}>{calc.badWeatherReports} reports</strong>
+          <span style={{ color: 'var(--ink3)' }}>Bad Weather Reports</span>
+          <strong style={{ color: 'var(--bad)' }}>{calc.badWeatherReports} reports</strong>
         </div>
       </div>
 
@@ -1083,28 +1083,28 @@ function AnalysisView({ data, calc }: { data: VoyageData; calc: ReturnType<typeo
       <div style={card}>
         <div style={sectionTitle}>⛽ Bunker Status</div>
         <div style={reportRow}>
-          <span style={{ color: '#7a8a72' }}>Total {data.cpFuelType} Consumed</span>
+          <span style={{ color: 'var(--ink3)' }}>Total {data.cpFuelType} Consumed</span>
           <strong>{fmt(calc.totalMeConsumed, 1)} MT</strong>
         </div>
         <div style={reportRow}>
-          <span style={{ color: '#7a8a72' }}>Total AE/MGO Consumed</span>
+          <span style={{ color: 'var(--ink3)' }}>Total AE/MGO Consumed</span>
           <strong>{fmt(calc.totalAeConsumed, 1)} MT</strong>
         </div>
         <div style={reportRow}>
-          <span style={{ color: '#7a8a72' }}>Bunker Cost (so far)</span>
+          <span style={{ color: 'var(--ink3)' }}>Bunker Cost (so far)</span>
           <strong>{fmtMoney(calc.totalBunkerCost)}</strong>
         </div>
         <div style={reportRow}>
-          <span style={{ color: '#7a8a72' }}>Current ROB {data.cpFuelType}</span>
-          <strong style={{ color: calc.fuelSufficient ? '#4caf76' : '#ff8a8a' }}>{fmt(calc.lastRob, 1)} MT</strong>
+          <span style={{ color: 'var(--ink3)' }}>Current ROB {data.cpFuelType}</span>
+          <strong style={{ color: calc.fuelSufficient ? 'var(--ok)' : 'var(--bad)' }}>{fmt(calc.lastRob, 1)} MT</strong>
         </div>
         <div style={reportRow}>
-          <span style={{ color: '#7a8a72' }}>Current ROB AE</span>
+          <span style={{ color: 'var(--ink3)' }}>Current ROB AE</span>
           <strong>{fmt(calc.lastRobAe, 1)} MT</strong>
         </div>
         <div style={{ ...reportRow, borderBottom: 'none' }}>
-          <span style={{ color: '#7a8a72' }}>Estimated Fuel Needed (Remaining)</span>
-          <strong style={{ color: calc.fuelSufficient ? '#4caf76' : '#ff8a8a' }}>
+          <span style={{ color: 'var(--ink3)' }}>Estimated Fuel Needed (Remaining)</span>
+          <strong style={{ color: calc.fuelSufficient ? 'var(--ok)' : 'var(--bad)' }}>
             {fmt(calc.estRemainingFuel, 1)} MT {calc.fuelSufficient ? '✓ Sufficient' : '⚠ Short!'}
           </strong>
         </div>
@@ -1116,7 +1116,7 @@ function AnalysisView({ data, calc }: { data: VoyageData; calc: ReturnType<typeo
         <div style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: rj, fontSize: 11 }}>
             <thead>
-              <tr style={{ borderBottom: '2px solid rgba(200,168,75,.3)' }}>
+              <tr style={{ borderBottom: '2px solid color-mix(in srgb, var(--acc) 30%, transparent)' }}>
                 <th style={th}>Date</th>
                 <th style={th}>Position</th>
                 <th style={th}>Dist 24h</th>
@@ -1129,7 +1129,7 @@ function AnalysisView({ data, calc }: { data: VoyageData; calc: ReturnType<typeo
             </thead>
             <tbody>
               {calc.sorted.map((r) => (
-                <tr key={r.id} style={{ borderBottom: '1px solid rgba(200,168,75,.08)' }}>
+                <tr key={r.id} style={{ borderBottom: '1px solid color-mix(in srgb, var(--acc) 8%, transparent)' }}>
                   <td style={td}>{r.date} {r.time}</td>
                   <td style={td}>
                     {r.lat ? `${fmt(r.lat, 2)}°${r.latDir}` : '—'} {r.lon ? `${fmt(r.lon, 2)}°${r.lonDir}` : ''}
@@ -1151,7 +1151,7 @@ function AnalysisView({ data, calc }: { data: VoyageData; calc: ReturnType<typeo
         </div>
       </div>
 
-      <div style={{ marginTop: 20, padding: '14px 16px', background: 'rgba(200,168,75,.04)', border: '1px solid rgba(200,168,75,.12)', borderRadius: 4, textAlign: 'center', fontFamily: rj, fontSize: 11, color: '#7a8a72' }}>
+      <div style={{ marginTop: 20, padding: '14px 16px', background: 'color-mix(in srgb, var(--acc) 4%, transparent)', border: '1px solid color-mix(in srgb, var(--acc) 12%, transparent)', borderRadius: 4, textAlign: 'center', fontFamily: rj, fontSize: 11, color: 'var(--ink3)' }}>
         Generated by PortServiceFinder Voyage Hub · portservicefinder.com/voyage
       </div>
     </div>
@@ -1167,22 +1167,22 @@ const th: React.CSSProperties = {
   fontSize: 10,
   letterSpacing: '.5px',
   textTransform: 'uppercase',
-  color: '#c8a84b',
+  color: 'var(--acc)',
   fontWeight: 700,
 };
 const td: React.CSSProperties = {
   padding: '8px 6px',
-  color: '#b0c0a4',
+  color: 'var(--ink2)',
 };
 
 function KpiBox({ label, value, color, sub }: { label: string; value: string; color: string; sub?: string }) {
   return (
-    <div style={{ background: '#0c1610', padding: '12px 14px', border: '1px solid rgba(200,168,75,.15)', borderRadius: 3 }}>
-      <div style={{ fontFamily: rj, fontSize: 10, color: '#7a8a72', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: 6, fontWeight: 600 }}>
+    <div style={{ background: 'var(--bg2)', padding: '12px 14px', border: '1px solid color-mix(in srgb, var(--acc) 15%, transparent)', borderRadius: 3 }}>
+      <div style={{ fontFamily: rj, fontSize: 10, color: 'var(--ink3)', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: 6, fontWeight: 600 }}>
         {label}
       </div>
       <div style={{ fontFamily: lb, fontSize: 17, fontWeight: 700, color, lineHeight: 1.1 }}>{value}</div>
-      {sub && <div style={{ fontFamily: rj, fontSize: 10.5, color: '#b0c0a4', marginTop: 4, fontWeight: 500 }}>{sub}</div>}
+      {sub && <div style={{ fontFamily: rj, fontSize: 10.5, color: 'var(--ink2)', marginTop: 4, fontWeight: 500 }}>{sub}</div>}
     </div>
   );
 }

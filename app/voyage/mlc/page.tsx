@@ -2,9 +2,9 @@
 import { useState, useEffect, useMemo } from 'react';
 import { saveItem, loadItem, genId } from '@/lib/voyage-storage';
 
-const lb = "'Libre Bodoni', serif";
-const rj = "'Rajdhani', sans-serif";
-const g = { color: '#c8a84b', fontStyle: 'italic' } as React.CSSProperties;
+const lb = 'var(--font-display)';
+const rj = 'var(--font-ui)';
+const g = { color: 'var(--acc)' } as React.CSSProperties;
 
 // ============================================================
 // MLC 2006 / STCW rest-hour limits
@@ -98,12 +98,12 @@ function analyseCrew(c: CrewMember) {
 // ============================================================
 // STYLES
 // ============================================================
-const card: React.CSSProperties = { background: '#111c13', border: '1px solid rgba(200,168,75,.18)', padding: '20px 18px', borderRadius: 4, marginBottom: 16 };
-const sectionTitle: React.CSSProperties = { fontFamily: rj, fontSize: 11, letterSpacing: '2px', textTransform: 'uppercase', color: '#c8a84b', fontWeight: 700, marginBottom: 14, paddingBottom: 8, borderBottom: '1px solid rgba(200,168,75,.12)' };
-const labelS: React.CSSProperties = { display: 'block', fontFamily: rj, fontSize: 10, letterSpacing: '.5px', textTransform: 'uppercase', color: '#7a8a72', fontWeight: 600, marginBottom: 4 };
-const inputStyle: React.CSSProperties = { width: '100%', background: '#0c1610', border: '1px solid rgba(200,168,75,.2)', color: '#f5f0e8', padding: '7px 9px', fontFamily: rj, fontSize: 12.5, fontWeight: 500, borderRadius: 3, boxSizing: 'border-box' };
-const ghostBtn: React.CSSProperties = { background: 'transparent', color: '#c8a84b', border: '1px solid rgba(200,168,75,.4)', padding: '8px 14px', fontFamily: rj, fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 };
-const goldBtn: React.CSSProperties = { background: '#c8a84b', color: '#08100a', border: 'none', padding: '8px 16px', fontFamily: rj, fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 };
+const card: React.CSSProperties = { background: 'var(--card)', border: '1px solid color-mix(in srgb, var(--acc) 18%, transparent)', padding: '20px 18px', borderRadius: 4, marginBottom: 16 };
+const sectionTitle: React.CSSProperties = { fontFamily: rj, fontSize: 11, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--acc)', fontWeight: 700, marginBottom: 14, paddingBottom: 8, borderBottom: '1px solid color-mix(in srgb, var(--acc) 12%, transparent)' };
+const labelS: React.CSSProperties = { display: 'block', fontFamily: rj, fontSize: 10, letterSpacing: '.5px', textTransform: 'uppercase', color: 'var(--ink3)', fontWeight: 600, marginBottom: 4 };
+const inputStyle: React.CSSProperties = { width: '100%', background: 'var(--bg2)', border: '1px solid color-mix(in srgb, var(--acc) 20%, transparent)', color: 'var(--ink)', padding: '7px 9px', fontFamily: rj, fontSize: 12.5, fontWeight: 500, borderRadius: 3, boxSizing: 'border-box' };
+const ghostBtn: React.CSSProperties = { background: 'transparent', color: 'var(--acc)', border: '1px solid color-mix(in srgb, var(--acc) 40%, transparent)', padding: '8px 14px', fontFamily: rj, fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 };
+const goldBtn: React.CSSProperties = { background: 'var(--acc)', color: 'var(--bg)', border: 'none', padding: '8px 16px', fontFamily: rj, fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 };
 
 const STORAGE_KEY = 'mlc';
 const SINGLETON_ID = 'mlctracker';
@@ -179,13 +179,13 @@ export default function MlcPage() {
     <div>
       {/* Header */}
       <div style={{ marginBottom: 24 }}>
-        <div style={{ fontFamily: rj, fontSize: 10, letterSpacing: '2px', textTransform: 'uppercase', color: '#c8a84b', fontWeight: 700, marginBottom: 8 }}>
+        <div style={{ fontFamily: rj, fontSize: 10, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--acc)', fontWeight: 700, marginBottom: 8 }}>
           ⚓ Voyage Hub · MLC Compliance
         </div>
         <h1 style={{ fontFamily: lb, fontSize: 'clamp(22px,3vw,32px)', fontWeight: 700, lineHeight: 1.1, marginBottom: 8 }}>
           MLC <em style={g}>Compliance</em>
         </h1>
-        <p style={{ fontSize: 13, color: '#b0c0a4', lineHeight: 1.6, maxWidth: 720 }}>
+        <p style={{ fontSize: 13, color: 'var(--ink2)', lineHeight: 1.6, maxWidth: 720 }}>
           Rest-hours grid per crew member with automatic MLC 2006 / STCW checks (min 10 h rest in 24 h,
           min 77 h in any week), plus an MLC self-check. A working aid — official rest-hour records govern.
         </p>
@@ -194,7 +194,7 @@ export default function MlcPage() {
       {/* Vessel */}
       <div style={card}>
         <div className="mlc-g3" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 12 }}>
-          <div><label style={labelS}>Vessel</label><input style={inputStyle} value={data.vesselName} onChange={(e) => update('vesselName', e.target.value)} placeholder="MV NEURONAI" /></div>
+          <div><label style={labelS}>Vessel</label><input style={inputStyle} value={data.vesselName} onChange={(e) => update('vesselName', e.target.value)} placeholder="MV OCEAN PIONEER" /></div>
           <div><label style={labelS}>IMO</label><input style={inputStyle} value={data.imo} onChange={(e) => update('imo', e.target.value)} placeholder="9876543" /></div>
           <div><label style={labelS}>Week Starting (Mon)</label><input style={inputStyle} type="date" value={data.weekStart} onChange={(e) => update('weekStart', e.target.value)} /></div>
         </div>
@@ -202,8 +202,8 @@ export default function MlcPage() {
 
       <div className="action-bar" style={{ display: 'flex', gap: 10, marginBottom: 16, flexWrap: 'wrap', alignItems: 'center' }}>
         <button onClick={() => window.print()} style={ghostBtn}>🖨️ Print / PDF</button>
-        {saveMsg && <span style={{ color: '#4caf76', fontFamily: rj, fontSize: 12, fontWeight: 600 }}>{saveMsg}</span>}
-        {fleetViolations > 0 && <span style={{ fontFamily: rj, fontSize: 12, color: '#ff8a8a', fontWeight: 700, marginLeft: 'auto' }}>⚠ {fleetViolations} crew with violations</span>}
+        {saveMsg && <span style={{ color: 'var(--ok)', fontFamily: rj, fontSize: 12, fontWeight: 600 }}>{saveMsg}</span>}
+        {fleetViolations > 0 && <span style={{ fontFamily: rj, fontSize: 12, color: 'var(--bad)', fontWeight: 700, marginLeft: 'auto' }}>⚠ {fleetViolations} crew with violations</span>}
       </div>
 
       {/* Crew tabs */}
@@ -212,9 +212,9 @@ export default function MlcPage() {
           const v = analyseCrew(c).anyViolation;
           return (
             <button key={c.id} onClick={() => setActiveCrew(i)} style={{
-              padding: '6px 12px', background: activeCrew === i ? '#c8a84b' : 'transparent',
-              color: activeCrew === i ? '#08100a' : v ? '#ff8a8a' : '#7a8a72',
-              border: `1px solid ${activeCrew === i ? '#c8a84b' : v ? 'rgba(255,138,138,.4)' : 'rgba(200,168,75,.25)'}`,
+              padding: '6px 12px', background: activeCrew === i ? 'var(--acc)' : 'transparent',
+              color: activeCrew === i ? 'var(--bg)' : v ? 'var(--bad)' : 'var(--ink3)',
+              border: `1px solid ${activeCrew === i ? 'var(--acc)' : v ? 'color-mix(in srgb, var(--bad) 40%, transparent)' : 'color-mix(in srgb, var(--acc) 25%, transparent)'}`,
               fontFamily: rj, fontSize: 11, fontWeight: 700, cursor: 'pointer', borderRadius: 4, whiteSpace: 'nowrap',
             }}>
               {v && '⚠ '}{c.name || c.rank || `Crew ${i + 1}`}
@@ -230,11 +230,11 @@ export default function MlcPage() {
           <div className="mlc-g3" style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr) auto', gap: 12, marginBottom: 14, alignItems: 'end' }}>
             <div><label style={labelS}>Name</label><input style={inputStyle} value={crew.name} onChange={(e) => updCrew(crew.id, { name: e.target.value })} placeholder="J. Smith" /></div>
             <div><label style={labelS}>Rank</label><input style={inputStyle} value={crew.rank} onChange={(e) => updCrew(crew.id, { rank: e.target.value })} placeholder="2nd Officer" /></div>
-            {data.crew.length > 1 && <button onClick={() => delCrew(crew.id)} style={{ ...ghostBtn, color: '#ff8a8a', borderColor: 'rgba(255,138,138,.3)' }}>Remove</button>}
+            {data.crew.length > 1 && <button onClick={() => delCrew(crew.id)} style={{ ...ghostBtn, color: 'var(--bad)', borderColor: 'color-mix(in srgb, var(--bad) 30%, transparent)' }}>Remove</button>}
           </div>
 
-          <p style={{ fontFamily: rj, fontSize: 11, color: '#7a8a72', marginBottom: 10 }}>
-            Tap an hour cell to toggle <b style={{ color: '#ff8a8a' }}>work</b> (red) / rest (dark). Use the row buttons to fill a whole day.
+          <p style={{ fontFamily: rj, fontSize: 11, color: 'var(--ink3)', marginBottom: 10 }}>
+            Tap an hour cell to toggle <b style={{ color: 'var(--bad)' }}>work</b> (red) / rest (dark). Use the row buttons to fill a whole day.
           </p>
 
           {/* Grid */}
@@ -242,11 +242,11 @@ export default function MlcPage() {
             <table style={{ borderCollapse: 'collapse', fontFamily: rj, fontSize: 9 }}>
               <thead>
                 <tr>
-                  <th style={{ padding: 2, position: 'sticky', left: 0, background: '#111c13' }}></th>
+                  <th style={{ padding: 2, position: 'sticky', left: 0, background: 'var(--card)' }}></th>
                   {Array.from({ length: 24 }, (_, h) => (
-                    <th key={h} style={{ padding: '2px 0', color: '#7a8a72', fontWeight: 600, width: 16, textAlign: 'center', fontSize: 8 }}>{h}</th>
+                    <th key={h} style={{ padding: '2px 0', color: 'var(--ink3)', fontWeight: 600, width: 16, textAlign: 'center', fontSize: 8 }}>{h}</th>
                   ))}
-                  <th style={{ padding: '2px 6px', color: '#7a8a72', fontWeight: 700, textAlign: 'right' }}>Rest</th>
+                  <th style={{ padding: '2px 6px', color: 'var(--ink3)', fontWeight: 700, textAlign: 'right' }}>Rest</th>
                   <th style={{ padding: '2px 4px' }}></th>
                 </tr>
               </thead>
@@ -257,20 +257,20 @@ export default function MlcPage() {
                   const viol = restViol || workViol;
                   return (
                     <tr key={di}>
-                      <td style={{ padding: '2px 6px 2px 0', color: viol ? '#ff8a8a' : '#b0c0a4', fontWeight: 700, position: 'sticky', left: 0, background: '#111c13', whiteSpace: 'nowrap' }}>{dname}</td>
+                      <td style={{ padding: '2px 6px 2px 0', color: viol ? 'var(--bad)' : 'var(--ink2)', fontWeight: 700, position: 'sticky', left: 0, background: 'var(--card)', whiteSpace: 'nowrap' }}>{dname}</td>
                       {crew.grid[di].map((work, hi) => (
                         <td key={hi} onClick={() => toggleHour(crew.id, di, hi)} style={{
                           width: 16, height: 18, cursor: 'pointer',
-                          background: work ? '#c14a4a' : '#0c1610',
-                          border: '1px solid rgba(200,168,75,.12)',
+                          background: work ? 'var(--bad)' : 'var(--bg2)',
+                          border: '1px solid color-mix(in srgb, var(--acc) 12%, transparent)',
                         }} title={`${dname} ${hi}:00 — ${work ? 'work' : 'rest'}`} />
                       ))}
-                      <td style={{ padding: '2px 6px', textAlign: 'right', fontWeight: 700, color: restViol ? '#ff8a8a' : '#f5f0e8', whiteSpace: 'nowrap' }}>
+                      <td style={{ padding: '2px 6px', textAlign: 'right', fontWeight: 700, color: restViol ? 'var(--bad)' : 'var(--ink)', whiteSpace: 'nowrap' }}>
                         {analysis.dailyRest[di]}h{restViol ? ' ⚠' : ''}
                       </td>
                       <td style={{ padding: '2px 2px', whiteSpace: 'nowrap' }}>
-                        <button onClick={() => fillDay(crew.id, di, true)} title="All work" style={fillBtn('#c14a4a')}>W</button>
-                        <button onClick={() => fillDay(crew.id, di, false)} title="All rest" style={fillBtn('#3a5a3a')}>R</button>
+                        <button onClick={() => fillDay(crew.id, di, true)} title="All work" style={fillBtn('var(--bad)')}>W</button>
+                        <button onClick={() => fillDay(crew.id, di, false)} title="All rest" style={fillBtn('var(--line)')}>R</button>
                       </td>
                     </tr>
                   );
@@ -280,20 +280,20 @@ export default function MlcPage() {
           </div>
 
           {/* verdict */}
-          <div style={{ marginTop: 14, padding: '14px 16px', background: '#0c1610', border: `1px solid ${analysis.anyViolation ? 'rgba(255,138,138,.6)' : 'rgba(76,175,118,.5)'}`, borderRadius: 4 }}>
+          <div style={{ marginTop: 14, padding: '14px 16px', background: 'var(--bg2)', border: `1px solid ${analysis.anyViolation ? 'color-mix(in srgb, var(--bad) 60%, transparent)' : 'color-mix(in srgb, var(--ok) 50%, transparent)'}`, borderRadius: 4 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 10, marginBottom: 8 }}>
-              <span style={{ fontFamily: rj, fontSize: 12, color: '#7a8a72' }}>Weekly rest: <b style={{ color: analysis.weekViol ? '#ff8a8a' : '#4caf76' }}>{analysis.weeklyRest}h</b> / min 77h</span>
-              <span style={{ fontFamily: rj, fontSize: 12, color: '#7a8a72' }}>Min daily rest: <b style={{ color: Math.min(...analysis.dailyRest) < 10 ? '#ff8a8a' : '#4caf76' }}>{Math.min(...analysis.dailyRest)}h</b> / min 10h</span>
+              <span style={{ fontFamily: rj, fontSize: 12, color: 'var(--ink3)' }}>Weekly rest: <b style={{ color: analysis.weekViol ? 'var(--bad)' : 'var(--ok)' }}>{analysis.weeklyRest}h</b> / min 77h</span>
+              <span style={{ fontFamily: rj, fontSize: 12, color: 'var(--ink3)' }}>Min daily rest: <b style={{ color: Math.min(...analysis.dailyRest) < 10 ? 'var(--bad)' : 'var(--ok)' }}>{Math.min(...analysis.dailyRest)}h</b> / min 10h</span>
             </div>
             {analysis.anyViolation ? (
-              <div style={{ fontFamily: rj, color: '#ff8a8a', fontSize: 13, lineHeight: 1.5 }}>
+              <div style={{ fontFamily: rj, color: 'var(--bad)', fontSize: 13, lineHeight: 1.5 }}>
                 ❌ <b>Rest-hour violation(s) detected.</b>
                 {analysis.weekViol && ' Weekly rest below 77h.'}
                 {analysis.dayRestViol.some(Boolean) && ` Days below 10h rest: ${DAYS.filter((_, i) => analysis.dayRestViol[i]).join(', ')}.`}
                 {analysis.dayWorkViol.some(Boolean) && ` Days above 14h work: ${DAYS.filter((_, i) => analysis.dayWorkViol[i]).join(', ')}.`}
               </div>
             ) : (
-              <div style={{ fontFamily: rj, color: '#4caf76', fontSize: 13 }}>✅ Within MLC daily (10h) and weekly (77h) rest limits.</div>
+              <div style={{ fontFamily: rj, color: 'var(--ok)', fontSize: 13 }}>✅ Within MLC daily (10h) and weekly (77h) rest limits.</div>
             )}
           </div>
         </div>
@@ -305,8 +305,8 @@ export default function MlcPage() {
         {MLC_CHECKS.map((k) => {
           const checked = !!data.checks[k];
           return (
-            <label key={k} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 0', borderBottom: '1px dashed rgba(200,168,75,.1)', cursor: 'pointer', fontFamily: rj, fontSize: 12.5, color: checked ? '#f5f0e8' : '#b0c0a4' }}>
-              <input type="checkbox" checked={checked} onChange={() => toggleCheck(k)} style={{ width: 16, height: 16, accentColor: '#4caf76', flexShrink: 0 }} />
+            <label key={k} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 0', borderBottom: '1px dashed color-mix(in srgb, var(--acc) 10%, transparent)', cursor: 'pointer', fontFamily: rj, fontSize: 12.5, color: checked ? 'var(--ink)' : 'var(--ink2)' }}>
+              <input type="checkbox" checked={checked} onChange={() => toggleCheck(k)} style={{ width: 16, height: 16, accentColor: 'var(--ok)', flexShrink: 0 }} />
               <span>{checked ? '✓ ' : ''}{k}</span>
             </label>
           );
@@ -320,11 +320,11 @@ export default function MlcPage() {
       </div>
 
       {/* Reference */}
-      <div style={{ ...card, background: 'rgba(122,138,114,.05)', borderColor: 'rgba(122,138,114,.15)' }}>
+      <div style={{ ...card, background: 'color-mix(in srgb, var(--ink3) 5%, transparent)', borderColor: 'color-mix(in srgb, var(--ink3) 15%, transparent)' }}>
         <div style={sectionTitle}>📖 MLC Rest-Hour Limits</div>
-        <ul style={{ fontSize: 11.5, color: '#b0c0a4', lineHeight: 1.7, paddingLeft: 18, fontFamily: rj }}>
-          <li>Minimum <b style={{ color: '#c8a84b' }}>10 hours rest</b> in any 24-hour period.</li>
-          <li>Minimum <b style={{ color: '#c8a84b' }}>77 hours rest</b> in any 7-day period.</li>
+        <ul style={{ fontSize: 11.5, color: 'var(--ink2)', lineHeight: 1.7, paddingLeft: 18, fontFamily: rj }}>
+          <li>Minimum <b style={{ color: 'var(--acc)' }}>10 hours rest</b> in any 24-hour period.</li>
+          <li>Minimum <b style={{ color: 'var(--acc)' }}>77 hours rest</b> in any 7-day period.</li>
           <li>Rest may be in no more than 2 periods, one of at least 6 hours, and intervals between rest periods not exceeding 14 hours.</li>
           <li>Equivalent limit: maximum 14 hours work in 24 h / 72 hours work in 7 days.</li>
           <li>This grid checks the two main numeric limits. Official IMO/ILO rest-hour record forms and your SMS govern.</li>
@@ -347,5 +347,5 @@ export default function MlcPage() {
 }
 
 function fillBtn(bg: string): React.CSSProperties {
-  return { background: bg, color: '#f5f0e8', border: 'none', width: 16, height: 16, fontSize: 8, fontFamily: rj, fontWeight: 700, cursor: 'pointer', borderRadius: 2, marginLeft: 2 };
+  return { background: bg, color: 'var(--ink)', border: 'none', width: 16, height: 16, fontSize: 8, fontFamily: rj, fontWeight: 700, cursor: 'pointer', borderRadius: 2, marginLeft: 2 };
 }

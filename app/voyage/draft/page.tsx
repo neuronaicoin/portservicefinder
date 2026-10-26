@@ -3,9 +3,9 @@ import { useState, useEffect, useMemo } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { saveItem, loadItem, genId } from '@/lib/voyage-storage';
 
-const lb = "'Libre Bodoni', serif";
-const rj = "'Rajdhani', sans-serif";
-const g = { color: '#c8a84b', fontStyle: 'italic' };
+const lb = 'var(--font-display)';
+const rj = 'var(--font-ui)';
+const g = { color: 'var(--acc)' };
 
 // ============================================================
 // TYPES
@@ -275,8 +275,8 @@ function fmt(n: number, dec = 2): string {
 // STYLES
 // ============================================================
 const card: React.CSSProperties = {
-  background: '#111c13',
-  border: '1px solid rgba(200,168,75,.18)',
+  background: 'var(--card)',
+  border: '1px solid color-mix(in srgb, var(--acc) 18%, transparent)',
   padding: '20px 18px',
   borderRadius: 4,
   marginBottom: 16,
@@ -286,11 +286,11 @@ const sectionTitle: React.CSSProperties = {
   fontSize: 11,
   letterSpacing: '2px',
   textTransform: 'uppercase',
-  color: '#c8a84b',
+  color: 'var(--acc)',
   fontWeight: 700,
   marginBottom: 14,
   paddingBottom: 8,
-  borderBottom: '1px solid rgba(200,168,75,.12)',
+  borderBottom: '1px solid color-mix(in srgb, var(--acc) 12%, transparent)',
 };
 const label: React.CSSProperties = {
   display: 'block',
@@ -298,15 +298,15 @@ const label: React.CSSProperties = {
   fontSize: 10,
   letterSpacing: '.5px',
   textTransform: 'uppercase',
-  color: '#7a8a72',
+  color: 'var(--ink3)',
   fontWeight: 600,
   marginBottom: 4,
 };
 const inputStyle: React.CSSProperties = {
   width: '100%',
-  background: '#0c1610',
-  border: '1px solid rgba(200,168,75,.2)',
-  color: '#f5f0e8',
+  background: 'var(--bg2)',
+  border: '1px solid color-mix(in srgb, var(--acc) 20%, transparent)',
+  color: 'var(--ink)',
   padding: '7px 9px',
   fontFamily: rj,
   fontSize: 12.5,
@@ -315,8 +315,8 @@ const inputStyle: React.CSSProperties = {
 };
 const ghostBtn: React.CSSProperties = {
   background: 'transparent',
-  color: '#c8a84b',
-  border: '1px solid rgba(200,168,75,.4)',
+  color: 'var(--acc)',
+  border: '1px solid color-mix(in srgb, var(--acc) 40%, transparent)',
   padding: '8px 14px',
   fontFamily: rj,
   fontSize: 11,
@@ -397,36 +397,36 @@ export default function DraftSurveyPage() {
     <div>
       {/* Header */}
       <div style={{ marginBottom: 24 }}>
-        <div style={{ fontFamily: rj, fontSize: 10, letterSpacing: '2px', textTransform: 'uppercase', color: '#c8a84b', fontWeight: 700, marginBottom: 8 }}>
+        <div style={{ fontFamily: rj, fontSize: 10, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--acc)', fontWeight: 700, marginBottom: 8 }}>
           ⚓ Voyage Hub · Draft Survey Calculator
         </div>
         <h1 style={{ fontFamily: lb, fontSize: 'clamp(22px,3vw,32px)', fontWeight: 700, lineHeight: 1.1, marginBottom: 8 }}>
           Draft <em style={g}>Survey</em> Calculator
         </h1>
-        <p style={{ fontSize: 13, color: '#b0c0a4', lineHeight: 1.6, maxWidth: 720 }}>
+        <p style={{ fontSize: 13, color: 'var(--ink2)', lineHeight: 1.6, maxWidth: 720 }}>
           Calculate cargo weight from draft readings — full 6-point survey with trim, hog/sag,
-          density corrections, and deductibles. Compatible with IMO/ISO standard methods.
+          density corrections, and deductibles. A quick estimate for planning: for commercial figures use the vessel’s hydrostatic tables and an independent surveyor.
         </p>
       </div>
 
       {/* Action Bar */}
       <div className="action-bar" style={{ display: 'flex', gap: 10, marginBottom: 22, flexWrap: 'wrap', alignItems: 'center' }}>
-        <button onClick={() => setShowSave(true)} style={{ background: '#c8a84b', color: '#08100a', border: 'none', padding: '8px 16px', fontFamily: rj, fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 }}>
+        <button onClick={() => setShowSave(true)} style={{ background: 'var(--acc)', color: 'var(--bg)', border: 'none', padding: '8px 16px', fontFamily: rj, fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 }}>
           💾 Save
         </button>
         <button onClick={handlePrint} style={ghostBtn}>🖨️ Print / PDF</button>
-        <button onClick={handleReset} style={{ ...ghostBtn, color: '#ff8a8a', borderColor: 'rgba(255,138,138,.3)' }}>🗑️ Reset</button>
-        {saveMsg && <span style={{ color: '#4caf76', fontFamily: rj, fontSize: 12, fontWeight: 600 }}>{saveMsg}</span>}
-        {recordName && <span style={{ color: '#7a8a72', fontFamily: rj, fontSize: 11, marginLeft: 'auto' }}>📂 {recordName}</span>}
+        <button onClick={handleReset} style={{ ...ghostBtn, color: 'var(--bad)', borderColor: 'color-mix(in srgb, var(--bad) 30%, transparent)' }}>🗑️ Reset</button>
+        {saveMsg && <span style={{ color: 'var(--ok)', fontFamily: rj, fontSize: 12, fontWeight: 600 }}>{saveMsg}</span>}
+        {recordName && <span style={{ color: 'var(--ink3)', fontFamily: rj, fontSize: 11, marginLeft: 'auto' }}>📂 {recordName}</span>}
       </div>
 
       {/* Save Dialog */}
       {showSave && (
-        <div style={{ ...card, background: 'rgba(200,168,75,.05)', borderColor: 'rgba(200,168,75,.4)' }}>
+        <div style={{ ...card, background: 'color-mix(in srgb, var(--acc) 5%, transparent)', borderColor: 'color-mix(in srgb, var(--acc) 40%, transparent)' }}>
           <label style={label}>Name</label>
-          <input type="text" value={recordName} onChange={(e) => setRecordName(e.target.value)} placeholder="e.g. MV NEURONAI — Tubarão Loading Survey" style={{ ...inputStyle, marginBottom: 10 }} />
+          <input type="text" value={recordName} onChange={(e) => setRecordName(e.target.value)} placeholder="e.g. MV OCEAN PIONEER — Tubarão Loading Survey" style={{ ...inputStyle, marginBottom: 10 }} />
           <div style={{ display: 'flex', gap: 8 }}>
-            <button onClick={handleSave} style={{ background: '#c8a84b', color: '#08100a', border: 'none', padding: '8px 14px', fontFamily: rj, fontSize: 11, letterSpacing: '1px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 3 }}>
+            <button onClick={handleSave} style={{ background: 'var(--acc)', color: 'var(--bg)', border: 'none', padding: '8px 14px', fontFamily: rj, fontSize: 11, letterSpacing: '1px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 3 }}>
               Save
             </button>
             <button onClick={() => setShowSave(false)} style={ghostBtn}>Cancel</button>
@@ -440,7 +440,7 @@ export default function DraftSurveyPage() {
         <div className="g3" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 12 }}>
           <div>
             <label style={label}>Vessel Name</label>
-            <input style={inputStyle} type="text" value={data.vesselName} onChange={(e) => update('vesselName', e.target.value)} placeholder="MV NEURONAI" />
+            <input style={inputStyle} type="text" value={data.vesselName} onChange={(e) => update('vesselName', e.target.value)} placeholder="MV OCEAN PIONEER" />
           </div>
           <div>
             <label style={label}>IMO</label>
@@ -480,30 +480,30 @@ export default function DraftSurveyPage() {
       {/* 2. Vessel Constants */}
       <div style={card}>
         <div style={sectionTitle}>2. Vessel Constants</div>
-        <p style={{ fontSize: 11, color: '#7a8a72', marginBottom: 12, fontFamily: rj, lineHeight: 1.5 }}>
-          Get these from vessel&apos;s <strong style={{ color: '#c8a84b' }}>Hydrostatic Tables</strong>{' '}
+        <p style={{ fontSize: 11, color: 'var(--ink3)', marginBottom: 12, fontFamily: rj, lineHeight: 1.5 }}>
+          Get these from vessel&apos;s <strong style={{ color: 'var(--acc)' }}>Hydrostatic Tables</strong>{' '}
           (from Stability Book) at the approximate mean draft.
         </p>
         <div className="g3" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 12 }}>
           <div>
             <label style={label}>LBP — m</label>
             <input style={inputStyle} type="number" step="0.01" value={data.lbp || ''} onChange={(e) => update('lbp', parseFloat(e.target.value) || 0)} placeholder="225.0" />
-            <span style={{ fontSize: 9.5, color: '#7a8a72', fontFamily: rj }}>Length between perp.</span>
+            <span style={{ fontSize: 9.5, color: 'var(--ink3)', fontFamily: rj }}>Length between perp.</span>
           </div>
           <div>
             <label style={label}>TPC — t/cm</label>
             <input style={inputStyle} type="number" step="0.01" value={data.tpc || ''} onChange={(e) => update('tpc', parseFloat(e.target.value) || 0)} placeholder="72.5" />
-            <span style={{ fontSize: 9.5, color: '#7a8a72', fontFamily: rj }}>Tonnes per cm</span>
+            <span style={{ fontSize: 9.5, color: 'var(--ink3)', fontFamily: rj }}>Tonnes per cm</span>
           </div>
           <div>
             <label style={label}>MTC — t·m</label>
             <input style={inputStyle} type="number" step="1" value={data.mtc || ''} onChange={(e) => update('mtc', parseFloat(e.target.value) || 0)} placeholder="950" />
-            <span style={{ fontSize: 9.5, color: '#7a8a72', fontFamily: rj }}>Moment to trim 1 cm</span>
+            <span style={{ fontSize: 9.5, color: 'var(--ink3)', fontFamily: rj }}>Moment to trim 1 cm</span>
           </div>
           <div>
             <label style={label}>LCF — m</label>
             <input style={inputStyle} type="number" step="0.01" value={data.lcf || ''} onChange={(e) => update('lcf', parseFloat(e.target.value) || 0)} placeholder="-1.50" />
-            <span style={{ fontSize: 9.5, color: '#7a8a72', fontFamily: rj }}>From midship (+ fwd)</span>
+            <span style={{ fontSize: 9.5, color: 'var(--ink3)', fontFamily: rj }}>From midship (+ fwd)</span>
           </div>
         </div>
       </div>
@@ -513,7 +513,7 @@ export default function DraftSurveyPage() {
         <div style={sectionTitle}>3. Initial Survey (Before {data.surveyType === 'loading' ? 'Loading' : 'Discharging'})</div>
 
         {/* Draft Readings */}
-        <h4 style={{ fontFamily: rj, fontSize: 11, color: '#c8a84b', letterSpacing: '1px', textTransform: 'uppercase', marginBottom: 10, fontWeight: 700 }}>
+        <h4 style={{ fontFamily: rj, fontSize: 11, color: 'var(--acc)', letterSpacing: '1px', textTransform: 'uppercase', marginBottom: 10, fontWeight: 700 }}>
           📏 Draft Readings (meters)
         </h4>
         <div className="g3" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 12, marginBottom: 14 }}>
@@ -547,7 +547,7 @@ export default function DraftSurveyPage() {
         </div>
 
         {/* Density */}
-        <h4 style={{ fontFamily: rj, fontSize: 11, color: '#c8a84b', letterSpacing: '1px', textTransform: 'uppercase', marginBottom: 10, fontWeight: 700, marginTop: 14 }}>
+        <h4 style={{ fontFamily: rj, fontSize: 11, color: 'var(--acc)', letterSpacing: '1px', textTransform: 'uppercase', marginBottom: 10, fontWeight: 700, marginTop: 14 }}>
           💧 Sea Water Density
         </h4>
         <div className="g3" style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 12, marginBottom: 14 }}>
@@ -562,20 +562,20 @@ export default function DraftSurveyPage() {
         </div>
 
         {/* Deductibles */}
-        <h4 style={{ fontFamily: rj, fontSize: 11, color: '#c8a84b', letterSpacing: '1px', textTransform: 'uppercase', marginBottom: 10, fontWeight: 700, marginTop: 14 }}>
+        <h4 style={{ fontFamily: rj, fontSize: 11, color: 'var(--acc)', letterSpacing: '1px', textTransform: 'uppercase', marginBottom: 10, fontWeight: 700, marginTop: 14 }}>
           ⚙️ Deductibles (Initial — MT)
         </h4>
         <DeductibleInputs values={data.initialDeductibles} onUpdate={updateInitialDeduct} />
 
         {/* Results preview */}
-        <div style={{ marginTop: 14, padding: '10px 12px', background: 'rgba(200,168,75,.05)', border: '1px solid rgba(200,168,75,.15)', borderRadius: 3, fontSize: 12, fontFamily: rj, color: '#b0c0a4' }}>
-          📏 Mean Draft: <strong style={{ color: '#f5f0e8' }}>{fmt(calc.initialResult.trueMeanDraft, 3)} m</strong>
-          {' · '}Trim: <strong style={{ color: '#f5f0e8' }}>{fmt(calc.initialResult.apparentTrim, 3)} m {calc.initialResult.apparentTrim > 0 ? 'by aft' : 'by fwd'}</strong>
-          {' · '}Hog/Sag: <strong style={{ color: calc.initialResult.hogSag > 0 ? '#ff8a8a' : '#4caf76' }}>{fmt(calc.initialResult.hogSag * 1000, 1)} mm {calc.initialResult.hogSag > 0 ? '(sag)' : '(hog)'}</strong>
+        <div style={{ marginTop: 14, padding: '10px 12px', background: 'color-mix(in srgb, var(--acc) 5%, transparent)', border: '1px solid color-mix(in srgb, var(--acc) 15%, transparent)', borderRadius: 3, fontSize: 12, fontFamily: rj, color: 'var(--ink2)' }}>
+          📏 Mean Draft: <strong style={{ color: 'var(--ink)' }}>{fmt(calc.initialResult.trueMeanDraft, 3)} m</strong>
+          {' · '}Trim: <strong style={{ color: 'var(--ink)' }}>{fmt(calc.initialResult.apparentTrim, 3)} m {calc.initialResult.apparentTrim > 0 ? 'by aft' : 'by fwd'}</strong>
+          {' · '}Hog/Sag: <strong style={{ color: calc.initialResult.hogSag > 0 ? 'var(--bad)' : 'var(--ok)' }}>{fmt(calc.initialResult.hogSag * 1000, 1)} mm {calc.initialResult.hogSag > 0 ? '(sag)' : '(hog)'}</strong>
           <br />
-          📊 Displacement: <strong style={{ color: '#c8a84b' }}>{fmt(calc.initialResult.correctedDisplacement, 1)} MT</strong>
-          {' · '}Deductibles: <strong style={{ color: '#ff8a8a' }}>-{fmt(calc.initialDeductTotal, 1)} MT</strong>
-          {' · '}Net: <strong style={{ color: '#4caf76' }}>{fmt(calc.initialNet, 1)} MT</strong>
+          📊 Displacement: <strong style={{ color: 'var(--acc)' }}>{fmt(calc.initialResult.correctedDisplacement, 1)} MT</strong>
+          {' · '}Deductibles: <strong style={{ color: 'var(--bad)' }}>-{fmt(calc.initialDeductTotal, 1)} MT</strong>
+          {' · '}Net: <strong style={{ color: 'var(--ok)' }}>{fmt(calc.initialNet, 1)} MT</strong>
         </div>
       </div>
 
@@ -583,7 +583,7 @@ export default function DraftSurveyPage() {
       <div style={card}>
         <div style={sectionTitle}>4. Final Survey (After {data.surveyType === 'loading' ? 'Loading' : 'Discharging'})</div>
 
-        <h4 style={{ fontFamily: rj, fontSize: 11, color: '#c8a84b', letterSpacing: '1px', textTransform: 'uppercase', marginBottom: 10, fontWeight: 700 }}>
+        <h4 style={{ fontFamily: rj, fontSize: 11, color: 'var(--acc)', letterSpacing: '1px', textTransform: 'uppercase', marginBottom: 10, fontWeight: 700 }}>
           📏 Draft Readings (meters)
         </h4>
         <div className="g3" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 12, marginBottom: 14 }}>
@@ -616,7 +616,7 @@ export default function DraftSurveyPage() {
           />
         </div>
 
-        <h4 style={{ fontFamily: rj, fontSize: 11, color: '#c8a84b', letterSpacing: '1px', textTransform: 'uppercase', marginBottom: 10, fontWeight: 700, marginTop: 14 }}>
+        <h4 style={{ fontFamily: rj, fontSize: 11, color: 'var(--acc)', letterSpacing: '1px', textTransform: 'uppercase', marginBottom: 10, fontWeight: 700, marginTop: 14 }}>
           💧 Sea Water Density
         </h4>
         <div className="g3" style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 12, marginBottom: 14 }}>
@@ -630,19 +630,19 @@ export default function DraftSurveyPage() {
           </div>
         </div>
 
-        <h4 style={{ fontFamily: rj, fontSize: 11, color: '#c8a84b', letterSpacing: '1px', textTransform: 'uppercase', marginBottom: 10, fontWeight: 700, marginTop: 14 }}>
+        <h4 style={{ fontFamily: rj, fontSize: 11, color: 'var(--acc)', letterSpacing: '1px', textTransform: 'uppercase', marginBottom: 10, fontWeight: 700, marginTop: 14 }}>
           ⚙️ Deductibles (Final — MT)
         </h4>
         <DeductibleInputs values={data.finalDeductibles} onUpdate={updateFinalDeduct} />
 
-        <div style={{ marginTop: 14, padding: '10px 12px', background: 'rgba(200,168,75,.05)', border: '1px solid rgba(200,168,75,.15)', borderRadius: 3, fontSize: 12, fontFamily: rj, color: '#b0c0a4' }}>
-          📏 Mean Draft: <strong style={{ color: '#f5f0e8' }}>{fmt(calc.finalResult.trueMeanDraft, 3)} m</strong>
-          {' · '}Trim: <strong style={{ color: '#f5f0e8' }}>{fmt(calc.finalResult.apparentTrim, 3)} m {calc.finalResult.apparentTrim > 0 ? 'by aft' : 'by fwd'}</strong>
-          {' · '}Hog/Sag: <strong style={{ color: calc.finalResult.hogSag > 0 ? '#ff8a8a' : '#4caf76' }}>{fmt(calc.finalResult.hogSag * 1000, 1)} mm {calc.finalResult.hogSag > 0 ? '(sag)' : '(hog)'}</strong>
+        <div style={{ marginTop: 14, padding: '10px 12px', background: 'color-mix(in srgb, var(--acc) 5%, transparent)', border: '1px solid color-mix(in srgb, var(--acc) 15%, transparent)', borderRadius: 3, fontSize: 12, fontFamily: rj, color: 'var(--ink2)' }}>
+          📏 Mean Draft: <strong style={{ color: 'var(--ink)' }}>{fmt(calc.finalResult.trueMeanDraft, 3)} m</strong>
+          {' · '}Trim: <strong style={{ color: 'var(--ink)' }}>{fmt(calc.finalResult.apparentTrim, 3)} m {calc.finalResult.apparentTrim > 0 ? 'by aft' : 'by fwd'}</strong>
+          {' · '}Hog/Sag: <strong style={{ color: calc.finalResult.hogSag > 0 ? 'var(--bad)' : 'var(--ok)' }}>{fmt(calc.finalResult.hogSag * 1000, 1)} mm {calc.finalResult.hogSag > 0 ? '(sag)' : '(hog)'}</strong>
           <br />
-          📊 Displacement: <strong style={{ color: '#c8a84b' }}>{fmt(calc.finalResult.correctedDisplacement, 1)} MT</strong>
-          {' · '}Deductibles: <strong style={{ color: '#ff8a8a' }}>-{fmt(calc.finalDeductTotal, 1)} MT</strong>
-          {' · '}Net: <strong style={{ color: '#4caf76' }}>{fmt(calc.finalNet, 1)} MT</strong>
+          📊 Displacement: <strong style={{ color: 'var(--acc)' }}>{fmt(calc.finalResult.correctedDisplacement, 1)} MT</strong>
+          {' · '}Deductibles: <strong style={{ color: 'var(--bad)' }}>-{fmt(calc.finalDeductTotal, 1)} MT</strong>
+          {' · '}Net: <strong style={{ color: 'var(--ok)' }}>{fmt(calc.finalNet, 1)} MT</strong>
         </div>
       </div>
 
@@ -659,40 +659,40 @@ export default function DraftSurveyPage() {
 
       {/* RESULTS */}
       {data.lbp > 0 && data.tpc > 0 && (
-        <div style={{ ...card, background: 'linear-gradient(135deg,rgba(200,168,75,.08),transparent)', borderColor: 'rgba(200,168,75,.4)' }}>
+        <div style={{ ...card, background: 'linear-gradient(135deg,color-mix(in srgb, var(--acc) 8%, transparent),transparent)', borderColor: 'color-mix(in srgb, var(--acc) 40%, transparent)' }}>
           <div style={sectionTitle}>⚡ CARGO QUANTITY RESULT</div>
 
           <div style={rowStyle}>
-            <span style={{ color: '#7a8a72' }}>Initial Survey Net (Light Vessel)</span>
+            <span style={{ color: 'var(--ink3)' }}>Initial Survey Net (Light Vessel)</span>
             <strong>{fmt(calc.initialNet, 1)} MT</strong>
           </div>
           <div style={rowStyle}>
-            <span style={{ color: '#7a8a72' }}>Final Survey Net (Loaded Vessel)</span>
+            <span style={{ color: 'var(--ink3)' }}>Final Survey Net (Loaded Vessel)</span>
             <strong>{fmt(calc.finalNet, 1)} MT</strong>
           </div>
 
-          <div style={{ ...rowStyle, borderTop: '2px solid #c8a84b', paddingTop: 14, marginTop: 10, borderBottom: 'none' }}>
-            <span style={{ color: '#c8a84b', fontWeight: 700, fontSize: 14 }}>
+          <div style={{ ...rowStyle, borderTop: '2px solid var(--acc)', paddingTop: 14, marginTop: 10, borderBottom: 'none' }}>
+            <span style={{ color: 'var(--acc)', fontWeight: 700, fontSize: 14 }}>
               CARGO {data.surveyType === 'loading' ? 'LOADED' : 'DISCHARGED'}
             </span>
-            <strong style={{ fontFamily: lb, fontSize: 28, color: '#c8a84b' }}>{fmt(calc.cargoQty, 1)} MT</strong>
+            <strong style={{ fontFamily: lb, fontSize: 28, color: 'var(--acc)' }}>{fmt(calc.cargoQty, 1)} MT</strong>
           </div>
 
           {data.blQty > 0 && (
             <>
-              <div style={{ ...rowStyle, marginTop: 14, paddingTop: 12, borderTop: '1px solid rgba(200,168,75,.2)' }}>
-                <span style={{ color: '#7a8a72' }}>Bill of Lading Quantity</span>
+              <div style={{ ...rowStyle, marginTop: 14, paddingTop: 12, borderTop: '1px solid color-mix(in srgb, var(--acc) 20%, transparent)' }}>
+                <span style={{ color: 'var(--ink3)' }}>Bill of Lading Quantity</span>
                 <strong>{fmt(data.blQty, 1)} MT</strong>
               </div>
               <div style={rowStyle}>
-                <span style={{ color: '#7a8a72' }}>Difference</span>
-                <strong style={{ color: Math.abs(calc.blDifferencePct) <= 0.5 ? '#4caf76' : '#ff8a8a' }}>
+                <span style={{ color: 'var(--ink3)' }}>Difference</span>
+                <strong style={{ color: Math.abs(calc.blDifferencePct) <= 0.5 ? 'var(--ok)' : 'var(--bad)' }}>
                   {calc.blDifference > 0 ? '+' : ''}{fmt(calc.blDifference, 1)} MT ({calc.blDifferencePct > 0 ? '+' : ''}{fmt(calc.blDifferencePct, 3)}%)
                 </strong>
               </div>
               <div style={{ ...rowStyle, borderBottom: 'none' }}>
-                <span style={{ color: '#7a8a72' }}>Status</span>
-                <strong style={{ color: Math.abs(calc.blDifferencePct) <= 0.5 ? '#4caf76' : '#ff8a8a' }}>
+                <span style={{ color: 'var(--ink3)' }}>Status</span>
+                <strong style={{ color: Math.abs(calc.blDifferencePct) <= 0.5 ? 'var(--ok)' : 'var(--bad)' }}>
                   {Math.abs(calc.blDifferencePct) <= 0.5 ? '✓ Within typical tolerance (±0.5%)' : '⚠ Outside typical tolerance'}
                 </strong>
               </div>
@@ -702,13 +702,13 @@ export default function DraftSurveyPage() {
       )}
 
       {/* Methodology */}
-      <div style={{ ...card, background: 'rgba(122,138,114,.05)', borderColor: 'rgba(122,138,114,.15)' }}>
+      <div style={{ ...card, background: 'color-mix(in srgb, var(--ink3) 5%, transparent)', borderColor: 'color-mix(in srgb, var(--ink3) 15%, transparent)' }}>
         <div style={sectionTitle}>📖 Methodology</div>
-        <ul style={{ fontSize: 11.5, color: '#b0c0a4', lineHeight: 1.7, paddingLeft: 18 }}>
-          <li>Quarter-mean draft method: <strong style={{ color: '#c8a84b' }}>(F + 6×M + A) / 8</strong></li>
-          <li>1st Trim Correction: <strong style={{ color: '#c8a84b' }}>(Trim × LCF × TPC × 100) / LBP</strong></li>
-          <li>2nd Trim Correction: <strong style={{ color: '#c8a84b' }}>(Trim² × 50 × MTC) / LBP</strong></li>
-          <li>Density Correction: <strong style={{ color: '#c8a84b' }}>Displacement × (Density - 1.025) / 1.025</strong></li>
+        <ul style={{ fontSize: 11.5, color: 'var(--ink2)', lineHeight: 1.7, paddingLeft: 18 }}>
+          <li>Quarter-mean draft method: <strong style={{ color: 'var(--acc)' }}>(F + 6×M + A) / 8</strong></li>
+          <li>1st Trim Correction: <strong style={{ color: 'var(--acc)' }}>(Trim × LCF × TPC × 100) / LBP</strong></li>
+          <li>2nd Trim Correction: <strong style={{ color: 'var(--acc)' }}>(Trim² × 50 × MTC) / LBP</strong></li>
+          <li>Density Correction: <strong style={{ color: 'var(--acc)' }}>Displacement × (Density - 1.025) / 1.025</strong></li>
           <li>Hog/Sag: difference between mid draft and (F+A)/2</li>
           <li>For commercial use, displacement <em>must</em> be read from vessel&apos;s actual hydrostatic tables — this tool uses linear approximation.</li>
         </ul>
@@ -764,8 +764,8 @@ function DraftPair({
   onCorr: (v: number) => void;
 }) {
   return (
-    <div style={{ background: '#0c1610', border: '1px solid rgba(200,168,75,.15)', padding: 12, borderRadius: 3 }}>
-      <div style={{ fontFamily: rj, fontSize: 11, color: '#c8a84b', fontWeight: 700, letterSpacing: '.5px', marginBottom: 8 }}>
+    <div style={{ background: 'var(--bg2)', border: '1px solid color-mix(in srgb, var(--acc) 15%, transparent)', padding: 12, borderRadius: 3 }}>
+      <div style={{ fontFamily: rj, fontSize: 11, color: 'var(--acc)', fontWeight: 700, letterSpacing: '.5px', marginBottom: 8 }}>
         {lbl}
       </div>
       <div className="draft-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6 }}>
@@ -821,7 +821,7 @@ function DeductibleInputs({ values, onUpdate }: { values: Deductibles; onUpdate:
           </div>
         ))}
       </div>
-      <div style={{ marginTop: 10, padding: '6px 12px', background: '#0c1610', border: '1px solid rgba(200,168,75,.2)', borderRadius: 3, fontSize: 12, color: '#c8a84b', fontFamily: rj, fontWeight: 700, textAlign: 'right' }}>
+      <div style={{ marginTop: 10, padding: '6px 12px', background: 'var(--bg2)', border: '1px solid color-mix(in srgb, var(--acc) 20%, transparent)', borderRadius: 3, fontSize: 12, color: 'var(--acc)', fontFamily: rj, fontWeight: 700, textAlign: 'right' }}>
         Total Deductibles: {fmt(total, 1)} MT
       </div>
     </>
@@ -835,7 +835,7 @@ const rowStyle: React.CSSProperties = {
   display: 'flex',
   justifyContent: 'space-between',
   padding: '8px 0',
-  borderBottom: '1px dashed rgba(200,168,75,.1)',
+  borderBottom: '1px dashed color-mix(in srgb, var(--acc) 10%, transparent)',
   fontFamily: rj,
   fontSize: 13,
 };

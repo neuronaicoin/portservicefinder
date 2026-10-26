@@ -3,9 +3,9 @@ import { useState, useEffect } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { saveItem, loadItem, genId } from '@/lib/voyage-storage';
 
-const lb = "'Libre Bodoni', serif";
-const rj = "'Rajdhani', sans-serif";
-const g = { color: '#c8a84b', fontStyle: 'italic' };
+const lb = 'var(--font-display)';
+const rj = 'var(--font-ui)';
+const g = { color: 'var(--acc)' };
 
 // ============================================================
 // DOC TYPES
@@ -547,8 +547,8 @@ Signature/Stamp: ___________________________`;
 // STYLES
 // ============================================================
 const card: React.CSSProperties = {
-  background: '#111c13',
-  border: '1px solid rgba(200,168,75,.18)',
+  background: 'var(--card)',
+  border: '1px solid color-mix(in srgb, var(--acc) 18%, transparent)',
   padding: '20px 18px',
   borderRadius: 4,
   marginBottom: 16,
@@ -558,11 +558,11 @@ const sectionTitle: React.CSSProperties = {
   fontSize: 11,
   letterSpacing: '2px',
   textTransform: 'uppercase',
-  color: '#c8a84b',
+  color: 'var(--acc)',
   fontWeight: 700,
   marginBottom: 14,
   paddingBottom: 8,
-  borderBottom: '1px solid rgba(200,168,75,.12)',
+  borderBottom: '1px solid color-mix(in srgb, var(--acc) 12%, transparent)',
 };
 const label: React.CSSProperties = {
   display: 'block',
@@ -570,15 +570,15 @@ const label: React.CSSProperties = {
   fontSize: 10.5,
   letterSpacing: '.5px',
   textTransform: 'uppercase',
-  color: '#7a8a72',
+  color: 'var(--ink3)',
   fontWeight: 600,
   marginBottom: 5,
 };
 const inputStyle: React.CSSProperties = {
   width: '100%',
-  background: '#0c1610',
-  border: '1px solid rgba(200,168,75,.2)',
-  color: '#f5f0e8',
+  background: 'var(--bg2)',
+  border: '1px solid color-mix(in srgb, var(--acc) 20%, transparent)',
+  color: 'var(--ink)',
   padding: '8px 10px',
   fontFamily: rj,
   fontSize: 13,
@@ -587,8 +587,8 @@ const inputStyle: React.CSSProperties = {
 };
 const ghostBtn: React.CSSProperties = {
   background: 'transparent',
-  color: '#c8a84b',
-  border: '1px solid rgba(200,168,75,.4)',
+  color: 'var(--acc)',
+  border: '1px solid color-mix(in srgb, var(--acc) 40%, transparent)',
   padding: '8px 14px',
   fontFamily: rj,
   fontSize: 11,
@@ -675,13 +675,13 @@ export default function DocumentGeneratorPage() {
     <div>
       {/* Header */}
       <div style={{ marginBottom: 24 }}>
-        <div style={{ fontFamily: rj, fontSize: 10, letterSpacing: '2px', textTransform: 'uppercase', color: '#c8a84b', fontWeight: 700, marginBottom: 8 }}>
+        <div style={{ fontFamily: rj, fontSize: 10, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--acc)', fontWeight: 700, marginBottom: 8 }}>
           📝 Voyage Hub · Document Generator
         </div>
         <h1 style={{ fontFamily: lb, fontSize: 'clamp(22px,3vw,32px)', fontWeight: 700, lineHeight: 1.1, marginBottom: 8 }}>
           Maritime <em style={g}>Documents</em> Generator
         </h1>
-        <p style={{ fontSize: 13, color: '#b0c0a4', lineHeight: 1.6, maxWidth: 720 }}>
+        <p style={{ fontSize: 13, color: 'var(--ink2)', lineHeight: 1.6, maxWidth: 720 }}>
           Generate professional NOR, SOF, LOP, LOI, Master Protest, and other essential maritime
           documents. Auto-filled, editable, ready to print or email.
         </p>
@@ -692,9 +692,9 @@ export default function DocumentGeneratorPage() {
         <button
           onClick={() => setView(view === 'input' ? 'preview' : 'input')}
           style={{
-            background: view === 'preview' ? 'transparent' : '#c8a84b',
-            color: view === 'preview' ? '#c8a84b' : '#08100a',
-            border: '1px solid #c8a84b',
+            background: view === 'preview' ? 'transparent' : 'var(--acc)',
+            color: view === 'preview' ? 'var(--acc)' : 'var(--bg)',
+            border: '1px solid var(--acc)',
             padding: '8px 16px',
             fontFamily: rj,
             fontSize: 11,
@@ -711,14 +711,14 @@ export default function DocumentGeneratorPage() {
         <button onClick={handleCopy} style={ghostBtn}>📋 Copy</button>
         <button onClick={handleEmail} style={ghostBtn}>✉️ Email</button>
         <button onClick={handlePrint} style={ghostBtn}>🖨️ Print / PDF</button>
-        <button onClick={handleReset} style={{ ...ghostBtn, color: '#ff8a8a', borderColor: 'rgba(255,138,138,.3)' }}>🗑️ Reset</button>
-        {saveMsg && <span style={{ color: '#4caf76', fontFamily: rj, fontSize: 12, fontWeight: 600 }}>{saveMsg}</span>}
-        {recordName && <span style={{ color: '#7a8a72', fontFamily: rj, fontSize: 11, marginLeft: 'auto' }}>📂 {recordName}</span>}
+        <button onClick={handleReset} style={{ ...ghostBtn, color: 'var(--bad)', borderColor: 'color-mix(in srgb, var(--bad) 30%, transparent)' }}>🗑️ Reset</button>
+        {saveMsg && <span style={{ color: 'var(--ok)', fontFamily: rj, fontSize: 12, fontWeight: 600 }}>{saveMsg}</span>}
+        {recordName && <span style={{ color: 'var(--ink3)', fontFamily: rj, fontSize: 11, marginLeft: 'auto' }}>📂 {recordName}</span>}
       </div>
 
       {/* Save Dialog */}
       {showSave && (
-        <div style={{ ...card, background: 'rgba(200,168,75,.05)', borderColor: 'rgba(200,168,75,.4)' }}>
+        <div style={{ ...card, background: 'color-mix(in srgb, var(--acc) 5%, transparent)', borderColor: 'color-mix(in srgb, var(--acc) 40%, transparent)' }}>
           <label style={label}>Name</label>
           <input
             type="text"
@@ -728,7 +728,7 @@ export default function DocumentGeneratorPage() {
             style={{ ...inputStyle, marginBottom: 10 }}
           />
           <div style={{ display: 'flex', gap: 8 }}>
-            <button onClick={handleSave} style={{ background: '#c8a84b', color: '#08100a', border: 'none', padding: '8px 14px', fontFamily: rj, fontSize: 11, letterSpacing: '1px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 3 }}>
+            <button onClick={handleSave} style={{ background: 'var(--acc)', color: 'var(--bg)', border: 'none', padding: '8px 14px', fontFamily: rj, fontSize: 11, letterSpacing: '1px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 3 }}>
               Save
             </button>
             <button onClick={() => setShowSave(false)} style={ghostBtn}>Cancel</button>
@@ -747,26 +747,26 @@ export default function DocumentGeneratorPage() {
                   key={doc.key}
                   onClick={() => update('docType', doc.key)}
                   style={{
-                    background: data.docType === doc.key ? 'rgba(200,168,75,.15)' : '#0c1610',
-                    border: `1px solid ${data.docType === doc.key ? '#c8a84b' : 'rgba(200,168,75,.18)'}`,
+                    background: data.docType === doc.key ? 'color-mix(in srgb, var(--acc) 15%, transparent)' : 'var(--bg2)',
+                    border: `1px solid ${data.docType === doc.key ? 'var(--acc)' : 'color-mix(in srgb, var(--acc) 18%, transparent)'}`,
                     padding: '14px 12px',
                     cursor: 'pointer',
                     borderRadius: 4,
                     textAlign: 'left',
                     fontFamily: rj,
-                    color: '#f5f0e8',
+                    color: 'var(--ink)',
                   }}
                 >
                   <div style={{ fontSize: 22, marginBottom: 6 }}>{doc.icon}</div>
-                  <div style={{ fontFamily: lb, fontSize: 13, fontWeight: 700, color: data.docType === doc.key ? '#c8a84b' : '#f5f0e8', marginBottom: 3 }}>
+                  <div style={{ fontFamily: lb, fontSize: 13, fontWeight: 700, color: data.docType === doc.key ? 'var(--acc)' : 'var(--ink)', marginBottom: 3 }}>
                     {doc.name}
                   </div>
-                  <div style={{ fontSize: 10, color: '#7a8a72', lineHeight: 1.3 }}>{doc.fullName}</div>
+                  <div style={{ fontSize: 10, color: 'var(--ink3)', lineHeight: 1.3 }}>{doc.fullName}</div>
                 </button>
               ))}
             </div>
-            <p style={{ fontSize: 12, color: '#b0c0a4', marginTop: 14, fontFamily: rj, lineHeight: 1.5 }}>
-              {currentDocInfo?.icon} <strong style={{ color: '#c8a84b' }}>{currentDocInfo?.fullName}</strong>: {currentDocInfo?.desc}
+            <p style={{ fontSize: 12, color: 'var(--ink2)', marginTop: 14, fontFamily: rj, lineHeight: 1.5 }}>
+              {currentDocInfo?.icon} <strong style={{ color: 'var(--acc)' }}>{currentDocInfo?.fullName}</strong>: {currentDocInfo?.desc}
             </p>
           </div>
 
@@ -776,7 +776,7 @@ export default function DocumentGeneratorPage() {
             <div className="g3" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 12 }}>
               <div>
                 <label style={label}>Vessel Name *</label>
-                <input style={inputStyle} type="text" value={data.vesselName} onChange={(e) => update('vesselName', e.target.value)} placeholder="MV NEURONAI" />
+                <input style={inputStyle} type="text" value={data.vesselName} onChange={(e) => update('vesselName', e.target.value)} placeholder="MV OCEAN PIONEER" />
               </div>
               <div>
                 <label style={label}>IMO Number</label>
@@ -1003,7 +1003,7 @@ export default function DocumentGeneratorPage() {
                     style={{ ...inputStyle, resize: 'vertical' }}
                   />
                 </div>
-                <div style={{ padding: '10px 12px', background: 'rgba(255,138,138,.06)', border: '1px solid rgba(255,138,138,.2)', borderRadius: 3, fontSize: 11.5, color: '#ff8a8a', fontFamily: rj, lineHeight: 1.5 }}>
+                <div style={{ padding: '10px 12px', background: 'color-mix(in srgb, var(--bad) 6%, transparent)', border: '1px solid color-mix(in srgb, var(--bad) 20%, transparent)', borderRadius: 3, fontSize: 11.5, color: 'var(--bad)', fontFamily: rj, lineHeight: 1.5 }}>
                   ⚠ <strong>Important:</strong> LOI templates are starting points. Consult P&I Club / lawyer
                   before issuing. Bank counter-signature often required.
                 </div>
@@ -1012,16 +1012,16 @@ export default function DocumentGeneratorPage() {
           )}
 
           {/* Quick Preview */}
-          <div style={{ ...card, background: 'linear-gradient(135deg,rgba(200,168,75,.08),transparent)', borderColor: 'rgba(200,168,75,.4)' }}>
+          <div style={{ ...card, background: 'linear-gradient(135deg,color-mix(in srgb, var(--acc) 8%, transparent),transparent)', borderColor: 'color-mix(in srgb, var(--acc) 40%, transparent)' }}>
             <div style={sectionTitle}>⚡ Document Ready</div>
-            <p style={{ fontSize: 12, color: '#b0c0a4', marginBottom: 12 }}>
-              Click <strong style={{ color: '#c8a84b' }}>Preview Document</strong> above to see the full text, then Print, Copy, or Email.
+            <p style={{ fontSize: 12, color: 'var(--ink2)', marginBottom: 12 }}>
+              Click <strong style={{ color: 'var(--acc)' }}>Preview Document</strong> above to see the full text, then Print, Copy, or Email.
             </p>
             <button
               onClick={() => setView('preview')}
               style={{
-                background: '#c8a84b',
-                color: '#08100a',
+                background: 'var(--acc)',
+                color: 'var(--bg)',
                 border: 'none',
                 padding: '10px 22px',
                 fontFamily: rj,
@@ -1046,8 +1046,8 @@ export default function DocumentGeneratorPage() {
             className="doc-preview"
             style={{
               ...card,
-              background: '#0c1610',
-              borderColor: 'rgba(200,168,75,.3)',
+              background: 'var(--bg2)',
+              borderColor: 'color-mix(in srgb, var(--acc) 30%, transparent)',
               padding: '32px 28px',
             }}
           >
@@ -1055,7 +1055,7 @@ export default function DocumentGeneratorPage() {
               style={{
                 fontFamily: '"Courier New", monospace',
                 fontSize: 12,
-                color: '#f5f0e8',
+                color: 'var(--ink)',
                 lineHeight: 1.7,
                 whiteSpace: 'pre-wrap',
                 wordWrap: 'break-word',
@@ -1066,9 +1066,9 @@ export default function DocumentGeneratorPage() {
             </pre>
           </div>
 
-          <div style={{ ...card, background: 'rgba(122,138,114,.05)', borderColor: 'rgba(122,138,114,.15)' }}>
-            <div style={{ fontFamily: rj, fontSize: 10.5, color: '#7a8a72', letterSpacing: '.5px', lineHeight: 1.7 }}>
-              💡 <strong style={{ color: '#c8a84b' }}>Tips:</strong>
+          <div style={{ ...card, background: 'color-mix(in srgb, var(--ink3) 5%, transparent)', borderColor: 'color-mix(in srgb, var(--ink3) 15%, transparent)' }}>
+            <div style={{ fontFamily: rj, fontSize: 10.5, color: 'var(--ink3)', letterSpacing: '.5px', lineHeight: 1.7 }}>
+              💡 <strong style={{ color: 'var(--acc)' }}>Tips:</strong>
               <br />
               • Click <strong>📋 Copy</strong> to paste into your email client.
               <br />

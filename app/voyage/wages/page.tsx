@@ -2,9 +2,9 @@
 import { useState, useEffect, useMemo } from 'react';
 import { saveItem, loadItem, genId } from '@/lib/voyage-storage';
 
-const lb = "'Libre Bodoni', serif";
-const rj = "'Rajdhani', sans-serif";
-const g = { color: '#c8a84b', fontStyle: 'italic' } as React.CSSProperties;
+const lb = 'var(--font-display)';
+const rj = 'var(--font-ui)';
+const g = { color: 'var(--acc)' } as React.CSSProperties;
 
 // ============================================================
 // TYPES
@@ -74,12 +74,12 @@ function fmt(n: number, dec = 2): string {
 // ============================================================
 // STYLES
 // ============================================================
-const card: React.CSSProperties = { background: '#111c13', border: '1px solid rgba(200,168,75,.18)', padding: '20px 18px', borderRadius: 4, marginBottom: 16 };
-const sectionTitle: React.CSSProperties = { fontFamily: rj, fontSize: 11, letterSpacing: '2px', textTransform: 'uppercase', color: '#c8a84b', fontWeight: 700, marginBottom: 14, paddingBottom: 8, borderBottom: '1px solid rgba(200,168,75,.12)' };
-const labelS: React.CSSProperties = { display: 'block', fontFamily: rj, fontSize: 10, letterSpacing: '.5px', textTransform: 'uppercase', color: '#7a8a72', fontWeight: 600, marginBottom: 4 };
-const inputStyle: React.CSSProperties = { width: '100%', background: '#0c1610', border: '1px solid rgba(200,168,75,.2)', color: '#f5f0e8', padding: '7px 9px', fontFamily: rj, fontSize: 12.5, fontWeight: 500, borderRadius: 3, boxSizing: 'border-box' };
-const ghostBtn: React.CSSProperties = { background: 'transparent', color: '#c8a84b', border: '1px solid rgba(200,168,75,.4)', padding: '8px 14px', fontFamily: rj, fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 };
-const goldBtn: React.CSSProperties = { background: '#c8a84b', color: '#08100a', border: 'none', padding: '8px 16px', fontFamily: rj, fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 };
+const card: React.CSSProperties = { background: 'var(--card)', border: '1px solid color-mix(in srgb, var(--acc) 18%, transparent)', padding: '20px 18px', borderRadius: 4, marginBottom: 16 };
+const sectionTitle: React.CSSProperties = { fontFamily: rj, fontSize: 11, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--acc)', fontWeight: 700, marginBottom: 14, paddingBottom: 8, borderBottom: '1px solid color-mix(in srgb, var(--acc) 12%, transparent)' };
+const labelS: React.CSSProperties = { display: 'block', fontFamily: rj, fontSize: 10, letterSpacing: '.5px', textTransform: 'uppercase', color: 'var(--ink3)', fontWeight: 600, marginBottom: 4 };
+const inputStyle: React.CSSProperties = { width: '100%', background: 'var(--bg2)', border: '1px solid color-mix(in srgb, var(--acc) 20%, transparent)', color: 'var(--ink)', padding: '7px 9px', fontFamily: rj, fontSize: 12.5, fontWeight: 500, borderRadius: 3, boxSizing: 'border-box' };
+const ghostBtn: React.CSSProperties = { background: 'transparent', color: 'var(--acc)', border: '1px solid color-mix(in srgb, var(--acc) 40%, transparent)', padding: '8px 14px', fontFamily: rj, fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 };
+const goldBtn: React.CSSProperties = { background: 'var(--acc)', color: 'var(--bg)', border: 'none', padding: '8px 16px', fontFamily: rj, fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 };
 
 const STORAGE_KEY = 'wages';
 const SINGLETON_ID = 'wagecalc';
@@ -125,21 +125,21 @@ export default function WagesPage() {
     <div>
       {/* Header */}
       <div style={{ marginBottom: 24 }}>
-        <div style={{ fontFamily: rj, fontSize: 10, letterSpacing: '2px', textTransform: 'uppercase', color: '#c8a84b', fontWeight: 700, marginBottom: 8 }}>
+        <div style={{ fontFamily: rj, fontSize: 10, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--acc)', fontWeight: 700, marginBottom: 8 }}>
           ⚓ Voyage Hub · Wage Calculator
         </div>
         <h1 style={{ fontFamily: lb, fontSize: 'clamp(22px,3vw,32px)', fontWeight: 700, lineHeight: 1.1, marginBottom: 8 }}>
           Wage <em style={g}>Calculator</em>
         </h1>
-        <p style={{ fontSize: 13, color: '#b0c0a4', lineHeight: 1.6, maxWidth: 720 }}>
+        <p style={{ fontSize: 13, color: 'var(--ink2)', lineHeight: 1.6, maxWidth: 720 }}>
           Build a crew wage bill — basic, guaranteed and extra overtime, leave and allowances, per month
           and per contract. Reference figures are indicative; your CBA / ITF table governs actual wages.
         </p>
       </div>
 
       {/* Disclaimer */}
-      <div style={{ ...card, background: 'rgba(232,184,90,.06)', borderColor: 'rgba(232,184,90,.3)', padding: '12px 16px' }}>
-        <div style={{ fontFamily: rj, fontSize: 12, color: '#e8c87a', lineHeight: 1.5 }}>
+      <div style={{ ...card, background: 'color-mix(in srgb, var(--warn) 6%, transparent)', borderColor: 'color-mix(in srgb, var(--warn) 30%, transparent)', padding: '12px 16px' }}>
+        <div style={{ fontFamily: rj, fontSize: 12, color: 'var(--warn)', lineHeight: 1.5 }}>
           ⚠ <b>Reference figures are indicative ballpark values for orientation only.</b> Always use the applicable
           collective bargaining agreement (CBA), ITF/IBF rate table or the seafarer&apos;s employment agreement.
         </div>
@@ -148,7 +148,7 @@ export default function WagesPage() {
       {/* Vessel + currency */}
       <div style={card}>
         <div className="wg-g3" style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 12 }}>
-          <div><label style={labelS}>Vessel</label><input style={inputStyle} value={data.vesselName} onChange={(e) => update('vesselName', e.target.value)} placeholder="MV NEURONAI" /></div>
+          <div><label style={labelS}>Vessel</label><input style={inputStyle} value={data.vesselName} onChange={(e) => update('vesselName', e.target.value)} placeholder="MV OCEAN PIONEER" /></div>
           <div>
             <label style={labelS}>Currency</label>
             <select style={inputStyle} value={data.currency} onChange={(e) => update('currency', e.target.value)}>
@@ -161,15 +161,15 @@ export default function WagesPage() {
       <div className="action-bar" style={{ display: 'flex', gap: 10, marginBottom: 16, flexWrap: 'wrap', alignItems: 'center' }}>
         <button onClick={addCrew} style={goldBtn}>+ Add Crew</button>
         <button onClick={() => window.print()} style={ghostBtn}>🖨️ Print / PDF</button>
-        {saveMsg && <span style={{ color: '#4caf76', fontFamily: rj, fontSize: 12, fontWeight: 600 }}>{saveMsg}</span>}
+        {saveMsg && <span style={{ color: 'var(--ok)', fontFamily: rj, fontSize: 12, fontWeight: 600 }}>{saveMsg}</span>}
       </div>
 
       {/* Totals */}
-      <div style={{ ...card, background: 'linear-gradient(135deg,rgba(200,168,75,.08),transparent)', borderColor: 'rgba(200,168,75,.4)' }}>
+      <div style={{ ...card, background: 'linear-gradient(135deg,color-mix(in srgb, var(--acc) 8%, transparent),transparent)', borderColor: 'color-mix(in srgb, var(--acc) 40%, transparent)' }}>
         <div className="wg-totals" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 10 }}>
-          <KPI label="Crew" value={String(totals.count)} color="#f5f0e8" />
-          <KPI label="Monthly Wage Bill" value={`${cur} ${fmt(totals.monthly, 0)}`} color="#c8a84b" big />
-          <KPI label="Total Contract Cost" value={`${cur} ${fmt(totals.contract, 0)}`} color="#4caf76" big />
+          <KPI label="Crew" value={String(totals.count)} color="var(--ink)" />
+          <KPI label="Monthly Wage Bill" value={`${cur} ${fmt(totals.monthly, 0)}`} color="var(--acc)" big />
+          <KPI label="Total Contract Cost" value={`${cur} ${fmt(totals.contract, 0)}`} color="var(--ok)" big />
         </div>
       </div>
 
@@ -179,8 +179,8 @@ export default function WagesPage() {
         return (
           <div key={c.id} style={card}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-              <div style={{ fontFamily: lb, fontSize: 15, fontWeight: 700, color: '#c8a84b' }}>{c.name || c.rank || `Crew ${i + 1}`}</div>
-              {data.crew.length > 1 && <button onClick={() => delCrew(c.id)} style={{ background: 'transparent', border: 'none', color: '#ff8a8a', fontFamily: rj, fontSize: 11, cursor: 'pointer' }}>Remove</button>}
+              <div style={{ fontFamily: lb, fontSize: 15, fontWeight: 700, color: 'var(--acc)' }}>{c.name || c.rank || `Crew ${i + 1}`}</div>
+              {data.crew.length > 1 && <button onClick={() => delCrew(c.id)} style={{ background: 'transparent', border: 'none', color: 'var(--bad)', fontFamily: rj, fontSize: 11, cursor: 'pointer' }}>Remove</button>}
             </div>
 
             <div className="wg-g3" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 10, marginBottom: 10 }}>
@@ -207,20 +207,20 @@ export default function WagesPage() {
             </div>
 
             {/* breakdown */}
-            <div style={{ background: '#0c1610', border: '1px solid rgba(200,168,75,.15)', borderRadius: 3, padding: '10px 12px' }}>
+            <div style={{ background: 'var(--bg2)', border: '1px solid color-mix(in srgb, var(--acc) 15%, transparent)', borderRadius: 3, padding: '10px 12px' }}>
               <Line label="Basic" value={`${cur} ${fmt(c.basicWage)}`} />
               <Line label={`Guaranteed OT (${c.guaranteedOtHours}h)`} value={`${cur} ${fmt(m.guaranteedOt)}`} />
               {c.extraOtHours > 0 && <Line label={`Extra OT (${c.extraOtHours}h)`} value={`${cur} ${fmt(m.extraOt)}`} />}
               {c.leavePay > 0 && <Line label="Leave pay" value={`${cur} ${fmt(c.leavePay)}`} />}
               {c.subsistence > 0 && <Line label="Subsistence" value={`${cur} ${fmt(c.subsistence)}`} />}
               {c.seniority > 0 && <Line label="Seniority" value={`${cur} ${fmt(c.seniority)}`} />}
-              <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: 8, marginTop: 4, borderTop: '1px solid rgba(200,168,75,.3)', fontFamily: rj }}>
-                <span style={{ color: '#c8a84b', fontWeight: 700, fontSize: 13 }}>Monthly</span>
-                <span style={{ color: '#c8a84b', fontWeight: 700, fontSize: 15, fontFamily: lb }}>{cur} {fmt(m.monthly)}</span>
+              <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: 8, marginTop: 4, borderTop: '1px solid color-mix(in srgb, var(--acc) 30%, transparent)', fontFamily: rj }}>
+                <span style={{ color: 'var(--acc)', fontWeight: 700, fontSize: 13 }}>Monthly</span>
+                <span style={{ color: 'var(--acc)', fontWeight: 700, fontSize: 15, fontFamily: lb }}>{cur} {fmt(m.monthly)}</span>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 4, fontFamily: rj, fontSize: 11.5 }}>
-                <span style={{ color: '#7a8a72' }}>Full contract ({c.contractMonths} mo)</span>
-                <span style={{ color: '#4caf76', fontWeight: 700 }}>{cur} {fmt(m.contract)}</span>
+                <span style={{ color: 'var(--ink3)' }}>Full contract ({c.contractMonths} mo)</span>
+                <span style={{ color: 'var(--ok)', fontWeight: 700 }}>{cur} {fmt(m.contract)}</span>
               </div>
             </div>
           </div>
@@ -228,9 +228,9 @@ export default function WagesPage() {
       })}
 
       {/* Reference */}
-      <div style={{ ...card, background: 'rgba(122,138,114,.05)', borderColor: 'rgba(122,138,114,.15)' }}>
+      <div style={{ ...card, background: 'color-mix(in srgb, var(--ink3) 5%, transparent)', borderColor: 'color-mix(in srgb, var(--ink3) 15%, transparent)' }}>
         <div style={sectionTitle}>📖 Notes</div>
-        <ul style={{ fontSize: 11.5, color: '#b0c0a4', lineHeight: 1.7, paddingLeft: 18, fontFamily: rj }}>
+        <ul style={{ fontSize: 11.5, color: 'var(--ink2)', lineHeight: 1.7, paddingLeft: 18, fontFamily: rj }}>
           <li>Monthly = basic + guaranteed OT + extra OT + leave pay + subsistence + seniority.</li>
           <li>Guaranteed overtime is a fixed monthly amount (commonly ~103 h) regardless of hours worked; extra OT is paid on top for hours above the guarantee.</li>
           <li>Picking a rank fills an indicative basic wage — overwrite it with the real CBA/ITF figure.</li>
@@ -257,15 +257,15 @@ export default function WagesPage() {
 function Line({ label, value }: { label: string; value: string }) {
   return (
     <div style={{ display: 'flex', justifyContent: 'space-between', padding: '3px 0', fontFamily: rj, fontSize: 12 }}>
-      <span style={{ color: '#7a8a72' }}>{label}</span>
-      <span style={{ color: '#f5f0e8' }}>{value}</span>
+      <span style={{ color: 'var(--ink3)' }}>{label}</span>
+      <span style={{ color: 'var(--ink)' }}>{value}</span>
     </div>
   );
 }
 function KPI({ label: l, value, color, big }: { label: string; value: string; color: string; big?: boolean }) {
   return (
-    <div style={{ background: '#0c1610', border: '1px solid rgba(200,168,75,.2)', borderRadius: 4, padding: '12px 10px', textAlign: 'center' }}>
-      <div style={{ fontFamily: rj, fontSize: 9, letterSpacing: '1px', textTransform: 'uppercase', color: '#7a8a72', fontWeight: 700 }}>{l}</div>
+    <div style={{ background: 'var(--bg2)', border: '1px solid color-mix(in srgb, var(--acc) 20%, transparent)', borderRadius: 4, padding: '12px 10px', textAlign: 'center' }}>
+      <div style={{ fontFamily: rj, fontSize: 9, letterSpacing: '1px', textTransform: 'uppercase', color: 'var(--ink3)', fontWeight: 700 }}>{l}</div>
       <div style={{ fontFamily: lb, fontSize: big ? 20 : 24, fontWeight: 700, color, marginTop: 4 }}>{value}</div>
     </div>
   );

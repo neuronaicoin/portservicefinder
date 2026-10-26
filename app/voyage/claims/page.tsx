@@ -3,9 +3,9 @@ import { useState, useEffect, useMemo } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { saveItem, loadItem, genId } from '@/lib/voyage-storage';
 
-const lb = "'Libre Bodoni', serif";
-const rj = "'Rajdhani', sans-serif";
-const g = { color: '#c8a84b', fontStyle: 'italic' } as React.CSSProperties;
+const lb = 'var(--font-display)';
+const rj = 'var(--font-ui)';
+const g = { color: 'var(--acc)' } as React.CSSProperties;
 
 // ============================================================
 // TYPES
@@ -142,19 +142,19 @@ function prettyDate(s: string | null): string {
 // ============================================================
 // STYLES
 // ============================================================
-const card: React.CSSProperties = { background: '#111c13', border: '1px solid rgba(200,168,75,.18)', padding: '20px 18px', borderRadius: 4, marginBottom: 16 };
-const sectionTitle: React.CSSProperties = { fontFamily: rj, fontSize: 11, letterSpacing: '2px', textTransform: 'uppercase', color: '#c8a84b', fontWeight: 700, marginBottom: 14, paddingBottom: 8, borderBottom: '1px solid rgba(200,168,75,.12)' };
-const label: React.CSSProperties = { display: 'block', fontFamily: rj, fontSize: 10, letterSpacing: '.5px', textTransform: 'uppercase', color: '#7a8a72', fontWeight: 600, marginBottom: 4 };
-const inputStyle: React.CSSProperties = { width: '100%', background: '#0c1610', border: '1px solid rgba(200,168,75,.2)', color: '#f5f0e8', padding: '7px 9px', fontFamily: rj, fontSize: 12.5, fontWeight: 500, borderRadius: 3, boxSizing: 'border-box' };
-const ghostBtn: React.CSSProperties = { background: 'transparent', color: '#c8a84b', border: '1px solid rgba(200,168,75,.4)', padding: '8px 14px', fontFamily: rj, fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 };
-const goldBtn: React.CSSProperties = { background: '#c8a84b', color: '#08100a', border: 'none', padding: '8px 16px', fontFamily: rj, fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 };
+const card: React.CSSProperties = { background: 'var(--card)', border: '1px solid color-mix(in srgb, var(--acc) 18%, transparent)', padding: '20px 18px', borderRadius: 4, marginBottom: 16 };
+const sectionTitle: React.CSSProperties = { fontFamily: rj, fontSize: 11, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--acc)', fontWeight: 700, marginBottom: 14, paddingBottom: 8, borderBottom: '1px solid color-mix(in srgb, var(--acc) 12%, transparent)' };
+const label: React.CSSProperties = { display: 'block', fontFamily: rj, fontSize: 10, letterSpacing: '.5px', textTransform: 'uppercase', color: 'var(--ink3)', fontWeight: 600, marginBottom: 4 };
+const inputStyle: React.CSSProperties = { width: '100%', background: 'var(--bg2)', border: '1px solid color-mix(in srgb, var(--acc) 20%, transparent)', color: 'var(--ink)', padding: '7px 9px', fontFamily: rj, fontSize: 12.5, fontWeight: 500, borderRadius: 3, boxSizing: 'border-box' };
+const ghostBtn: React.CSSProperties = { background: 'transparent', color: 'var(--acc)', border: '1px solid color-mix(in srgb, var(--acc) 40%, transparent)', padding: '8px 14px', fontFamily: rj, fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 };
+const goldBtn: React.CSSProperties = { background: 'var(--acc)', color: 'var(--bg)', border: 'none', padding: '8px 16px', fontFamily: rj, fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 };
 
 const STATUS_META: Record<ClaimStatus, { label: string; color: string; bg: string }> = {
-  draft: { label: 'DRAFT', color: '#7a8a72', bg: 'rgba(122,138,114,.14)' },
-  submitted: { label: 'SUBMITTED', color: '#5aa6e8', bg: 'rgba(90,166,232,.14)' },
-  agreed: { label: 'AGREED', color: '#c8a84b', bg: 'rgba(200,168,75,.14)' },
-  paid: { label: 'PAID', color: '#4caf76', bg: 'rgba(76,175,118,.14)' },
-  disputed: { label: 'DISPUTED', color: '#ff8a8a', bg: 'rgba(255,138,138,.14)' },
+  draft: { label: 'DRAFT', color: 'var(--ink3)', bg: 'color-mix(in srgb, var(--ink3) 14%, transparent)' },
+  submitted: { label: 'SUBMITTED', color: 'var(--info)', bg: 'color-mix(in srgb, var(--info) 14%, transparent)' },
+  agreed: { label: 'AGREED', color: 'var(--acc)', bg: 'color-mix(in srgb, var(--acc) 14%, transparent)' },
+  paid: { label: 'PAID', color: 'var(--ok)', bg: 'color-mix(in srgb, var(--ok) 14%, transparent)' },
+  disputed: { label: 'DISPUTED', color: 'var(--bad)', bg: 'color-mix(in srgb, var(--bad) 14%, transparent)' },
 };
 
 const TYPE_META: Record<ClaimType, { label: string; icon: string }> = {
@@ -235,13 +235,13 @@ export default function ClaimsCenterPage() {
     <div>
       {/* Header */}
       <div style={{ marginBottom: 24 }}>
-        <div style={{ fontFamily: rj, fontSize: 10, letterSpacing: '2px', textTransform: 'uppercase', color: '#c8a84b', fontWeight: 700, marginBottom: 8 }}>
+        <div style={{ fontFamily: rj, fontSize: 10, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--acc)', fontWeight: 700, marginBottom: 8 }}>
           ⚓ Voyage Hub · Claims Center
         </div>
         <h1 style={{ fontFamily: lb, fontSize: 'clamp(22px,3vw,32px)', fontWeight: 700, lineHeight: 1.1, marginBottom: 8 }}>
           Claims <em style={g}>Center</em>
         </h1>
-        <p style={{ fontSize: 13, color: '#b0c0a4', lineHeight: 1.6, maxWidth: 720 }}>
+        <p style={{ fontSize: 13, color: 'var(--ink2)', lineHeight: 1.6, maxWidth: 720 }}>
           Track demurrage, off-hire, and speed/consumption claims in one register, with time-bar
           countdowns and a running net position. A working estimate — always reconcile against the charter party.
         </p>
@@ -251,15 +251,15 @@ export default function ClaimsCenterPage() {
       <div className="action-bar" style={{ display: 'flex', gap: 10, marginBottom: 22, flexWrap: 'wrap', alignItems: 'center' }}>
         <button onClick={() => setShowSave(true)} style={goldBtn}>💾 Save</button>
         <button onClick={() => window.print()} style={ghostBtn}>🖨️ Print / PDF</button>
-        <button onClick={handleReset} style={{ ...ghostBtn, color: '#ff8a8a', borderColor: 'rgba(255,138,138,.3)' }}>🗑️ Reset</button>
-        {saveMsg && <span style={{ color: '#4caf76', fontFamily: rj, fontSize: 12, fontWeight: 600 }}>{saveMsg}</span>}
-        {recordName && <span style={{ color: '#7a8a72', fontFamily: rj, fontSize: 11, marginLeft: 'auto' }}>📂 {recordName}</span>}
+        <button onClick={handleReset} style={{ ...ghostBtn, color: 'var(--bad)', borderColor: 'color-mix(in srgb, var(--bad) 30%, transparent)' }}>🗑️ Reset</button>
+        {saveMsg && <span style={{ color: 'var(--ok)', fontFamily: rj, fontSize: 12, fontWeight: 600 }}>{saveMsg}</span>}
+        {recordName && <span style={{ color: 'var(--ink3)', fontFamily: rj, fontSize: 11, marginLeft: 'auto' }}>📂 {recordName}</span>}
       </div>
 
       {showSave && (
-        <div style={{ ...card, background: 'rgba(200,168,75,.05)', borderColor: 'rgba(200,168,75,.4)' }}>
+        <div style={{ ...card, background: 'color-mix(in srgb, var(--acc) 5%, transparent)', borderColor: 'color-mix(in srgb, var(--acc) 40%, transparent)' }}>
           <label style={label}>Name</label>
-          <input type="text" value={recordName} onChange={(e) => setRecordName(e.target.value)} placeholder="e.g. MV NEURONAI — Voyage 12 Claims" style={{ ...inputStyle, marginBottom: 10 }} />
+          <input type="text" value={recordName} onChange={(e) => setRecordName(e.target.value)} placeholder="e.g. MV OCEAN PIONEER — Voyage 12 Claims" style={{ ...inputStyle, marginBottom: 10 }} />
           <div style={{ display: 'flex', gap: 8 }}>
             <button onClick={handleSave} style={{ ...goldBtn, padding: '8px 14px', letterSpacing: '1px' }}>Save</button>
             <button onClick={() => setShowSave(false)} style={ghostBtn}>Cancel</button>
@@ -271,30 +271,30 @@ export default function ClaimsCenterPage() {
       <div style={card}>
         <div style={sectionTitle}>Voyage Reference</div>
         <div className="claims-g3" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 12 }}>
-          <div><label style={label}>Vessel</label><input style={inputStyle} value={data.vesselName} onChange={(e) => update('vesselName', e.target.value)} placeholder="MV NEURONAI" /></div>
+          <div><label style={label}>Vessel</label><input style={inputStyle} value={data.vesselName} onChange={(e) => update('vesselName', e.target.value)} placeholder="MV OCEAN PIONEER" /></div>
           <div><label style={label}>Charterer</label><input style={inputStyle} value={data.charterer} onChange={(e) => update('charterer', e.target.value)} placeholder="ABC Chartering" /></div>
           <div><label style={label}>CP Date</label><input style={inputStyle} type="date" value={data.cpDate} onChange={(e) => update('cpDate', e.target.value)} /></div>
         </div>
       </div>
 
       {/* Net position + urgent */}
-      <div style={{ ...card, background: 'linear-gradient(135deg,rgba(200,168,75,.08),transparent)', borderColor: 'rgba(200,168,75,.4)' }}>
+      <div style={{ ...card, background: 'linear-gradient(135deg,color-mix(in srgb, var(--acc) 8%, transparent),transparent)', borderColor: 'color-mix(in srgb, var(--acc) 40%, transparent)' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
           <div>
-            <div style={{ fontFamily: rj, fontSize: 10, letterSpacing: '1.5px', textTransform: 'uppercase', color: '#7a8a72', fontWeight: 700 }}>
+            <div style={{ fontFamily: rj, fontSize: 10, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ink3)', fontWeight: 700 }}>
               Net Position ({data.claims.length} claim{data.claims.length !== 1 ? 's' : ''})
             </div>
-            <div style={{ fontFamily: lb, fontSize: 30, fontWeight: 700, color: netPosition >= 0 ? '#4caf76' : '#ff8a8a', marginTop: 2 }}>
+            <div style={{ fontFamily: lb, fontSize: 30, fontWeight: 700, color: netPosition >= 0 ? 'var(--ok)' : 'var(--bad)', marginTop: 2 }}>
               {money(Math.abs(netPosition))}
             </div>
-            <div style={{ fontFamily: rj, fontSize: 11, color: '#7a8a72' }}>
+            <div style={{ fontFamily: rj, fontSize: 11, color: 'var(--ink3)' }}>
               {netPosition >= 0 ? 'Charterer owes Owner' : 'Owner owes Charterer'}
             </div>
           </div>
           {urgentCount > 0 && (
-            <div style={{ background: 'rgba(255,138,138,.12)', border: '1px solid rgba(255,138,138,.4)', borderRadius: 4, padding: '10px 14px', textAlign: 'center' }}>
-              <div style={{ fontFamily: lb, fontSize: 22, fontWeight: 700, color: '#ff8a8a' }}>{urgentCount}</div>
-              <div style={{ fontFamily: rj, fontSize: 9.5, color: '#ff8a8a', letterSpacing: '.5px', textTransform: 'uppercase', fontWeight: 700 }}>Time-bar ≤14d</div>
+            <div style={{ background: 'color-mix(in srgb, var(--bad) 12%, transparent)', border: '1px solid color-mix(in srgb, var(--bad) 40%, transparent)', borderRadius: 4, padding: '10px 14px', textAlign: 'center' }}>
+              <div style={{ fontFamily: lb, fontSize: 22, fontWeight: 700, color: 'var(--bad)' }}>{urgentCount}</div>
+              <div style={{ fontFamily: rj, fontSize: 9.5, color: 'var(--bad)', letterSpacing: '.5px', textTransform: 'uppercase', fontWeight: 700 }}>Time-bar ≤14d</div>
             </div>
           )}
         </div>
@@ -317,7 +317,7 @@ export default function ClaimsCenterPage() {
       {data.claims.length > 0 && (
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 14 }}>
           {(['all', 'draft', 'submitted', 'agreed', 'paid', 'disputed'] as const).map((f) => (
-            <button key={f} onClick={() => setFilter(f)} style={{ padding: '6px 12px', background: filter === f ? '#c8a84b' : 'transparent', color: filter === f ? '#08100a' : '#7a8a72', border: `1px solid ${filter === f ? '#c8a84b' : 'rgba(200,168,75,.25)'}`, fontFamily: rj, fontSize: 10, letterSpacing: '1px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 }}>
+            <button key={f} onClick={() => setFilter(f)} style={{ padding: '6px 12px', background: filter === f ? 'var(--acc)' : 'transparent', color: filter === f ? 'var(--bg)' : 'var(--ink3)', border: `1px solid ${filter === f ? 'var(--acc)' : 'color-mix(in srgb, var(--acc) 25%, transparent)'}`, fontFamily: rj, fontSize: 10, letterSpacing: '1px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 }}>
               {f === 'all' ? 'All' : STATUS_META[f].label}
             </button>
           ))}
@@ -326,7 +326,7 @@ export default function ClaimsCenterPage() {
 
       {/* Claim cards */}
       {visibleClaims.length === 0 && (
-        <div style={{ ...card, textAlign: 'center', color: '#7a8a72', fontFamily: rj }}>
+        <div style={{ ...card, textAlign: 'center', color: 'var(--ink3)', fontFamily: rj }}>
           {data.claims.length === 0 ? 'No claims yet. Add one above to start the register.' : 'No claims match this filter.'}
         </div>
       )}
@@ -338,16 +338,16 @@ export default function ClaimsCenterPage() {
         const urgent = tb.daysLeft != null && tb.daysLeft <= 14 && c.status !== 'paid' && c.status !== 'agreed';
         const expired = tb.daysLeft != null && tb.daysLeft < 0;
         return (
-          <div key={c.id} style={{ ...card, borderColor: urgent ? 'rgba(255,138,138,.5)' : 'rgba(200,168,75,.18)' }}>
+          <div key={c.id} style={{ ...card, borderColor: urgent ? 'color-mix(in srgb, var(--bad) 50%, transparent)' : 'color-mix(in srgb, var(--acc) 18%, transparent)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 10, marginBottom: 12 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                 <span style={{ fontSize: 20 }}>{TYPE_META[c.type].icon}</span>
                 <div>
-                  <div style={{ fontFamily: lb, fontSize: 15, fontWeight: 700, color: '#f5f0e8' }}>{c.title || TYPE_META[c.type].label}</div>
-                  <div style={{ fontFamily: rj, fontSize: 10, color: '#7a8a72', letterSpacing: '.5px' }}>{TYPE_META[c.type].label}</div>
+                  <div style={{ fontFamily: lb, fontSize: 15, fontWeight: 700, color: 'var(--ink)' }}>{c.title || TYPE_META[c.type].label}</div>
+                  <div style={{ fontFamily: rj, fontSize: 10, color: 'var(--ink3)', letterSpacing: '.5px' }}>{TYPE_META[c.type].label}</div>
                 </div>
               </div>
-              <button onClick={() => delClaim(c.id)} style={{ background: 'transparent', border: 'none', color: '#ff8a8a', fontFamily: rj, fontSize: 11, cursor: 'pointer', letterSpacing: '.5px' }}>Delete</button>
+              <button onClick={() => delClaim(c.id)} style={{ background: 'transparent', border: 'none', color: 'var(--bad)', fontFamily: rj, fontSize: 11, cursor: 'pointer', letterSpacing: '.5px' }}>Delete</button>
             </div>
 
             {/* common: title, status, event date, time bar */}
@@ -369,10 +369,10 @@ export default function ClaimsCenterPage() {
               <div><label style={label}>Time Bar (days)</label><input style={inputStyle} type="number" value={c.timeBarDays || ''} onChange={(e) => updClaim(c.id, { timeBarDays: num(e.target.value) })} placeholder="90" /></div>
               <div style={{ display: 'flex', alignItems: 'flex-end' }}>
                 {tb.daysLeft != null ? (
-                  <div style={{ fontFamily: rj, fontSize: 11.5, color: expired ? '#ff8a8a' : urgent ? '#ff8a8a' : '#b0c0a4' }}>
-                    {expired ? <b style={{ color: '#ff8a8a' }}>⚠ TIME-BARRED</b> : <>Deadline <b style={{ color: urgent ? '#ff8a8a' : '#c8a84b' }}>{prettyDate(tb.deadline)}</b> · <b style={{ color: urgent ? '#ff8a8a' : '#4caf76' }}>{tb.daysLeft}d left</b></>}
+                  <div style={{ fontFamily: rj, fontSize: 11.5, color: expired ? 'var(--bad)' : urgent ? 'var(--bad)' : 'var(--ink2)' }}>
+                    {expired ? <b style={{ color: 'var(--bad)' }}>⚠ TIME-BARRED</b> : <>Deadline <b style={{ color: urgent ? 'var(--bad)' : 'var(--acc)' }}>{prettyDate(tb.deadline)}</b> · <b style={{ color: urgent ? 'var(--bad)' : 'var(--ok)' }}>{tb.daysLeft}d left</b></>}
                   </div>
-                ) : <span style={{ fontFamily: rj, fontSize: 10.5, color: '#7a8a72' }}>set event date for countdown</span>}
+                ) : <span style={{ fontFamily: rj, fontSize: 10.5, color: 'var(--ink3)' }}>set event date for countdown</span>}
               </div>
             </div>
 
@@ -426,24 +426,24 @@ export default function ClaimsCenterPage() {
               <input style={inputStyle} value={c.notes} onChange={(e) => updClaim(c.id, { notes: e.target.value })} placeholder="Reference, supporting docs, comments..." />
             </div>
 
-            <div style={{ marginTop: 12, paddingTop: 10, borderTop: '1px dashed rgba(200,168,75,.18)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ fontFamily: rj, fontSize: 11, color: '#7a8a72', letterSpacing: '.5px', textTransform: 'uppercase' }}>
+            <div style={{ marginTop: 12, paddingTop: 10, borderTop: '1px dashed color-mix(in srgb, var(--acc) 18%, transparent)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span style={{ fontFamily: rj, fontSize: 11, color: 'var(--ink3)', letterSpacing: '.5px', textTransform: 'uppercase' }}>
                 {val >= 0 ? 'Charterer owes Owner' : 'Owner owes Charterer'}
               </span>
-              <span style={{ fontFamily: lb, fontSize: 20, fontWeight: 700, color: val >= 0 ? '#4caf76' : '#ff8a8a' }}>{money(Math.abs(val))}</span>
+              <span style={{ fontFamily: lb, fontSize: 20, fontWeight: 700, color: val >= 0 ? 'var(--ok)' : 'var(--bad)' }}>{money(Math.abs(val))}</span>
             </div>
           </div>
         );
       })}
 
       {/* Reference */}
-      <div style={{ ...card, background: 'rgba(122,138,114,.05)', borderColor: 'rgba(122,138,114,.15)' }}>
+      <div style={{ ...card, background: 'color-mix(in srgb, var(--ink3) 5%, transparent)', borderColor: 'color-mix(in srgb, var(--ink3) 15%, transparent)' }}>
         <div style={sectionTitle}>📖 How Claims Are Calculated</div>
-        <ul style={{ fontSize: 11.5, color: '#b0c0a4', lineHeight: 1.7, paddingLeft: 18, fontFamily: rj }}>
-          <li><b style={{ color: '#c8a84b' }}>Demurrage</b> = (used − allowed laytime) ÷ 24 × rate. If laytime is saved, despatch is paid by owner (often half rate).</li>
-          <li><b style={{ color: '#c8a84b' }}>Off-hire</b> = hours ÷ 24 × hire rate, plus off-hire bunker value — credited to charterer.</li>
-          <li><b style={{ color: '#c8a84b' }}>Speed/Consumption</b> uses the good-weather period: excess fuel = (actual − warranted) × GW days × bunker price; time lost valued at hire rate.</li>
-          <li><b style={{ color: '#ff8a8a' }}>Time bar</b> — most CPs require claims within a set period (often 90 days) with full supporting documents, or the claim is lost. The countdown starts from the event end date.</li>
+        <ul style={{ fontSize: 11.5, color: 'var(--ink2)', lineHeight: 1.7, paddingLeft: 18, fontFamily: rj }}>
+          <li><b style={{ color: 'var(--acc)' }}>Demurrage</b> = (used − allowed laytime) ÷ 24 × rate. If laytime is saved, despatch is paid by owner (often half rate).</li>
+          <li><b style={{ color: 'var(--acc)' }}>Off-hire</b> = hours ÷ 24 × hire rate, plus off-hire bunker value — credited to charterer.</li>
+          <li><b style={{ color: 'var(--acc)' }}>Speed/Consumption</b> uses the good-weather period: excess fuel = (actual − warranted) × GW days × bunker price; time lost valued at hire rate.</li>
+          <li><b style={{ color: 'var(--bad)' }}>Time bar</b> — most CPs require claims within a set period (often 90 days) with full supporting documents, or the claim is lost. The countdown starts from the event end date.</li>
           <li>Figures are working estimates. For hour/minute laytime precision, use the Laytime / Demurrage tool; for full CP performance, use CP Performance.</li>
         </ul>
       </div>

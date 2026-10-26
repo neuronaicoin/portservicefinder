@@ -8,6 +8,8 @@ import { getRecentLeads, getTotalLeadCount, getLeadsThisWeek, type Lead } from "
 import { getReceivedRfqs, getRfqCount, type ReceivedRfq } from "@/lib/rfq";
 import { getSearchAppearances, getAppearancesByPort, type PortAppearance } from "@/lib/analytics";
 import { NotificationBell } from "@/components/NotificationBell";
+import { SiteHeader } from "@/components/SiteHeader";
+import { SiteFooter } from "@/components/SiteFooter";
 
 interface ProviderRow {
   id: string;
@@ -33,13 +35,13 @@ function timeAgo(iso: string): string {
 
 const CallIcon = (
   <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
-    <path d="M6.5 3h3l2 5-2.5 1.5a12 12 0 0 0 5.5 5.5L16 12.5l5 2v3a2 2 0 0 1-2 2C10.5 19.5 4.5 13.5 4.5 5a2 2 0 0 1 2-2Z" stroke="#c8a84b" strokeWidth="1.6" strokeLinejoin="round" />
+    <path d="M6.5 3h3l2 5-2.5 1.5a12 12 0 0 0 5.5 5.5L16 12.5l5 2v3a2 2 0 0 1-2 2C10.5 19.5 4.5 13.5 4.5 5a2 2 0 0 1 2-2Z" stroke="var(--acc)" strokeWidth="1.6" strokeLinejoin="round" />
   </svg>
 );
 const EmailIcon = (
   <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
-    <rect x="3.5" y="5.5" width="17" height="13" rx="1.5" stroke="#c8a84b" strokeWidth="1.6" />
-    <path d="m4.5 7 7.5 6 7.5-6" stroke="#c8a84b" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+    <rect x="3.5" y="5.5" width="17" height="13" rx="1.5" stroke="var(--acc)" strokeWidth="1.6" />
+    <path d="m4.5 7 7.5 6 7.5-6" stroke="var(--acc)" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 );
 
@@ -110,17 +112,26 @@ export default function ProviderDashboardPage() {
 
   if (loading) {
     return (
-      <main style={{ minHeight: "100vh", background: "#08100a", display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <span style={{ color: "#d4dcc8" }}>Loading...</span>
-      </main>
+      <>
+        <SiteHeader />
+        <main style={{ minHeight: "60vh", background: "var(--bg)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <span style={{ color: "var(--ink2)" }}>Loading...</span>
+        </main>
+      </>
     );
   }
 
   if (!provider) {
     return (
-      <main style={{ minHeight: "100vh", background: "#08100a", display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <span style={{ color: "#d4dcc8" }}>We couldn&apos;t find your listing. Please contact support.</span>
-      </main>
+      <>
+        <SiteHeader />
+        <main style={{ minHeight: "60vh", background: "var(--bg)", display: "flex", alignItems: "center", justifyContent: "center", padding: 20, textAlign: "center" }}>
+          <span style={{ color: "var(--ink2)" }}>
+            We couldn&apos;t find your listing. Please email <a href="mailto:contact@portservicefinder.com" style={{ color: "var(--acc)" }}>contact@portservicefinder.com</a>.
+          </span>
+        </main>
+        <SiteFooter />
+      </>
     );
   }
 
@@ -128,24 +139,24 @@ export default function ProviderDashboardPage() {
   const isActive = provider.status === "active";
 
   const cardStyle: React.CSSProperties = {
-    background: "#111c13",
-    border: "1px solid rgba(200,168,75,.15)",
+    background: "var(--card)",
+    border: "1px solid var(--line)",
     borderRadius: 14,
   };
 
   return (
-    <main style={{ minHeight: "100vh", background: "#08100a" }}>
-      {/* HEADER */}
-      <div style={{ borderBottom: "1px solid rgba(200,168,75,.12)", padding: "16px 20px" }}>
-        <div style={{ maxWidth: 880, margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <Link href="/" style={{ color: "#f5f0e8", fontWeight: 700, fontSize: 17, textDecoration: "none" }}>
-            Port<span style={{ color: "#c8a84b" }}>Service</span>Finder
-          </Link>
+    <>
+    <SiteHeader />
+    <main style={{ background: "var(--bg)" }}>
+      {/* ACCOUNT BAR */}
+      <div style={{ borderBottom: "1px solid var(--line)", padding: "10px 20px" }}>
+        <div style={{ maxWidth: 880, margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
+          <span style={{ color: "var(--ink3)", fontSize: 13, fontWeight: 600 }}>Provider dashboard</span>
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
             <NotificationBell providerId={provider.id} />
             <button
               onClick={handleLogout}
-              style={{ color: "#d4dcc8", fontSize: 12, border: "1px solid rgba(255,255,255,.12)", borderRadius: 10, padding: "10px 16px", background: "transparent", cursor: "pointer" }}
+              style={{ color: "var(--ink2)", fontSize: 13, border: "1px solid var(--line)", borderRadius: 10, padding: "10px 16px", minHeight: 40, background: "transparent", cursor: "pointer" }}
             >
               Log out
             </button>
@@ -155,65 +166,65 @@ export default function ProviderDashboardPage() {
 
       <div style={{ maxWidth: 880, margin: "0 auto", padding: "28px 20px 60px" }}>
         {showWelcome && (
-          <div style={{ ...cardStyle, background: "rgba(76,175,118,.1)", borderColor: "rgba(76,175,118,.35)", padding: "16px 20px", marginBottom: 18 }}>
-            <span style={{ color: "#4caf76", fontWeight: 700, fontSize: 14 }}>🎉 Your listing is live!</span>
-            <p style={{ color: "#d4dcc8", fontSize: 13, marginTop: 4 }}>
-              Vessel operators searching your ports can now find and contact you directly.
+          <div style={{ ...cardStyle, background: "color-mix(in srgb, var(--ok) 10%, transparent)", borderColor: "color-mix(in srgb, var(--ok) 35%, transparent)", padding: "16px 20px", marginBottom: 18 }}>
+            <span style={{ color: "var(--ok)", fontWeight: 700, fontSize: 15 }}>Your listing is live</span>
+            <p style={{ color: "var(--ink2)", fontSize: 13, marginTop: 4 }}>
+              Vessel operators searching your ports can now find and contact you directly. Listing is free during our launch period; we will email you before that changes.
             </p>
           </div>
         )}
 
         {isPending && (
-          <div style={{ ...cardStyle, background: "rgba(200,168,75,.1)", borderColor: "rgba(200,168,75,.4)", padding: "16px 20px", marginBottom: 18 }}>
-            <span style={{ color: "#c8a84b", fontWeight: 700, fontSize: 14 }}>Your listing isn&apos;t published yet</span>
-            <p style={{ color: "#d4dcc8", fontSize: 13, marginTop: 4, marginBottom: 12 }}>
+          <div style={{ ...cardStyle, background: "color-mix(in srgb, var(--acc) 10%, transparent)", borderColor: "color-mix(in srgb, var(--acc) 40%, transparent)", padding: "16px 20px", marginBottom: 18 }}>
+            <span style={{ color: "var(--acc)", fontWeight: 700, fontSize: 14 }}>Your listing isn&apos;t published yet</span>
+            <p style={{ color: "var(--ink2)", fontSize: 13, marginTop: 4, marginBottom: 12 }}>
               Complete your profile so vessel operators can find you.
             </p>
             <Link
               href="/for-providers/complete-profile"
-              style={{ display: "inline-block", background: "#c8a84b", color: "#08100a", fontWeight: 700, fontSize: 13, padding: "10px 18px", borderRadius: 10, textDecoration: "none" }}
+              style={{ display: "inline-block", background: "var(--acc)", color: "var(--on-acc)", fontWeight: 650, fontSize: 14, padding: "11px 18px", borderRadius: 10, textDecoration: "none" }}
             >
-              Complete My Listing →
+              Complete my listing
             </Link>
           </div>
         )}
 
         {/* PAGE TITLE */}
         <div style={{ marginBottom: 20 }}>
-          <h1 style={{ color: "#f5f0e8", fontSize: 24, fontWeight: 700, marginBottom: 3 }}>{provider.name}</h1>
-          <p style={{ color: "#d4dcc8", fontSize: 13 }}>{provider.email}</p>
+          <h1 style={{ color: "var(--ink)", fontSize: 24, fontWeight: 700, marginBottom: 3 }}>{provider.name}</h1>
+          <p style={{ color: "var(--ink2)", fontSize: 13 }}>{provider.email}</p>
         </div>
 
         {/* STATS ROW */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 12, marginBottom: 24 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: 12, marginBottom: 24 }}>
           <div style={{ ...cardStyle, padding: "18px 16px" }}>
-            <div style={{ color: "#c8a84b", fontSize: 10, textTransform: "uppercase", fontWeight: 700, letterSpacing: 1, marginBottom: 8 }}>Search Appearances</div>
-            <div style={{ color: "#f5f0e8", fontSize: 26, fontWeight: 700 }}>{appearances}</div>
-            <div style={{ color: "#7a8a72", fontSize: 10, marginTop: 2 }}>Last 30 days</div>
+            <div style={{ color: "var(--ink3)", fontSize: 13, fontWeight: 600, marginBottom: 8 }}>Search appearances</div>
+            <div style={{ color: "var(--ink)", fontSize: 26, fontWeight: 700 }}>{appearances}</div>
+            <div style={{ color: "var(--ink3)", fontSize: 12, marginTop: 2 }}>Last 30 days</div>
           </div>
           <div style={{ ...cardStyle, padding: "18px 16px" }}>
-            <div style={{ color: "#c8a84b", fontSize: 10, textTransform: "uppercase", fontWeight: 700, letterSpacing: 1, marginBottom: 8 }}>RFQs Received</div>
-            <div style={{ color: "#f5f0e8", fontSize: 26, fontWeight: 700 }}>{rfqCount}</div>
+            <div style={{ color: "var(--ink3)", fontSize: 13, fontWeight: 600, marginBottom: 8 }}>Quote requests</div>
+            <div style={{ color: "var(--ink)", fontSize: 26, fontWeight: 700 }}>{rfqCount}</div>
           </div>
           <div style={{ ...cardStyle, padding: "18px 16px" }}>
-            <div style={{ color: "#c8a84b", fontSize: 10, textTransform: "uppercase", fontWeight: 700, letterSpacing: 1, marginBottom: 8 }}>Total Leads</div>
-            <div style={{ color: "#f5f0e8", fontSize: 26, fontWeight: 700 }}>{totalLeads}</div>
+            <div style={{ color: "var(--ink3)", fontSize: 13, fontWeight: 600, marginBottom: 8 }}>Total leads</div>
+            <div style={{ color: "var(--ink)", fontSize: 26, fontWeight: 700 }}>{totalLeads}</div>
           </div>
           <div style={{ ...cardStyle, padding: "18px 16px" }}>
-            <div style={{ color: "#4caf76", fontSize: 10, textTransform: "uppercase", fontWeight: 700, letterSpacing: 1, marginBottom: 8 }}>This Week</div>
-            <div style={{ color: "#f5f0e8", fontSize: 26, fontWeight: 700 }}>{leadsThisWeek}</div>
+            <div style={{ color: "var(--ok)", fontSize: 13, fontWeight: 600, marginBottom: 8 }}>This week</div>
+            <div style={{ color: "var(--ink)", fontSize: 26, fontWeight: 700 }}>{leadsThisWeek}</div>
           </div>
           <div style={{ ...cardStyle, padding: "18px 16px" }}>
-            <div style={{ color: isActive ? "#4caf76" : "#c8a84b", fontSize: 10, textTransform: "uppercase", fontWeight: 700, letterSpacing: 1, marginBottom: 8 }}>Status</div>
-            <div style={{ color: "#f5f0e8", fontSize: 15, fontWeight: 700, marginTop: 4 }}>{isActive ? "Published" : "Pending"}</div>
+            <div style={{ color: isActive ? "var(--ok)" : "var(--acc)", fontSize: 13, fontWeight: 600, marginBottom: 8 }}>Status</div>
+            <div style={{ color: "var(--ink)", fontSize: 15, fontWeight: 700, marginTop: 4 }}>{isActive ? "Published" : "Pending"}</div>
           </div>
         </div>
 
         {/* VISIBILITY BY PORT - gercek search_events verisinden */}
         {portBreakdown.length > 0 && (
           <div style={{ ...cardStyle, padding: "22px 20px", marginBottom: 20 }}>
-            <h2 style={{ color: "#f5f0e8", fontSize: 16, fontWeight: 700, marginBottom: 4 }}>Your Visibility This Month</h2>
-            <p style={{ color: "#d4dcc8", fontSize: 12, marginBottom: 16 }}>
+            <h2 style={{ color: "var(--ink)", fontSize: 16, fontWeight: 700, marginBottom: 4 }}>Your visibility this month</h2>
+            <p style={{ color: "var(--ink2)", fontSize: 12, marginBottom: 16 }}>
               How many times each of your ports was searched in the last 30 days.
             </p>
             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
@@ -223,11 +234,11 @@ export default function ProviderDashboardPage() {
                 return (
                   <div key={p.port}>
                     <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
-                      <span style={{ color: "#f5f0e8", fontSize: 12.5 }}>{p.port}</span>
-                      <span style={{ color: "#c8a84b", fontSize: 12.5, fontWeight: 700 }}>{p.count}</span>
+                      <span style={{ color: "var(--ink)", fontSize: 12.5 }}>{p.port}</span>
+                      <span style={{ color: "var(--acc)", fontSize: 12.5, fontWeight: 700 }}>{p.count}</span>
                     </div>
-                    <div style={{ height: 6, background: "#08100a", borderRadius: 3, overflow: "hidden" }}>
-                      <div style={{ height: "100%", width: `${pct}%`, background: "#c8a84b", borderRadius: 3 }} />
+                    <div style={{ height: 6, background: "var(--bg)", borderRadius: 3, overflow: "hidden" }}>
+                      <div style={{ height: "100%", width: `${pct}%`, background: "var(--acc)", borderRadius: 3 }} />
                     </div>
                   </div>
                 );
@@ -238,42 +249,41 @@ export default function ProviderDashboardPage() {
 
         {/* RECEIVED RFQs - en yuksek deger, en ustte */}
         <div style={{ ...cardStyle, padding: "22px 20px", marginBottom: 20 }}>
-          <h2 style={{ color: "#f5f0e8", fontSize: 16, fontWeight: 700, marginBottom: 4 }}>Quote Requests</h2>
-          <p style={{ color: "#d4dcc8", fontSize: 12, marginBottom: 16 }}>
-            Operators requesting a quote for your port and service appear here with full details — contact them
+          <h2 style={{ color: "var(--ink)", fontSize: 16, fontWeight: 700, marginBottom: 4 }}>Quote requests</h2>
+          <p style={{ color: "var(--ink2)", fontSize: 12, marginBottom: 16 }}>
+            Operators requesting a quote for your port and service appear here with full details. Contact them
             directly.
           </p>
 
           {rfqs.length === 0 ? (
             <div style={{ textAlign: "center", padding: "30px 10px" }}>
-              <div style={{ fontSize: 28, marginBottom: 8 }}>📋</div>
-              <p style={{ color: "#d4dcc8", fontSize: 13 }}>No quote requests yet. When an operator requests a quote for your port, it shows up here.</p>
+              <p style={{ color: "var(--ink2)", fontSize: 13 }}>No quote requests yet. When an operator requests a quote for your port, it shows up here.</p>
             </div>
           ) : (
             <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
               {rfqs.map((r) => (
                 <div
                   key={r.distributionId}
-                  style={{ background: "#08100a", border: r.urgency === "urgent" ? "1px solid rgba(224,85,85,.4)" : "1px solid rgba(255,255,255,.08)", borderRadius: 10, padding: 14 }}
+                  style={{ background: "var(--bg)", border: r.urgency === "urgent" ? "1px solid color-mix(in srgb, var(--bad) 40%, transparent)" : "1px solid color-mix(in srgb, var(--ink) 8%, transparent)", borderRadius: 10, padding: 14 }}
                 >
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8 }}>
                     <div>
-                      <span style={{ color: "#f5f0e8", fontSize: 13.5, fontWeight: 700 }}>{r.port}, {r.country}</span>
+                      <span style={{ color: "var(--ink)", fontSize: 13.5, fontWeight: 700 }}>{r.port}, {r.country}</span>
                       {r.urgency === "urgent" && (
-                        <span style={{ marginLeft: 8, background: "rgba(224,85,85,.15)", color: "#e88", fontSize: 9.5, fontWeight: 700, padding: "2px 7px", borderRadius: 999, textTransform: "uppercase" }}>
-                          ⚡ Urgent
+                        <span style={{ marginLeft: 8, background: "color-mix(in srgb, var(--bad) 15%, transparent)", color: "var(--bad)", fontSize: 12, fontWeight: 600, padding: "2px 8px", borderRadius: 999 }}>
+                          Urgent
                         </span>
                       )}
                     </div>
-                    <span style={{ color: "#7a8a72", fontSize: 10.5, flexShrink: 0 }}>{timeAgo(r.createdAt)}</span>
+                    <span style={{ color: "var(--ink3)", fontSize: 10.5, flexShrink: 0 }}>{timeAgo(r.createdAt)}</span>
                   </div>
-                  {r.vesselType && <div style={{ color: "#d4dcc8", fontSize: 12, marginBottom: 3 }}><b style={{ color: "#c8a84b" }}>Vessel:</b> {r.vesselType}</div>}
-                  {r.eta && <div style={{ color: "#d4dcc8", fontSize: 12, marginBottom: 3 }}><b style={{ color: "#c8a84b" }}>ETA:</b> {r.eta}</div>}
-                  <div style={{ color: "#d4dcc8", fontSize: 12, marginBottom: 10 }}>{r.requirementDetails}</div>
-                  <div style={{ borderTop: "1px solid rgba(255,255,255,.08)", paddingTop: 10, display: "flex", flexDirection: "column", gap: 4 }}>
-                    <span style={{ color: "#f5f0e8", fontSize: 12.5, fontWeight: 700 }}>{r.operatorName}</span>
-                    <a href={`mailto:${r.operatorEmail}`} style={{ color: "#c8a84b", fontSize: 12 }}>{r.operatorEmail}</a>
-                    {r.operatorPhone && <a href={`tel:${r.operatorPhone}`} style={{ color: "#c8a84b", fontSize: 12 }}>{r.operatorPhone}</a>}
+                  {r.vesselType && <div style={{ color: "var(--ink2)", fontSize: 12, marginBottom: 3 }}><b style={{ color: "var(--acc)" }}>Vessel:</b> {r.vesselType}</div>}
+                  {r.eta && <div style={{ color: "var(--ink2)", fontSize: 12, marginBottom: 3 }}><b style={{ color: "var(--acc)" }}>ETA:</b> {r.eta}</div>}
+                  <div style={{ color: "var(--ink2)", fontSize: 12, marginBottom: 10 }}>{r.requirementDetails}</div>
+                  <div style={{ borderTop: "1px solid color-mix(in srgb, var(--ink) 8%, transparent)", paddingTop: 10, display: "flex", flexDirection: "column", gap: 4 }}>
+                    <span style={{ color: "var(--ink)", fontSize: 12.5, fontWeight: 700 }}>{r.operatorName}</span>
+                    <a href={`mailto:${r.operatorEmail}`} style={{ color: "var(--acc)", fontSize: 12 }}>{r.operatorEmail}</a>
+                    {r.operatorPhone && <a href={`tel:${r.operatorPhone}`} style={{ color: "var(--acc)", fontSize: 12 }}>{r.operatorPhone}</a>}
                   </div>
                 </div>
               ))}
@@ -283,15 +293,14 @@ export default function ProviderDashboardPage() {
 
         {/* RECENT LEADS */}
         <div id="recent-leads-section" style={{ ...cardStyle, padding: "22px 20px", marginBottom: 20 }}>
-          <h2 style={{ color: "#f5f0e8", fontSize: 16, fontWeight: 700, marginBottom: 4 }}>Recent Leads</h2>
-          <p style={{ color: "#d4dcc8", fontSize: 12, marginBottom: 16 }}>
+          <h2 style={{ color: "var(--ink)", fontSize: 16, fontWeight: 700, marginBottom: 4 }}>Recent leads</h2>
+          <p style={{ color: "var(--ink2)", fontSize: 12, marginBottom: 16 }}>
             Every time a vessel operator taps Call or Email on your listing, it shows up here.
           </p>
 
           {leads.length === 0 ? (
             <div style={{ textAlign: "center", padding: "30px 10px" }}>
-              <div style={{ fontSize: 28, marginBottom: 8 }}>📭</div>
-              <p style={{ color: "#d4dcc8", fontSize: 13 }}>No leads yet. Once operators start contacting you, they&apos;ll appear here.</p>
+              <p style={{ color: "var(--ink2)", fontSize: 13 }}>No leads yet. Once operators start contacting you, they&apos;ll appear here.</p>
             </div>
           ) : (
             <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
@@ -303,19 +312,19 @@ export default function ProviderDashboardPage() {
                     alignItems: "center",
                     gap: 12,
                     padding: "12px 8px",
-                    borderBottom: "1px solid rgba(255,255,255,.06)",
+                    borderBottom: "1px solid color-mix(in srgb, var(--ink) 6%, transparent)",
                   }}
                 >
-                  <div style={{ width: 32, height: 32, borderRadius: 8, background: "rgba(200,168,75,.12)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                  <div style={{ width: 32, height: 32, borderRadius: 8, background: "color-mix(in srgb, var(--acc) 12%, transparent)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                     {lead.contact_method === "call" ? CallIcon : EmailIcon}
                   </div>
                   <div style={{ flex: 1 }}>
-                    <div style={{ color: "#f5f0e8", fontSize: 13, fontWeight: 600 }}>
+                    <div style={{ color: "var(--ink)", fontSize: 13, fontWeight: 600 }}>
                       Operator {lead.contact_method === "call" ? "called" : "emailed"} you
                     </div>
-                    <div style={{ color: "#d4dcc8", fontSize: 11 }}>via PortServiceFinder</div>
+                    <div style={{ color: "var(--ink2)", fontSize: 11 }}>via PortServiceFinder</div>
                   </div>
-                  <div style={{ color: "#7a8a72", fontSize: 11, flexShrink: 0 }}>{timeAgo(lead.created_at)}</div>
+                  <div style={{ color: "var(--ink3)", fontSize: 11, flexShrink: 0 }}>{timeAgo(lead.created_at)}</div>
                 </div>
               ))}
             </div>
@@ -324,25 +333,27 @@ export default function ProviderDashboardPage() {
 
         {/* LISTING INFO */}
         <div style={{ ...cardStyle, padding: "22px 20px" }}>
-          <h2 style={{ color: "#f5f0e8", fontSize: 16, fontWeight: 700, marginBottom: 14 }}>Your Listing</h2>
+          <h2 style={{ color: "var(--ink)", fontSize: 16, fontWeight: 700, marginBottom: 14 }}>Your listing</h2>
           {provider.country && (
-            <p style={{ color: "#d4dcc8", fontSize: 13, marginBottom: 6 }}>
-              <b style={{ color: "#f5f0e8" }}>Country:</b> {provider.country}
+            <p style={{ color: "var(--ink2)", fontSize: 13, marginBottom: 6 }}>
+              <b style={{ color: "var(--ink)" }}>Country:</b> {provider.country}
             </p>
           )}
           {provider.ports && provider.ports.length > 0 && (
-            <p style={{ color: "#d4dcc8", fontSize: 13, marginBottom: 14 }}>
-              <b style={{ color: "#f5f0e8" }}>Ports:</b> {provider.ports.join(", ")}
+            <p style={{ color: "var(--ink2)", fontSize: 13, marginBottom: 14 }}>
+              <b style={{ color: "var(--ink)" }}>Ports:</b> {provider.ports.join(", ")}
             </p>
           )}
           <Link
             href="/for-providers/complete-profile"
-            style={{ display: "inline-block", color: "#c8a84b", fontSize: 13, fontWeight: 700, textDecoration: "underline" }}
+            style={{ display: "inline-block", color: "var(--acc)", fontSize: 13, fontWeight: 700, textDecoration: "underline" }}
           >
             Edit my listing
           </Link>
         </div>
       </div>
     </main>
+    <SiteFooter />
+    </>
   );
 }

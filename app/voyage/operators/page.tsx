@@ -3,9 +3,9 @@ import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { countAll } from '@/lib/voyage-storage';
 
-const lb = "'Libre Bodoni', serif";
-const rj = "'Rajdhani', sans-serif";
-const g = { color: '#c8a84b', fontStyle: 'italic' };
+const lb = 'var(--font-display)';
+const rj = 'var(--font-ui)';
+const g = { color: 'var(--acc)' };
 
 interface Tool {
   href: string;
@@ -30,7 +30,6 @@ const CATEGORIES: Category[] = [
       { href: '/voyage/tce', icon: '💵', title: 'TCE Calculator', desc: 'Time charter equivalent + Worldscale.', status: 'ready' },
       { href: '/voyage/laytime', icon: '⏱️', title: 'Laytime / Demurrage', desc: 'Auto SoF & demurrage statements.', status: 'ready' },
       { href: '/voyage/hire', icon: '📊', title: 'Hire Statement', desc: 'Time charter hire calc + bunker.', status: 'ready' },
-      { href: '/voyage/cp', icon: '📜', title: 'CP Manager (AI)', desc: 'Upload CP — AI extracts terms.', status: 'ai' },
     ],
   },
   {
@@ -38,7 +37,7 @@ const CATEGORIES: Category[] = [
     desc: 'Plan routes, calculate distances, estimate fuel and time.',
     icon: '🗺️',
     tools: [
-      { href: '/voyage/planner', icon: '🧭', title: 'AI Route Optimizer', desc: 'Best route with weather, fuel & constraints.', status: 'ai' },
+      { href: '/voyage/planner', icon: '🧭', title: 'Voyage Planner', desc: 'Plan a passage: route, distance, ETA and fuel.', status: 'ready' },
       { href: '/voyage/distance', icon: '📏', title: 'Distance Calculator', desc: 'Port-to-port distance & ETA in seconds.', status: 'ready' },
       { href: '/voyage/bunker-plan', icon: '⛽', title: 'Bunker Planner', desc: 'ROB management — delivery to redelivery.', status: 'ready' },
     ],
@@ -71,28 +70,16 @@ const CATEGORIES: Category[] = [
     icon: '🎛️',
     tools: [
       { href: '/voyage/fleet', icon: '🎛️', title: 'Fleet Dashboard', desc: 'All vessels — one screen.', status: 'ready' },
-      { href: '/voyage/vessel', icon: '🚢', title: 'Vessel Database', desc: 'Search by IMO — particulars & history.', status: 'ready' },
       { href: '/voyage/cii', icon: '🌍', title: 'CII Calculator', desc: 'Carbon Intensity Indicator — A to E rating.', status: 'ready' },
-      { href: '/voyage/ets', icon: '🌫️', title: 'EU ETS / FuelEU', desc: 'Allowance cost & FuelEU compliance.', status: 'ready' },
-    ],
-  },
-  {
-    title: 'AI & Intelligence',
-    desc: 'AI-powered tools — your commercial co-pilot.',
-    icon: '🤖',
-    tools: [
-      { href: '/voyage/assistant', icon: '🤖', title: 'AI Assistant', desc: 'Ask anything: CP, weather, regulations.', status: 'ai' },
-      { href: '/voyage/email-ai', icon: '✉️', title: 'Email Assistant', desc: 'AI drafts demurrage, LOP, etc.', status: 'ai' },
-      { href: '/voyage/insights', icon: '💡', title: 'Smart Insights', desc: 'AI analyzes your voyage trends.', status: 'ai' },
     ],
   },
 ];
 
 const statusBadge = (status?: string) => {
-  if (status === 'ai') return { label: 'AI', color: '#c8a84b', bg: 'rgba(200,168,75,.18)' };
-  if (status === 'ready') return { label: 'LIVE', color: '#4caf76', bg: 'rgba(76,175,118,.15)' };
-  if (status === 'beta') return { label: 'BETA', color: '#5aa6e8', bg: 'rgba(90,166,232,.15)' };
-  if (status === 'soon') return { label: 'SOON', color: '#7a8a72', bg: 'rgba(122,138,114,.12)' };
+  if (status === 'ai') return { label: 'AI', color: 'var(--acc)', bg: 'color-mix(in srgb, var(--acc) 18%, transparent)' };
+  if (status === 'ready') return { label: 'LIVE', color: 'var(--ok)', bg: 'color-mix(in srgb, var(--ok) 15%, transparent)' };
+  if (status === 'beta') return { label: 'BETA', color: 'var(--info)', bg: 'color-mix(in srgb, var(--info) 15%, transparent)' };
+  if (status === 'soon') return { label: 'SOON', color: 'var(--ink3)', bg: 'color-mix(in srgb, var(--ink3) 12%, transparent)' };
   return null;
 };
 
@@ -109,25 +96,25 @@ export default function OperatorsPage() {
     <div>
       {/* breadcrumb back */}
       <div style={{ marginBottom: 18 }}>
-        <Link href="/voyage" style={{ fontFamily: rj, fontSize: 11, color: '#7a8a72', textDecoration: 'none', letterSpacing: '.5px' }}>← Voyage Hub</Link>
+        <Link href="/voyage" style={{ fontFamily: rj, fontSize: 11, color: 'var(--ink3)', textDecoration: 'none', letterSpacing: '.5px' }}>← Voyage Hub</Link>
       </div>
 
       {/* HERO */}
-      <section style={{ padding: '20px 0 26px', borderBottom: '1px solid rgba(200,168,75,.1)', marginBottom: 28 }}>
-        <div style={{ display: 'inline-block', padding: '5px 14px', background: 'rgba(200,168,75,.12)', border: '1px solid rgba(200,168,75,.35)', color: '#c8a84b', fontFamily: rj, fontSize: 10, letterSpacing: '2px', textTransform: 'uppercase', fontWeight: 700, marginBottom: 14 }}>
+      <section style={{ padding: '20px 0 26px', borderBottom: '1px solid color-mix(in srgb, var(--acc) 10%, transparent)', marginBottom: 28 }}>
+        <div style={{ display: 'inline-block', padding: '5px 14px', background: 'color-mix(in srgb, var(--acc) 12%, transparent)', border: '1px solid color-mix(in srgb, var(--acc) 35%, transparent)', color: 'var(--acc)', fontFamily: rj, fontSize: 10, letterSpacing: '2px', textTransform: 'uppercase', fontWeight: 700, marginBottom: 14 }}>
           🏢 Shore Office · Commercial
         </div>
         <h1 style={{ fontFamily: lb, fontSize: 'clamp(26px,3.5vw,42px)', fontWeight: 700, lineHeight: 1.08, marginBottom: 12 }}>
           For Operators, Owners &amp; <em style={g}>Charterers</em>
         </h1>
-        <p style={{ fontSize: 14, color: '#b0c0a4', lineHeight: 1.7, maxWidth: 680 }}>
+        <p style={{ fontSize: 14, color: 'var(--ink2)', lineHeight: 1.7, maxWidth: 680 }}>
           The commercial desk in one place — chartering, claims, performance, fleet and market tools.
           No signup; your data stays in your browser.
         </p>
-        <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap', marginTop: 18, fontFamily: rj, fontSize: 12, color: '#7a8a72', letterSpacing: '.5px' }}>
-          <span><strong style={{ color: '#4caf76', fontSize: 18, fontFamily: lb, fontWeight: 700 }}>{readyTools}</strong> tools live</span>
-          <span><strong style={{ color: '#c8a84b', fontSize: 18, fontFamily: lb, fontWeight: 700 }}>{totalTools}</strong> tools total</span>
-          {savedCount > 0 && <Link href="/voyage/saved" style={{ color: '#c8a84b', textDecoration: 'none', fontWeight: 700 }}>💾 {savedCount} saved</Link>}
+        <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap', marginTop: 18, fontFamily: rj, fontSize: 12, color: 'var(--ink3)', letterSpacing: '.5px' }}>
+          <span><strong style={{ color: 'var(--ok)', fontSize: 18, fontFamily: lb, fontWeight: 700 }}>{readyTools}</strong> tools live</span>
+          <span><strong style={{ color: 'var(--acc)', fontSize: 18, fontFamily: lb, fontWeight: 700 }}>{totalTools}</strong> tools total</span>
+          {savedCount > 0 && <Link href="/voyage/saved" style={{ color: 'var(--acc)', textDecoration: 'none', fontWeight: 700 }}>💾 {savedCount} saved</Link>}
         </div>
       </section>
 
@@ -146,7 +133,7 @@ export default function OperatorsPage() {
             <span style={{ fontSize: 26 }}>{cat.icon}</span>
             <div>
               <h2 style={{ fontFamily: lb, fontSize: 22, fontWeight: 700, lineHeight: 1.1 }}>{cat.title}</h2>
-              <p style={{ fontSize: 12, color: '#7a8a72', marginTop: 3 }}>{cat.desc}</p>
+              <p style={{ fontSize: 12, color: 'var(--ink3)', marginTop: 3 }}>{cat.desc}</p>
             </div>
           </div>
           <div className="tool-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 12 }}>
@@ -156,10 +143,10 @@ export default function OperatorsPage() {
       ))}
 
       {/* PRO TEASER */}
-      <section style={{ marginTop: 20, padding: '24px 20px', background: 'rgba(200,168,75,.05)', border: '1px solid rgba(200,168,75,.2)', borderRadius: 8, textAlign: 'center' }}>
-        <div style={{ fontFamily: rj, fontSize: 10, letterSpacing: '2px', textTransform: 'uppercase', color: '#c8a84b', fontWeight: 700, marginBottom: 8 }}>✨ Pro — Coming Soon</div>
-        <p style={{ fontSize: 13, color: '#b0c0a4', lineHeight: 1.7, maxWidth: 680, margin: '0 auto' }}>
-          These commercial tools are free to use today. A <strong style={{ color: '#c8a84b' }}>Pro</strong> tier is coming for
+      <section style={{ marginTop: 20, padding: '24px 20px', background: 'color-mix(in srgb, var(--acc) 5%, transparent)', border: '1px solid color-mix(in srgb, var(--acc) 20%, transparent)', borderRadius: 8, textAlign: 'center' }}>
+        <div style={{ fontFamily: rj, fontSize: 10, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--acc)', fontWeight: 700, marginBottom: 8 }}>✨ Pro — Coming Soon</div>
+        <p style={{ fontSize: 13, color: 'var(--ink2)', lineHeight: 1.7, maxWidth: 680, margin: '0 auto' }}>
+          These commercial tools are free to use today. A <strong style={{ color: 'var(--acc)' }}>Pro</strong> tier is coming for
           operators who want cloud sync across devices, multi-vessel fleets, exports and advanced AI — built on the same tools you already know.
         </p>
       </section>
@@ -173,8 +160,8 @@ export default function OperatorsPage() {
 
 function filterStyle(active: boolean): React.CSSProperties {
   return {
-    padding: '7px 14px', background: active ? '#c8a84b' : 'transparent', color: active ? '#08100a' : '#7a8a72',
-    border: `1px solid ${active ? '#c8a84b' : 'rgba(200,168,75,.25)'}`, fontFamily: rj, fontSize: 11,
+    padding: '7px 14px', background: active ? 'var(--acc)' : 'transparent', color: active ? 'var(--bg)' : 'var(--ink3)',
+    border: `1px solid ${active ? 'var(--acc)' : 'color-mix(in srgb, var(--acc) 25%, transparent)'}`, fontFamily: rj, fontSize: 11,
     letterSpacing: '1px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4,
   };
 }
@@ -184,13 +171,13 @@ function renderTool(tool: Tool) {
   const isLive = tool.status === 'ready' || tool.status === 'ai';
   return (
     <Link key={tool.title} href={isLive ? tool.href : '#'} onClick={(e) => { if (!isLive) e.preventDefault(); }} style={{ textDecoration: 'none', opacity: isLive ? 1 : 0.55, cursor: isLive ? 'pointer' : 'default' }}>
-      <div className={isLive ? 'tool-card-live' : ''} style={{ background: '#111c13', border: '1px solid rgba(200,168,75,.15)', padding: '16px 14px', height: '100%', position: 'relative', transition: 'all .25s ease', borderRadius: 4 }}>
+      <div className={isLive ? 'tool-card-live' : ''} style={{ background: 'var(--card)', border: '1px solid color-mix(in srgb, var(--acc) 15%, transparent)', padding: '16px 14px', height: '100%', position: 'relative', transition: 'all .25s ease', borderRadius: 4 }}>
         {badge && (
           <div style={{ position: 'absolute', top: 8, right: 8, fontSize: 8, background: badge.bg, color: badge.color, padding: '2px 6px', borderRadius: 3, fontFamily: rj, fontWeight: 700, letterSpacing: '1px', border: `1px solid ${badge.color}40` }}>{badge.label}</div>
         )}
         <div style={{ fontSize: 24, marginBottom: 8 }}>{tool.icon}</div>
-        <div style={{ fontFamily: lb, fontSize: 13.5, fontWeight: 700, color: '#f5f0e8', marginBottom: 5, lineHeight: 1.2 }}>{tool.title}</div>
-        <div style={{ fontSize: 11, color: '#b0c0a4', lineHeight: 1.5 }}>{tool.desc}</div>
+        <div style={{ fontFamily: lb, fontSize: 13.5, fontWeight: 700, color: 'var(--ink)', marginBottom: 5, lineHeight: 1.2 }}>{tool.title}</div>
+        <div style={{ fontSize: 11, color: 'var(--ink2)', lineHeight: 1.5 }}>{tool.desc}</div>
       </div>
     </Link>
   );
@@ -202,7 +189,7 @@ function FilterStyles() {
       @media (max-width: 1024px) { .tool-grid { grid-template-columns: repeat(3,1fr) !important; } }
       @media (max-width: 720px) { .tool-grid { grid-template-columns: repeat(2,1fr) !important; gap: 8px !important; } }
       @media (max-width: 420px) { .tool-grid { grid-template-columns: 1fr !important; } }
-      .tool-card-live:hover { border-color: #c8a84b !important; transform: translateY(-2px); box-shadow: 0 6px 16px rgba(200,168,75,.15); }
+      .tool-card-live:hover { border-color: var(--acc) !important; transform: translateY(-2px); box-shadow: 0 6px 16px color-mix(in srgb, var(--acc) 15%, transparent); }
     `}</style>
   );
 }

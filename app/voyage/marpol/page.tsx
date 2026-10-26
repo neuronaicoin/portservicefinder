@@ -3,9 +3,9 @@ import { useState, useEffect, useMemo } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { saveItem, loadItem, genId } from '@/lib/voyage-storage';
 
-const lb = "'Libre Bodoni', serif";
-const rj = "'Rajdhani', sans-serif";
-const g = { color: '#c8a84b', fontStyle: 'italic' } as React.CSSProperties;
+const lb = 'var(--font-display)';
+const rj = 'var(--font-ui)';
+const g = { color: 'var(--acc)' } as React.CSSProperties;
 
 // ============================================================
 // TYPES
@@ -92,12 +92,12 @@ const AREA_META: Record<MarpolData['area'], { label: string; sulphur: number; no
 // ============================================================
 // STYLES
 // ============================================================
-const card: React.CSSProperties = { background: '#111c13', border: '1px solid rgba(200,168,75,.18)', padding: '20px 18px', borderRadius: 4, marginBottom: 16 };
-const sectionTitle: React.CSSProperties = { fontFamily: rj, fontSize: 11, letterSpacing: '2px', textTransform: 'uppercase', color: '#c8a84b', fontWeight: 700, marginBottom: 14, paddingBottom: 8, borderBottom: '1px solid rgba(200,168,75,.12)' };
-const labelS: React.CSSProperties = { display: 'block', fontFamily: rj, fontSize: 10, letterSpacing: '.5px', textTransform: 'uppercase', color: '#7a8a72', fontWeight: 600, marginBottom: 4 };
-const inputStyle: React.CSSProperties = { width: '100%', background: '#0c1610', border: '1px solid rgba(200,168,75,.2)', color: '#f5f0e8', padding: '7px 9px', fontFamily: rj, fontSize: 12.5, fontWeight: 500, borderRadius: 3, boxSizing: 'border-box' };
-const ghostBtn: React.CSSProperties = { background: 'transparent', color: '#c8a84b', border: '1px solid rgba(200,168,75,.4)', padding: '8px 14px', fontFamily: rj, fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 };
-const goldBtn: React.CSSProperties = { background: '#c8a84b', color: '#08100a', border: 'none', padding: '8px 16px', fontFamily: rj, fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 };
+const card: React.CSSProperties = { background: 'var(--card)', border: '1px solid color-mix(in srgb, var(--acc) 18%, transparent)', padding: '20px 18px', borderRadius: 4, marginBottom: 16 };
+const sectionTitle: React.CSSProperties = { fontFamily: rj, fontSize: 11, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--acc)', fontWeight: 700, marginBottom: 14, paddingBottom: 8, borderBottom: '1px solid color-mix(in srgb, var(--acc) 12%, transparent)' };
+const labelS: React.CSSProperties = { display: 'block', fontFamily: rj, fontSize: 10, letterSpacing: '.5px', textTransform: 'uppercase', color: 'var(--ink3)', fontWeight: 600, marginBottom: 4 };
+const inputStyle: React.CSSProperties = { width: '100%', background: 'var(--bg2)', border: '1px solid color-mix(in srgb, var(--acc) 20%, transparent)', color: 'var(--ink)', padding: '7px 9px', fontFamily: rj, fontSize: 12.5, fontWeight: 500, borderRadius: 3, boxSizing: 'border-box' };
+const ghostBtn: React.CSSProperties = { background: 'transparent', color: 'var(--acc)', border: '1px solid color-mix(in srgb, var(--acc) 40%, transparent)', padding: '8px 14px', fontFamily: rj, fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 };
+const goldBtn: React.CSSProperties = { background: 'var(--acc)', color: 'var(--bg)', border: 'none', padding: '8px 16px', fontFamily: rj, fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 };
 
 function daysSince(dateStr: string): number | null {
   if (!dateStr) return null;
@@ -167,13 +167,13 @@ export default function MarpolPage() {
     <div>
       {/* Header */}
       <div style={{ marginBottom: 24 }}>
-        <div style={{ fontFamily: rj, fontSize: 10, letterSpacing: '2px', textTransform: 'uppercase', color: '#c8a84b', fontWeight: 700, marginBottom: 8 }}>
+        <div style={{ fontFamily: rj, fontSize: 10, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--acc)', fontWeight: 700, marginBottom: 8 }}>
           ⚓ Voyage Hub · MARPOL Tracker
         </div>
         <h1 style={{ fontFamily: lb, fontSize: 'clamp(22px,3vw,32px)', fontWeight: 700, lineHeight: 1.1, marginBottom: 8 }}>
           MARPOL <em style={g}>Tracker</em>
         </h1>
-        <p style={{ fontSize: 13, color: '#b0c0a4', lineHeight: 1.6, maxWidth: 720 }}>
+        <p style={{ fontSize: 13, color: 'var(--ink2)', lineHeight: 1.6, maxWidth: 720 }}>
           A self-check for MARPOL Annexes I, IV, V and VI — record books, discharge rules and the
           fuel sulphur limit for your current area. A compliance aid, not a substitute for the Convention text.
         </p>
@@ -183,15 +183,15 @@ export default function MarpolPage() {
       <div className="action-bar" style={{ display: 'flex', gap: 10, marginBottom: 22, flexWrap: 'wrap', alignItems: 'center' }}>
         <button onClick={() => setShowSave(true)} style={goldBtn}>💾 Save</button>
         <button onClick={() => window.print()} style={ghostBtn}>🖨️ Print / PDF</button>
-        <button onClick={handleReset} style={{ ...ghostBtn, color: '#ff8a8a', borderColor: 'rgba(255,138,138,.3)' }}>🗑️ Reset</button>
-        {saveMsg && <span style={{ color: '#4caf76', fontFamily: rj, fontSize: 12, fontWeight: 600 }}>{saveMsg}</span>}
-        {recordName && <span style={{ color: '#7a8a72', fontFamily: rj, fontSize: 11, marginLeft: 'auto' }}>📂 {recordName}</span>}
+        <button onClick={handleReset} style={{ ...ghostBtn, color: 'var(--bad)', borderColor: 'color-mix(in srgb, var(--bad) 30%, transparent)' }}>🗑️ Reset</button>
+        {saveMsg && <span style={{ color: 'var(--ok)', fontFamily: rj, fontSize: 12, fontWeight: 600 }}>{saveMsg}</span>}
+        {recordName && <span style={{ color: 'var(--ink3)', fontFamily: rj, fontSize: 11, marginLeft: 'auto' }}>📂 {recordName}</span>}
       </div>
 
       {showSave && (
-        <div style={{ ...card, background: 'rgba(200,168,75,.05)', borderColor: 'rgba(200,168,75,.4)' }}>
+        <div style={{ ...card, background: 'color-mix(in srgb, var(--acc) 5%, transparent)', borderColor: 'color-mix(in srgb, var(--acc) 40%, transparent)' }}>
           <label style={labelS}>Name</label>
-          <input type="text" value={recordName} onChange={(e) => setRecordName(e.target.value)} placeholder="e.g. MV NEURONAI — MARPOL self-check" style={{ ...inputStyle, marginBottom: 10 }} />
+          <input type="text" value={recordName} onChange={(e) => setRecordName(e.target.value)} placeholder="e.g. MV OCEAN PIONEER — MARPOL self-check" style={{ ...inputStyle, marginBottom: 10 }} />
           <div style={{ display: 'flex', gap: 8 }}>
             <button onClick={handleSave} style={{ ...goldBtn, padding: '8px 14px', letterSpacing: '1px' }}>Save</button>
             <button onClick={() => setShowSave(false)} style={ghostBtn}>Cancel</button>
@@ -203,7 +203,7 @@ export default function MarpolPage() {
       <div style={card}>
         <div style={sectionTitle}>Vessel &amp; Current Area</div>
         <div className="mp-g3" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 12 }}>
-          <div><label style={labelS}>Vessel</label><input style={inputStyle} value={data.vesselName} onChange={(e) => update('vesselName', e.target.value)} placeholder="MV NEURONAI" /></div>
+          <div><label style={labelS}>Vessel</label><input style={inputStyle} value={data.vesselName} onChange={(e) => update('vesselName', e.target.value)} placeholder="MV OCEAN PIONEER" /></div>
           <div><label style={labelS}>IMO</label><input style={inputStyle} value={data.imo} onChange={(e) => update('imo', e.target.value)} placeholder="9876543" /></div>
           <div>
             <label style={labelS}>Current Area</label>
@@ -212,20 +212,20 @@ export default function MarpolPage() {
             </select>
           </div>
         </div>
-        <div style={{ marginTop: 12, padding: '10px 12px', background: 'rgba(200,168,75,.05)', border: '1px solid rgba(200,168,75,.15)', borderRadius: 3, fontFamily: rj, fontSize: 12, color: '#b0c0a4' }}>
-          📍 {area.note} · Sulphur limit: <b style={{ color: '#c8a84b' }}>{area.sulphur.toFixed(2)}% m/m</b>
+        <div style={{ marginTop: 12, padding: '10px 12px', background: 'color-mix(in srgb, var(--acc) 5%, transparent)', border: '1px solid color-mix(in srgb, var(--acc) 15%, transparent)', borderRadius: 3, fontFamily: rj, fontSize: 12, color: 'var(--ink2)' }}>
+          📍 {area.note} · Sulphur limit: <b style={{ color: 'var(--acc)' }}>{area.sulphur.toFixed(2)}% m/m</b>
         </div>
       </div>
 
       {/* Compliance summary */}
       {compliance.total > 0 && (
-        <div style={{ ...card, background: 'linear-gradient(135deg,rgba(200,168,75,.08),transparent)', borderColor: 'rgba(200,168,75,.4)' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6, fontFamily: rj, fontSize: 12, color: '#7a8a72' }}>
+        <div style={{ ...card, background: 'linear-gradient(135deg,color-mix(in srgb, var(--acc) 8%, transparent),transparent)', borderColor: 'color-mix(in srgb, var(--acc) 40%, transparent)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6, fontFamily: rj, fontSize: 12, color: 'var(--ink3)' }}>
             <span>Self-check completion</span>
-            <span style={{ color: compliance.pct === 100 ? '#4caf76' : '#c8a84b', fontWeight: 700 }}>{compliance.done}/{compliance.total} · {compliance.pct}%</span>
+            <span style={{ color: compliance.pct === 100 ? 'var(--ok)' : 'var(--acc)', fontWeight: 700 }}>{compliance.done}/{compliance.total} · {compliance.pct}%</span>
           </div>
-          <div style={{ height: 10, background: '#0c1610', borderRadius: 5, overflow: 'hidden', border: '1px solid rgba(200,168,75,.2)' }}>
-            <div style={{ width: `${compliance.pct}%`, height: '100%', background: compliance.pct === 100 ? '#4caf76' : 'linear-gradient(90deg,#c8a84b,#4caf76)' }} />
+          <div style={{ height: 10, background: 'var(--bg2)', borderRadius: 5, overflow: 'hidden', border: '1px solid color-mix(in srgb, var(--acc) 20%, transparent)' }}>
+            <div style={{ width: `${compliance.pct}%`, height: '100%', background: compliance.pct === 100 ? 'var(--ok)' : 'linear-gradient(90deg,var(--acc),var(--ok))' }} />
           </div>
         </div>
       )}
@@ -237,7 +237,7 @@ export default function MarpolPage() {
           <div>
             <label style={labelS}>ORB Part I — last entry</label>
             <input style={inputStyle} type="date" value={data.orb1LastDate} onChange={(e) => update('orb1LastDate', e.target.value)} />
-            {orb1Days != null && <span style={{ fontSize: 10, color: orb1Days > 7 ? '#ff8a8a' : '#7a8a72', fontFamily: rj }}>{orb1Days} days ago{orb1Days > 7 ? ' ⚠' : ''}</span>}
+            {orb1Days != null && <span style={{ fontSize: 10, color: orb1Days > 7 ? 'var(--bad)' : 'var(--ink3)', fontFamily: rj }}>{orb1Days} days ago{orb1Days > 7 ? ' ⚠' : ''}</span>}
           </div>
           <div><label style={labelS}>Sludge ROB (m³)</label><input style={inputStyle} type="number" step="0.1" value={data.sludgeRob || ''} onChange={(e) => update('sludgeRob', num(e.target.value))} placeholder="12.5" /></div>
           <div><label style={labelS}>Bilge ROB (m³)</label><input style={inputStyle} type="number" step="0.1" value={data.bilgeRob || ''} onChange={(e) => update('bilgeRob', num(e.target.value))} placeholder="8.0" /></div>
@@ -268,7 +268,7 @@ export default function MarpolPage() {
         <div style={{ marginBottom: 14, maxWidth: 240 }}>
           <label style={labelS}>Garbage Record Book — last entry</label>
           <input style={inputStyle} type="date" value={data.grbLastDate} onChange={(e) => update('grbLastDate', e.target.value)} />
-          {grbDays != null && <span style={{ fontSize: 10, color: grbDays > 14 ? '#ff8a8a' : '#7a8a72', fontFamily: rj }}>{grbDays} days ago{grbDays > 14 ? ' ⚠' : ''}</span>}
+          {grbDays != null && <span style={{ fontSize: 10, color: grbDays > 14 ? 'var(--bad)' : 'var(--ink3)', fontFamily: rj }}>{grbDays} days ago{grbDays > 14 ? ' ⚠' : ''}</span>}
         </div>
         <Checklist keys={ANNEX5_CHECKS} state={data.garbageChecks} onToggle={(k) => toggleCheck('garbageChecks', k)} />
       </div>
@@ -279,14 +279,14 @@ export default function MarpolPage() {
         <div className="mp-g3" style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 12, marginBottom: 14 }}>
           <div>
             <label style={labelS}>In-use Fuel Sulphur (% m/m)</label>
-            <input style={{ ...inputStyle, borderColor: sulphurOk ? 'rgba(200,168,75,.2)' : 'rgba(255,138,138,.5)' }} type="number" step="0.01" value={data.fuelSulphur || ''} onChange={(e) => update('fuelSulphur', num(e.target.value))} placeholder="0.10" />
-            <span style={{ fontSize: 10.5, color: sulphurOk ? '#4caf76' : '#ff8a8a', fontFamily: rj, fontWeight: 600 }}>
+            <input style={{ ...inputStyle, borderColor: sulphurOk ? 'color-mix(in srgb, var(--acc) 20%, transparent)' : 'color-mix(in srgb, var(--bad) 50%, transparent)' }} type="number" step="0.01" value={data.fuelSulphur || ''} onChange={(e) => update('fuelSulphur', num(e.target.value))} placeholder="0.10" />
+            <span style={{ fontSize: 10.5, color: sulphurOk ? 'var(--ok)' : 'var(--bad)', fontFamily: rj, fontWeight: 600 }}>
               {sulphurOk ? `✓ within ${area.sulphur.toFixed(2)}% limit` : `⚠ exceeds ${area.sulphur.toFixed(2)}% limit for this area`}
             </span>
           </div>
           <div style={{ display: 'flex', alignItems: 'flex-end' }}>
-            <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', fontFamily: rj, fontSize: 12.5, color: data.bdnOnBoard ? '#4caf76' : '#ff8a8a', padding: '7px 0' }}>
-              <input type="checkbox" checked={data.bdnOnBoard} onChange={(e) => update('bdnOnBoard', e.target.checked)} style={{ width: 16, height: 16, accentColor: '#c8a84b' }} />
+            <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', fontFamily: rj, fontSize: 12.5, color: data.bdnOnBoard ? 'var(--ok)' : 'var(--bad)', padding: '7px 0' }}>
+              <input type="checkbox" checked={data.bdnOnBoard} onChange={(e) => update('bdnOnBoard', e.target.checked)} style={{ width: 16, height: 16, accentColor: 'var(--acc)' }} />
               BDN samples retained on board
             </label>
           </div>
@@ -301,13 +301,13 @@ export default function MarpolPage() {
       </div>
 
       {/* Reference */}
-      <div style={{ ...card, background: 'rgba(122,138,114,.05)', borderColor: 'rgba(122,138,114,.15)' }}>
+      <div style={{ ...card, background: 'color-mix(in srgb, var(--ink3) 5%, transparent)', borderColor: 'color-mix(in srgb, var(--ink3) 15%, transparent)' }}>
         <div style={sectionTitle}>📖 Quick Reference</div>
-        <ul style={{ fontSize: 11.5, color: '#b0c0a4', lineHeight: 1.7, paddingLeft: 18, fontFamily: rj }}>
-          <li><b style={{ color: '#c8a84b' }}>Annex I</b> — oil ≤15 ppm via OWS; no discharge in special areas; ORB entries for every oil transfer/operation.</li>
-          <li><b style={{ color: '#c8a84b' }}>Annex IV</b> — treated sewage &gt;3 nm, untreated &gt;12 nm at ≥4 kts; nothing in port/special areas.</li>
-          <li><b style={{ color: '#c8a84b' }}>Annex V</b> — garbage generally prohibited at sea; food waste only &gt;12 nm comminuted; never any plastics.</li>
-          <li><b style={{ color: '#c8a84b' }}>Annex VI</b> — global sulphur cap 0.50%; ECA/Med SOx 0.10%; keep BDNs 3 years, log fuel changeover.</li>
+        <ul style={{ fontSize: 11.5, color: 'var(--ink2)', lineHeight: 1.7, paddingLeft: 18, fontFamily: rj }}>
+          <li><b style={{ color: 'var(--acc)' }}>Annex I</b> — oil ≤15 ppm via OWS; no discharge in special areas; ORB entries for every oil transfer/operation.</li>
+          <li><b style={{ color: 'var(--acc)' }}>Annex IV</b> — treated sewage &gt;3 nm, untreated &gt;12 nm at ≥4 kts; nothing in port/special areas.</li>
+          <li><b style={{ color: 'var(--acc)' }}>Annex V</b> — garbage generally prohibited at sea; food waste only &gt;12 nm comminuted; never any plastics.</li>
+          <li><b style={{ color: 'var(--acc)' }}>Annex VI</b> — global sulphur cap 0.50%; ECA/Med SOx 0.10%; keep BDNs 3 years, log fuel changeover.</li>
           <li>This is a self-check aid. The MARPOL Convention, your SMS procedures and flag/class requirements govern.</li>
         </ul>
       </div>
@@ -333,8 +333,8 @@ function Checklist({ keys, state, onToggle }: { keys: string[]; state: Record<st
       {keys.map((k) => {
         const checked = !!state[k];
         return (
-          <label key={k} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 0', borderBottom: '1px dashed rgba(200,168,75,.1)', cursor: 'pointer', fontFamily: rj, fontSize: 12.5, color: checked ? '#f5f0e8' : '#b0c0a4' }}>
-            <input type="checkbox" checked={checked} onChange={() => onToggle(k)} style={{ width: 16, height: 16, accentColor: '#4caf76', flexShrink: 0 }} />
+          <label key={k} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 0', borderBottom: '1px dashed color-mix(in srgb, var(--acc) 10%, transparent)', cursor: 'pointer', fontFamily: rj, fontSize: 12.5, color: checked ? 'var(--ink)' : 'var(--ink2)' }}>
+            <input type="checkbox" checked={checked} onChange={() => onToggle(k)} style={{ width: 16, height: 16, accentColor: 'var(--ok)', flexShrink: 0 }} />
             <span style={{ textDecoration: checked ? 'none' : 'none' }}>{checked ? '✓ ' : ''}{k}</span>
           </label>
         );

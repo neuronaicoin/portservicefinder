@@ -2,9 +2,9 @@
 import { useState, useEffect, useMemo } from 'react';
 import { saveItem, loadItem, genId } from '@/lib/voyage-storage';
 
-const lb = "'Libre Bodoni', serif";
-const rj = "'Rajdhani', sans-serif";
-const g = { color: '#c8a84b', fontStyle: 'italic' } as React.CSSProperties;
+const lb = 'var(--font-display)';
+const rj = 'var(--font-ui)';
+const g = { color: 'var(--acc)' } as React.CSSProperties;
 
 // ============================================================
 // SOLAS / ISM drill schedule
@@ -56,20 +56,20 @@ function daysBetween(a: Date, b: Date): number {
 // ============================================================
 // STYLES
 // ============================================================
-const card: React.CSSProperties = { background: '#111c13', border: '1px solid rgba(200,168,75,.18)', padding: '20px 18px', borderRadius: 4, marginBottom: 16 };
-const sectionTitle: React.CSSProperties = { fontFamily: rj, fontSize: 11, letterSpacing: '2px', textTransform: 'uppercase', color: '#c8a84b', fontWeight: 700, marginBottom: 14, paddingBottom: 8, borderBottom: '1px solid rgba(200,168,75,.12)' };
-const labelS: React.CSSProperties = { display: 'block', fontFamily: rj, fontSize: 10, letterSpacing: '.5px', textTransform: 'uppercase', color: '#7a8a72', fontWeight: 600, marginBottom: 4 };
-const inputStyle: React.CSSProperties = { width: '100%', background: '#0c1610', border: '1px solid rgba(200,168,75,.2)', color: '#f5f0e8', padding: '7px 9px', fontFamily: rj, fontSize: 12.5, fontWeight: 500, borderRadius: 3, boxSizing: 'border-box' };
-const ghostBtn: React.CSSProperties = { background: 'transparent', color: '#c8a84b', border: '1px solid rgba(200,168,75,.4)', padding: '8px 14px', fontFamily: rj, fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 };
-const goldBtn: React.CSSProperties = { background: '#c8a84b', color: '#08100a', border: 'none', padding: '8px 16px', fontFamily: rj, fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 };
+const card: React.CSSProperties = { background: 'var(--card)', border: '1px solid color-mix(in srgb, var(--acc) 18%, transparent)', padding: '20px 18px', borderRadius: 4, marginBottom: 16 };
+const sectionTitle: React.CSSProperties = { fontFamily: rj, fontSize: 11, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--acc)', fontWeight: 700, marginBottom: 14, paddingBottom: 8, borderBottom: '1px solid color-mix(in srgb, var(--acc) 12%, transparent)' };
+const labelS: React.CSSProperties = { display: 'block', fontFamily: rj, fontSize: 10, letterSpacing: '.5px', textTransform: 'uppercase', color: 'var(--ink3)', fontWeight: 600, marginBottom: 4 };
+const inputStyle: React.CSSProperties = { width: '100%', background: 'var(--bg2)', border: '1px solid color-mix(in srgb, var(--acc) 20%, transparent)', color: 'var(--ink)', padding: '7px 9px', fontFamily: rj, fontSize: 12.5, fontWeight: 500, borderRadius: 3, boxSizing: 'border-box' };
+const ghostBtn: React.CSSProperties = { background: 'transparent', color: 'var(--acc)', border: '1px solid color-mix(in srgb, var(--acc) 40%, transparent)', padding: '8px 14px', fontFamily: rj, fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 };
+const goldBtn: React.CSSProperties = { background: 'var(--acc)', color: 'var(--bg)', border: 'none', padding: '8px 16px', fontFamily: rj, fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 };
 
 const STORAGE_KEY = 'drills';
 const SINGLETON_ID = 'drilltracker';
 
 const PERF_META: Record<DrillRecord['performance'], { label: string; color: string }> = {
-  good: { label: 'Good', color: '#4caf76' },
-  satisfactory: { label: 'Satisfactory', color: '#c8a84b' },
-  'needs-improvement': { label: 'Needs improvement', color: '#ff8a8a' },
+  good: { label: 'Good', color: 'var(--ok)' },
+  satisfactory: { label: 'Satisfactory', color: 'var(--acc)' },
+  'needs-improvement': { label: 'Needs improvement', color: 'var(--bad)' },
 };
 
 // ============================================================
@@ -150,23 +150,23 @@ export default function DrillTrackerPage() {
   }, [status, data.records]);
 
   const STATE_META: Record<string, { label: string; color: string; bg: string }> = {
-    overdue: { label: 'OVERDUE', color: '#ff6b6b', bg: 'rgba(255,107,107,.16)' },
-    'due-soon': { label: 'DUE SOON', color: '#e8b85a', bg: 'rgba(232,184,90,.14)' },
-    ok: { label: 'OK', color: '#4caf76', bg: 'rgba(76,175,118,.14)' },
-    never: { label: 'NOT LOGGED', color: '#7a8a72', bg: 'rgba(122,138,114,.14)' },
+    overdue: { label: 'OVERDUE', color: 'var(--bad)', bg: 'color-mix(in srgb, var(--bad) 16%, transparent)' },
+    'due-soon': { label: 'DUE SOON', color: 'var(--warn)', bg: 'color-mix(in srgb, var(--warn) 14%, transparent)' },
+    ok: { label: 'OK', color: 'var(--ok)', bg: 'color-mix(in srgb, var(--ok) 14%, transparent)' },
+    never: { label: 'NOT LOGGED', color: 'var(--ink3)', bg: 'color-mix(in srgb, var(--ink3) 14%, transparent)' },
   };
 
   return (
     <div>
       {/* Header */}
       <div style={{ marginBottom: 24 }}>
-        <div style={{ fontFamily: rj, fontSize: 10, letterSpacing: '2px', textTransform: 'uppercase', color: '#c8a84b', fontWeight: 700, marginBottom: 8 }}>
+        <div style={{ fontFamily: rj, fontSize: 10, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--acc)', fontWeight: 700, marginBottom: 8 }}>
           ⚓ Voyage Hub · Drill Tracker
         </div>
         <h1 style={{ fontFamily: lb, fontSize: 'clamp(22px,3vw,32px)', fontWeight: 700, lineHeight: 1.1, marginBottom: 8 }}>
           Drill <em style={g}>Tracker</em>
         </h1>
-        <p style={{ fontSize: 13, color: '#b0c0a4', lineHeight: 1.6, maxWidth: 720 }}>
+        <p style={{ fontSize: 13, color: 'var(--ink2)', lineHeight: 1.6, maxWidth: 720 }}>
           SOLAS-mandated drill schedule with next-due dates. Log each drill and the tracker flags what
           is overdue or coming up. Always follow your company SMS for exact intervals and content.
         </p>
@@ -175,27 +175,27 @@ export default function DrillTrackerPage() {
       {/* Vessel + action */}
       <div style={card}>
         <div className="dr-g3" style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 12 }}>
-          <div><label style={labelS}>Vessel</label><input style={inputStyle} value={data.vesselName} onChange={(e) => update('vesselName', e.target.value)} placeholder="MV NEURONAI" /></div>
+          <div><label style={labelS}>Vessel</label><input style={inputStyle} value={data.vesselName} onChange={(e) => update('vesselName', e.target.value)} placeholder="MV OCEAN PIONEER" /></div>
           <div><label style={labelS}>IMO</label><input style={inputStyle} value={data.imo} onChange={(e) => update('imo', e.target.value)} placeholder="9876543" /></div>
         </div>
       </div>
 
       <div className="action-bar" style={{ display: 'flex', gap: 10, marginBottom: 22, flexWrap: 'wrap', alignItems: 'center' }}>
         <button onClick={() => window.print()} style={ghostBtn}>🖨️ Print / PDF</button>
-        {saveMsg && <span style={{ color: '#4caf76', fontFamily: rj, fontSize: 12, fontWeight: 600 }}>{saveMsg}</span>}
+        {saveMsg && <span style={{ color: 'var(--ok)', fontFamily: rj, fontSize: 12, fontWeight: 600 }}>{saveMsg}</span>}
       </div>
 
       {/* Summary */}
       <div className="dr-summary" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 10, marginBottom: 16 }}>
-        <KPI label="Overdue" value={String(summary.overdue)} color={summary.overdue > 0 ? '#ff6b6b' : '#4caf76'} />
-        <KPI label="Due Soon" value={String(summary.dueSoon)} color={summary.dueSoon > 0 ? '#e8b85a' : '#4caf76'} />
-        <KPI label="Not Logged" value={String(summary.never)} color="#7a8a72" />
-        <KPI label="Total Drills" value={String(summary.total)} color="#c8a84b" />
+        <KPI label="Overdue" value={String(summary.overdue)} color={summary.overdue > 0 ? 'var(--bad)' : 'var(--ok)'} />
+        <KPI label="Due Soon" value={String(summary.dueSoon)} color={summary.dueSoon > 0 ? 'var(--warn)' : 'var(--ok)'} />
+        <KPI label="Not Logged" value={String(summary.never)} color="var(--ink3)" />
+        <KPI label="Total Drills" value={String(summary.total)} color="var(--acc)" />
       </div>
 
       {/* Log dialog */}
       {logFor && logRec && (
-        <div style={{ ...card, borderColor: 'rgba(200,168,75,.5)' }}>
+        <div style={{ ...card, borderColor: 'color-mix(in srgb, var(--acc) 50%, transparent)' }}>
           <div style={sectionTitle}>{logFor.icon} Log: {logFor.name}</div>
           <div className="dr-g3" style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 10, marginBottom: 10 }}>
             <div><label style={labelS}>Date</label><input style={inputStyle} type="date" value={logRec.date} onChange={(e) => setLogRec({ ...logRec, date: e.target.value })} /></div>
@@ -222,24 +222,24 @@ export default function DrillTrackerPage() {
           {status.map((s) => {
             const sm = STATE_META[s.state];
             return (
-              <div key={s.dt.key} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 10, padding: '12px 0', borderBottom: '1px dashed rgba(200,168,75,.1)', flexWrap: 'wrap' }}>
+              <div key={s.dt.key} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 10, padding: '12px 0', borderBottom: '1px dashed color-mix(in srgb, var(--acc) 10%, transparent)', flexWrap: 'wrap' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 220 }}>
                   <span style={{ fontSize: 18 }}>{s.dt.icon}</span>
                   <div>
-                    <div style={{ fontFamily: rj, fontSize: 13.5, fontWeight: 700, color: '#f5f0e8' }}>{s.dt.name}</div>
-                    <div style={{ fontFamily: rj, fontSize: 10, color: '#7a8a72' }}>{s.dt.ref}</div>
+                    <div style={{ fontFamily: rj, fontSize: 13.5, fontWeight: 700, color: 'var(--ink)' }}>{s.dt.name}</div>
+                    <div style={{ fontFamily: rj, fontSize: 10, color: 'var(--ink3)' }}>{s.dt.ref}</div>
                   </div>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
                   <div style={{ textAlign: 'right', fontFamily: rj, fontSize: 11 }}>
                     {s.lastDate ? (
                       <>
-                        <div style={{ color: '#b0c0a4' }}>Last: {s.lastDate} ({s.daysSince}d ago)</div>
-                        <div style={{ color: s.state === 'overdue' ? '#ff6b6b' : s.state === 'due-soon' ? '#e8b85a' : '#4caf76' }}>
+                        <div style={{ color: 'var(--ink2)' }}>Last: {s.lastDate} ({s.daysSince}d ago)</div>
+                        <div style={{ color: s.state === 'overdue' ? 'var(--bad)' : s.state === 'due-soon' ? 'var(--warn)' : 'var(--ok)' }}>
                           {s.dueIn != null && (s.dueIn < 0 ? `${Math.abs(s.dueIn)}d overdue` : `due in ${s.dueIn}d`)}
                         </div>
                       </>
-                    ) : <div style={{ color: '#7a8a72' }}>No record yet</div>}
+                    ) : <div style={{ color: 'var(--ink3)' }}>No record yet</div>}
                   </div>
                   <span style={{ fontSize: 9, background: sm.bg, color: sm.color, padding: '3px 9px', borderRadius: 3, fontFamily: rj, fontWeight: 700, letterSpacing: '.5px', border: `1px solid ${sm.color}40`, whiteSpace: 'nowrap', minWidth: 84, textAlign: 'center' }}>{sm.label}</span>
                   <button onClick={() => openLog(s.dt)} style={{ ...goldBtn, padding: '6px 12px', fontSize: 10 }}>Log</button>
@@ -258,15 +258,15 @@ export default function DrillTrackerPage() {
             const dt = DRILL_TYPES.find((d) => d.key === r.typeKey);
             const pm = PERF_META[r.performance];
             return (
-              <div key={r.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 10, padding: '10px 0', borderBottom: '1px dashed rgba(200,168,75,.1)' }}>
+              <div key={r.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 10, padding: '10px 0', borderBottom: '1px dashed color-mix(in srgb, var(--acc) 10%, transparent)' }}>
                 <div style={{ minWidth: 0 }}>
-                  <div style={{ fontFamily: rj, fontSize: 12.5, color: '#f5f0e8', fontWeight: 600 }}>{dt?.icon} {dt?.name || r.typeKey} <span style={{ color: '#7a8a72', fontWeight: 400 }}>· {r.date}</span></div>
-                  {r.participants && <div style={{ fontFamily: rj, fontSize: 11, color: '#7a8a72' }}>👥 {r.participants}</div>}
-                  {r.notes && <div style={{ fontFamily: rj, fontSize: 11.5, color: '#b0c0a4', marginTop: 2, lineHeight: 1.5 }}>{r.notes}</div>}
+                  <div style={{ fontFamily: rj, fontSize: 12.5, color: 'var(--ink)', fontWeight: 600 }}>{dt?.icon} {dt?.name || r.typeKey} <span style={{ color: 'var(--ink3)', fontWeight: 400 }}>· {r.date}</span></div>
+                  {r.participants && <div style={{ fontFamily: rj, fontSize: 11, color: 'var(--ink3)' }}>👥 {r.participants}</div>}
+                  {r.notes && <div style={{ fontFamily: rj, fontSize: 11.5, color: 'var(--ink2)', marginTop: 2, lineHeight: 1.5 }}>{r.notes}</div>}
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                   <span style={{ fontFamily: rj, fontSize: 10, color: pm.color, fontWeight: 700, whiteSpace: 'nowrap' }}>{pm.label}</span>
-                  <button onClick={() => deleteRecord(r.id)} style={{ background: 'transparent', border: 'none', color: '#ff8a8a', cursor: 'pointer', fontSize: 12 }}>✕</button>
+                  <button onClick={() => deleteRecord(r.id)} style={{ background: 'transparent', border: 'none', color: 'var(--bad)', cursor: 'pointer', fontSize: 12 }}>✕</button>
                 </div>
               </div>
             );
@@ -275,13 +275,13 @@ export default function DrillTrackerPage() {
       )}
 
       {/* Reference */}
-      <div style={{ ...card, background: 'rgba(122,138,114,.05)', borderColor: 'rgba(122,138,114,.15)' }}>
+      <div style={{ ...card, background: 'color-mix(in srgb, var(--ink3) 5%, transparent)', borderColor: 'color-mix(in srgb, var(--ink3) 15%, transparent)' }}>
         <div style={sectionTitle}>📖 Key SOLAS Intervals</div>
-        <ul style={{ fontSize: 11.5, color: '#b0c0a4', lineHeight: 1.7, paddingLeft: 18, fontFamily: rj }}>
-          <li>Fire &amp; abandon-ship drills: <b style={{ color: '#c8a84b' }}>monthly</b> (within 24 h of leaving port if &gt;25% of crew changed).</li>
-          <li>Each lifeboat launched &amp; manoeuvred in water: <b style={{ color: '#c8a84b' }}>every 3 months</b>.</li>
-          <li>Enclosed-space entry &amp; rescue drills: <b style={{ color: '#c8a84b' }}>every 2 months</b>.</li>
-          <li>Emergency steering drills: <b style={{ color: '#c8a84b' }}>every 3 months</b> (SOLAS V/26).</li>
+        <ul style={{ fontSize: 11.5, color: 'var(--ink2)', lineHeight: 1.7, paddingLeft: 18, fontFamily: rj }}>
+          <li>Fire &amp; abandon-ship drills: <b style={{ color: 'var(--acc)' }}>monthly</b> (within 24 h of leaving port if &gt;25% of crew changed).</li>
+          <li>Each lifeboat launched &amp; manoeuvred in water: <b style={{ color: 'var(--acc)' }}>every 3 months</b>.</li>
+          <li>Enclosed-space entry &amp; rescue drills: <b style={{ color: 'var(--acc)' }}>every 2 months</b>.</li>
+          <li>Emergency steering drills: <b style={{ color: 'var(--acc)' }}>every 3 months</b> (SOLAS V/26).</li>
           <li>Intervals here are defaults — your company SMS, flag and ship type may require more. This is a tracking aid only.</li>
         </ul>
       </div>
@@ -304,8 +304,8 @@ export default function DrillTrackerPage() {
 
 function KPI({ label: l, value, color }: { label: string; value: string; color: string }) {
   return (
-    <div style={{ background: '#0c1610', border: '1px solid rgba(200,168,75,.2)', borderRadius: 4, padding: '12px 10px', textAlign: 'center' }}>
-      <div style={{ fontFamily: rj, fontSize: 9, letterSpacing: '1px', textTransform: 'uppercase', color: '#7a8a72', fontWeight: 700 }}>{l}</div>
+    <div style={{ background: 'var(--bg2)', border: '1px solid color-mix(in srgb, var(--acc) 20%, transparent)', borderRadius: 4, padding: '12px 10px', textAlign: 'center' }}>
+      <div style={{ fontFamily: rj, fontSize: 9, letterSpacing: '1px', textTransform: 'uppercase', color: 'var(--ink3)', fontWeight: 700 }}>{l}</div>
       <div style={{ fontFamily: lb, fontSize: 24, fontWeight: 700, color, marginTop: 4 }}>{value}</div>
     </div>
   );

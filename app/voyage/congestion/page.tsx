@@ -2,9 +2,9 @@
 import { useState, useEffect, useMemo } from 'react';
 import { saveItem, loadItem, genId } from '@/lib/voyage-storage';
 
-const lb = "'Libre Bodoni', serif";
-const rj = "'Rajdhani', sans-serif";
-const g = { color: '#c8a84b', fontStyle: 'italic' } as React.CSSProperties;
+const lb = 'var(--font-display)';
+const rj = 'var(--font-ui)';
+const g = { color: 'var(--acc)' } as React.CSSProperties;
 
 // ============================================================
 // TYPES
@@ -34,12 +34,12 @@ function newReport(): CongReport {
 const DEFAULT_DATA: CongData = { reports: [], myEta: '', myPort: '' };
 
 function congestionLevel(days: number): { label: string; color: string; bg: string } {
-  if (days <= 0) return { label: 'No data', color: '#7a8a72', bg: 'rgba(122,138,114,.12)' };
-  if (days < 1) return { label: 'CLEAR', color: '#4caf76', bg: 'rgba(76,175,118,.12)' };
-  if (days < 3) return { label: 'LIGHT', color: '#8bc34a', bg: 'rgba(139,195,74,.12)' };
-  if (days < 7) return { label: 'MODERATE', color: '#e8b85a', bg: 'rgba(232,184,90,.12)' };
-  if (days < 14) return { label: 'HEAVY', color: '#ff8a8a', bg: 'rgba(255,138,138,.12)' };
-  return { label: 'SEVERE', color: '#ff6b6b', bg: 'rgba(255,107,107,.14)' };
+  if (days <= 0) return { label: 'No data', color: 'var(--ink3)', bg: 'color-mix(in srgb, var(--ink3) 12%, transparent)' };
+  if (days < 1) return { label: 'CLEAR', color: 'var(--ok)', bg: 'color-mix(in srgb, var(--ok) 12%, transparent)' };
+  if (days < 3) return { label: 'LIGHT', color: 'var(--ok)', bg: 'color-mix(in srgb, var(--ok) 12%, transparent)' };
+  if (days < 7) return { label: 'MODERATE', color: 'var(--warn)', bg: 'color-mix(in srgb, var(--warn) 12%, transparent)' };
+  if (days < 14) return { label: 'HEAVY', color: 'var(--bad)', bg: 'color-mix(in srgb, var(--bad) 12%, transparent)' };
+  return { label: 'SEVERE', color: 'var(--bad)', bg: 'color-mix(in srgb, var(--bad) 14%, transparent)' };
 }
 
 function addDays(dateStr: string, days: number): string {
@@ -53,12 +53,12 @@ function addDays(dateStr: string, days: number): string {
 // ============================================================
 // STYLES
 // ============================================================
-const card: React.CSSProperties = { background: '#111c13', border: '1px solid rgba(200,168,75,.18)', padding: '20px 18px', borderRadius: 4, marginBottom: 16 };
-const sectionTitle: React.CSSProperties = { fontFamily: rj, fontSize: 11, letterSpacing: '2px', textTransform: 'uppercase', color: '#c8a84b', fontWeight: 700, marginBottom: 14, paddingBottom: 8, borderBottom: '1px solid rgba(200,168,75,.12)' };
-const labelS: React.CSSProperties = { display: 'block', fontFamily: rj, fontSize: 10, letterSpacing: '.5px', textTransform: 'uppercase', color: '#7a8a72', fontWeight: 600, marginBottom: 4 };
-const inputStyle: React.CSSProperties = { width: '100%', background: '#0c1610', border: '1px solid rgba(200,168,75,.2)', color: '#f5f0e8', padding: '7px 9px', fontFamily: rj, fontSize: 12.5, fontWeight: 500, borderRadius: 3, boxSizing: 'border-box' };
-const ghostBtn: React.CSSProperties = { background: 'transparent', color: '#c8a84b', border: '1px solid rgba(200,168,75,.4)', padding: '8px 14px', fontFamily: rj, fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 };
-const goldBtn: React.CSSProperties = { background: '#c8a84b', color: '#08100a', border: 'none', padding: '8px 16px', fontFamily: rj, fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 };
+const card: React.CSSProperties = { background: 'var(--card)', border: '1px solid color-mix(in srgb, var(--acc) 18%, transparent)', padding: '20px 18px', borderRadius: 4, marginBottom: 16 };
+const sectionTitle: React.CSSProperties = { fontFamily: rj, fontSize: 11, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--acc)', fontWeight: 700, marginBottom: 14, paddingBottom: 8, borderBottom: '1px solid color-mix(in srgb, var(--acc) 12%, transparent)' };
+const labelS: React.CSSProperties = { display: 'block', fontFamily: rj, fontSize: 10, letterSpacing: '.5px', textTransform: 'uppercase', color: 'var(--ink3)', fontWeight: 600, marginBottom: 4 };
+const inputStyle: React.CSSProperties = { width: '100%', background: 'var(--bg2)', border: '1px solid color-mix(in srgb, var(--acc) 20%, transparent)', color: 'var(--ink)', padding: '7px 9px', fontFamily: rj, fontSize: 12.5, fontWeight: 500, borderRadius: 3, boxSizing: 'border-box' };
+const ghostBtn: React.CSSProperties = { background: 'transparent', color: 'var(--acc)', border: '1px solid color-mix(in srgb, var(--acc) 40%, transparent)', padding: '8px 14px', fontFamily: rj, fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 };
+const goldBtn: React.CSSProperties = { background: 'var(--acc)', color: 'var(--bg)', border: 'none', padding: '8px 16px', fontFamily: rj, fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 };
 
 const STORAGE_KEY = 'congestion';
 const SINGLETON_ID = 'congtracker';
@@ -126,21 +126,21 @@ export default function CongestionPage() {
     <div>
       {/* Header */}
       <div style={{ marginBottom: 24 }}>
-        <div style={{ fontFamily: rj, fontSize: 10, letterSpacing: '2px', textTransform: 'uppercase', color: '#c8a84b', fontWeight: 700, marginBottom: 8 }}>
+        <div style={{ fontFamily: rj, fontSize: 10, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--acc)', fontWeight: 700, marginBottom: 8 }}>
           ⚓ Voyage Hub · Port Congestion
         </div>
         <h1 style={{ fontFamily: lb, fontSize: 'clamp(22px,3vw,32px)', fontWeight: 700, lineHeight: 1.1, marginBottom: 8 }}>
           Port <em style={g}>Congestion</em>
         </h1>
-        <p style={{ fontSize: 13, color: '#b0c0a4', lineHeight: 1.6, maxWidth: 720 }}>
+        <p style={{ fontSize: 13, color: 'var(--ink2)', lineHeight: 1.6, maxWidth: 720 }}>
           Log congestion from agent reports and your own observations — vessels waiting and average wait —
           then estimate your berthing date from your ETA. You enter the data; no live AIS feed.
         </p>
       </div>
 
       {/* Info */}
-      <div style={{ ...card, background: 'rgba(90,166,232,.06)', borderColor: 'rgba(90,166,232,.3)', padding: '12px 16px' }}>
-        <div style={{ fontFamily: rj, fontSize: 12, color: '#9fc6ef', lineHeight: 1.5 }}>
+      <div style={{ ...card, background: 'color-mix(in srgb, var(--info) 6%, transparent)', borderColor: 'color-mix(in srgb, var(--info) 30%, transparent)', padding: '12px 16px' }}>
+        <div style={{ fontFamily: rj, fontSize: 12, color: 'var(--info)', lineHeight: 1.5 }}>
           💡 Ask your agent for the waiting count and average waiting time, log it here, and the tool ranks ports
           and projects when your ship is likely to get a berth.
         </div>
@@ -149,7 +149,7 @@ export default function CongestionPage() {
       <div className="action-bar" style={{ display: 'flex', gap: 10, marginBottom: 16, flexWrap: 'wrap', alignItems: 'center' }}>
         <button onClick={openNew} style={goldBtn}>+ Add Report</button>
         <button onClick={() => window.print()} style={ghostBtn}>🖨️ Print / PDF</button>
-        {saveMsg && <span style={{ color: '#4caf76', fontFamily: rj, fontSize: 12, fontWeight: 600 }}>{saveMsg}</span>}
+        {saveMsg && <span style={{ color: 'var(--ok)', fontFamily: rj, fontSize: 12, fontWeight: 600 }}>{saveMsg}</span>}
       </div>
 
       {/* My vessel estimate */}
@@ -160,22 +160,22 @@ export default function CongestionPage() {
           <div><label style={labelS}>My ETA</label><input style={inputStyle} type="date" value={data.myEta} onChange={(e) => update('myEta', e.target.value)} /></div>
         </div>
         {myPortReport && data.myEta ? (
-          <div style={{ marginTop: 12, padding: '12px 14px', background: '#0c1610', border: '1px solid rgba(200,168,75,.3)', borderRadius: 4 }}>
-            <div style={{ fontFamily: rj, fontSize: 12, color: '#b0c0a4', lineHeight: 1.6 }}>
-              Latest for <b style={{ color: '#c8a84b' }}>{myPortReport.port}</b> ({myPortReport.date}): {myPortReport.waiting} waiting, avg <b style={{ color: '#e8b85a' }}>{myPortReport.avgWaitDays} days</b>.
+          <div style={{ marginTop: 12, padding: '12px 14px', background: 'var(--bg2)', border: '1px solid color-mix(in srgb, var(--acc) 30%, transparent)', borderRadius: 4 }}>
+            <div style={{ fontFamily: rj, fontSize: 12, color: 'var(--ink2)', lineHeight: 1.6 }}>
+              Latest for <b style={{ color: 'var(--acc)' }}>{myPortReport.port}</b> ({myPortReport.date}): {myPortReport.waiting} waiting, avg <b style={{ color: 'var(--warn)' }}>{myPortReport.avgWaitDays} days</b>.
             </div>
-            <div style={{ fontFamily: lb, fontSize: 17, fontWeight: 700, color: '#4caf76', marginTop: 6 }}>
+            <div style={{ fontFamily: lb, fontSize: 17, fontWeight: 700, color: 'var(--ok)', marginTop: 6 }}>
               Estimated berth: {estBerth}
             </div>
           </div>
         ) : (
-          <p style={{ fontFamily: rj, fontSize: 11, color: '#7a8a72', marginTop: 10 }}>Enter a port that has a report below, plus your ETA, to project a berthing date.</p>
+          <p style={{ fontFamily: rj, fontSize: 11, color: 'var(--ink3)', marginTop: 10 }}>Enter a port that has a report below, plus your ETA, to project a berthing date.</p>
         )}
       </div>
 
       {/* Form */}
       {showForm && editing && (
-        <div style={{ ...card, borderColor: 'rgba(200,168,75,.5)' }}>
+        <div style={{ ...card, borderColor: 'color-mix(in srgb, var(--acc) 50%, transparent)' }}>
           <div style={sectionTitle}>{data.reports.some((x) => x.id === editing.id) ? 'Edit Report' : 'New Congestion Report'}</div>
           <div className="cg-g3" style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 10, marginBottom: 10 }}>
             <div><label style={labelS}>Port</label><input style={inputStyle} value={editing.port} onChange={(e) => setEditing({ ...editing, port: e.target.value })} placeholder="Santos" /></div>
@@ -207,12 +207,12 @@ export default function CongestionPage() {
               return (
                 <div key={r.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 14px', background: lvl.bg, border: `1px solid ${lvl.color}40`, borderRadius: 4, flexWrap: 'wrap', gap: 8 }}>
                   <div>
-                    <span style={{ fontFamily: lb, fontSize: 15, fontWeight: 700, color: '#f5f0e8' }}>{r.port}</span>
-                    <span style={{ fontFamily: rj, fontSize: 11, color: '#7a8a72', marginLeft: 8 }}>{r.date}{r.source ? ` · ${r.source}` : ''}</span>
+                    <span style={{ fontFamily: lb, fontSize: 15, fontWeight: 700, color: 'var(--ink)' }}>{r.port}</span>
+                    <span style={{ fontFamily: rj, fontSize: 11, color: 'var(--ink3)', marginLeft: 8 }}>{r.date}{r.source ? ` · ${r.source}` : ''}</span>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 16, fontFamily: rj }}>
-                    <span style={{ fontSize: 12, color: '#b0c0a4' }}>🚢 {r.waiting} waiting</span>
-                    <span style={{ fontSize: 13, color: '#f5f0e8', fontWeight: 700 }}>{r.avgWaitDays}d avg</span>
+                    <span style={{ fontSize: 12, color: 'var(--ink2)' }}>🚢 {r.waiting} waiting</span>
+                    <span style={{ fontSize: 13, color: 'var(--ink)', fontWeight: 700 }}>{r.avgWaitDays}d avg</span>
                     <span style={{ fontSize: 9, background: `${lvl.color}22`, color: lvl.color, padding: '3px 9px', borderRadius: 3, fontWeight: 700, letterSpacing: '.5px', border: `1px solid ${lvl.color}40` }}>{lvl.label}</span>
                   </div>
                 </div>
@@ -224,8 +224,8 @@ export default function CongestionPage() {
 
       {/* All reports log */}
       {data.reports.length === 0 && !showForm && (
-        <div style={{ ...card, textAlign: 'center', color: '#7a8a72', fontFamily: rj }}>
-          No reports yet. Tap <b style={{ color: '#c8a84b' }}>+ Add Report</b> to log congestion.
+        <div style={{ ...card, textAlign: 'center', color: 'var(--ink3)', fontFamily: rj }}>
+          No reports yet. Tap <b style={{ color: 'var(--acc)' }}>+ Add Report</b> to log congestion.
         </div>
       )}
 
@@ -235,17 +235,17 @@ export default function CongestionPage() {
           {allReportsForPortSorted.map((r) => {
             const lvl = congestionLevel(r.avgWaitDays);
             return (
-              <div key={r.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '9px 0', borderBottom: '1px dashed rgba(200,168,75,.1)', fontFamily: rj, gap: 10, flexWrap: 'wrap' }}>
+              <div key={r.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '9px 0', borderBottom: '1px dashed color-mix(in srgb, var(--acc) 10%, transparent)', fontFamily: rj, gap: 10, flexWrap: 'wrap' }}>
                 <div style={{ minWidth: 0 }}>
-                  <span style={{ color: '#f5f0e8', fontSize: 12.5, fontWeight: 600 }}>{r.port}</span>
-                  <span style={{ color: '#7a8a72', fontSize: 11, marginLeft: 8 }}>{r.date}</span>
-                  {r.notes && <div style={{ color: '#7a8a72', fontSize: 11 }}>{r.notes}</div>}
+                  <span style={{ color: 'var(--ink)', fontSize: 12.5, fontWeight: 600 }}>{r.port}</span>
+                  <span style={{ color: 'var(--ink3)', fontSize: 11, marginLeft: 8 }}>{r.date}</span>
+                  {r.notes && <div style={{ color: 'var(--ink3)', fontSize: 11 }}>{r.notes}</div>}
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                  <span style={{ fontSize: 11, color: '#b0c0a4' }}>{r.waiting} / {r.avgWaitDays}d</span>
+                  <span style={{ fontSize: 11, color: 'var(--ink2)' }}>{r.waiting} / {r.avgWaitDays}d</span>
                   <span style={{ fontSize: 9, color: lvl.color, fontWeight: 700 }}>{lvl.label}</span>
-                  <button onClick={() => openEdit(r)} style={miniBtn('#c8a84b')}>Edit</button>
-                  <button onClick={() => delReport(r.id)} style={miniBtn('#ff8a8a')}>✕</button>
+                  <button onClick={() => openEdit(r)} style={miniBtn('var(--acc)')}>Edit</button>
+                  <button onClick={() => delReport(r.id)} style={miniBtn('var(--bad)')}>✕</button>
                 </div>
               </div>
             );
@@ -254,10 +254,10 @@ export default function CongestionPage() {
       )}
 
       {/* Note */}
-      <div style={{ ...card, background: 'rgba(122,138,114,.05)', borderColor: 'rgba(122,138,114,.15)' }}>
+      <div style={{ ...card, background: 'color-mix(in srgb, var(--ink3) 5%, transparent)', borderColor: 'color-mix(in srgb, var(--ink3) 15%, transparent)' }}>
         <div style={sectionTitle}>📖 Congestion Bands</div>
-        <ul style={{ fontSize: 11.5, color: '#b0c0a4', lineHeight: 1.7, paddingLeft: 18, fontFamily: rj }}>
-          <li><b style={{ color: '#4caf76' }}>Clear / Light</b> &lt; 3 days · <b style={{ color: '#e8b85a' }}>Moderate</b> 3–7 days · <b style={{ color: '#ff8a8a' }}>Heavy</b> 7–14 days · <b style={{ color: '#ff6b6b' }}>Severe</b> &gt; 14 days average wait.</li>
+        <ul style={{ fontSize: 11.5, color: 'var(--ink2)', lineHeight: 1.7, paddingLeft: 18, fontFamily: rj }}>
+          <li><b style={{ color: 'var(--ok)' }}>Clear / Light</b> &lt; 3 days · <b style={{ color: 'var(--warn)' }}>Moderate</b> 3–7 days · <b style={{ color: 'var(--bad)' }}>Heavy</b> 7–14 days · <b style={{ color: 'var(--bad)' }}>Severe</b> &gt; 14 days average wait.</li>
           <li>Berth estimate = your ETA + the latest average wait for that port. It is an indication only.</li>
           <li>Congestion shifts daily with weather, labour and cargo flow — refresh the figure from your agent before relying on it.</li>
         </ul>

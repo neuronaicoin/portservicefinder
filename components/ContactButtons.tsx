@@ -27,10 +27,10 @@ export function ContactButtons({ providerId, phone, email }: Props) {
         onClick={() => trackLead("call")}
         style={{
           padding: "8px 10px",
-          background: "#c8a84b",
-          color: "#08100a",
+          background: "var(--acc)",
+          color: "var(--bg)",
           textDecoration: "none",
-          fontFamily: "'Rajdhani',sans-serif",
+          fontFamily: 'var(--font-ui)',
           fontSize: 10,
           letterSpacing: "1px",
           textTransform: "uppercase",
@@ -50,10 +50,10 @@ export function ContactButtons({ providerId, phone, email }: Props) {
         style={{
           padding: "8px 10px",
           background: "transparent",
-          border: "1px solid rgba(200,168,75,.4)",
-          color: "#c8a84b",
+          border: "1px solid color-mix(in srgb, var(--acc) 40%, transparent)",
+          color: "var(--acc)",
           textDecoration: "none",
-          fontFamily: "'Rajdhani',sans-serif",
+          fontFamily: 'var(--font-ui)',
           fontSize: 10,
           letterSpacing: "1px",
           textTransform: "uppercase",

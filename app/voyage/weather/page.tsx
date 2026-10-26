@@ -3,9 +3,9 @@ import { useState, useEffect, useMemo } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { saveItem, loadItem, genId } from '@/lib/voyage-storage';
 
-const lb = "'Libre Bodoni', serif";
-const rj = "'Rajdhani', sans-serif";
-const g = { color: '#c8a84b', fontStyle: 'italic' } as React.CSSProperties;
+const lb = 'var(--font-display)';
+const rj = 'var(--font-ui)';
+const g = { color: 'var(--acc)' } as React.CSSProperties;
 
 // ============================================================
 // TYPES
@@ -87,21 +87,21 @@ function rowState(f: Forecast, d: WeatherData): 'ok' | 'marginal' | 'nogo' {
 }
 
 const STATE_META: Record<string, { label: string; color: string; bg: string }> = {
-  ok: { label: '✓ GO', color: '#4caf76', bg: 'rgba(76,175,118,.12)' },
-  marginal: { label: '⚠ MARGINAL', color: '#e8b85a', bg: 'rgba(232,184,90,.12)' },
-  nogo: { label: '✕ NO-GO', color: '#ff6b6b', bg: 'rgba(255,107,107,.14)' },
+  ok: { label: '✓ GO', color: 'var(--ok)', bg: 'color-mix(in srgb, var(--ok) 12%, transparent)' },
+  marginal: { label: '⚠ MARGINAL', color: 'var(--warn)', bg: 'color-mix(in srgb, var(--warn) 12%, transparent)' },
+  nogo: { label: '✕ NO-GO', color: 'var(--bad)', bg: 'color-mix(in srgb, var(--bad) 14%, transparent)' },
 };
 
 // ============================================================
 // STYLES
 // ============================================================
-const card: React.CSSProperties = { background: '#111c13', border: '1px solid rgba(200,168,75,.18)', padding: '20px 18px', borderRadius: 4, marginBottom: 16 };
-const sectionTitle: React.CSSProperties = { fontFamily: rj, fontSize: 11, letterSpacing: '2px', textTransform: 'uppercase', color: '#c8a84b', fontWeight: 700, marginBottom: 14, paddingBottom: 8, borderBottom: '1px solid rgba(200,168,75,.12)' };
-const labelS: React.CSSProperties = { display: 'block', fontFamily: rj, fontSize: 10, letterSpacing: '.5px', textTransform: 'uppercase', color: '#7a8a72', fontWeight: 600, marginBottom: 4 };
-const inputStyle: React.CSSProperties = { width: '100%', background: '#0c1610', border: '1px solid rgba(200,168,75,.2)', color: '#f5f0e8', padding: '7px 9px', fontFamily: rj, fontSize: 12.5, fontWeight: 500, borderRadius: 3, boxSizing: 'border-box' };
+const card: React.CSSProperties = { background: 'var(--card)', border: '1px solid color-mix(in srgb, var(--acc) 18%, transparent)', padding: '20px 18px', borderRadius: 4, marginBottom: 16 };
+const sectionTitle: React.CSSProperties = { fontFamily: rj, fontSize: 11, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--acc)', fontWeight: 700, marginBottom: 14, paddingBottom: 8, borderBottom: '1px solid color-mix(in srgb, var(--acc) 12%, transparent)' };
+const labelS: React.CSSProperties = { display: 'block', fontFamily: rj, fontSize: 10, letterSpacing: '.5px', textTransform: 'uppercase', color: 'var(--ink3)', fontWeight: 600, marginBottom: 4 };
+const inputStyle: React.CSSProperties = { width: '100%', background: 'var(--bg2)', border: '1px solid color-mix(in srgb, var(--acc) 20%, transparent)', color: 'var(--ink)', padding: '7px 9px', fontFamily: rj, fontSize: 12.5, fontWeight: 500, borderRadius: 3, boxSizing: 'border-box' };
 const numCell: React.CSSProperties = { ...inputStyle, padding: '5px 7px', fontSize: 12, textAlign: 'right' };
-const ghostBtn: React.CSSProperties = { background: 'transparent', color: '#c8a84b', border: '1px solid rgba(200,168,75,.4)', padding: '8px 14px', fontFamily: rj, fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 };
-const goldBtn: React.CSSProperties = { background: '#c8a84b', color: '#08100a', border: 'none', padding: '8px 16px', fontFamily: rj, fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 };
+const ghostBtn: React.CSSProperties = { background: 'transparent', color: 'var(--acc)', border: '1px solid color-mix(in srgb, var(--acc) 40%, transparent)', padding: '8px 14px', fontFamily: rj, fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 };
+const goldBtn: React.CSSProperties = { background: 'var(--acc)', color: 'var(--bg)', border: 'none', padding: '8px 16px', fontFamily: rj, fontSize: 11, letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', borderRadius: 4 };
 
 // ============================================================
 // COMPONENT
@@ -161,21 +161,21 @@ export default function WeatherPage() {
     <div>
       {/* Header */}
       <div style={{ marginBottom: 24 }}>
-        <div style={{ fontFamily: rj, fontSize: 10, letterSpacing: '2px', textTransform: 'uppercase', color: '#c8a84b', fontWeight: 700, marginBottom: 8 }}>
+        <div style={{ fontFamily: rj, fontSize: 10, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--acc)', fontWeight: 700, marginBottom: 8 }}>
           ⚓ Voyage Hub · Weather Windows
         </div>
         <h1 style={{ fontFamily: lb, fontSize: 'clamp(22px,3vw,32px)', fontWeight: 700, lineHeight: 1.1, marginBottom: 8 }}>
           Weather <em style={g}>Windows</em>
         </h1>
-        <p style={{ fontSize: 13, color: '#b0c0a4', lineHeight: 1.6, maxWidth: 720 }}>
+        <p style={{ fontSize: 13, color: 'var(--ink2)', lineHeight: 1.6, maxWidth: 720 }}>
           Set the limits for an operation, paste in your forecast, and see which periods are GO, marginal
           or no-go. You enter the forecast — no live data — and the limits are indicative defaults.
         </p>
       </div>
 
       {/* Disclaimer */}
-      <div style={{ ...card, background: 'rgba(232,184,90,.06)', borderColor: 'rgba(232,184,90,.3)', padding: '12px 16px' }}>
-        <div style={{ fontFamily: rj, fontSize: 12, color: '#e8c87a', lineHeight: 1.5 }}>
+      <div style={{ ...card, background: 'color-mix(in srgb, var(--warn) 6%, transparent)', borderColor: 'color-mix(in srgb, var(--warn) 30%, transparent)', padding: '12px 16px' }}>
+        <div style={{ fontFamily: rj, fontSize: 12, color: 'var(--warn)', lineHeight: 1.5 }}>
           ⚠ <b>Planning aid only.</b> Use an official forecast (your weather routing provider, national met service)
           and the actual terminal / charter-party limits. The Master&apos;s judgement governs every operation.
         </div>
@@ -185,13 +185,13 @@ export default function WeatherPage() {
       <div className="action-bar" style={{ display: 'flex', gap: 10, marginBottom: 22, flexWrap: 'wrap', alignItems: 'center' }}>
         <button onClick={() => setShowSave(true)} style={goldBtn}>💾 Save</button>
         <button onClick={() => window.print()} style={ghostBtn}>🖨️ Print / PDF</button>
-        <button onClick={handleReset} style={{ ...ghostBtn, color: '#ff8a8a', borderColor: 'rgba(255,138,138,.3)' }}>🗑️ Reset</button>
-        {saveMsg && <span style={{ color: '#4caf76', fontFamily: rj, fontSize: 12, fontWeight: 600 }}>{saveMsg}</span>}
-        {recordName && <span style={{ color: '#7a8a72', fontFamily: rj, fontSize: 11, marginLeft: 'auto' }}>📂 {recordName}</span>}
+        <button onClick={handleReset} style={{ ...ghostBtn, color: 'var(--bad)', borderColor: 'color-mix(in srgb, var(--bad) 30%, transparent)' }}>🗑️ Reset</button>
+        {saveMsg && <span style={{ color: 'var(--ok)', fontFamily: rj, fontSize: 12, fontWeight: 600 }}>{saveMsg}</span>}
+        {recordName && <span style={{ color: 'var(--ink3)', fontFamily: rj, fontSize: 11, marginLeft: 'auto' }}>📂 {recordName}</span>}
       </div>
 
       {showSave && (
-        <div style={{ ...card, background: 'rgba(200,168,75,.05)', borderColor: 'rgba(200,168,75,.4)' }}>
+        <div style={{ ...card, background: 'color-mix(in srgb, var(--acc) 5%, transparent)', borderColor: 'color-mix(in srgb, var(--acc) 40%, transparent)' }}>
           <label style={labelS}>Name</label>
           <input type="text" value={recordName} onChange={(e) => setRecordName(e.target.value)} placeholder="e.g. STS window — 14 Jul" style={{ ...inputStyle, marginBottom: 10 }} />
           <div style={{ display: 'flex', gap: 8 }}>
@@ -205,7 +205,7 @@ export default function WeatherPage() {
       <div style={card}>
         <div style={sectionTitle}>1. Operation &amp; Limits</div>
         <div className="we-g3" style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 12, marginBottom: 12 }}>
-          <div><label style={labelS}>Vessel</label><input style={inputStyle} value={data.vesselName} onChange={(e) => update('vesselName', e.target.value)} placeholder="MV NEURONAI" /></div>
+          <div><label style={labelS}>Vessel</label><input style={inputStyle} value={data.vesselName} onChange={(e) => update('vesselName', e.target.value)} placeholder="MV OCEAN PIONEER" /></div>
           <div><label style={labelS}>Location</label><input style={inputStyle} value={data.location} onChange={(e) => update('location', e.target.value)} placeholder="Singapore OPL / berth 5" /></div>
         </div>
         <div style={{ marginBottom: 12 }}>
@@ -224,12 +224,12 @@ export default function WeatherPage() {
       </div>
 
       {/* Summary */}
-      <div style={{ ...card, background: 'linear-gradient(135deg,rgba(200,168,75,.08),transparent)', borderColor: 'rgba(200,168,75,.4)' }}>
+      <div style={{ ...card, background: 'linear-gradient(135deg,color-mix(in srgb, var(--acc) 8%, transparent),transparent)', borderColor: 'color-mix(in srgb, var(--acc) 40%, transparent)' }}>
         <div className="we-kpis" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 10 }}>
-          <KPI label="GO periods" value={String(summary.go)} color="#4caf76" />
-          <KPI label="Marginal" value={String(summary.marginal)} color="#e8b85a" />
-          <KPI label="No-Go" value={String(summary.nogo)} color={summary.nogo > 0 ? '#ff6b6b' : '#4caf76'} />
-          <KPI label="First GO" value={summary.firstGo || '—'} color="#c8a84b" />
+          <KPI label="GO periods" value={String(summary.go)} color="var(--ok)" />
+          <KPI label="Marginal" value={String(summary.marginal)} color="var(--warn)" />
+          <KPI label="No-Go" value={String(summary.nogo)} color={summary.nogo > 0 ? 'var(--bad)' : 'var(--ok)'} />
+          <KPI label="First GO" value={summary.firstGo || '—'} color="var(--acc)" />
         </div>
       </div>
 
@@ -239,7 +239,7 @@ export default function WeatherPage() {
         <div style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 560 }}>
             <thead>
-              <tr style={{ color: '#7a8a72', fontFamily: rj, fontSize: 9.5, letterSpacing: '.5px', textTransform: 'uppercase' }}>
+              <tr style={{ color: 'var(--ink3)', fontFamily: rj, fontSize: 9.5, letterSpacing: '.5px', textTransform: 'uppercase' }}>
                 <th style={{ ...thd, textAlign: 'left' }}>Time / Day</th>
                 <th style={thd}>Wind kt</th>
                 <th style={thd}>Gust kt</th>
@@ -253,14 +253,14 @@ export default function WeatherPage() {
               {analysed.map(({ f, st }) => {
                 const sm = STATE_META[st];
                 return (
-                  <tr key={f.id} style={{ borderTop: '1px solid rgba(200,168,75,.08)', background: sm.bg }}>
+                  <tr key={f.id} style={{ borderTop: '1px solid color-mix(in srgb, var(--acc) 8%, transparent)', background: sm.bg }}>
                     <td style={{ padding: '4px 6px' }}><input style={{ ...inputStyle, padding: '5px 7px', fontSize: 12 }} value={f.label} onChange={(e) => updF(f.id, { label: e.target.value })} placeholder="00:00" /></td>
                     <td style={{ padding: '4px 4px' }}><input style={numCell} type="number" value={f.wind || ''} onChange={(e) => updF(f.id, { wind: num(e.target.value) })} placeholder="0" /></td>
                     <td style={{ padding: '4px 4px' }}><input style={numCell} type="number" value={f.gust || ''} onChange={(e) => updF(f.id, { gust: num(e.target.value) })} placeholder="0" /></td>
                     <td style={{ padding: '4px 4px' }}><input style={numCell} type="number" step="0.1" value={f.waveHs || ''} onChange={(e) => updF(f.id, { waveHs: num(e.target.value) })} placeholder="0" /></td>
                     <td style={{ padding: '4px 4px' }}><input style={numCell} type="number" step="0.1" value={f.swell || ''} onChange={(e) => updF(f.id, { swell: num(e.target.value) })} placeholder="0" /></td>
                     <td style={{ padding: '4px 6px', textAlign: 'center' }}><span style={{ fontFamily: rj, fontSize: 10.5, fontWeight: 700, color: sm.color, whiteSpace: 'nowrap' }}>{sm.label}</span></td>
-                    <td style={{ padding: '4px 4px', textAlign: 'center' }}><button onClick={() => delF(f.id)} style={{ background: 'transparent', border: 'none', color: '#ff8a8a', cursor: 'pointer', fontSize: 12 }}>✕</button></td>
+                    <td style={{ padding: '4px 4px', textAlign: 'center' }}><button onClick={() => delF(f.id)} style={{ background: 'transparent', border: 'none', color: 'var(--bad)', cursor: 'pointer', fontSize: 12 }}>✕</button></td>
                   </tr>
                 );
               })}
@@ -268,20 +268,20 @@ export default function WeatherPage() {
           </table>
         </div>
         <button onClick={addF} style={{ ...ghostBtn, marginTop: 12, fontSize: 10 }}>+ Add Period</button>
-        <p style={{ fontSize: 10, color: '#7a8a72', fontFamily: rj, marginTop: 8 }}>Marginal = within 15% of a limit. No-Go = any of wind / wave / swell exceeds its limit.</p>
+        <p style={{ fontSize: 10, color: 'var(--ink3)', fontFamily: rj, marginTop: 8 }}>Marginal = within 15% of a limit. No-Go = any of wind / wave / swell exceeds its limit.</p>
       </div>
 
       {/* Beaufort reference */}
       <div style={card}>
         <div style={{ ...sectionTitle, cursor: 'pointer', display: 'flex', justifyContent: 'space-between' }} onClick={() => setShowBeaufort(!showBeaufort)}>
           <span>🌬️ Beaufort &amp; Sea State Reference</span>
-          <span style={{ color: '#c8a84b' }}>{showBeaufort ? '▲' : '▼'}</span>
+          <span style={{ color: 'var(--acc)' }}>{showBeaufort ? '▲' : '▼'}</span>
         </div>
         {showBeaufort && (
           <div style={{ overflowX: 'auto' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 480, fontFamily: rj }}>
               <thead>
-                <tr style={{ color: '#7a8a72', fontSize: 9.5, letterSpacing: '.5px', textTransform: 'uppercase' }}>
+                <tr style={{ color: 'var(--ink3)', fontSize: 9.5, letterSpacing: '.5px', textTransform: 'uppercase' }}>
                   <th style={{ ...thd, textAlign: 'left' }}>Force</th>
                   <th style={{ ...thd, textAlign: 'left' }}>Wind kt</th>
                   <th style={{ ...thd, textAlign: 'left' }}>Description</th>
@@ -290,11 +290,11 @@ export default function WeatherPage() {
               </thead>
               <tbody>
                 {BEAUFORT.map((b) => (
-                  <tr key={b.f} style={{ borderTop: '1px solid rgba(200,168,75,.08)' }}>
-                    <td style={{ padding: '6px', color: '#c8a84b', fontWeight: 700 }}>{b.f}</td>
-                    <td style={{ padding: '6px', color: '#f5f0e8' }}>{b.kt}</td>
-                    <td style={{ padding: '6px', color: '#b0c0a4' }}>{b.desc}</td>
-                    <td style={{ padding: '6px', color: '#7a8a72', fontSize: 11.5 }}>{b.sea}</td>
+                  <tr key={b.f} style={{ borderTop: '1px solid color-mix(in srgb, var(--acc) 8%, transparent)' }}>
+                    <td style={{ padding: '6px', color: 'var(--acc)', fontWeight: 700 }}>{b.f}</td>
+                    <td style={{ padding: '6px', color: 'var(--ink)' }}>{b.kt}</td>
+                    <td style={{ padding: '6px', color: 'var(--ink2)' }}>{b.desc}</td>
+                    <td style={{ padding: '6px', color: 'var(--ink3)', fontSize: 11.5 }}>{b.sea}</td>
                   </tr>
                 ))}
               </tbody>
@@ -322,12 +322,12 @@ export default function WeatherPage() {
 const thd: React.CSSProperties = { padding: '6px 6px', textAlign: 'right', fontWeight: 700, whiteSpace: 'nowrap' };
 
 function chip(active: boolean): React.CSSProperties {
-  return { padding: '5px 12px', background: active ? '#c8a84b' : 'transparent', color: active ? '#08100a' : '#7a8a72', border: `1px solid ${active ? '#c8a84b' : 'rgba(200,168,75,.25)'}`, fontFamily: rj, fontSize: 10, letterSpacing: '.5px', fontWeight: 700, cursor: 'pointer', borderRadius: 4, whiteSpace: 'nowrap' };
+  return { padding: '5px 12px', background: active ? 'var(--acc)' : 'transparent', color: active ? 'var(--bg)' : 'var(--ink3)', border: `1px solid ${active ? 'var(--acc)' : 'color-mix(in srgb, var(--acc) 25%, transparent)'}`, fontFamily: rj, fontSize: 10, letterSpacing: '.5px', fontWeight: 700, cursor: 'pointer', borderRadius: 4, whiteSpace: 'nowrap' };
 }
 function KPI({ label: l, value, color }: { label: string; value: string; color: string }) {
   return (
-    <div style={{ background: '#0c1610', border: '1px solid rgba(200,168,75,.2)', borderRadius: 4, padding: '12px 10px', textAlign: 'center' }}>
-      <div style={{ fontFamily: rj, fontSize: 9, letterSpacing: '1px', textTransform: 'uppercase', color: '#7a8a72', fontWeight: 700 }}>{l}</div>
+    <div style={{ background: 'var(--bg2)', border: '1px solid color-mix(in srgb, var(--acc) 20%, transparent)', borderRadius: 4, padding: '12px 10px', textAlign: 'center' }}>
+      <div style={{ fontFamily: rj, fontSize: 9, letterSpacing: '1px', textTransform: 'uppercase', color: 'var(--ink3)', fontWeight: 700 }}>{l}</div>
       <div style={{ fontFamily: lb, fontSize: 22, fontWeight: 700, color, marginTop: 4 }}>{value}</div>
     </div>
   );

@@ -3,9 +3,9 @@ import { useState, useEffect, useMemo } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { saveItem, loadItem, genId } from '@/lib/voyage-storage';
 
-const lb = "'Libre Bodoni', serif";
-const rj = "'Rajdhani', sans-serif";
-const g = { color: '#c8a84b', fontStyle: 'italic' } as React.CSSProperties;
+const lb = 'var(--font-display)';
+const rj = 'var(--font-ui)';
+const g = { color: 'var(--acc)' } as React.CSSProperties;
 
 interface OffHire {
   id: string;
@@ -139,8 +139,8 @@ function money(n: number): string {
 }
 
 const card: React.CSSProperties = {
-  background: '#111c13',
-  border: '1px solid rgba(200,168,75,.18)',
+  background: 'var(--card)',
+  border: '1px solid color-mix(in srgb, var(--acc) 18%, transparent)',
   padding: '20px 18px',
   borderRadius: 4,
   marginBottom: 16,
@@ -150,11 +150,11 @@ const sectionTitle: React.CSSProperties = {
   fontSize: 11,
   letterSpacing: '2px',
   textTransform: 'uppercase',
-  color: '#c8a84b',
+  color: 'var(--acc)',
   fontWeight: 700,
   marginBottom: 14,
   paddingBottom: 8,
-  borderBottom: '1px solid rgba(200,168,75,.12)',
+  borderBottom: '1px solid color-mix(in srgb, var(--acc) 12%, transparent)',
 };
 const label: React.CSSProperties = {
   display: 'block',
@@ -162,15 +162,15 @@ const label: React.CSSProperties = {
   fontSize: 10,
   letterSpacing: '.5px',
   textTransform: 'uppercase',
-  color: '#7a8a72',
+  color: 'var(--ink3)',
   fontWeight: 600,
   marginBottom: 4,
 };
 const inputStyle: React.CSSProperties = {
   width: '100%',
-  background: '#0c1610',
-  border: '1px solid rgba(200,168,75,.2)',
-  color: '#f5f0e8',
+  background: 'var(--bg2)',
+  border: '1px solid color-mix(in srgb, var(--acc) 20%, transparent)',
+  color: 'var(--ink)',
   padding: '7px 9px',
   fontFamily: rj,
   fontSize: 12.5,
@@ -180,8 +180,8 @@ const inputStyle: React.CSSProperties = {
 };
 const ghostBtn: React.CSSProperties = {
   background: 'transparent',
-  color: '#c8a84b',
-  border: '1px solid rgba(200,168,75,.4)',
+  color: 'var(--acc)',
+  border: '1px solid color-mix(in srgb, var(--acc) 40%, transparent)',
   padding: '8px 14px',
   fontFamily: rj,
   fontSize: 11,
@@ -192,8 +192,8 @@ const ghostBtn: React.CSSProperties = {
   borderRadius: 4,
 };
 const goldBtn: React.CSSProperties = {
-  background: '#c8a84b',
-  color: '#08100a',
+  background: 'var(--acc)',
+  color: 'var(--bg)',
   border: 'none',
   padding: '8px 16px',
   fontFamily: rj,
@@ -208,7 +208,7 @@ const rowStyle: React.CSSProperties = {
   display: 'flex',
   justifyContent: 'space-between',
   padding: '8px 0',
-  borderBottom: '1px dashed rgba(200,168,75,.1)',
+  borderBottom: '1px dashed color-mix(in srgb, var(--acc) 10%, transparent)',
   fontFamily: rj,
   fontSize: 13,
 };
@@ -289,13 +289,13 @@ export default function HireStatementPage() {
   return (
     <div>
       <div style={{ marginBottom: 24 }}>
-        <div style={{ fontFamily: rj, fontSize: 10, letterSpacing: '2px', textTransform: 'uppercase', color: '#c8a84b', fontWeight: 700, marginBottom: 8 }}>
+        <div style={{ fontFamily: rj, fontSize: 10, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--acc)', fontWeight: 700, marginBottom: 8 }}>
           ⚓ Voyage Hub · Hire Statement
         </div>
         <h1 style={{ fontFamily: lb, fontSize: 'clamp(22px,3vw,32px)', fontWeight: 700, lineHeight: 1.1, marginBottom: 8 }}>
           Hire <em style={g}>Statement</em>
         </h1>
-        <p style={{ fontSize: 13, color: '#b0c0a4', lineHeight: 1.6, maxWidth: 720 }}>
+        <p style={{ fontSize: 13, color: 'var(--ink2)', lineHeight: 1.6, maxWidth: 720 }}>
           Time charter hire calculation — on-hire / off-hire periods, bunkers on delivery and
           redelivery, CVE, commissions, and balance due. Always reconcile against the charter party.
         </p>
@@ -304,15 +304,15 @@ export default function HireStatementPage() {
       <div className="action-bar" style={{ display: 'flex', gap: 10, marginBottom: 22, flexWrap: 'wrap', alignItems: 'center' }}>
         <button onClick={() => setShowSave(true)} style={goldBtn}>💾 Save</button>
         <button onClick={handlePrint} style={ghostBtn}>🖨️ Print / PDF</button>
-        <button onClick={handleReset} style={{ ...ghostBtn, color: '#ff8a8a', borderColor: 'rgba(255,138,138,.3)' }}>🗑️ Reset</button>
-        {saveMsg && <span style={{ color: '#4caf76', fontFamily: rj, fontSize: 12, fontWeight: 600 }}>{saveMsg}</span>}
-        {recordName && <span style={{ color: '#7a8a72', fontFamily: rj, fontSize: 11, marginLeft: 'auto' }}>📂 {recordName}</span>}
+        <button onClick={handleReset} style={{ ...ghostBtn, color: 'var(--bad)', borderColor: 'color-mix(in srgb, var(--bad) 30%, transparent)' }}>🗑️ Reset</button>
+        {saveMsg && <span style={{ color: 'var(--ok)', fontFamily: rj, fontSize: 12, fontWeight: 600 }}>{saveMsg}</span>}
+        {recordName && <span style={{ color: 'var(--ink3)', fontFamily: rj, fontSize: 11, marginLeft: 'auto' }}>📂 {recordName}</span>}
       </div>
 
       {showSave && (
-        <div style={{ ...card, background: 'rgba(200,168,75,.05)', borderColor: 'rgba(200,168,75,.4)' }}>
+        <div style={{ ...card, background: 'color-mix(in srgb, var(--acc) 5%, transparent)', borderColor: 'color-mix(in srgb, var(--acc) 40%, transparent)' }}>
           <label style={label}>Name</label>
-          <input type="text" value={recordName} onChange={(e) => setRecordName(e.target.value)} placeholder="e.g. MV NEURONAI — Q1 Hire Statement" style={{ ...inputStyle, marginBottom: 10 }} />
+          <input type="text" value={recordName} onChange={(e) => setRecordName(e.target.value)} placeholder="e.g. MV OCEAN PIONEER — Q1 Hire Statement" style={{ ...inputStyle, marginBottom: 10 }} />
           <div style={{ display: 'flex', gap: 8 }}>
             <button onClick={handleSave} style={{ ...goldBtn, padding: '8px 14px', letterSpacing: '1px' }}>Save</button>
             <button onClick={() => setShowSave(false)} style={ghostBtn}>Cancel</button>
@@ -325,7 +325,7 @@ export default function HireStatementPage() {
         <div className="g3" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 12 }}>
           <div>
             <label style={label}>Vessel Name</label>
-            <input style={inputStyle} type="text" value={data.vesselName} onChange={(e) => update('vesselName', e.target.value)} placeholder="MV NEURONAI" />
+            <input style={inputStyle} type="text" value={data.vesselName} onChange={(e) => update('vesselName', e.target.value)} placeholder="MV OCEAN PIONEER" />
           </div>
           <div>
             <label style={label}>IMO</label>
@@ -376,12 +376,12 @@ export default function HireStatementPage() {
             <input style={inputStyle} type="number" step="0.01" value={data.hireRate || ''} onChange={(e) => update('hireRate', num(e.target.value))} placeholder="15000" />
           </div>
         </div>
-        <div style={{ marginTop: 12, padding: '8px 12px', background: 'rgba(200,168,75,.05)', border: '1px solid rgba(200,168,75,.15)', borderRadius: 3, fontSize: 12, fontFamily: rj, color: '#b0c0a4' }}>
-          Gross period: <strong style={{ color: '#f5f0e8' }}>{fmt(calc.grossDays, 4)} days</strong>
+        <div style={{ marginTop: 12, padding: '8px 12px', background: 'color-mix(in srgb, var(--acc) 5%, transparent)', border: '1px solid color-mix(in srgb, var(--acc) 15%, transparent)', borderRadius: 3, fontSize: 12, fontFamily: rj, color: 'var(--ink2)' }}>
+          Gross period: <strong style={{ color: 'var(--ink)' }}>{fmt(calc.grossDays, 4)} days</strong>
           {calc.offHireDays > 0 && (
             <>
-              {' · '}Off-hire: <strong style={{ color: '#ff8a8a' }}>{fmt(calc.offHireDays, 4)} d</strong>
-              {' · '}On-hire: <strong style={{ color: '#4caf76' }}>{fmt(calc.onHireDays, 4)} d</strong>
+              {' · '}Off-hire: <strong style={{ color: 'var(--bad)' }}>{fmt(calc.offHireDays, 4)} d</strong>
+              {' · '}On-hire: <strong style={{ color: 'var(--ok)' }}>{fmt(calc.onHireDays, 4)} d</strong>
             </>
           )}
         </div>
@@ -390,19 +390,19 @@ export default function HireStatementPage() {
       <div style={card}>
         <div style={sectionTitle}>3. Off-Hire Periods</div>
         {data.offHires.length === 0 && (
-          <p style={{ fontSize: 11.5, color: '#7a8a72', fontFamily: rj, marginBottom: 12, lineHeight: 1.5 }}>
+          <p style={{ fontSize: 11.5, color: 'var(--ink3)', fontFamily: rj, marginBottom: 12, lineHeight: 1.5 }}>
             No off-hire. Add periods (breakdown, deviation, detention) to deduct from hire.
           </p>
         )}
         {data.offHires.map((o, i) => {
           const h = Math.max(0, hoursBetween(o.from, o.to));
           return (
-            <div key={o.id} style={{ background: '#0c1610', border: '1px solid rgba(200,168,75,.15)', padding: 12, borderRadius: 3, marginBottom: 10 }}>
+            <div key={o.id} style={{ background: 'var(--bg2)', border: '1px solid color-mix(in srgb, var(--acc) 15%, transparent)', padding: 12, borderRadius: 3, marginBottom: 10 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                <span style={{ fontFamily: rj, fontSize: 11, color: '#ff8a8a', fontWeight: 700, letterSpacing: '.5px' }}>
+                <span style={{ fontFamily: rj, fontSize: 11, color: 'var(--bad)', fontWeight: 700, letterSpacing: '.5px' }}>
                   Off-Hire #{i + 1} — {fmt(h / 24, 3)} d ({fmt(h, 1)} h)
                 </span>
-                <button onClick={() => delOffHire(o.id)} style={{ background: 'transparent', border: 'none', color: '#ff8a8a', fontFamily: rj, fontSize: 11, cursor: 'pointer', letterSpacing: '.5px' }}>Delete</button>
+                <button onClick={() => delOffHire(o.id)} style={{ background: 'transparent', border: 'none', color: 'var(--bad)', fontFamily: rj, fontSize: 11, cursor: 'pointer', letterSpacing: '.5px' }}>Delete</button>
               </div>
               <div style={{ marginBottom: 8 }}>
                 <label style={label}>Reason</label>
@@ -446,7 +446,7 @@ export default function HireStatementPage() {
             <input style={inputStyle} type="number" step="0.01" value={data.delMgoPrice || ''} onChange={(e) => update('delMgoPrice', num(e.target.value))} placeholder="780" />
           </div>
         </div>
-        <div style={{ marginTop: 10, padding: '6px 12px', background: '#0c1610', border: '1px solid rgba(200,168,75,.2)', borderRadius: 3, fontSize: 12, color: '#4caf76', fontFamily: rj, fontWeight: 700, textAlign: 'right' }}>
+        <div style={{ marginTop: 10, padding: '6px 12px', background: 'var(--bg2)', border: '1px solid color-mix(in srgb, var(--acc) 20%, transparent)', borderRadius: 3, fontSize: 12, color: 'var(--ok)', fontFamily: rj, fontWeight: 700, textAlign: 'right' }}>
           Bunker on Delivery: {money(calc.bunkerDelivery)}
         </div>
       </div>
@@ -473,7 +473,7 @@ export default function HireStatementPage() {
             <input style={inputStyle} type="number" step="0.01" value={data.redMgoPrice || ''} onChange={(e) => update('redMgoPrice', num(e.target.value))} placeholder="780" />
           </div>
         </div>
-        <div style={{ marginTop: 10, padding: '6px 12px', background: '#0c1610', border: '1px solid rgba(200,168,75,.2)', borderRadius: 3, fontSize: 12, color: '#ff8a8a', fontFamily: rj, fontWeight: 700, textAlign: 'right' }}>
+        <div style={{ marginTop: 10, padding: '6px 12px', background: 'var(--bg2)', border: '1px solid color-mix(in srgb, var(--acc) 20%, transparent)', borderRadius: 3, fontSize: 12, color: 'var(--bad)', fontFamily: rj, fontWeight: 700, textAlign: 'right' }}>
           Bunker on Redelivery: {money(calc.bunkerRedelivery)}
         </div>
       </div>
@@ -484,7 +484,7 @@ export default function HireStatementPage() {
           <div>
             <label style={label}>CVE / Victualling — $/month</label>
             <input style={inputStyle} type="number" step="0.01" value={data.cveMonthly || ''} onChange={(e) => update('cveMonthly', num(e.target.value))} placeholder="1500" />
-            <span style={{ fontSize: 9.5, color: '#7a8a72', fontFamily: rj }}>Pro-rated on on-hire days</span>
+            <span style={{ fontSize: 9.5, color: 'var(--ink3)', fontFamily: rj }}>Pro-rated on on-hire days</span>
           </div>
           <div>
             <label style={label}>Address Commission — %</label>
@@ -495,7 +495,7 @@ export default function HireStatementPage() {
             <input style={inputStyle} type="number" step="0.01" value={data.brokeragePct || ''} onChange={(e) => update('brokeragePct', num(e.target.value))} placeholder="1.25" />
           </div>
         </div>
-        <p style={{ fontSize: 10.5, color: '#7a8a72', fontFamily: rj, marginTop: 10 }}>
+        <p style={{ fontSize: 10.5, color: 'var(--ink3)', fontFamily: rj, marginTop: 10 }}>
           Commission applied on hire (on-hire) + CVE.
         </p>
       </div>
@@ -503,15 +503,15 @@ export default function HireStatementPage() {
       <div style={card}>
         <div style={sectionTitle}>7. Other Adjustments</div>
         {data.others.length === 0 && (
-          <p style={{ fontSize: 11.5, color: '#7a8a72', fontFamily: rj, marginBottom: 12, lineHeight: 1.5 }}>
+          <p style={{ fontSize: 11.5, color: 'var(--ink3)', fontFamily: rj, marginBottom: 12, lineHeight: 1.5 }}>
             Add claims, owner&apos;s DA, speed/consumption settlements, advances, etc.
           </p>
         )}
         {data.others.map((o, i) => (
-          <div key={o.id} style={{ background: '#0c1610', border: '1px solid rgba(200,168,75,.15)', padding: 12, borderRadius: 3, marginBottom: 10 }}>
+          <div key={o.id} style={{ background: 'var(--bg2)', border: '1px solid color-mix(in srgb, var(--acc) 15%, transparent)', padding: 12, borderRadius: 3, marginBottom: 10 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-              <span style={{ fontFamily: rj, fontSize: 11, color: '#c8a84b', fontWeight: 700, letterSpacing: '.5px' }}>Item #{i + 1}</span>
-              <button onClick={() => delOther(o.id)} style={{ background: 'transparent', border: 'none', color: '#ff8a8a', fontFamily: rj, fontSize: 11, cursor: 'pointer', letterSpacing: '.5px' }}>Delete</button>
+              <span style={{ fontFamily: rj, fontSize: 11, color: 'var(--acc)', fontWeight: 700, letterSpacing: '.5px' }}>Item #{i + 1}</span>
+              <button onClick={() => delOther(o.id)} style={{ background: 'transparent', border: 'none', color: 'var(--bad)', fontFamily: rj, fontSize: 11, cursor: 'pointer', letterSpacing: '.5px' }}>Delete</button>
             </div>
             <div className="g3" style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1.4fr', gap: 10 }}>
               <div>
@@ -541,74 +541,74 @@ export default function HireStatementPage() {
           <div>
             <label style={label}>Hire already paid by charterer — $</label>
             <input style={inputStyle} type="number" step="0.01" value={data.paid || ''} onChange={(e) => update('paid', num(e.target.value))} placeholder="0" />
-            <span style={{ fontSize: 9.5, color: '#7a8a72', fontFamily: rj }}>Sum of installments paid to date</span>
+            <span style={{ fontSize: 9.5, color: 'var(--ink3)', fontFamily: rj }}>Sum of installments paid to date</span>
           </div>
         </div>
       </div>
 
-      <div style={{ ...card, background: 'linear-gradient(135deg,rgba(200,168,75,.08),transparent)', borderColor: 'rgba(200,168,75,.4)' }}>
+      <div style={{ ...card, background: 'linear-gradient(135deg,color-mix(in srgb, var(--acc) 8%, transparent),transparent)', borderColor: 'color-mix(in srgb, var(--acc) 40%, transparent)' }}>
         <div style={sectionTitle}>⚡ Hire Statement Summary</div>
 
         <div style={rowStyle}>
-          <span style={{ color: '#7a8a72' }}>Hire — on-hire {fmt(calc.onHireDays, 3)} d × ${fmt(data.hireRate, 2)}</span>
+          <span style={{ color: 'var(--ink3)' }}>Hire — on-hire {fmt(calc.onHireDays, 3)} d × ${fmt(data.hireRate, 2)}</span>
           <strong>{money(calc.hireNet)}</strong>
         </div>
         {calc.offHireDeduction > 0 && (
           <div style={rowStyle}>
-            <span style={{ color: '#7a8a72' }}>Off-hire deducted ({fmt(calc.offHireDays, 3)} d)</span>
-            <strong style={{ color: '#ff8a8a' }}>-{money(calc.offHireDeduction)}</strong>
+            <span style={{ color: 'var(--ink3)' }}>Off-hire deducted ({fmt(calc.offHireDays, 3)} d)</span>
+            <strong style={{ color: 'var(--bad)' }}>-{money(calc.offHireDeduction)}</strong>
           </div>
         )}
         <div style={rowStyle}>
-          <span style={{ color: '#7a8a72' }}>(+) Bunkers on delivery</span>
-          <strong style={{ color: '#4caf76' }}>{money(calc.bunkerDelivery)}</strong>
+          <span style={{ color: 'var(--ink3)' }}>(+) Bunkers on delivery</span>
+          <strong style={{ color: 'var(--ok)' }}>{money(calc.bunkerDelivery)}</strong>
         </div>
         <div style={rowStyle}>
-          <span style={{ color: '#7a8a72' }}>(−) Bunkers on redelivery</span>
-          <strong style={{ color: '#ff8a8a' }}>-{money(calc.bunkerRedelivery)}</strong>
+          <span style={{ color: 'var(--ink3)' }}>(−) Bunkers on redelivery</span>
+          <strong style={{ color: 'var(--bad)' }}>-{money(calc.bunkerRedelivery)}</strong>
         </div>
         <div style={rowStyle}>
-          <span style={{ color: '#7a8a72' }}>(−) CVE / victualling</span>
-          <strong style={{ color: '#ff8a8a' }}>-{money(calc.cve)}</strong>
+          <span style={{ color: 'var(--ink3)' }}>(−) CVE / victualling</span>
+          <strong style={{ color: 'var(--bad)' }}>-{money(calc.cve)}</strong>
         </div>
         <div style={rowStyle}>
-          <span style={{ color: '#7a8a72' }}>(−) Address comm. {fmt(data.addressCommPct, 2)}%</span>
-          <strong style={{ color: '#ff8a8a' }}>-{money(calc.addrComm)}</strong>
+          <span style={{ color: 'var(--ink3)' }}>(−) Address comm. {fmt(data.addressCommPct, 2)}%</span>
+          <strong style={{ color: 'var(--bad)' }}>-{money(calc.addrComm)}</strong>
         </div>
         <div style={rowStyle}>
-          <span style={{ color: '#7a8a72' }}>(−) Brokerage {fmt(data.brokeragePct, 2)}%</span>
-          <strong style={{ color: '#ff8a8a' }}>-{money(calc.brokerage)}</strong>
+          <span style={{ color: 'var(--ink3)' }}>(−) Brokerage {fmt(data.brokeragePct, 2)}%</span>
+          <strong style={{ color: 'var(--bad)' }}>-{money(calc.brokerage)}</strong>
         </div>
         {data.others.map((o) => (
           <div key={o.id} style={rowStyle}>
-            <span style={{ color: '#7a8a72' }}>{o.dir === 'add' ? '(+)' : '(−)'} {o.label || 'Adjustment'}</span>
-            <strong style={{ color: o.dir === 'add' ? '#4caf76' : '#ff8a8a' }}>
+            <span style={{ color: 'var(--ink3)' }}>{o.dir === 'add' ? '(+)' : '(−)'} {o.label || 'Adjustment'}</span>
+            <strong style={{ color: o.dir === 'add' ? 'var(--ok)' : 'var(--bad)' }}>
               {o.dir === 'add' ? '' : '-'}{money(o.amount)}
             </strong>
           </div>
         ))}
 
-        <div style={{ ...rowStyle, borderTop: '2px solid #c8a84b', paddingTop: 14, marginTop: 10, borderBottom: 'none' }}>
-          <span style={{ color: '#c8a84b', fontWeight: 700, fontSize: 14 }}>TOTAL DUE TO OWNER</span>
-          <strong style={{ fontFamily: lb, fontSize: 22, color: '#c8a84b' }}>{money(calc.totalDue)}</strong>
+        <div style={{ ...rowStyle, borderTop: '2px solid var(--acc)', paddingTop: 14, marginTop: 10, borderBottom: 'none' }}>
+          <span style={{ color: 'var(--acc)', fontWeight: 700, fontSize: 14 }}>TOTAL DUE TO OWNER</span>
+          <strong style={{ fontFamily: lb, fontSize: 22, color: 'var(--acc)' }}>{money(calc.totalDue)}</strong>
         </div>
         {data.paid > 0 && (
           <div style={rowStyle}>
-            <span style={{ color: '#7a8a72' }}>Less: hire paid</span>
-            <strong style={{ color: '#ff8a8a' }}>-{money(data.paid)}</strong>
+            <span style={{ color: 'var(--ink3)' }}>Less: hire paid</span>
+            <strong style={{ color: 'var(--bad)' }}>-{money(data.paid)}</strong>
           </div>
         )}
 
-        <div style={{ marginTop: 14, padding: '14px 16px', background: '#0c1610', border: `1px solid ${calc.balance >= 0 ? 'rgba(200,168,75,.5)' : 'rgba(76,175,118,.5)'}`, borderRadius: 4, textAlign: 'center' }}>
-          <div style={{ fontFamily: rj, fontSize: 10, letterSpacing: '1.5px', textTransform: 'uppercase', color: '#7a8a72', fontWeight: 700 }}>
+        <div style={{ marginTop: 14, padding: '14px 16px', background: 'var(--bg2)', border: `1px solid ${calc.balance >= 0 ? 'color-mix(in srgb, var(--acc) 50%, transparent)' : 'color-mix(in srgb, var(--ok) 50%, transparent)'}`, borderRadius: 4, textAlign: 'center' }}>
+          <div style={{ fontFamily: rj, fontSize: 10, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ink3)', fontWeight: 700 }}>
             {calc.balance >= 0 ? 'Balance Due from Charterer' : 'Balance Due to Charterer'}
           </div>
-          <div style={{ fontFamily: lb, fontSize: 30, fontWeight: 700, color: calc.balance >= 0 ? '#c8a84b' : '#4caf76', marginTop: 4 }}>
+          <div style={{ fontFamily: lb, fontSize: 30, fontWeight: 700, color: calc.balance >= 0 ? 'var(--acc)' : 'var(--ok)', marginTop: 4 }}>
             {money(Math.abs(calc.balance))}
           </div>
         </div>
 
-        <div style={{ marginTop: 12, fontSize: 11, color: '#7a8a72', fontFamily: rj, lineHeight: 1.5 }}>
+        <div style={{ marginTop: 12, fontSize: 11, color: 'var(--ink3)', fontFamily: rj, lineHeight: 1.5 }}>
           Owner {data.owner || '—'} · Charterer {data.charterer || '—'}
           {data.cpDate && <> · CP {data.cpDate}</>}
         </div>

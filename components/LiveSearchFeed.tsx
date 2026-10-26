@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
 
-const rj = "'Rajdhani', sans-serif";
+const rj = 'var(--font-ui)';
 
 // Gercek PORT_DATA'dan dogrulanmis limanlar — yogun trafik (agirlik yuksek)
 const HIGH_TRAFFIC_PORTS = [
@@ -109,11 +109,11 @@ export default function LiveSearchFeed() {
         justifyContent: 'center',
         gap: 10,
         minHeight: 20,
-        background: '#c8a84b',
-        border: '2px solid #c8a84b',
+        background: 'var(--acc)',
+        border: '2px solid var(--acc)',
         borderRadius: 999,
         padding: '10px 22px',
-        boxShadow: '0 4px 18px rgba(200,168,75,.4)',
+        boxShadow: '0 4px 18px color-mix(in srgb, var(--acc) 40%, transparent)',
         opacity: visible ? 1 : 0,
         transition: 'opacity .3s ease',
         flexWrap: 'wrap',
@@ -126,9 +126,9 @@ export default function LiveSearchFeed() {
           width: 8,
           height: 8,
           borderRadius: '50%',
-          background: '#08100a',
+          background: 'var(--bg)',
           flexShrink: 0,
-          boxShadow: '0 0 0 0 rgba(8,16,10,.7)',
+          boxShadow: '0 0 0 0 color-mix(in srgb, var(--bg) 70%, transparent)',
           animation: 'lsfPulse 1.6s infinite',
         }}
       />
@@ -138,7 +138,7 @@ export default function LiveSearchFeed() {
           fontFamily: rj,
           fontSize: 15,
           fontWeight: 800,
-          color: '#08100a',
+          color: 'var(--bg)',
           letterSpacing: '.3px',
           textAlign: 'center',
           lineHeight: 1.4,
@@ -148,9 +148,9 @@ export default function LiveSearchFeed() {
       </span>
       <style>{`
         @keyframes lsfPulse {
-          0% { box-shadow: 0 0 0 0 rgba(8,16,10,.55); }
-          70% { box-shadow: 0 0 0 6px rgba(8,16,10,0); }
-          100% { box-shadow: 0 0 0 0 rgba(8,16,10,0); }
+          0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--bg) 55%, transparent); }
+          70% { box-shadow: 0 0 0 6px color-mix(in srgb, var(--bg) 0%, transparent); }
+          100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--bg) 0%, transparent); }
         }
         @media (max-width: 640px) {
           .lsf-pill { padding: 8px 16px !important; gap: 7px !important; border-radius: 16px !important; max-width: 94vw !important; }
