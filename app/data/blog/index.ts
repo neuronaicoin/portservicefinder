@@ -235,8 +235,30 @@ import { crewChange2026CostsVisasTimelines } from './crew-change-2026-costs-visa
 import { shipSupplyDeliveryAnchorage2026 } from './ship-supply-delivery-anchorage-chandlers-guide-2026';
 import { howMarineServiceCompaniesWinMorePortCalls2026 } from './how-marine-service-companies-win-more-port-calls-2026';
 import { BLOG_REDIRECTS } from './redirects';
+import { shipAgentsPortSaidSuezTransit2026 } from './ship-agents-port-said-suez-canal-transit-2026-operator-guide';
+import { shipAgentsBalboaCristobal2026 } from './ship-agents-balboa-cristobal-panama-canal-2026-operator-guide';
+import { gibraltarPortCall2026 } from './gibraltar-port-call-bunkers-agents-chandlers-2026-operator-guide';
+import { howToGetMoreShipAgencyAppointments2026 } from './how-to-get-more-ship-agency-appointments-2026';
+import { howShipchandlersWinNewCustomers2026 } from './how-shipchandlers-win-new-vessel-customers-2026';
+import { whereToListMaritimeCompanyFree2026 } from './where-to-list-maritime-company-online-free-2026';
+import { shipAgentEnquiryEmailTemplate2026 } from './ship-agent-enquiry-email-template-pda-request-2026';
+import { shipProvisionsCostPerCrewPerDay2026 } from './ship-provisions-cost-per-crew-per-day-victualling-2026';
+import { urgentMarineEngineRepairAtPort2026 } from './urgent-marine-engine-repair-at-port-find-service-engineer-2026';
+import { howToFindShipAgentAnyPort2026 } from './how-to-find-ship-agent-any-port-2026';
+import { marineServiceCompanyWebsiteSeo2026 } from './marine-service-company-website-seo-get-found-by-operators-2026';
 export { BLOG_REDIRECTS } from './redirects';
 const ALL_POSTS: BlogPost[] = [
+  shipAgentsPortSaidSuezTransit2026,
+  shipAgentsBalboaCristobal2026,
+  gibraltarPortCall2026,
+  howToGetMoreShipAgencyAppointments2026,
+  howShipchandlersWinNewCustomers2026,
+  whereToListMaritimeCompanyFree2026,
+  shipAgentEnquiryEmailTemplate2026,
+  shipProvisionsCostPerCrewPerDay2026,
+  urgentMarineEngineRepairAtPort2026,
+  howToFindShipAgentAnyPort2026,
+  marineServiceCompanyWebsiteSeo2026,
   howToAppointShipAgentChecklist2026,
   proformaVsFinalDisbursementAccount2026,
   crewChange2026CostsVisasTimelines,
