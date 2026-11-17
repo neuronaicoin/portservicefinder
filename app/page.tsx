@@ -165,12 +165,23 @@ export default async function Home() {
               <span>service categories</span>
             </div>
           </div>
+          <p className="popular hp-desk">
+            <span>Popular:</span>
+            <Link href="/ports/singapore/bunker-supply">Singapore bunkers</Link>
+            <Link href="/ports/rotterdam/ship-agent">Rotterdam agents</Link>
+            <Link href="/ports/istanbul/shipchandler">Istanbul chandlers</Link>
+            <Link href="/ports/houston/main-engine-service">Houston engine service</Link>
+            <Link href="/ports/fujairah">Fujairah</Link>
+            <Link href="/ports/santos">Santos</Link>
+            <Link href="/ports/cape-town">Cape Town</Link>
+            <Link href="/ports">All ports →</Link>
+          </p>
           <div className="hs-desk">
             <HomeSearch />
           </div>
           <HeroFinder />
           {live.length > 0 && (
-            <section className="livereq" aria-labelledby="lr-h">
+            <section className="livereq lr-mob" aria-labelledby="lr-h">
               <div className="sec-h">
                 <h2 id="lr-h">
                   <span className="pulse" aria-hidden="true" /> Live port requests
@@ -196,6 +207,32 @@ export default async function Home() {
           )}
         </div>
 
+        <div className="hero-side">
+            {live.length > 0 && (
+              <section className="livereq lr-desk" aria-labelledby="lr-h2">
+                <div className="sec-h">
+                  <h2 id="lr-h2">
+                    <span className="pulse" aria-hidden="true" /> Live port requests
+                  </h2>
+                  <Link href="/requests">See all →</Link>
+                </div>
+                <ul className="lr">
+                  {live.map((d) => (
+                    <li key={d.id}>
+                      <Link href={d.kind === 'request' ? '/requests' : demandHref(d)}>
+                        <span className={`lk ${d.kind}`}>{d.kind === 'request' ? 'Request' : 'Looking for'}</span>
+                        <span className="lt">
+                          <b>{d.service}</b>
+                          <small>
+                            {d.port?.flag} {d.portName} · {agoText(d.at, now)}
+                          </small>
+                        </span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            )}
         <aside className="panel" aria-labelledby="new-h">
           <div className="panel-h">
             <h2 id="new-h">New on PortServiceFinder</h2>
@@ -220,6 +257,7 @@ export default async function Home() {
             See all {stats.total} companies →
           </Link>
         </aside>
+        </div>
       </section>
 
 
@@ -529,4 +567,40 @@ const CSS = `
   .home .fslot{flex:none;width:72%;max-width:260px;padding:12px 14px}
 }
 @keyframes psfSweep{0%,60%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+
+/* desktop fit */
+.home .lr-desk,.home .hp-desk{display:none}
+@media (min-width:821px){
+  .home .lr-mob{display:none}
+  .home .lr-desk{display:block;margin:0 0 14px}
+  .home .lr-desk .lr{grid-template-columns:minmax(0,1fr);gap:6px}
+  .home .lr-desk .lr a{padding:7px 12px;border-radius:12px}
+  .home .lr-desk h2{font-size:15px;font-weight:700;margin:0}
+  .home .lr-desk .sec-h{margin-bottom:8px;align-items:center}
+  .home .lr-desk .sec-h a{font-size:13.5px}
+  .home .hero-side{min-width:0;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px 18px 12px;box-shadow:var(--shadow)}
+  .home .hero-side .panel{background:none;border:0;box-shadow:none;padding:12px 0 0;border-top:1px solid var(--line);border-radius:0}
+  .home .hero-side .panel .row{padding:8px 0}
+  .home .hero-side .panel .row:nth-of-type(n+5){display:none}
+  .home .hero-main{display:flex;flex-direction:column}
+  .home .hero-main .hs-desk{order:3;margin-bottom:18px}
+  .home .hero-main .hstats{order:4;margin-bottom:0;border-bottom:0;padding-bottom:0}
+  .home .hp-desk{display:flex;order:5;margin-top:18px}
+  .home .lr-desk .lk{font-size:11px;padding:3px 8px}
+  .home .lr-desk .lt b{font-size:14px}
+  .home .hero{padding-top:22px;padding-bottom:28px;align-items:start}
+  .home h1{font-size:clamp(34px,3.7vw,54px)}
+  .home .sub{margin:12px 0 20px;font-size:17px}
+  .home .joined-wrap{padding-top:12px}
+  .home .joined{padding:8px 18px;gap:10px 24px}
+  .home .j-num b{font-size:clamp(28px,2.6vw,36px)}
+  .home .j-sub{font-size:13.5px;line-height:1.4}
+  .home .j-cta{padding-top:10px;padding-bottom:10px}
+  .home .chip{padding:9px 0}
+  .home .ticker .lab{margin-top:7px;margin-bottom:7px}
+}
+@media (min-width:821px) and (max-height:820px){
+  .home h1{font-size:clamp(32px,3.3vw,46px)}
+  .home .sub{font-size:16px;margin:10px 0 16px}
+}
 `;
