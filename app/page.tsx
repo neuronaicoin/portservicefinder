@@ -580,8 +580,7 @@ const CSS = `
   .home .lr-desk .sec-h a{font-size:13.5px}
   .home .hero-side{min-width:0;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px 18px 12px;box-shadow:var(--shadow)}
   .home .hero-side .panel{background:none;border:0;box-shadow:none;padding:12px 0 0;border-top:1px solid var(--line);border-radius:0}
-  .home .hero-side .panel .row{padding:8px 0}
-  .home .hero-side .panel .row:nth-of-type(n+5){display:none}
+  .home .hero-side .panel .row{padding:6px 0}
   .home .hero-main{display:flex;flex-direction:column}
   .home .hero-main .hs-desk{order:3;margin-bottom:18px}
   .home .hero-main .hstats{order:4;margin-bottom:0;border-bottom:0;padding-bottom:0}
@@ -598,6 +597,11 @@ const CSS = `
   .home .j-cta{padding-top:10px;padding-bottom:10px}
   .home .chip{padding:9px 0}
   .home .ticker .lab{margin-top:7px;margin-bottom:7px}
+  .home .ticker{margin:10px max(var(--gutter),calc((100% - var(--wrap)) / 2 + var(--gutter))) 0;border:1px solid var(--line);border-radius:12px}
+  .home .ticker .lab{margin-left:8px}
+  .home .hero::before{left:var(--gutter);right:var(--gutter)}
+  .home .lr-desk .lr li:nth-child(n+4){display:none}
+  .home .hero-side .panel .row:nth-of-type(n+4){display:none}
 }
 @media (min-width:821px) and (max-height:820px){
   .home h1{font-size:clamp(32px,3.3vw,46px)}
