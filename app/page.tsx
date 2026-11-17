@@ -11,7 +11,7 @@ import { siteConfig } from '@/lib/site-config';
 import { getDemand, demandHref } from '@/lib/port-requests';
 
 // the newest companies and counts: refreshed every 5 minutes
-export const revalidate = 300;
+export const revalidate = 120;
 
 export const metadata: Metadata = {
   title: { absolute: 'PortServiceFinder: Ship Agents, Shipchandlers & Marine Services at 1,200+ Ports' },
@@ -169,6 +169,31 @@ export default async function Home() {
             <HomeSearch />
           </div>
           <HeroFinder />
+          {live.length > 0 && (
+            <section className="livereq" aria-labelledby="lr-h">
+              <div className="sec-h">
+                <h2 id="lr-h">
+                  <span className="pulse" aria-hidden="true" /> Live port requests
+                </h2>
+                <Link href="/requests">See all →</Link>
+              </div>
+              <ul className="lr">
+                {live.map((d) => (
+                  <li key={d.id}>
+                    <Link href={d.kind === 'request' ? '/requests' : demandHref(d)}>
+                      <span className={`lk ${d.kind}`}>{d.kind === 'request' ? 'Request' : 'Looking for'}</span>
+                      <span className="lt">
+                        <b>{d.service}</b>
+                        <small>
+                          {d.port?.flag} {d.portName} · {agoText(d.at, now)}
+                        </small>
+                      </span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
         </div>
 
         <aside className="panel" aria-labelledby="new-h">
@@ -198,32 +223,6 @@ export default async function Home() {
       </section>
 
 
-
-      {live.length > 0 && (
-        <section className="wrap sec livereq" aria-labelledby="lr-h">
-          <div className="sec-h">
-            <h2 id="lr-h">
-              <span className="pulse" aria-hidden="true" /> Live port requests
-            </h2>
-            <Link href="/requests">See all →</Link>
-          </div>
-          <ul className="lr">
-            {live.map((d) => (
-              <li key={d.id}>
-                <Link href={d.kind === 'request' ? '/requests' : demandHref(d)}>
-                  <span className={`lk ${d.kind}`}>{d.kind === 'request' ? 'Request' : 'Looking for'}</span>
-                  <span className="lt">
-                    <b>{d.service}</b>
-                    <small>
-                      {d.port?.flag} {d.portName} · {agoText(d.at, now)}
-                    </small>
-                  </span>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
 
       <section className="wrap sec">
         <h2>How it works</h2>
@@ -503,9 +502,10 @@ const CSS = `
   .home .faq details p{font-size:14px}
 }
 
-.home .livereq h2{display:flex;align-items:center;gap:10px}
+.home .livereq{margin-top:26px}
+.home .livereq h2{display:flex;align-items:center;gap:10px;font-size:19px;font-weight:750;margin:0 0 10px;letter-spacing:-0.02em}
 .home .livereq h2 .pulse{flex:none}
-.home .lr{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.home .lr{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
 .home .lr a{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;text-decoration:none;color:inherit;min-width:0;animation:psfUp .5s ease both}
 .home .lr li:nth-child(2) a{animation-delay:.08s}.home .lr li:nth-child(3) a{animation-delay:.16s}.home .lr li:nth-child(4) a{animation-delay:.24s}
 .home .lr a:hover{border-color:color-mix(in srgb,var(--acc) 55%,var(--line))}
@@ -520,6 +520,7 @@ const CSS = `
 .home .fslot b{font-size:15.5px}.home .fslot small{color:var(--ink3);font-size:13px}
 .home .fbadge{align-self:flex-start;font-size:11px;font-weight:700;letter-spacing:.02em;color:#8a6d12;background:color-mix(in srgb,#c9a227 22%,var(--card));padding:3px 8px;border-radius:6px;margin-bottom:4px}
 @media (max-width:820px){
+  .home .livereq{margin-top:18px}
   .home .panel .row:nth-child(n+5){display:none}
   .home .lr{grid-template-columns:minmax(0,1fr);gap:8px}
   .home .lr a{padding:10px 12px}

@@ -31,25 +31,6 @@ export default async function RequestsPage() {
           <p className="lead">Ship operators say what they need at a port. Companies listed at that port reply to them directly.</p>
         </div>
 
-        <div className="two">
-          <div className="box op">
-            <span className="tag">For ship operators</span>
-            <b>Need an agent, chandler or service at a port?</b>
-            <p>Post a free request. Companies at that port send you their offer.</p>
-            <Link href="/request-quote" className="btn gold">
-              Post a request
-            </Link>
-          </div>
-          <div className="box pr">
-            <span className="tag">For providers</span>
-            <b>Want these requests?</b>
-            <p>List your company free and get requests for the ports you serve.</p>
-            <Link href="/for-providers/signup" className="btn dark">
-              List my company free
-            </Link>
-          </div>
-        </div>
-
         <div className="lh">
           <h2>
             <span className="dot" aria-hidden="true" /> What operators are looking for
@@ -63,11 +44,11 @@ export default async function RequestsPage() {
         ) : (
           <ul className="list">
             {all.map((d, i) => (
-              <Row key={d.id} d={d} now={now} extra={i >= 15} />
+              <Row key={d.id} d={d} now={now} extra={i >= 10} />
             ))}
           </ul>
         )}
-        {all.length > 15 && <MoreToggle label={`Load more (${all.length - 15})`} />}
+        {all.length > 10 && <MoreToggle label={`Load more (${all.length - 10})`} />}
       </main>
       <SiteFooter />
     </div>
