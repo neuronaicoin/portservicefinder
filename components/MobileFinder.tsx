@@ -4,6 +4,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { ALL_PORTS, FLAG, PORT_DATA } from '@/lib/ports';
 import { SERVICE_CATEGORIES } from '@/lib/services-config';
+import { smartSearch, SEARCH_EXAMPLES } from '@/lib/smart-search';
 
 /**
  * Phone-only finder: three fixed buttons at the bottom of the screen
@@ -15,9 +16,9 @@ import { SERVICE_CATEGORIES } from '@/lib/services-config';
 
 const COUNTRIES = Object.keys(PORT_DATA).sort((a, b) => a.localeCompare(b));
 const MARINE = SERVICE_CATEGORIES.filter((s) => s.type === 'service');
-const HIDE_ON = ['/admin', '/for-providers/'];
+const HIDE_ON = ['/admin', '/for-providers/dashboard', '/for-providers/complete-profile'];
 
-type Sheet = null | 'country' | 'port' | 'service' | 'marine';
+type Sheet = null | 'country' | 'port' | 'service' | 'marine' | 'ask';
 
 const norm = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
 
@@ -35,7 +36,8 @@ export function MobileFinder() {
   useEffect(() => {
     const open = (e: Event) => {
       const d = (e as CustomEvent).detail;
-      if (d === 'country') setSheet('country');
+      if (d === 'ask') setSheet('ask');
+      else if (d === 'country') setSheet('country');
       else if (d === 'port') setSheet(country ? 'port' : 'country');
       else if (d === 'service') setSheet(port ? 'service' : country ? 'port' : 'country');
       else setSheet(country ? (port ? 'service' : 'port') : 'country');
@@ -107,8 +109,17 @@ export function MobileFinder() {
   const portList = ports.filter((p) => !qn || norm(p.name).includes(qn));
   const marineList = MARINE.filter((s) => !qn || norm(s.label).includes(qn));
 
+  const askHits = sheet === 'ask' ? smartSearch(q) : [];
+  const openHit = (h: ReturnType<typeof smartSearch>[number]) => {
+    if (h.port) {
+      fetch('/api/track-search', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ country: h.port.country, port: h.port.name, service_type: h.service || 'all' }) }).catch(() => {});
+    }
+    setSheet(null);
+    router.push(h.href);
+  };
+
   const title =
-    sheet === 'country' ? 'Choose a country' : sheet === 'port' ? (country ? `Ports in ${country}` : 'Choose a country first') : sheet === 'service' ? (portRef ? `What do you need in ${portRef.name}?` : 'Choose a service') : 'Marine services';
+    sheet === 'ask' ? 'Search' : sheet === 'country' ? 'Choose a country' : sheet === 'port' ? (country ? `Ports in ${country}` : 'Choose a country first') : sheet === 'service' ? (portRef ? `What do you need in ${portRef.name}?` : 'Choose a service') : 'Marine services';
 
   return (
     <>
@@ -127,7 +138,7 @@ export function MobileFinder() {
               )}
               <div className="mf-ht">
                 <h2>{title}</h2>
-                {(country || portRef) && (
+                {sheet !== 'ask' && (country || portRef) && (
                   <small>
                     {country && `${FLAG[country] || ''} ${country}`}
                     {portRef && ` · ${portRef.name}`}
@@ -139,13 +150,16 @@ export function MobileFinder() {
               </button>
             </div>
 
-            {(sheet === 'country' || sheet === 'port' || sheet === 'marine') && (
+            {(sheet === 'country' || sheet === 'port' || sheet === 'marine' || sheet === 'ask') && (
               <div className="mf-search">
                 <SearchIcon />
                 <input
                   value={q}
                   onChange={(e) => setQ(e.target.value)}
-                  placeholder={sheet === 'country' ? 'Search 150+ countries' : sheet === 'port' ? 'Search ports' : 'Search marine services'}
+                  placeholder={sheet === 'ask' ? 'e.g. Singapore bunker, Amsterdam main engine' : sheet === 'country' ? 'Search 150+ countries' : sheet === 'port' ? 'Search ports' : 'Search marine services'}
+                  autoFocus={sheet === 'ask'}
+                  onKeyDown={(e) => { if (e.key === 'Enter' && sheet === 'ask' && askHits[0]) openHit(askHits[0]); }}
+                  enterKeyHint={sheet === 'ask' ? 'search' : undefined}
                   aria-label="Search"
                   autoComplete="off"
                 />
@@ -157,7 +171,7 @@ export function MobileFinder() {
                 <ul className="mf-list">
                   {countryList.map((c) => (
                     <li key={c}>
-                      <button type="button" className={country === c ? 'on' : ''} onClick={() => { setCountry(c); setPort(''); setSheet('port'); }}>
+                      <button type="button" className={country === c ? 'on' : ''} onClick={() => { setCountry(c); setPort(''); setSheet(null); }}>
                         <span className="f">{FLAG[c] || '🏳️'}</span>
                         <span className="n">{c}</span>
                         <em>{(PORT_DATA[c] || []).length} {(PORT_DATA[c] || []).length === 1 ? 'port' : 'ports'}</em>
@@ -172,7 +186,7 @@ export function MobileFinder() {
                 <ul className="mf-list">
                   {portList.map((p) => (
                     <li key={p.slug}>
-                      <button type="button" className={port === p.slug ? 'on' : ''} onClick={() => { setPort(p.slug); setSheet('service'); }}>
+                      <button type="button" className={port === p.slug ? 'on' : ''} onClick={() => { setPort(p.slug); setSheet(null); }}>
                         <span className="f"><AnchorIcon /></span>
                         <span className="n">{p.name}</span>
                       </button>
@@ -194,11 +208,46 @@ export function MobileFinder() {
                     <b>Shipchandler</b>
                     <small>Provisions, stores, spares</small>
                   </button>
-                  <button type="button" onClick={() => go('marine')}>
+                  <button type="button" onClick={() => setSheet('marine')}>
                     <span className="ti">🔧</span>
                     <b>Marine Service</b>
-                    <small>Engine, electrical, hull, diving, surveys and more</small>
+                    <small>{MARINE.length} categories: engine, electrical, hull, diving…</small>
+                    <i className="arr" aria-hidden="true">›</i>
                   </button>
+                </div>
+              )}
+
+              {sheet === 'ask' && (
+                <div className="mf-ask">
+                  {!q.trim() ? (
+                    <>
+                      <p className="mf-hint">Type a port, a country or a service, in any order.</p>
+                      <div className="mf-ex">
+                        {SEARCH_EXAMPLES.map((x) => (
+                          <button key={x} type="button" onClick={() => setQ(x)}>
+                            {x}
+                          </button>
+                        ))}
+                      </div>
+                    </>
+                  ) : askHits.length === 0 ? (
+                    <p className="mf-hint">Nothing found for “{q}”. Try a port name like Rotterdam, or a service like bunker.</p>
+                  ) : (
+                    <ul className="mf-list">
+                      {askHits.map((h) => (
+                        <li key={h.href}>
+                          <button type="button" onClick={() => openHit(h)}>
+                            <span className="f">{h.kind === 'service' ? '🔧' : h.kind === 'country' ? (h.country ? FLAG[h.country] || '🌍' : '🌍') : h.port?.flag || '⚓'}</span>
+                            <span className="n">
+                              {h.title}
+                              <small>{h.sub}</small>
+                            </span>
+                            <i className="arr" aria-hidden="true">›</i>
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
                 </div>
               )}
 
@@ -278,6 +327,11 @@ const CSS = `
   .mf-list .f{width:24px;flex:none;display:flex;justify-content:center;font-size:19px;color:var(--acc)}
   .mf-list .n{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .mf-list em{font-style:normal;font-size:12.5px;color:var(--ink3);flex:none}
+  .mf-list .n small{display:block;font-size:12.5px;color:var(--ink3);font-weight:500;margin-top:1px}
+  .mf-list .arr{font-style:normal;color:var(--ink3);font-size:20px}
+  .mf-hint{color:var(--ink2);font-size:14.5px;line-height:1.5;padding:10px 8px 4px;margin:0}
+  .mf-ex{display:flex;flex-wrap:wrap;gap:8px;padding:8px 6px 14px}
+  .mf-ex button{border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:999px;padding:8px 13px;font:inherit;font-size:14px;cursor:pointer}
   .mf-list .none{padding:22px 10px;color:var(--ink3);text-align:center}
   .mf-tiles{display:grid;gap:10px;padding:4px 6px 8px}
   .mf-tiles button{position:relative;display:grid;grid-template-columns:48px minmax(0,1fr);grid-template-rows:auto auto;column-gap:12px;align-items:center;text-align:left;padding:16px 36px 16px 14px;border-radius:14px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:inherit;cursor:pointer}
