@@ -2,6 +2,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { saveItem, loadItem, genId } from '@/lib/voyage-storage';
+import { computeSeaRoute } from '@/lib/sea-router';
 import {
   PORTS_SORTED,
   searchPorts,
@@ -122,6 +123,28 @@ export default function DistanceCalculatorPage() {
     }
   }, [existingId]);
 
+  // Sea route (avoids land, uses canals and straits); falls back to great circle
+  const [sea, setSea] = useState<{ key: string; nm: number; via: string } | null>(null);
+  const [seaBusy, setSeaBusy] = useState(false);
+  useEffect(() => {
+    if (!data.fromLat || !data.toLat) { setSea(null); return; }
+    const key = `${data.fromLat},${data.fromLon}-${data.toLat},${data.toLon}`;
+    let cancelled = false;
+    setSeaBusy(true);
+    computeSeaRoute({ lat: data.fromLat, lon: data.fromLon }, { lat: data.toLat, lon: data.toLon })
+      .then((wps) => {
+        if (cancelled) return;
+        const pts = [{ lat: data.fromLat, lon: data.fromLon }, ...wps, { lat: data.toLat, lon: data.toLon }];
+        let nm = 0;
+        for (let i = 1; i < pts.length; i++) nm += haversineDistance(pts[i - 1].lat, pts[i - 1].lon, pts[i].lat, pts[i].lon);
+        const via = [...new Set(wps.filter((w) => w.major).map((w) => w.name))].join(', ');
+        setSea({ key, nm, via });
+      })
+      .catch(() => { if (!cancelled) setSea(null); })
+      .finally(() => { if (!cancelled) setSeaBusy(false); });
+    return () => { cancelled = true; };
+  }, [data.fromLat, data.fromLon, data.toLat, data.toLon]);
+
   // Calculate distance
   const calc = useMemo(() => {
     const greatCircleDist =
@@ -129,7 +152,9 @@ export default function DistanceCalculatorPage() {
         ? haversineDistance(data.fromLat, data.fromLon, data.toLat, data.toLon)
         : 0;
 
-    const distance = data.customDistance > 0 ? data.customDistance : greatCircleDist;
+    const seaKey = `${data.fromLat},${data.fromLon}-${data.toLat},${data.toLon}`;
+    const seaDist = sea && sea.key === seaKey && sea.nm > 0 ? Math.max(sea.nm, greatCircleDist) : 0;
+    const distance = data.customDistance > 0 ? data.customDistance : seaDist || greatCircleDist;
 
     const bearing =
       data.fromLat && data.toLat
@@ -161,8 +186,10 @@ export default function DistanceCalculatorPage() {
       compass,
       speedRows,
       isOverride: data.customDistance > 0,
+      seaDist,
+      via: seaDist && sea ? sea.via : '',
     };
-  }, [data]);
+  }, [data, sea]);
 
   function update<K extends keyof DistData>(key: K, value: DistData[K]) {
     setData((prev) => ({ ...prev, [key]: value }));
@@ -260,7 +287,7 @@ export default function DistanceCalculatorPage() {
           Port-to-Port <em style={g}>Distance</em> & ETA
         </h1>
         <p style={{ fontSize: 13, color: 'var(--ink2)', lineHeight: 1.6, maxWidth: 720 }}>
-          Great circle distance, voyage time at multiple speeds, fuel needed, and approximate cost.
+          Sea route distance (via canals and straits, avoiding land), voyage time at multiple speeds, fuel needed, and approximate cost.
           150+ major ports in database — or enter custom coordinates.
         </p>
       </div>
@@ -595,8 +622,8 @@ export default function DistanceCalculatorPage() {
             </div>
           </div>
           <p style={{ fontSize: 10.5, color: 'var(--ink3)', marginTop: 6, fontStyle: 'italic' }}>
-            Great circle distance is theoretical (rhumb line / canal routing may differ). Use
-            override for actual sea route distance.
+            The sea route is an automatic planning estimate (land avoided, Suez, Panama, Kiel and main straits used).
+            Use the override if you have the actual passage distance.
           </p>
         </details>
       </div>
@@ -621,7 +648,7 @@ export default function DistanceCalculatorPage() {
             <KpiBox
               label="Distance"
               value={`${fmt(calc.distance, 0)} nm`}
-              sub={calc.isOverride ? 'Custom override' : 'Great circle'}
+              sub={calc.isOverride ? 'Custom override' : calc.seaDist ? (calc.via ? `Sea route via ${calc.via}` : 'Sea route') : seaBusy ? 'Calculating sea route…' : 'Great circle'}
               color="var(--acc)"
               big
             />
@@ -637,7 +664,7 @@ export default function DistanceCalculatorPage() {
               sub={calc.compass}
               color="var(--ink)"
             />
-            {calc.isOverride && calc.greatCircleDist > 0 && (
+            {(calc.isOverride || calc.seaDist > 0) && calc.greatCircleDist > 0 && (
               <KpiBox
                 label="GC Distance"
                 value={`${fmt(calc.greatCircleDist, 0)} nm`}

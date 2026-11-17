@@ -45,7 +45,16 @@ export type ToolKey =
   | 'planner'
   | 'congestion'
   | 'holidays'
-  | 'news';
+  | 'news'
+  | 'bunkerprices'
+  | 'diary'
+  | 'indices'
+  | 'lashing'
+  | 'pms'
+  | 'stability'
+  | 'vault'
+  | 'wages'
+  | 'weather';
 
 interface SavedItem<T = unknown> {
   id: string;

@@ -46,7 +46,7 @@ interface PlannerData {
 
 const DEFAULT_VESSEL: Vessel = {
   name: '', loa: 0, beam: 0, draft: 0, serviceSpeed: 12,
-  ladenCons: 0, portCons: 0, robVlsfo: 0, robMgo: 0, fuelType: 'VLSFO', mgoSeaCons: 0,
+  ladenCons: 24, portCons: 3, robVlsfo: 0, robMgo: 0, fuelType: 'VLSFO', mgoSeaCons: 0,
 };
 
 const DEFAULT_DATA: PlannerData = {

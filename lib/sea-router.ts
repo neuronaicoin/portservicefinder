@@ -19,10 +19,23 @@ const NLON = Math.round((LON_MAX - LON_MIN) / GRID_RES);
 // man-made canals: cells along these are forced to SEA (passable)
 // each is a list of [lat,lon] points that we rasterize as open water
 const CANALS: { name: string; pts: [number, number][] }[] = [
-  { name: 'Suez', pts: [[31.26, 32.31], [30.6, 32.34], [30.0, 32.35], [29.93, 32.55]] },
-  { name: 'Panama', pts: [[9.36, -79.92], [9.1, -79.8], [9.0, -79.68], [8.88, -79.55]] },
-  { name: 'Kiel', pts: [[54.37, 9.95], [54.3, 9.7], [54.2, 9.3], [53.9, 9.13]] },
+  // Suez Canal + Gulf of Suez + Red Sea + Bab-el-Mandeb (too narrow for a 1° grid otherwise)
+  { name: 'Suez / Red Sea', pts: [[32.2, 32.3], [31.4, 32.35], [30.6, 32.33], [29.9, 32.55], [29.0, 32.9], [27.9, 33.7], [27.0, 34.3], [25.0, 35.8], [22.0, 37.8], [19.0, 39.5], [16.0, 41.3], [14.0, 42.4], [12.6, 43.35], [12.0, 45.0], [12.5, 48.0]] },
+  { name: 'Panama', pts: [[10.5, -79.9], [9.36, -79.92], [9.1, -79.8], [9.0, -79.68], [8.88, -79.55], [8.3, -79.4], [7.5, -79.5]] },
+  { name: 'Kiel', pts: [[53.9, 8.6], [53.9, 9.13], [54.2, 9.3], [54.37, 10.15], [54.5, 10.5]] },
   { name: 'Corinth', pts: [[37.95, 22.94], [37.93, 22.99]] },
+  // Skagerrak - Kattegat - Oresund / Great Belt - western Baltic
+  { name: 'Danish Straits', pts: [[57.8, 8.0], [57.9, 10.6], [57.0, 11.3], [56.2, 12.0], [55.6, 12.75], [55.3, 13.0], [55.0, 14.0], [54.8, 16.0]] },
+  { name: 'Great Belt', pts: [[56.2, 11.6], [55.3, 11.0], [54.6, 11.0], [54.4, 12.0], [54.8, 14.0]] },
+  // Dardanelles - Sea of Marmara - Bosphorus
+  { name: 'Turkish Straits', pts: [[39.8, 25.9], [40.2, 26.4], [40.4, 26.7], [40.7, 27.5], [40.8, 28.6], [41.0, 29.0], [41.2, 29.1], [41.6, 29.3]] },
+  // Strait of Malacca and Singapore Strait
+  { name: 'Malacca', pts: [[6.0, 97.5], [4.0, 99.8], [2.5, 101.3], [1.6, 102.8], [1.2, 103.8], [1.3, 104.3], [2.0, 105.0]] },
+  // Strait of Hormuz and the Gulf
+  { name: 'Hormuz', pts: [[24.5, 58.5], [25.5, 57.5], [26.5, 56.4], [26.2, 55.0], [25.5, 54.0], [26.0, 52.0], [27.0, 50.5], [28.5, 49.5], [29.5, 48.5]] },
+  // English Channel and Dover Strait
+  { name: 'Channel', pts: [[49.5, -5.0], [50.0, -2.0], [50.6, 0.5], [51.0, 1.5], [51.5, 2.5], [52.0, 3.5]] },
+  { name: 'Gibraltar', pts: [[36.0, -7.0], [35.95, -5.6], [36.1, -4.5], [36.3, -3.0]] },
 ];
 
 // named choke points — if the route passes near one, we label it
@@ -240,6 +253,11 @@ function astar(startLat: number, startLon: number, goalLat: number, goalLon: num
       const nil = cil + dl;
       if (nil < 0 || nil >= NLAT) continue;
       if (landMask[idx(nil, nio)] === 1) continue; // land blocked
+      // no corner cutting: a diagonal step needs both orthogonal neighbours to be sea
+      if (dl !== 0 && dc !== 0) {
+        let sio = cio + dc; if (sio < 0) sio = NLON - 1; else if (sio >= NLON) sio = 0;
+        if (landMask[idx(nil, cio)] === 1 || landMask[idx(cil, sio)] === 1) continue;
+      }
       const nIdx = idx(nil, nio);
       const stepCost = (dl !== 0 && dc !== 0) ? 1.4142 : 1;
       const tentative = (gScore.get(current) ?? Infinity) + stepCost;
@@ -273,6 +291,10 @@ function simplifyAndLabel(path: [number, number][]): RouteWaypoint[] {
     }
     return { name: name || 'WP', lat, lon, major };
   });
+  // the same choke point is labelled once; later points near it become plain waypoints
+  for (let i = 1; i < out.length; i++) {
+    if (out[i].major && out.slice(0, i).some((o) => o.major && o.name === out[i].name)) { out[i].name = 'WP'; out[i].major = false; }
+  }
   return out;
 }
 
