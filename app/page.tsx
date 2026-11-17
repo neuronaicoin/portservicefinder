@@ -120,9 +120,32 @@ export default async function Home() {
         </div>
       </section>
 
+      {ticker.length > 0 && (
+        <div className="ticker" aria-label="Companies that joined recently">
+          <span className="lab">Just joined</span>
+          <div className="track-wrap">
+            <div className="track" style={{ animationDuration: `${Math.max(90, ticker.length * 7)}s` }}>
+              {[0, 1].map((k) => (
+                <span key={k} className="set" aria-hidden={k === 1}>
+                  {ticker.map((p) => (
+                    <Link key={`${k}-${p.id}`} href={`/providers/${p.slug}`} className="chip" tabIndex={k === 1 ? -1 : undefined}>
+                      <ProviderAvatar text={initials(p.name)} size={24} />
+                      <b>{p.name}</b>
+                      <span>
+                        {p.flag} {p.ports[0]?.name}, {p.country} · joined {agoText(p.joinedAt, now)}
+                      </span>
+                    </Link>
+                  ))}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
       <section className="wrap hero">
         <div className="hero-main">
-          <h1>Ship agents, chandlers and marine services, port by port.</h1>
+          <h1>Ship agents, chandlers and marine services, <span className="h1-acc">port by port.</span></h1>
           <p className="sub">
             Find providers at 1,200+ ports in 150+ countries and contact them directly. Free for ship operators, no commission on any job.
           </p>
@@ -143,13 +166,20 @@ export default async function Home() {
           <div className="hs-desk">
             <HomeSearch />
           </div>
-          <FinderButton className="hs-mob">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="M20 20l-3.5-3.5" /></svg>
-            <span>
-              <b>Find a provider</b>
-              <small>Country · Port · Service</small>
-            </span>
-          </FinderButton>
+          <div className="hs-mob" aria-label="Search providers">
+            <FinderButton className="fb fb-c" sheet="country">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M3 12h18M12 3c3 3.5 3 14.5 0 18M12 3c-3 3.5-3 14.5 0 18" /></svg>
+              <b>Country</b>
+            </FinderButton>
+            <FinderButton className="fb fb-p" sheet="port">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><circle cx="12" cy="5" r="2" /><path d="M12 7v14M5 13a7 7 0 0 0 14 0M8 11h8" /></svg>
+              <b>Port</b>
+            </FinderButton>
+            <FinderButton className="fb fb-s" sheet="service">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="M20 20l-3.5-3.5" /></svg>
+              <b>Service</b>
+            </FinderButton>
+          </div>
         </div>
 
         <aside className="panel" aria-labelledby="new-h">
@@ -178,28 +208,6 @@ export default async function Home() {
         </aside>
       </section>
 
-      {ticker.length > 0 && (
-        <div className="ticker" aria-label="Companies that joined recently">
-          <span className="lab">Just joined</span>
-          <div className="track-wrap">
-            <div className="track" style={{ animationDuration: `${Math.max(90, ticker.length * 7)}s` }}>
-              {[0, 1].map((k) => (
-                <span key={k} className="set" aria-hidden={k === 1}>
-                  {ticker.map((p) => (
-                    <Link key={`${k}-${p.id}`} href={`/providers/${p.slug}`} className="chip" tabIndex={k === 1 ? -1 : undefined}>
-                      <ProviderAvatar text={initials(p.name)} size={24} />
-                      <b>{p.name}</b>
-                      <span>
-                        {p.flag} {p.ports[0]?.name}, {p.country} · joined {agoText(p.joinedAt, now)}
-                      </span>
-                    </Link>
-                  ))}
-                </span>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
 
 
       <section className="wrap sec">
@@ -245,7 +253,7 @@ export default async function Home() {
           <h2>Free voyage tools</h2>
           <Link href="/voyage">All 41 tools →</Link>
         </div>
-        <div className="grid3">
+        <div className="grid3 tools-grid">
           {TOOLS.map(([slug, name, text]) => (
             <Link key={slug} href={`/voyage/${slug}`} className="card tool">
               <b>{name}</b>
@@ -273,14 +281,14 @@ export default async function Home() {
 
       <section className="wrap sec faq">
         <h2>Questions</h2>
-        <dl>
+        <div className="qs">
           {FAQ.map((f) => (
-            <div key={f.q}>
-              <dt>{f.q}</dt>
-              <dd>{f.a}</dd>
-            </div>
+            <details key={f.q}>
+              <summary>{f.q}</summary>
+              <p>{f.a}</p>
+            </details>
           ))}
-        </dl>
+        </div>
       </section>
 
       <SiteFooter />
@@ -408,4 +416,58 @@ const CSS = `
   .home .join{padding:20px}.home .join-cta{width:100%}.home .join-cta a{flex:1;text-align:center}
   .home .sec-h a{font-size:14px}
 }
+.home .h1-acc{background:linear-gradient(90deg,var(--acc),#c9a227,var(--acc));background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:psfShine 6s linear infinite}
+@keyframes psfShine{to{background-position:-200% 0}}
+.home .hero{position:relative;isolation:isolate}
+.home .hero::before{content:"";position:absolute;inset:0 0 auto;height:340px;-webkit-mask-image:linear-gradient(transparent,#000 25%,#000 60%,transparent);mask-image:linear-gradient(transparent,#000 25%,#000 60%,transparent);z-index:-1;pointer-events:none;background:radial-gradient(600px 220px at 15% 20%,color-mix(in srgb,var(--acc) 16%,transparent),transparent 70%),radial-gradient(500px 200px at 85% 10%,color-mix(in srgb,#c9a227 14%,transparent),transparent 70%);animation:psfFloat 9s ease-in-out infinite alternate}
+@keyframes psfFloat{to{transform:translate3d(0,14px,0) scale(1.03)}}
+.home .hero,.home .sec,.home .join{animation:psfUp .6s ease both}
+@keyframes psfUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.home .ticker{margin-top:12px}
+.home .faq .qs{display:grid;gap:10px}
+.home .faq details{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:0 18px}
+.home .faq summary{list-style:none;cursor:pointer;font-weight:650;font-size:15.5px;padding:15px 28px 15px 0;position:relative}
+.home .faq summary::-webkit-details-marker{display:none}
+.home .faq summary::after{content:"+";position:absolute;right:0;top:50%;transform:translateY(-50%);font-size:22px;font-weight:500;color:var(--acc);transition:transform .2s}
+.home .faq details[open] summary::after{transform:translateY(-50%) rotate(45deg)}
+.home .faq details p{margin:0 0 15px;color:var(--ink2);line-height:1.6;font-size:14.5px}
+@media (prefers-reduced-motion:reduce){.home .h1-acc,.home .hero::before,.home .hero,.home .sec,.home .join{animation:none}}
+@media (max-width:820px){
+  .home .sub{display:none}
+  .home .hero{padding-bottom:8px}
+  .home h1{margin-bottom:16px}
+  .home .hstats{margin-bottom:10px}
+  .home .hstats div{padding:8px 6px}
+  .home .hstats b{font-size:clamp(17px,4.8vw,21px)}
+  .home .hstats span{font-size:11px}
+  .home .hs-mob{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding:0;background:none;box-shadow:none;border-radius:0}
+  .home .fb{display:flex;flex-direction:row;align-items:center;justify-content:center;gap:6px;min-width:0;padding:13px 6px;border:0;border-radius:12px;font:inherit;cursor:pointer;color:#fff;box-shadow:0 6px 16px -8px rgba(0,0,0,.45);position:relative;overflow:hidden}
+  .home .fb b{font-size:15px;font-weight:750}
+  .home .fb-c{background:linear-gradient(135deg,#1f6feb,#2a4fb3)}
+  .home .fb-p{background:linear-gradient(135deg,#0f9d8a,#137a6b)}
+  .home .fb-s{background:linear-gradient(135deg,#d4a72c,#b8892a);color:#1b1b1b}
+  .home .fb::after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 30%,rgba(255,255,255,.28) 50%,transparent 70%);transform:translateX(-100%);animation:psfSweep 3.6s ease-in-out infinite}
+  .home .fb-p::after{animation-delay:.4s}.home .fb-s::after{animation-delay:.8s}
+  .home .fb:active{transform:scale(.97)}
+  .home .ticker{margin-top:10px}
+  .home .ticker .lab{margin:8px 10px 8px 12px;font-size:11.5px;padding:4px 9px}
+  .home .chip{padding:9px 0;font-size:13px}
+  .home .sec{padding-top:28px}
+  .home .steps{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+  .home .steps li{padding:12px 10px}
+  .home .steps li::before{width:24px;height:24px;margin-bottom:6px;font-size:13px}
+  .home .steps b{font-size:13px;line-height:1.3;margin:0}
+  .home .steps span{display:none}
+  .home .join{margin-top:28px}
+  .home .tools-grid{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin-right:calc(var(--gutter) * -1);padding-right:var(--gutter)}
+  .home .tools-grid::-webkit-scrollbar{display:none}
+  .home .tools-grid .tool{flex:none;padding:10px 14px;border-radius:999px}
+  .home .tools-grid .tool span{display:none}
+  .home .tools-grid .tool b{font-size:14px;white-space:nowrap}
+  .home .guide:nth-child(n+3){display:none}
+  .home .faq summary{font-size:14.5px;padding:13px 26px 13px 0}
+  .home .faq details{padding:0 14px}
+  .home .faq details p{font-size:14px}
+}
+@keyframes psfSweep{0%,60%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
 `;

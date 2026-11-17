@@ -33,7 +33,13 @@ export function MobileFinder() {
   const portRef = ports.find((p) => p.slug === port);
 
   useEffect(() => {
-    const open = () => setSheet(country ? (port ? 'service' : 'port') : 'country');
+    const open = (e: Event) => {
+      const d = (e as CustomEvent).detail;
+      if (d === 'country') setSheet('country');
+      else if (d === 'port') setSheet(country ? 'port' : 'country');
+      else if (d === 'service') setSheet('service');
+      else setSheet(country ? (port ? 'service' : 'port') : 'country');
+    };
     window.addEventListener('psf:finder', open);
     return () => window.removeEventListener('psf:finder', open);
   }, [country, port]);
@@ -302,9 +308,9 @@ const CSS = `
 `;
 
 /** A button (phones) that opens the bottom finder sheet. */
-export function FinderButton({ className, children }: { className?: string; children: React.ReactNode }) {
+export function FinderButton({ className, children, sheet }: { className?: string; children: React.ReactNode; sheet?: 'country' | 'port' | 'service' }) {
   return (
-    <button type="button" className={className} onClick={() => window.dispatchEvent(new Event('psf:finder'))}>
+    <button type="button" className={className} onClick={() => window.dispatchEvent(new CustomEvent('psf:finder', { detail: sheet }))}>
       {children}
     </button>
   );
