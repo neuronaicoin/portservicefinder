@@ -235,6 +235,11 @@ import { crewChange2026CostsVisasTimelines } from './crew-change-2026-costs-visa
 import { shipSupplyDeliveryAnchorage2026 } from './ship-supply-delivery-anchorage-chandlers-guide-2026';
 import { howMarineServiceCompaniesWinMorePortCalls2026 } from './how-marine-service-companies-win-more-port-calls-2026';
 import { BLOG_REDIRECTS } from './redirects';
+import { capeTownPortCall2026 } from './cape-town-port-call-ship-agents-chandlers-repairs-2026-operator-guide';
+import { mundraKandlaGuide2026 } from './mundra-kandla-ship-agents-chandlers-gujarat-2026-operator-guide';
+import { brazilPortCall2026 } from './brazil-port-call-santos-paranagua-rio-grande-agents-chandlers-2026';
+import { shipSparesInTransit2026 } from './ship-spares-in-transit-delivery-to-vessel-customs-guide-2026';
+import { howToWinPortRequests2026 } from './how-to-win-port-requests-marine-service-providers-respond-fast-2026';
 import { shipAgentsPortSaidSuezTransit2026 } from './ship-agents-port-said-suez-canal-transit-2026-operator-guide';
 import { shipAgentsBalboaCristobal2026 } from './ship-agents-balboa-cristobal-panama-canal-2026-operator-guide';
 import { gibraltarPortCall2026 } from './gibraltar-port-call-bunkers-agents-chandlers-2026-operator-guide';
@@ -248,6 +253,11 @@ import { howToFindShipAgentAnyPort2026 } from './how-to-find-ship-agent-any-port
 import { marineServiceCompanyWebsiteSeo2026 } from './marine-service-company-website-seo-get-found-by-operators-2026';
 export { BLOG_REDIRECTS } from './redirects';
 const ALL_POSTS: BlogPost[] = [
+  capeTownPortCall2026,
+  mundraKandlaGuide2026,
+  brazilPortCall2026,
+  shipSparesInTransit2026,
+  howToWinPortRequests2026,
   shipAgentsPortSaidSuezTransit2026,
   shipAgentsBalboaCristobal2026,
   gibraltarPortCall2026,
