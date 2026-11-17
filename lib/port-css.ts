@@ -30,6 +30,7 @@ export const PORT_CSS = `
 .pt .empty~.join{display:none}
 .pt .empty .em-ico{display:inline-flex;width:52px;height:52px;border-radius:14px;align-items:center;justify-content:center;font-size:24px;background:color-mix(in srgb,var(--acc) 10%,var(--card));margin-bottom:10px}
 .pt .empty .note{margin:6px auto 0;max-width:520px}
+.pt .more-tg{display:none}
 .pt .em-cta{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:18px}
 @media (max-width:620px){
   .pt .grid{grid-template-columns:1fr}
@@ -40,7 +41,9 @@ export const PORT_CSS = `
   .pt .lead{font-size:15px;margin:8px 0 16px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
   .pt .sec{margin-top:22px}
   .pt h2{font-size:18px}
-  .pt .more{order:2}
+  .pt .more{order:3}
+  .pt main.wrap:not(.open) .more:not(.join),.pt main.wrap:not(.open) .xtra{display:none}
+  .pt .more-tg{order:2;display:flex;align-items:center;justify-content:center;gap:6px;width:100%;margin-top:18px;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink);font:inherit;font-weight:650;font-size:15px;cursor:pointer}
   .pt .join{order:1;padding:18px}
   .pt .join .btn,.pt .em-cta a{width:100%;text-align:center;box-sizing:border-box}
   .pt .facts dl{grid-template-columns:repeat(2,minmax(0,1fr))}

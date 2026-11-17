@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { MoreToggle } from '@/components/MoreToggle';
 import { SiteHeader } from '@/components/SiteHeader';
 import { SiteFooter } from '@/components/SiteFooter';
 import { getActivePorts } from '@/lib/providers-db';
@@ -32,12 +33,13 @@ export default async function PortsPage() {
           <section className="sec">
             <h2>Ports with listed companies</h2>
             <div className="links">
-              {active.map((p) => (
-                <Link key={p.slug} href={`/ports/${p.slug}`}>
+              {active.map((p, i) => (
+                <Link key={p.slug} href={`/ports/${p.slug}`} className={i >= 12 ? 'xtra' : ''}>
                   {p.flag} {p.name} <span>({p.providers})</span>
                 </Link>
               ))}
             </div>
+            {active.length > 12 && <MoreToggle label={`Load more (${active.length - 12})`} />}
           </section>
         )}
 
@@ -71,6 +73,8 @@ const EXTRA = `
 .pt .az details{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
 .pt .az summary{cursor:pointer;font-weight:600;display:flex;justify-content:space-between;gap:8px}
 .pt .az summary span{color:var(--ink3);font-weight:500;font-size:13px}
+.pt .az details[open]{grid-column:1/-1}
+@media (max-width:620px){.pt .az{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:6px}.pt .az details{padding:9px 10px;border-radius:10px}.pt .az summary{font-size:13.5px;min-width:0}.pt .az summary span{font-size:12px}}
 .pt .az .links{margin-top:10px}.pt .az .links a{font-size:13.5px;padding:6px 10px}
 .pt .az .links a.has{border-color:color-mix(in srgb,var(--acc) 50%,var(--line));font-weight:600}
 @media (max-width:720px){.pt .az{grid-template-columns:1fr}}

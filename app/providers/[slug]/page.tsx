@@ -228,7 +228,7 @@ export default async function ProviderPage({ params }: { params: Promise<{ slug:
                   <ul className="dem">
                     {demand.map((d) => (
                       <li key={d.id}>
-                        <span className={`dk ${d.kind}`}>{d.kind === 'request' ? 'Request' : 'Search'}</span>
+                        <span className={`dk ${d.kind}`}>{d.kind === 'request' ? 'Request' : 'Looking for'}</span>
                         <span className="dt">
                           <b>{d.service}</b>
                           <small>{ago(d.at, now)}{d.vessel ? ` · ${d.vessel}` : ''}</small>

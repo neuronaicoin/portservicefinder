@@ -5,7 +5,6 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Logo } from './Logo';
 import { ThemeToggle } from './ThemeToggle';
-import { siteConfig } from '@/lib/site-config';
 
 const NAV = [
   { href: '/providers', label: 'Find providers' },
@@ -124,13 +123,7 @@ export function SiteHeader() {
           </Link>
         ))}
         <Link href="/for-providers/login">Log in</Link>
-        {String((siteConfig as { whatsapp?: string }).whatsapp || '') ? (
-          <a href={`https://wa.me/${String((siteConfig as { whatsapp?: string }).whatsapp).replace(/[^\d]/g, '')}`} target="_blank" rel="noopener noreferrer">
-            Help on WhatsApp
-          </a>
-        ) : (
-          <Link href="/contact">Help &amp; contact</Link>
-        )}
+        <Link href="/contact">Help &amp; contact</Link>
         <div className="sheet-theme">
           <span>Dark / light mode</span>
           <ThemeToggle />

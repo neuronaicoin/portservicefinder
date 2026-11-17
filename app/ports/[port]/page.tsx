@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { MoreToggle } from '@/components/MoreToggle';
 import { notFound, permanentRedirect } from 'next/navigation';
 import { SiteHeader } from '@/components/SiteHeader';
 import { SiteFooter } from '@/components/SiteFooter';
@@ -161,7 +162,7 @@ export default async function PortPage({ params }: { params: Promise<{ port: str
         {groups
           .filter((g) => g[2].length > 0)
           .map(([k, label, list]) => (
-            <section key={k} className="sec">
+            <section key={k} className="sec" id={k === 'service' ? 'marine-services' : k === 'agent' ? 'ship-agents' : 'shipchandlers'} style={{ scrollMarginTop: 80 }}>
               <h2>
                 {label} in {port.name} <span>({list.length})</span>
               </h2>
@@ -249,6 +250,7 @@ export default async function PortPage({ params }: { params: Promise<{ port: str
             </div>
           </section>
         )}
+        <MoreToggle label={`More about ${port.name}`} />
       </main>
       <SiteFooter />
     </div>

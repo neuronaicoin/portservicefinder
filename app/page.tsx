@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { SiteHeader } from '@/components/SiteHeader';
 import { SiteFooter } from '@/components/SiteFooter';
 import { HomeSearch } from '@/components/home/HomeSearch';
-import { FinderButton } from '@/components/MobileFinder';
+import { HeroFinder } from '@/components/home/HeroFinder';
 import { ProviderAvatar } from '@/components/home/ProviderAvatar';
 import { agoText, getListedProviders, getListingStats, initials } from '@/lib/providers-db';
 import { BLOG_POSTS } from './data/blog';
@@ -168,20 +168,7 @@ export default async function Home() {
           <div className="hs-desk">
             <HomeSearch />
           </div>
-          <div className="hs-mob" aria-label="Search providers">
-            <FinderButton className="fb fb-c" sheet="country">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M3 12h18M12 3c3 3.5 3 14.5 0 18M12 3c-3 3.5-3 14.5 0 18" /></svg>
-              <b>Country</b>
-            </FinderButton>
-            <FinderButton className="fb fb-p" sheet="port">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><circle cx="12" cy="5" r="2" /><path d="M12 7v14M5 13a7 7 0 0 0 14 0M8 11h8" /></svg>
-              <b>Port</b>
-            </FinderButton>
-            <FinderButton className="fb fb-s" sheet="service">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="M20 20l-3.5-3.5" /></svg>
-              <b>Service</b>
-            </FinderButton>
-          </div>
+          <HeroFinder />
         </div>
 
         <aside className="panel" aria-labelledby="new-h">
@@ -224,7 +211,7 @@ export default async function Home() {
             {live.map((d) => (
               <li key={d.id}>
                 <Link href={d.kind === 'request' ? '/requests' : demandHref(d)}>
-                  <span className={`lk ${d.kind}`}>{d.kind === 'request' ? 'Request' : 'Search'}</span>
+                  <span className={`lk ${d.kind}`}>{d.kind === 'request' ? 'Request' : 'Looking for'}</span>
                   <span className="lt">
                     <b>{d.service}</b>
                     <small>
@@ -481,12 +468,14 @@ const CSS = `
   .home .hero{padding-bottom:8px}
   .home h1{margin-bottom:16px}
   .home .hstats{margin-bottom:10px}
-  .home .hstats div{padding:8px 6px}
-  .home .hstats b{font-size:clamp(17px,4.8vw,21px)}
-  .home .hstats span{font-size:11px}
+  .home .hstats div{padding:0 4px;height:56px;justify-content:center}
+  .home .hstats b{font-size:clamp(16px,4.6vw,19px);line-height:1.1}
+  .home .hstats span{font-size:10.5px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
   .home .hs-mob{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding:0;background:none;box-shadow:none;border-radius:0}
-  .home .fb{display:flex;flex-direction:row;align-items:center;justify-content:center;gap:6px;min-width:0;padding:13px 6px;border:0;border-radius:12px;font:inherit;cursor:pointer;color:#fff;box-shadow:0 6px 16px -8px rgba(0,0,0,.45);position:relative;overflow:hidden}
-  .home .fb b{font-size:15px;font-weight:750}
+  .home .fb{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-width:0;height:56px;padding:0 6px;border:0;border-radius:12px;font:inherit;cursor:pointer;color:#fff;box-shadow:0 6px 16px -8px rgba(0,0,0,.45);position:relative;overflow:hidden}
+  .home .fb b{font-size:14px;font-weight:750;line-height:1.15;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .home .fb small{font-size:10.5px;font-weight:650;opacity:.85;letter-spacing:.02em;text-transform:uppercase;white-space:nowrap}
+  .home .fb.now{box-shadow:0 0 0 3px color-mix(in srgb,var(--acc) 35%,transparent),0 6px 16px -8px rgba(0,0,0,.45)}
   .home .fb-c{background:linear-gradient(135deg,#1f6feb,#2a4fb3)}
   .home .fb-p{background:linear-gradient(135deg,#0f9d8a,#137a6b)}
   .home .fb-s{background:linear-gradient(135deg,#d4a72c,#b8892a);color:#1b1b1b}

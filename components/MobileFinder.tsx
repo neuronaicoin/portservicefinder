@@ -37,13 +37,32 @@ export function MobileFinder() {
       const d = (e as CustomEvent).detail;
       if (d === 'country') setSheet('country');
       else if (d === 'port') setSheet(country ? 'port' : 'country');
-      else if (d === 'service') setSheet('service');
+      else if (d === 'service') setSheet(port ? 'service' : country ? 'port' : 'country');
       else setSheet(country ? (port ? 'service' : 'port') : 'country');
     };
     window.addEventListener('psf:finder', open);
     return () => window.removeEventListener('psf:finder', open);
   }, [country, port]);
 
+  // restore the last choice in this tab, and tell the page's Country / Port / Service boxes about it
+  useEffect(() => {
+    try {
+      const v = JSON.parse(sessionStorage.getItem('psfFinder') || '{}');
+      if (v.country) setCountry(v.country);
+      if (v.port) setPort(v.port);
+    } catch {}
+  }, []);
+  useEffect(() => {
+    try {
+      sessionStorage.setItem('psfFinder', JSON.stringify({ country, port }));
+    } catch {}
+    window.dispatchEvent(new CustomEvent('psf:finder-state', { detail: { country, port, portName: portRef?.name || '' } }));
+  }, [country, port, portRef]);
+  useEffect(() => {
+    const ask = () => window.dispatchEvent(new CustomEvent('psf:finder-state', { detail: { country, port, portName: portRef?.name || '' } }));
+    window.addEventListener('psf:finder-ask', ask);
+    return () => window.removeEventListener('psf:finder-ask', ask);
+  }, [country, port, portRef]);
   useEffect(() => setSheet(null), [path]);
   useEffect(() => setQ(''), [sheet]);
   useEffect(() => {
@@ -71,7 +90,7 @@ export function MobileFinder() {
         body: JSON.stringify({ country: portRef.country, port: portRef.name, service_type: cat || 'marine-services' }),
       }).catch(() => {});
       setSheet(null);
-      router.push(cat ? `/ports/${portRef.slug}/${cat}` : `/ports/${portRef.slug}`);
+      router.push(cat ? `/ports/${portRef.slug}/${cat}` : `/ports/${portRef.slug}#marine-services`);
       return;
     }
     const u = new URLSearchParams();
@@ -89,29 +108,11 @@ export function MobileFinder() {
   const marineList = MARINE.filter((s) => !qn || norm(s.label).includes(qn));
 
   const title =
-    sheet === 'country' ? 'Choose a country' : sheet === 'port' ? (country ? `Ports in ${country}` : 'Choose a country first') : sheet === 'service' ? 'Choose a service' : 'Marine services';
+    sheet === 'country' ? 'Choose a country' : sheet === 'port' ? (country ? `Ports in ${country}` : 'Choose a country first') : sheet === 'service' ? (portRef ? `What do you need in ${portRef.name}?` : 'Choose a service') : 'Marine services';
 
   return (
     <>
       <style>{CSS}</style>
-      <div className="mf-space" aria-hidden="true" />
-      <nav className="mf-bar" aria-label="Find providers">
-        <button type="button" className={'mf-btn' + (country ? ' set' : '')} onClick={() => setSheet('country')}>
-          <i aria-hidden="true">{country ? FLAG[country] || '🌍' : <GlobeIcon />}</i>
-          <span>Country</span>
-          <b>{country || 'Any'}</b>
-        </button>
-        <button type="button" className={'mf-btn' + (portRef ? ' set' : '')} onClick={() => setSheet(country ? 'port' : 'country')}>
-          <i aria-hidden="true"><AnchorIcon /></i>
-          <span>Port</span>
-          <b>{portRef ? portRef.name : country ? 'All ports' : 'Select'}</b>
-        </button>
-        <button type="button" className="mf-btn mf-go" onClick={() => setSheet('service')}>
-          <i aria-hidden="true"><SearchIcon /></i>
-          <span>Service</span>
-          <b>Find</b>
-        </button>
-      </nav>
 
       {sheet && (
         <div className="mf-wrap" role="dialog" aria-modal="true" aria-label={title}>
@@ -119,8 +120,8 @@ export function MobileFinder() {
           <div className="mf-sheet">
             <div className="mf-grab" aria-hidden="true" />
             <div className="mf-head">
-              {(sheet === 'marine' || sheet === 'port') && (
-                <button type="button" className="mf-back" aria-label="Back" onClick={() => setSheet(sheet === 'marine' ? 'service' : 'country')}>
+              {(sheet === 'marine' || sheet === 'port' || sheet === 'service') && (
+                <button type="button" className="mf-back" aria-label="Back" onClick={() => setSheet(sheet === 'marine' ? 'service' : sheet === 'service' ? 'port' : 'country')}>
                   <BackIcon />
                 </button>
               )}
@@ -154,14 +155,6 @@ export function MobileFinder() {
             <div className="mf-body">
               {sheet === 'country' && (
                 <ul className="mf-list">
-                  {!qn && (
-                    <li>
-                      <button type="button" className={!country ? 'on' : ''} onClick={() => { setCountry(''); setPort(''); setSheet('service'); }}>
-                        <span className="f">🌍</span>
-                        <span className="n">Any country</span>
-                      </button>
-                    </li>
-                  )}
                   {countryList.map((c) => (
                     <li key={c}>
                       <button type="button" className={country === c ? 'on' : ''} onClick={() => { setCountry(c); setPort(''); setSheet('port'); }}>
@@ -177,14 +170,6 @@ export function MobileFinder() {
 
               {sheet === 'port' && (
                 <ul className="mf-list">
-                  {!qn && (
-                    <li>
-                      <button type="button" className={!port ? 'on' : ''} onClick={() => { setPort(''); setSheet('service'); }}>
-                        <span className="f"><AnchorIcon /></span>
-                        <span className="n">All ports in {country}</span>
-                      </button>
-                    </li>
-                  )}
                   {portList.map((p) => (
                     <li key={p.slug}>
                       <button type="button" className={port === p.slug ? 'on' : ''} onClick={() => { setPort(p.slug); setSheet('service'); }}>
@@ -209,11 +194,10 @@ export function MobileFinder() {
                     <b>Shipchandler</b>
                     <small>Provisions, stores, spares</small>
                   </button>
-                  <button type="button" onClick={() => setSheet('marine')}>
+                  <button type="button" onClick={() => go('marine')}>
                     <span className="ti">🔧</span>
                     <b>Marine Service</b>
-                    <small>{MARINE.length} categories: engine, hull, survey…</small>
-                    <i className="arr" aria-hidden="true">›</i>
+                    <small>Engine, electrical, hull, diving, surveys and more</small>
                   </button>
                 </div>
               )}

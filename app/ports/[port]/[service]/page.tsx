@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { MoreToggle } from '@/components/MoreToggle';
 import { notFound, permanentRedirect } from 'next/navigation';
 import { SiteHeader } from '@/components/SiteHeader';
 import { SiteFooter } from '@/components/SiteFooter';
@@ -196,6 +197,7 @@ export default async function PortServicePage({ params }: { params: Promise<{ po
             ))}
           </dl>
         </section>
+        <MoreToggle label={`More about ${port.name}`} />
       </main>
       <SiteFooter />
     </div>
