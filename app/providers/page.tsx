@@ -105,7 +105,7 @@ export default async function ProvidersPage({ searchParams }: { searchParams: SP
 
 const CSS = `
 .pl{background:var(--bg);min-height:100vh}
-.pl .wrap{max-width:1200px;margin:0 auto;padding:28px 20px 0}
+.pl .wrap{max-width:var(--wrap);margin:0 auto;padding:28px 20px 0}
 .pl h1{font-size:clamp(28px,4vw,40px);margin:0;letter-spacing:-0.03em;font-weight:800}
 .pl .lead{color:var(--ink2);font-size:16.5px;margin:10px 0 20px;max-width:760px;line-height:1.55}
 .pl .filters{display:grid;gap:12px;margin-bottom:18px}

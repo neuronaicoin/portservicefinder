@@ -1,7 +1,7 @@
 /** Styles shared by the port pages (/ports/…). */
 export const PORT_CSS = `
 .pt{background:var(--bg);min-height:100vh}
-.pt .wrap{max-width:1200px;margin:0 auto;padding:0 20px}
+.pt .wrap{max-width:var(--wrap);margin:0 auto;padding:0 20px}
 .pt .crumbs{font-size:13.5px;color:var(--ink3);padding-top:18px}
 .pt .crumbs a{color:var(--ink3);text-decoration:none}.pt .crumbs a:hover{color:var(--acc)}
 .pt h1{font-size:clamp(26px,4vw,40px);margin:14px 0 0;letter-spacing:-0.03em;line-height:1.12;font-weight:800}

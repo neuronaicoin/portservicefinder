@@ -55,6 +55,17 @@ html {
   -webkit-text-size-adjust: 100%;
 }
 
+/* Page width: wide screens use the full width, phones never scroll sideways */
+:root {
+  --wrap: 1440px;
+  --gutter: clamp(16px, 3vw, 40px);
+}
+
+html, body {
+  max-width: 100%;
+  overflow-x: clip;
+}
+
 body {
   background: var(--bg);
   color: var(--ink);

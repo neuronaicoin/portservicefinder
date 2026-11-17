@@ -18,7 +18,7 @@ export default function VoyageLayout({ children }: { children: React.ReactNode }
       <div style={{ borderBottom: '1px solid var(--line)', background: 'var(--bg2)' }}>
         <div
           style={{
-            maxWidth: 1200,
+            maxWidth: 'var(--wrap)',
             margin: '0 auto',
             padding: '10px 20px',
             display: 'flex',
@@ -35,7 +35,7 @@ export default function VoyageLayout({ children }: { children: React.ReactNode }
           <span style={{ color: 'var(--ok)', fontWeight: 600, fontSize: 13 }}>Free · No signup · Data stays in your browser</span>
         </div>
       </div>
-      <main style={{ maxWidth: 1200, margin: '0 auto', padding: '24px 20px 20px' }}>{children}</main>
+      <main style={{ maxWidth: 'var(--wrap)', margin: '0 auto', padding: '24px 20px 20px' }}>{children}</main>
       <SiteFooter />
     </div>
   );

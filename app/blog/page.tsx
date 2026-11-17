@@ -29,7 +29,7 @@ export const metadata: Metadata = {
 type Props = { searchParams: Promise<{ category?: string | string[] }> };
 
 const CSS = `
-.bl-wrap{max-width:1120px;margin:0 auto;padding:36px 16px 0}
+.bl-wrap{max-width:var(--wrap);margin:0 auto;padding:36px 16px 0}
 .bl-head h1{font-family:var(--font-display);font-size:clamp(30px,5vw,44px);line-height:1.1;font-weight:700;letter-spacing:-0.02em;color:var(--ink);margin:0 0 12px}
 .bl-head p{font-size:18px;line-height:1.6;color:var(--ink2);margin:0;max-width:680px}
 .bl-filters{display:flex;flex-wrap:wrap;gap:8px;margin:26px 0 28px}

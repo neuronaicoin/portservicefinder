@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { SiteHeader } from '@/components/SiteHeader';
 import { SiteFooter } from '@/components/SiteFooter';
 import { HomeSearch } from '@/components/home/HomeSearch';
+import { FinderButton } from '@/components/MobileFinder';
 import { ProviderAvatar } from '@/components/home/ProviderAvatar';
 import { agoText, getActivePorts, getListedProviders, getListingStats, initials } from '@/lib/providers-db';
 import { BLOG_POSTS } from './data/blog';
@@ -81,16 +82,46 @@ export default async function Home() {
       ))}
       <SiteHeader />
 
+      <section className="wrap joined-wrap" aria-label="Companies joining PortServiceFinder">
+        <div className="joined">
+          <div className="j-num">
+            <span className="pulse" aria-hidden="true" />
+            <b>{stats.last30 > 0 ? stats.last30 : stats.total}</b>
+            <span className="j-t">
+              {stats.last30 > 0 ? (
+                <>
+                  {stats.last30 === 1 ? 'company' : 'companies'} joined
+                  <br />
+                  in the last 30 days
+                </>
+              ) : (
+                <>
+                  companies
+                  <br />
+                  listed so far
+                </>
+              )}
+            </span>
+          </div>
+          {newest.length > 0 && (
+            <div className="j-faces" aria-hidden="true">
+              {newest.slice(0, 5).map((p) => (
+                <span key={p.id} className="j-face">
+                  <ProviderAvatar text={initials(p.name)} size={34} />
+                </span>
+              ))}
+              <span className="j-more">{stats.total} companies listed</span>
+            </div>
+          )}
+          <p className="j-sub">Ship agents, shipchandlers and marine service companies are listing their ports now. Listing is free during our launch period.</p>
+          <Link href="/for-providers/signup" className="btn gold j-cta">
+            List your company free →
+          </Link>
+        </div>
+      </section>
+
       <section className="wrap hero">
         <div className="hero-main">
-          {stats.last30 > 0 ? (
-            <p className="eyebrow">
-              <span className="pulse" aria-hidden="true" />
-              {stats.last30} {stats.last30 === 1 ? 'company' : 'companies'} joined in the last 30 days
-            </p>
-          ) : (
-            <p className="eyebrow">Free for vessel operators · No commission</p>
-          )}
           <h1>Ship agents, chandlers and marine services, port by port.</h1>
           <p className="sub">
             Find providers at 1,200+ ports in 150+ countries and contact them directly. Free for ship operators, no commission on any job.
@@ -109,7 +140,16 @@ export default async function Home() {
               <span>service categories</span>
             </div>
           </div>
-          <HomeSearch />
+          <div className="hs-desk">
+            <HomeSearch />
+          </div>
+          <FinderButton className="hs-mob">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="M20 20l-3.5-3.5" /></svg>
+            <span>
+              <b>Find a provider</b>
+              <small>Country · Port · Service</small>
+            </span>
+          </FinderButton>
           {ports.length > 0 && (
           <p className="popular">
             Popular:{' '}
@@ -280,12 +320,12 @@ export default async function Home() {
 
 const CSS = `
 .home{background:var(--bg);color:var(--ink);min-height:100vh}
-.home .wrap{max-width:1200px;margin:0 auto;padding:0 20px}
-.home .hero{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:36px;padding-top:48px;padding-bottom:36px;align-items:start}
+.home .wrap{max-width:var(--wrap);margin:0 auto;padding:0 var(--gutter)}
+.home .hero{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:clamp(28px,4vw,64px);padding-top:28px;padding-bottom:36px;align-items:start}
 .home .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:600;color:var(--ok);margin:0}
 .home .pulse{width:8px;height:8px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 0 color-mix(in srgb,var(--ok) 60%,transparent);animation:psfPulse 2s infinite}
 @keyframes psfPulse{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--ok) 55%,transparent)}70%{box-shadow:0 0 0 8px transparent}100%{box-shadow:0 0 0 0 transparent}}
-.home h1{font-size:clamp(34px,5vw,52px);line-height:1.06;letter-spacing:-0.035em;margin:14px 0 0;font-weight:800}
+.home h1{font-size:clamp(30px,4.6vw,60px);line-height:1.06;letter-spacing:-0.035em;margin:0;font-weight:800;overflow-wrap:break-word}
 .home .sub{color:var(--ink2);font-size:18px;line-height:1.55;margin:16px 0 24px;max-width:600px}
 .home .popular{margin:14px 0 0;font-size:14px;color:var(--ink3);display:flex;flex-wrap:wrap;gap:6px;align-items:center}
 .home .popular a{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:5px 11px;color:var(--ink2);text-decoration:none}
@@ -311,11 +351,11 @@ const CSS = `
 .home .set{display:flex;flex:none}
 .home .chip{display:inline-flex;align-items:center;gap:8px;margin-right:28px;white-space:nowrap;font-size:14px;color:var(--ink2);text-decoration:none;padding:12px 0}
 .home .chip b{color:var(--ink);font-weight:600}
-.home .hstats{display:flex;gap:28px;margin:0 0 22px;padding:14px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.home .hstats{display:grid;grid-template-columns:repeat(3,max-content);gap:12px 40px;margin:0 0 22px;padding:14px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
 .home .hstats div{display:flex;flex-direction:column;line-height:1.2}
 .home .hstats b{font-size:26px;font-weight:800;letter-spacing:-0.03em;color:var(--ink)}
 .home .hstats span{font-size:13.5px;color:var(--ink3);margin-top:2px}
-@media (max-width:520px){.home .hstats{gap:0;justify-content:space-between}.home .hstats b{font-size:23px}.home .hstats span{font-size:12.5px}}
+@media (max-width:820px){.home .hstats{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;border:0;padding:0}.home .hstats div{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 8px;text-align:center;align-items:center;min-width:0}.home .hstats b{font-size:clamp(19px,5.6vw,24px)}.home .hstats span{font-size:12px;line-height:1.25;overflow-wrap:break-word}}
 .home .stats{display:flex;flex-wrap:wrap;gap:16px 44px;padding-top:30px;padding-bottom:10px}
 .home .stats div{display:flex;flex-direction:column}
 .home .stats b{font-size:28px;letter-spacing:-0.03em;font-weight:800}
@@ -348,16 +388,52 @@ const CSS = `
 .home .faq dl div{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px}
 .home .faq dt{font-weight:650;font-size:15.5px}.home .faq dd{margin:6px 0 0;color:var(--ink2);line-height:1.6;font-size:14.5px}
 @media (max-width:960px){
-  .home .hero{grid-template-columns:1fr;padding-top:28px;gap:24px}
+  .home .hero{grid-template-columns:minmax(0,1fr);padding-top:20px;gap:24px}
   .home .grid4{grid-template-columns:repeat(2,minmax(0,1fr))}
   .home .grid3,.home .steps{grid-template-columns:1fr}
   .home .join{flex-direction:column;align-items:flex-start}
 }
 @media (max-width:520px){
-  .home .wrap{padding:0 16px}
   .home .sub{font-size:16.5px}
   .home .stats{gap:14px 28px}.home .stats b{font-size:24px}
   .home .ticker .lab{margin-left:16px}
   .home .row em{display:none}
+}
+.home .joined-wrap{padding-top:22px}
+.home .joined{display:grid;grid-template-columns:auto auto minmax(0,1fr) auto;align-items:center;gap:18px 28px;padding:18px 24px;border-radius:18px;border:1px solid color-mix(in srgb,var(--ok) 35%,var(--line));background:linear-gradient(120deg,color-mix(in srgb,var(--ok) 12%,var(--card)),var(--card) 60%);box-shadow:var(--shadow)}
+.home .j-num{display:flex;align-items:center;gap:12px}
+.home .j-num .pulse{width:11px;height:11px;flex:none}
+.home .j-num b{font-size:clamp(40px,4.4vw,56px);line-height:1;font-weight:850;letter-spacing:-0.04em;color:var(--ok)}
+.home .j-t{font-size:15px;font-weight:650;line-height:1.3;color:var(--ink)}
+.home .j-faces{display:flex;align-items:center}
+.home .j-face{display:inline-flex;border-radius:10px;box-shadow:0 0 0 2px var(--card);margin-left:4px;background:var(--card)}
+.home .j-face:first-child{margin-left:0}
+.home .j-more{margin-left:10px;font-size:13.5px;font-weight:650;color:var(--ink2);white-space:nowrap}
+.home .j-sub{margin:0;color:var(--ink2);font-size:14.5px;line-height:1.5}
+.home .j-cta{padding:13px 20px;font-size:15px}
+.home .hs-mob{display:none}
+.home .hero-main,.home .panel{min-width:0}
+@media (max-width:1100px){.home .joined{grid-template-columns:auto minmax(0,1fr) auto}.home .j-faces{display:none}}
+@media (max-width:820px){
+  .home .hs-desk{display:none}
+  .home .hs-mob{display:flex;width:100%;align-items:center;gap:12px;padding:14px 16px;border-radius:14px;border:0;background:var(--acc);color:var(--on-acc);font:inherit;text-align:left;cursor:pointer;box-shadow:var(--shadow)}
+  .home .hs-mob span{display:flex;flex-direction:column;line-height:1.25}
+  .home .hs-mob b{font-size:17px}.home .hs-mob small{font-size:13px;opacity:.85}
+  .home .joined{grid-template-columns:minmax(0,1fr);gap:12px;padding:16px}
+  .home .j-faces{display:flex}
+  .home .j-num b{font-size:46px}
+  .home .j-t{font-size:15.5px}
+  .home .j-cta{text-align:center;justify-content:center;display:flex;font-size:16px;padding:14px}
+  .home .popular{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin-right:calc(var(--gutter) * -1);padding-right:var(--gutter)}
+  .home .popular::-webkit-scrollbar{display:none}
+  .home .popular a{white-space:nowrap;flex:none}
+}
+@media (max-width:520px){
+  .home .j-face:nth-child(n+5){display:none}
+  .home .j-faces{flex-wrap:wrap;row-gap:6px}
+  .home .port{padding:12px}.home .port b{font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.home .port small{display:block;font-size:12.5px}
+  .home .sec h2,.home .join h2{font-size:21px}
+  .home .join{padding:20px}.home .join-cta{width:100%}.home .join-cta a{flex:1;text-align:center}
+  .home .sec-h a{font-size:14px}
 }
 `;

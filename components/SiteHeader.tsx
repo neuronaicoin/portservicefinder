@@ -23,29 +23,49 @@ export function SiteHeader() {
   return (
     <header className="psf-header" style={{ position: 'sticky', top: 0, zIndex: 100, background: 'color-mix(in srgb, var(--card) 92%, transparent)', backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)', borderBottom: '1px solid var(--line)' }}>
       <style>{`
-        .psf-header .in{max-width:1200px;margin:0 auto;padding:0 20px;height:64px;display:flex;align-items:center;gap:24px}
+        .psf-header .in{max-width:var(--wrap);margin:0 auto;padding:0 var(--gutter);height:64px;display:flex;align-items:center;gap:24px}
+        .psf-header .home-link{display:flex;min-width:0;flex:0 1 auto;text-decoration:none}
         .psf-header nav.main{display:flex;gap:4px}
-        .psf-header nav.main a{padding:8px 10px;border-radius:8px;font-size:14.5px;color:var(--ink2);text-decoration:none;font-weight:500}
+        .psf-header nav.main a{padding:8px 10px;border-radius:8px;font-size:14.5px;color:var(--ink2);text-decoration:none;font-weight:500;white-space:nowrap}
         .psf-header nav.main a:hover{color:var(--ink);background:var(--bg2)}
         .psf-header nav.main a.on{color:var(--ink);font-weight:600}
-        .psf-header .right{margin-left:auto;display:flex;align-items:center;gap:10px}
-        .psf-header .login{font-size:14.5px;color:var(--ink2);text-decoration:none;padding:8px 10px;font-weight:500}
-        .psf-header .cta{background:var(--acc);color:var(--on-acc);text-decoration:none;font-weight:650;font-size:14.5px;padding:10px 16px;border-radius:10px;white-space:nowrap}
+        .psf-header .right{margin-left:auto;display:flex;align-items:center;gap:10px;flex:none}
+        .psf-header .login{font-size:14.5px;color:var(--ink2);text-decoration:none;padding:8px 10px;font-weight:500;white-space:nowrap}
+        .psf-header .cta{background:var(--acc);color:var(--on-acc);text-decoration:none;font-weight:650;font-size:14.5px;padding:10px 16px;border-radius:10px;white-space:nowrap;display:inline-block}
         .psf-header .cta:hover{background:var(--acc-h)}
-        .psf-header .burger{display:none;width:40px;height:40px;border-radius:9px;border:1px solid var(--line);background:var(--card);color:var(--ink);align-items:center;justify-content:center;cursor:pointer}
+        .psf-header .burger{display:none;width:40px;height:40px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);align-items:center;justify-content:center;cursor:pointer;flex:none;padding:0}
         .psf-header .sheet{display:none}
+        .psf-header .sheet-theme{display:none}
+        @media (max-width:1080px){.psf-header .in{gap:14px}.psf-header nav.main a{padding:8px 7px;font-size:14px}}
         @media (max-width:960px){
           .psf-header nav.main,.psf-header .login{display:none}
           .psf-header .burger{display:inline-flex}
-          .psf-header .in{gap:12px;padding:0 16px;height:60px}
-          .psf-header .sheet.open{display:block;border-top:1px solid var(--line);background:var(--card);padding:8px 16px 16px}
-          .psf-header .sheet a{display:block;padding:13px 4px;border-bottom:1px solid var(--line);color:var(--ink);text-decoration:none;font-size:16px;font-weight:500}
+          .psf-header .in{gap:10px;height:60px}
+          .psf-header .right{gap:8px}
+          .psf-header .right>button:first-child{width:40px!important;height:40px!important;border-radius:10px!important}
+          .psf-header .cta{height:40px;line-height:40px;padding:0 14px;font-size:14px}
+          .psf-header .sheet.open{display:block;border-top:1px solid var(--line);background:var(--card);padding:6px var(--gutter) 16px;max-height:calc(100dvh - 60px);overflow-y:auto}
+          .psf-header .sheet a{display:flex;align-items:center;justify-content:space-between;padding:14px 2px;border-bottom:1px solid var(--line);color:var(--ink);text-decoration:none;font-size:16px;font-weight:500}
+          .psf-header .sheet a::after{content:'›';color:var(--ink3);font-size:20px}
+          .psf-header .sheet a.sheet-cta{justify-content:center;margin-top:14px;border:0;border-radius:12px;padding:14px;font-weight:700}
+          .psf-header .sheet a.sheet-cta::after{content:none}
         }
         @media (max-width:620px){.psf-header .cta .long{display:none}}
-        @media (max-width:480px){.psf-header .in{gap:8px;padding:0 12px}.psf-header .right{gap:6px}.psf-header .cta{padding:8px 10px;font-size:13.5px}.psf-header .psf-logo{font-size:14px!important;gap:7px!important;letter-spacing:0!important}.psf-header .psf-logo svg{width:26px;height:26px}}
+        @media (max-width:420px){
+          .psf-header .in{gap:6px;height:56px}
+          .psf-header .right{gap:6px}
+          .psf-header .right>button:first-child{display:none!important}
+          .psf-header .sheet-theme{display:flex;align-items:center;justify-content:space-between;padding:12px 2px;border-bottom:1px solid var(--line);font-size:16px;font-weight:500}
+          .psf-header .cta,.psf-header .burger{height:38px}.psf-header .cta{line-height:38px}
+          .psf-header .burger{width:38px}
+          .psf-header .cta{padding:0 12px;font-size:13.5px}
+          .psf-header .psf-logo{font-size:15px!important;gap:7px!important;letter-spacing:0!important}
+          .psf-header .psf-logo svg{width:28px;height:28px}
+        }
+        @media (max-width:350px){.psf-header .psf-logo{font-size:13.5px!important;gap:6px!important}.psf-header .psf-logo svg{width:24px;height:24px}.psf-header .cta{padding:0 10px;font-size:13px}}
       `}</style>
       <div className="in">
-        <Link href="/" aria-label="PortServiceFinder home" style={{ textDecoration: 'none' }}>
+        <Link href="/" aria-label="PortServiceFinder home" className="home-link">
           <Logo />
         </Link>
         <nav className="main" aria-label="Main">
@@ -77,6 +97,13 @@ export function SiteHeader() {
           </Link>
         ))}
         <Link href="/for-providers/login">Log in</Link>
+        <div className="sheet-theme">
+          <span>Dark / light mode</span>
+          <ThemeToggle />
+        </div>
+        <Link href="/for-providers/signup" className="sheet-cta gold">
+          List your company free
+        </Link>
       </div>
     </header>
   );

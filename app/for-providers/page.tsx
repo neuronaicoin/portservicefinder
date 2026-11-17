@@ -100,7 +100,7 @@ export default function ForProvidersPage() {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema).replace(/</g, '\\u003c') }} />
       <style>{`
-        .fp{max-width:1080px;margin:0 auto;padding:48px 20px 8px;color:var(--ink);font-family:var(--font-ui)}
+        .fp{max-width:var(--wrap);margin:0 auto;padding:48px 20px 8px;color:var(--ink);font-family:var(--font-ui)}
         .fp .eyebrow{font-size:13px;font-weight:600;color:var(--ink3);margin:0 0 10px}
         .fp h1{font-size:clamp(30px,6.5vw,48px);font-weight:700;letter-spacing:-0.025em;line-height:1.1;margin:0 0 16px;max-width:820px}
         .fp .lede{font-size:18px;line-height:1.6;color:var(--ink2);margin:0 0 22px;max-width:680px}

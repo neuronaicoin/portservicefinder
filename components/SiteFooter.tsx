@@ -14,12 +14,12 @@ export function SiteFooter() {
   return (
     <footer className="psf-footer" style={{ borderTop: '1px solid var(--line)', background: 'var(--card)', marginTop: 64 }}>
       <style>{`
-        .psf-footer .in{max-width:1200px;margin:0 auto;padding:44px 20px 28px;display:grid;grid-template-columns:minmax(0,1.3fr) repeat(4,minmax(0,1fr));gap:28px}
+        .psf-footer .in{max-width:var(--wrap);margin:0 auto;padding:44px var(--gutter) 28px;display:grid;grid-template-columns:minmax(0,1.3fr) repeat(4,minmax(0,1fr));gap:28px}
         .psf-footer h3{font-size:13px;font-weight:650;color:var(--ink);margin:0 0 10px}
         .psf-footer ul{list-style:none;margin:0;padding:0;display:grid;gap:8px}
         .psf-footer a{color:var(--ink2);text-decoration:none;font-size:14px}
         .psf-footer a:hover{color:var(--acc)}
-        .psf-footer .base{max-width:1200px;margin:0 auto;padding:16px 20px 28px;border-top:1px solid var(--line);display:flex;flex-wrap:wrap;gap:8px 20px;justify-content:space-between;color:var(--ink3);font-size:13px}
+        .psf-footer .base{max-width:var(--wrap);margin:0 auto;padding:16px var(--gutter) 28px;border-top:1px solid var(--line);display:flex;flex-wrap:wrap;gap:8px 20px;justify-content:space-between;color:var(--ink3);font-size:13px}
         @media (max-width:860px){.psf-footer .in{grid-template-columns:repeat(2,minmax(0,1fr))}.psf-footer .brand{grid-column:1/-1}}
       `}</style>
       <div className="in">

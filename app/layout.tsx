@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Script from "next/script";
 import "./globals.css";
 import { siteConfig, getKeywordsString, getOrganizationSchema, getWebsiteSchema } from "@/lib/site-config";
+import { MobileFinder } from '@/components/MobileFinder';
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
@@ -170,6 +171,7 @@ export default function RootLayout({
           />
         </noscript>
         {children}
+        <MobileFinder />
       </body>
     </html>
   );

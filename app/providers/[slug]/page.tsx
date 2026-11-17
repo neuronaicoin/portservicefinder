@@ -232,7 +232,7 @@ export default async function ProviderPage({ params }: { params: Promise<{ slug:
 
 const CSS = `
 .pp{background:var(--bg);min-height:100vh}
-.pp .wrap{max-width:1200px;margin:0 auto;padding:0 20px}
+.pp .wrap{max-width:var(--wrap);margin:0 auto;padding:0 20px}
 .pp .crumbs{font-size:13.5px;color:var(--ink3);padding-top:18px}
 .pp .crumbs a{color:var(--ink3);text-decoration:none}.pp .crumbs a:hover{color:var(--acc)}
 .pp .head{display:flex;gap:18px;align-items:center;padding:22px 0 20px}
