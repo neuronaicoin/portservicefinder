@@ -9,6 +9,8 @@ export const siteConfig = {
   alternateName: ['PSF', 'Port Service Finder'],
   url: 'https://www.portservicefinder.com',
   email: 'contact@portservicefinder.com',
+  // WhatsApp number for the help button, digits with country code (empty = no WhatsApp option)
+  whatsapp: '',
   foundingDate: '2025',
   // Where the company is based (shown in the footer, About, Terms and structured data)
   address: { addressLocality: 'London', addressRegion: 'England', addressCountry: 'GB' },

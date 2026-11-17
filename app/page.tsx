@@ -8,6 +8,7 @@ import { ProviderAvatar } from '@/components/home/ProviderAvatar';
 import { agoText, getListedProviders, getListingStats, initials } from '@/lib/providers-db';
 import { BLOG_POSTS } from './data/blog';
 import { siteConfig } from '@/lib/site-config';
+import { getDemand, demandHref } from '@/lib/port-requests';
 
 // the newest companies and counts: refreshed every 5 minutes
 export const revalidate = 300;
@@ -54,7 +55,8 @@ const FAQ = [
 ];
 
 export default async function Home() {
-  const [stats, providers] = await Promise.all([getListingStats(), getListedProviders()]);
+  const [stats, providers, demand] = await Promise.all([getListingStats(), getListedProviders(), getDemand()]);
+  const live = demand.slice(0, 4);
   const newest = providers.slice(0, 6);
   const ticker = providers.slice(0, 24);
   const guides = [...BLOG_POSTS].sort((a, b) => String(b.publishedDate).localeCompare(String(a.publishedDate))).slice(0, 6);
@@ -210,6 +212,32 @@ export default async function Home() {
 
 
 
+      {live.length > 0 && (
+        <section className="wrap sec livereq" aria-labelledby="lr-h">
+          <div className="sec-h">
+            <h2 id="lr-h">
+              <span className="pulse" aria-hidden="true" /> Live port requests
+            </h2>
+            <Link href="/requests">See all →</Link>
+          </div>
+          <ul className="lr">
+            {live.map((d) => (
+              <li key={d.id}>
+                <Link href={d.kind === 'request' ? '/requests' : demandHref(d)}>
+                  <span className={`lk ${d.kind}`}>{d.kind === 'request' ? 'Request' : 'Search'}</span>
+                  <span className="lt">
+                    <b>{d.service}</b>
+                    <small>
+                      {d.port?.flag} {d.portName} · {agoText(d.at, now)}
+                    </small>
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
       <section className="wrap sec">
         <h2>How it works</h2>
         <ol className="steps">
@@ -245,6 +273,22 @@ export default async function Home() {
               How listing works
             </Link>
           </div>
+        </div>
+      </section>
+
+      <section className="wrap sec" aria-labelledby="ft-h">
+        <div className="sec-h">
+          <h2 id="ft-h">Featured companies</h2>
+          <Link href="/contact?topic=featured">Get featured →</Link>
+        </div>
+        <div className="feat">
+          {['Ship agent', 'Shipchandler', 'Marine services'].map((t) => (
+            <Link key={t} href="/contact?topic=featured" className="card fslot">
+              <span className="fbadge">Featured spot</span>
+              <b>Your company here</b>
+              <small>{t} · top of your port pages</small>
+            </Link>
+          ))}
         </div>
       </section>
 
@@ -468,6 +512,31 @@ const CSS = `
   .home .faq summary{font-size:14.5px;padding:13px 26px 13px 0}
   .home .faq details{padding:0 14px}
   .home .faq details p{font-size:14px}
+}
+
+.home .livereq h2{display:flex;align-items:center;gap:10px}
+.home .livereq h2 .pulse{flex:none}
+.home .lr{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.home .lr a{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;text-decoration:none;color:inherit;min-width:0;animation:psfUp .5s ease both}
+.home .lr li:nth-child(2) a{animation-delay:.08s}.home .lr li:nth-child(3) a{animation-delay:.16s}.home .lr li:nth-child(4) a{animation-delay:.24s}
+.home .lr a:hover{border-color:color-mix(in srgb,var(--acc) 55%,var(--line))}
+.home .lk{flex:none;font-size:11.5px;font-weight:700;padding:4px 9px;border-radius:999px}
+.home .lk.request{background:color-mix(in srgb,var(--acc) 14%,var(--card));color:var(--acc)}
+.home .lk.search{background:color-mix(in srgb,var(--ok) 12%,var(--card));color:var(--ok)}
+.home .lt{min-width:0;display:flex;flex-direction:column}
+.home .lt b{font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.home .lt small{color:var(--ink3);font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.home .feat{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.home .fslot{padding:16px 18px;display:flex;flex-direction:column;gap:4px;border-style:dashed;background:linear-gradient(135deg,color-mix(in srgb,#c9a227 8%,var(--card)),var(--card))}
+.home .fslot b{font-size:15.5px}.home .fslot small{color:var(--ink3);font-size:13px}
+.home .fbadge{align-self:flex-start;font-size:11px;font-weight:700;letter-spacing:.02em;color:#8a6d12;background:color-mix(in srgb,#c9a227 22%,var(--card));padding:3px 8px;border-radius:6px;margin-bottom:4px}
+@media (max-width:820px){
+  .home .panel .row:nth-child(n+5){display:none}
+  .home .lr{grid-template-columns:minmax(0,1fr);gap:8px}
+  .home .lr a{padding:10px 12px}
+  .home .feat{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin-right:calc(var(--gutter) * -1);padding-right:var(--gutter)}
+  .home .feat::-webkit-scrollbar{display:none}
+  .home .fslot{flex:none;width:72%;max-width:260px;padding:12px 14px}
 }
 @keyframes psfSweep{0%,60%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
 `;

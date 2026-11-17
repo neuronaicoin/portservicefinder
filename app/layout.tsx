@@ -3,6 +3,7 @@ import Script from "next/script";
 import "./globals.css";
 import { siteConfig, getKeywordsString, getOrganizationSchema, getWebsiteSchema } from "@/lib/site-config";
 import { MobileFinder } from '@/components/MobileFinder';
+import { HelpBubble } from '@/components/HelpBubble';
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
@@ -172,6 +173,7 @@ export default function RootLayout({
         </noscript>
         {children}
         <MobileFinder />
+        <HelpBubble />
       </body>
     </html>
   );

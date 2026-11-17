@@ -5,10 +5,12 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Logo } from './Logo';
 import { ThemeToggle } from './ThemeToggle';
+import { siteConfig } from '@/lib/site-config';
 
 const NAV = [
   { href: '/providers', label: 'Find providers' },
   { href: '/ports', label: 'Ports' },
+  { href: '/requests', label: 'Requests' },
   { href: '/voyage', label: 'Voyage tools' },
   { href: '/blog', label: 'Guides' },
   { href: '/for-providers', label: 'For providers' },
@@ -48,7 +50,9 @@ export function SiteHeader() {
         .psf-header .burger{display:none;width:40px;height:40px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);align-items:center;justify-content:center;cursor:pointer;flex:none;padding:0}
         .psf-header .sheet{display:none}
         .psf-header .sheet-theme{display:none}
-        @media (max-width:1080px){.psf-header .in{gap:14px}.psf-header nav.main a{padding:8px 7px;font-size:14px}}
+        @media (max-width:1240px){.psf-header .cta .long{display:none}}
+        @media (max-width:1010px){.psf-header nav.main a[href="/voyage"]{display:none}}
+        @media (max-width:1080px){.psf-header .in{gap:14px}.psf-header nav.main a{padding:8px 7px;font-size:14px}.psf-header nav.main a[href="/blog"]{display:none}}
         @media (max-width:960px){
           .psf-header nav.main,.psf-header .login{display:none}
           .psf-header .burger{display:inline-flex}
@@ -120,6 +124,13 @@ export function SiteHeader() {
           </Link>
         ))}
         <Link href="/for-providers/login">Log in</Link>
+        {String((siteConfig as { whatsapp?: string }).whatsapp || '') ? (
+          <a href={`https://wa.me/${String((siteConfig as { whatsapp?: string }).whatsapp).replace(/[^\d]/g, '')}`} target="_blank" rel="noopener noreferrer">
+            Help on WhatsApp
+          </a>
+        ) : (
+          <Link href="/contact">Help &amp; contact</Link>
+        )}
         <div className="sheet-theme">
           <span>Dark / light mode</span>
           <ThemeToggle />

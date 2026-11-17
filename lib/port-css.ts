@@ -14,7 +14,10 @@ export const PORT_CSS = `
 .pt .sec{margin-top:30px}
 .pt .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
 .pt .join{margin-top:30px;display:flex;gap:20px;align-items:center;justify-content:space-between;background:linear-gradient(135deg,color-mix(in srgb,var(--acc) 10%,var(--card)),var(--card))}
-.pt .join h2{font-size:19px;margin-bottom:6px}.pt .join p{color:var(--ink2);margin:0;line-height:1.55}
+.pt .join h2{font-size:19px;margin-bottom:6px}
+.pt .join p.demand{display:inline-flex;align-items:center;gap:8px;color:var(--ok);font-weight:650;font-size:14px;line-height:1.4;margin:0 0 8px;background:color-mix(in srgb,var(--ok) 10%,var(--card));border:1px solid color-mix(in srgb,var(--ok) 28%,var(--line));padding:6px 12px;border-radius:12px}
+.pt .pulse-dot{flex:none;width:8px;height:8px;border-radius:50%;background:var(--ok);animation:ptPulse 2s infinite}
+@keyframes ptPulse{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--ok) 55%,transparent)}70%{box-shadow:0 0 0 8px transparent}100%{box-shadow:0 0 0 0 transparent}}.pt .join p{color:var(--ink2);margin:0;line-height:1.55}
 .pt .btn{background:var(--acc);color:var(--on-acc);padding:12px 18px;border-radius:10px;font-weight:650;text-decoration:none;white-space:nowrap}
 .pt .links{display:flex;flex-wrap:wrap;gap:8px}.pt .links.col{flex-direction:column;align-items:flex-start}
 .pt .links a{border:1px solid var(--line);background:var(--card);border-radius:9px;padding:8px 12px;font-size:14.5px;color:var(--ink);text-decoration:none}

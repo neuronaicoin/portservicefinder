@@ -224,6 +224,9 @@ export default function RequestQuotePage() {
           <button type="submit" className="submit" disabled={submitting} style={{ cursor: submitting ? "not-allowed" : "pointer", opacity: submitting ? 0.6 : 1 }}>
             {submitting ? "Sending..." : "Send request"}
           </button>
+          <p style={{ color: "var(--ink3)", fontSize: 13, lineHeight: 1.5, marginTop: 12 }}>
+            Your contact details go only to companies listed at this port. The port, service, vessel type and ETA (without your name or details) also appear on our public <a href="/requests" style={{ color: "var(--acc)" }}>Port requests</a> board.
+          </p>
         </form>
       </main>
       <SiteFooter />

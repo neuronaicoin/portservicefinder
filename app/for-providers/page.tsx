@@ -18,8 +18,8 @@ const BENEFITS = [
     desc: 'A superintendent with a vessel heading to Constanta or Santos searches that port. If you serve it, your company is on the list they see.',
   },
   {
-    title: 'Your own company page',
-    desc: 'Your listing gets a company page with its own link. Share it on LinkedIn, put it in your email signature or send it to clients.',
+    title: 'A free company website page',
+    desc: 'Your listing is a full company page with its own link: services, ports, contact buttons and a share card. No website of your own needed. Share it on LinkedIn or put it in your email signature.',
   },
   {
     title: 'Direct contact, no commission',
@@ -27,7 +27,7 @@ const BENEFITS = [
   },
   {
     title: 'Quote requests by port',
-    desc: 'When an operator sends a quote request for your port and service, it lands in your dashboard with their contact details.',
+    desc: 'When an operator sends a quote request for your port and service, it lands in your dashboard with their contact details. See what operators ask for on the live Port requests board.',
   },
   {
     title: 'See your visibility',

@@ -14,6 +14,7 @@ export const revalidate = 3600;
 const STATIC: [string, MetadataRoute.Sitemap[number]['changeFrequency'], number][] = [
   ['/', 'daily', 1],
   ['/providers', 'daily', 0.9],
+  ['/requests', 'hourly', 0.8],
   ['/ports', 'daily', 0.9],
   ['/for-providers', 'weekly', 0.9],
   ['/for-providers/signup', 'monthly', 0.8],

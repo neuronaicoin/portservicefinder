@@ -5,6 +5,7 @@ import { SiteHeader } from '@/components/SiteHeader';
 import { SiteFooter } from '@/components/SiteFooter';
 import { ProviderCard } from '@/components/providers/ProviderCard';
 import { getListedProviders, getProvidersForPortSlug, providerOffers } from '@/lib/providers-db';
+import { getDemandForPort } from '@/lib/port-requests';
 import { ALL_PORTS, legacySlug, portBySlug, type PortRef } from '@/lib/ports';
 import { countryPorts, directoryEntry, guidesFor } from '@/lib/port-content';
 import { SERVICE_CATEGORIES } from '@/lib/services-config';
@@ -47,7 +48,7 @@ export default async function PortPage({ params }: { params: Promise<{ port: str
   const port = resolve(slug);
   if (port === 'moved') permanentRedirect(`/ports/${ALL_PORTS.find((x) => legacySlug(x.name) === slug)!.slug}`);
   if (!port) notFound();
-  const [providers, all] = await Promise.all([getProvidersForPortSlug(port.slug), getListedProviders()]);
+  const [providers, all, demand] = await Promise.all([getProvidersForPortSlug(port.slug), getListedProviders(), getDemandForPort(port.slug, 500)]);
   const dir = directoryEntry(port);
   const guides = guidesFor(port);
   const others = countryPorts(port);
@@ -186,6 +187,11 @@ export default async function PortPage({ params }: { params: Promise<{ port: str
         <section className="card join more">
           <div>
             <h2>{providers.length ? `Work in ${port.name}? Join ${providers.length === 1 ? 'the company' : `the ${providers.length} companies`} listed here.` : `Be the first company listed in ${port.name}.`}</h2>
+            {demand.length > 0 && (
+              <p className="demand">
+                <span className="pulse-dot" aria-hidden="true" /> {demand.length} operator {demand.length === 1 ? 'search or request' : 'searches and requests'} for {port.name} in the last 60 days
+              </p>
+            )}
             <p>Operators search by port. Your listing appears here and on its own company page you can share. Free during our launch period.</p>
           </div>
           <Link href="/for-providers/signup" className="btn gold">

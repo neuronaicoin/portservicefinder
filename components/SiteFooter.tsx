@@ -3,7 +3,7 @@ import { Logo } from './Logo';
 import { siteConfig } from '@/lib/site-config';
 
 const COLS: { title: string; links: [string, string][] }[] = [
-  { title: 'Find', links: [['/providers', 'All providers'], ['/ports', 'Ports'], ['/request-quote', 'Request a quote'], ['/voyage', 'Voyage tools']] },
+  { title: 'Find', links: [['/providers', 'All providers'], ['/ports', 'Ports'], ['/request-quote', 'Request a quote'], ['/requests', 'Port requests'], ['/voyage', 'Voyage tools']] },
   { title: 'Providers', links: [['/for-providers', 'Why list with us'], ['/for-providers/signup', 'List your company free'], ['/for-providers/login', 'Provider login'], ['/listing-rules', 'Listing rules'], ['/pricing', 'Pricing']] },
   { title: 'Company', links: [['/about', 'About'], ['/blog', 'Guides'], ['/faq', 'FAQ'], ['/contact', 'Contact']] },
   { title: 'Legal', links: [['/terms', 'Terms'], ['/privacy', 'Privacy'], ['/refund-policy', 'Refund policy']] },

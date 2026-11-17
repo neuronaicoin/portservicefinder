@@ -10,6 +10,8 @@ import { getListedProviders, getProviderBySlug, initials, providerOffers, type L
 import { CHANDLER_CATEGORIES, MARINE_SERVICES } from '@/lib/ports';
 import { SERVICE_CATEGORIES } from '@/lib/services-config';
 import { siteConfig } from '@/lib/site-config';
+import { getDemandForPort } from '@/lib/port-requests';
+import { agoText as ago } from '@/lib/providers-db';
 
 export const revalidate = 300;
 
@@ -56,6 +58,8 @@ export default async function ProviderPage({ params }: { params: Promise<{ slug:
   const sameCountry = nearby.length < 3 ? all.filter((o) => o.id !== p.id && o.country === p.country && !nearby.includes(o)).slice(0, 6 - nearby.length) : [];
   const cats = SERVICE_CATEGORIES.filter((c) => providerOffers(p, c));
   const mainPort = p.ports[0];
+  const demand = mainPort ? await getDemandForPort(mainPort.slug, 4) : [];
+  const now = Date.now();
 
   const faq = [
     { q: `Which ports does ${p.name} serve?`, a: `${p.name} lists ${p.ports.map((x) => x.name).join(', ')} in ${p.country}.` },
@@ -215,11 +219,35 @@ export default async function ProviderPage({ params }: { params: Promise<{ slug:
               </section>
             )}
 
+            {mainPort && (
+              <section className="card">
+                <h2>Live demand in {mainPort.name}</h2>
+                {demand.length === 0 ? (
+                  <p className="small" style={{ marginTop: 0 }}>Operator requests for {mainPort.name} show here as they come in.</p>
+                ) : (
+                  <ul className="dem">
+                    {demand.map((d) => (
+                      <li key={d.id}>
+                        <span className={`dk ${d.kind}`}>{d.kind === 'request' ? 'Request' : 'Search'}</span>
+                        <span className="dt">
+                          <b>{d.service}</b>
+                          <small>{ago(d.at, now)}{d.vessel ? ` · ${d.vessel}` : ''}</small>
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+                <Link href="/requests" className="small" style={{ display: 'inline-block', marginTop: 10, color: 'var(--acc)', textDecoration: 'none', fontWeight: 600 }}>
+                  All port requests →
+                </Link>
+              </section>
+            )}
+
             <section className="card cta">
-              <h2>Run a marine service company?</h2>
-              <p className="small">Get your own company page and appear on every port you serve. Free during our launch period.</p>
+              <h2>Get a free company page like this</h2>
+              <p className="small">Your own page with services, ports and direct contact buttons, listed on every port you serve. Free during our launch period.</p>
               <Link href="/for-providers/signup" className="btn gold">
-                List your company free
+                Create my free page
               </Link>
             </section>
           </aside>
@@ -256,6 +284,14 @@ const CSS = `
 .pp .btn{display:inline-flex;margin-top:12px;background:var(--acc);color:var(--on-acc);padding:11px 16px;border-radius:10px;font-weight:650;text-decoration:none}
 .pp .cta{background:linear-gradient(135deg,color-mix(in srgb,var(--acc) 10%,var(--card)),var(--card))}
 .pp .m-only{display:none}
+.pp .dem{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.pp .dem li{display:flex;gap:10px;align-items:center;min-width:0}
+.pp .dk{flex:none;font-size:11px;font-weight:700;padding:3px 8px;border-radius:999px}
+.pp .dk.request{background:color-mix(in srgb,var(--acc) 14%,var(--card));color:var(--acc)}
+.pp .dk.search{background:color-mix(in srgb,var(--ok) 12%,var(--card));color:var(--ok)}
+.pp .dt{min-width:0;display:flex;flex-direction:column}
+.pp .dt b{font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pp .dt small{color:var(--ink3);font-size:12px}
 @media (max-width:900px){.pp .cols{grid-template-columns:1fr}.pp .m-only{display:block;margin-bottom:14px}.pp .d-only{display:none}}
 @media (max-width:520px){.pp .wrap{padding:0 16px}.pp .head{gap:14px}.pp .card{padding:16px}}
 `;
