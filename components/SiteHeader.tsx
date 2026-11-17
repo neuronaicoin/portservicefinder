@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Logo } from './Logo';
 import { ThemeToggle } from './ThemeToggle';
@@ -17,6 +17,15 @@ const NAV = [
 /** The one header every page uses: navigation, theme switch, log in and the free listing button. */
 export function SiteHeader() {
   const path = usePathname() || '/';
+  const router = useRouter();
+  const goBack = () => {
+    let sameSite = false;
+    try {
+      sameSite = !!document.referrer && new URL(document.referrer).origin === location.origin;
+    } catch {}
+    if (sameSite && window.history.length > 1) router.back();
+    else router.push(path.split('/').slice(0, -1).join('/') || '/');
+  };
   const [open, setOpen] = useState(false);
   useEffect(() => setOpen(false), [path]);
   const active = (href: string) => path === href || path.startsWith(href + '/');
@@ -25,6 +34,9 @@ export function SiteHeader() {
       <style>{`
         .psf-header .in{max-width:var(--wrap);margin:0 auto;padding:0 var(--gutter);height:64px;display:flex;align-items:center;gap:24px}
         .psf-header .home-link{display:flex;min-width:0;flex:0 1 auto;text-decoration:none}
+        .psf-header .back{flex:none;width:40px;height:40px;margin-right:-12px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;padding:0}
+        .psf-header .back:hover{border-color:var(--acc);color:var(--acc)}
+        .psf-header .home-link{overflow:hidden}
         .psf-header nav.main{display:flex;gap:4px}
         .psf-header nav.main a{padding:8px 10px;border-radius:8px;font-size:14.5px;color:var(--ink2);text-decoration:none;font-weight:500;white-space:nowrap}
         .psf-header nav.main a:hover{color:var(--ink);background:var(--bg2)}
@@ -51,8 +63,9 @@ export function SiteHeader() {
           .psf-header .sheet a.sheet-cta::after{content:none}
         }
         @media (max-width:620px){.psf-header .cta .long{display:none}}
-        @media (max-width:420px){
+        @media (max-width:560px){
           .psf-header .in{gap:6px;height:56px}
+          .psf-header .back{width:38px;height:38px;margin-right:0}
           .psf-header .right{gap:6px}
           .psf-header .right>button:first-child{display:none!important}
           .psf-header .sheet-theme{display:flex;align-items:center;justify-content:space-between;padding:12px 2px;border-bottom:1px solid var(--line);font-size:16px;font-weight:500}
@@ -62,9 +75,19 @@ export function SiteHeader() {
           .psf-header .psf-logo{font-size:15px!important;gap:7px!important;letter-spacing:0!important}
           .psf-header .psf-logo svg{width:28px;height:28px}
         }
-        @media (max-width:350px){.psf-header .psf-logo{font-size:13.5px!important;gap:6px!important}.psf-header .psf-logo svg{width:24px;height:24px}.psf-header .cta{padding:0 10px;font-size:13px}}
+        @media (max-width:400px){.psf-header .psf-logo{font-size:13.5px!important;gap:6px!important}}
+        @media (max-width:430px){.psf-header .back~.home-link .psf-logo{font-size:13px!important;gap:6px!important}.psf-header .back~.home-link .psf-logo svg{width:26px;height:26px}}
+        @media (max-width:369px){.psf-header .back~.home-link .psf-logo>span{display:none}}
+        @media (max-width:350px){.psf-header .psf-logo{font-size:13px!important;gap:6px!important}.psf-header .psf-logo svg{width:24px;height:24px}.psf-header .cta{padding:0 10px;font-size:13px}}
       `}</style>
       <div className="in">
+        {path !== '/' && (
+          <button type="button" className="back" aria-label="Go back" onClick={goBack}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M15 5l-7 7 7 7" />
+            </svg>
+          </button>
+        )}
         <Link href="/" aria-label="PortServiceFinder home" className="home-link">
           <Logo />
         </Link>

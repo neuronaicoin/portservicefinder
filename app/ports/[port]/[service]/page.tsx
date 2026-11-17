@@ -115,11 +115,20 @@ export default async function PortServicePage({ params }: { params: Promise<{ po
             </div>
           </section>
         ) : (
-          <section className="card">
+          <section className="card empty">
+            <span className="em-ico" aria-hidden="true">🔎</span>
             <h2>No {cat.shortLabel.toLowerCase()} company listed at {port.name} yet</h2>
             <p className="note">
-              See the <Link href={`/ports/${port.slug}`}>{port.name} port page</Link> for every company there{sameCountry.length ? `, or the companies elsewhere in ${port.country} below` : ''}.
+              Be the first one operators find here{sameCountry.length ? `, or see companies elsewhere in ${port.country} below` : ''}.
             </p>
+            <div className="em-cta">
+              <Link href="/for-providers/signup" className="btn gold">
+                List your company free
+              </Link>
+              <Link href={`/ports/${port.slug}`} className="ghost">
+                All companies in {port.name}
+              </Link>
+            </div>
           </section>
         )}
 
@@ -136,7 +145,7 @@ export default async function PortServicePage({ params }: { params: Promise<{ po
           </section>
         )}
 
-        <section className="card join">
+        <section className="card join more">
           <div>
             <h2>
               Offer {cat.shortLabel.toLowerCase()} in {port.name}?
@@ -149,7 +158,7 @@ export default async function PortServicePage({ params }: { params: Promise<{ po
         </section>
 
         {otherCats.length > 0 && (
-          <section className="sec">
+          <section className="sec more">
             <h2>More services in {port.name}</h2>
             <div className="links">
               {otherCats.map((c) => (
@@ -162,7 +171,7 @@ export default async function PortServicePage({ params }: { params: Promise<{ po
         )}
 
         {otherPorts.length > 0 && (
-          <section className="sec">
+          <section className="sec more">
             <h2>
               {cat.shortLabel} in other ports of {port.country}
             </h2>
@@ -176,7 +185,7 @@ export default async function PortServicePage({ params }: { params: Promise<{ po
           </section>
         )}
 
-        <section className="sec">
+        <section className="sec more">
           <h2>Questions</h2>
           <dl className="faq">
             {faq.map((f) => (

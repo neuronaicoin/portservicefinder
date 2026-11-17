@@ -5,7 +5,7 @@ import { SiteFooter } from '@/components/SiteFooter';
 import { HomeSearch } from '@/components/home/HomeSearch';
 import { FinderButton } from '@/components/MobileFinder';
 import { ProviderAvatar } from '@/components/home/ProviderAvatar';
-import { agoText, getActivePorts, getListedProviders, getListingStats, initials } from '@/lib/providers-db';
+import { agoText, getListedProviders, getListingStats, initials } from '@/lib/providers-db';
 import { BLOG_POSTS } from './data/blog';
 import { siteConfig } from '@/lib/site-config';
 
@@ -54,7 +54,7 @@ const FAQ = [
 ];
 
 export default async function Home() {
-  const [stats, providers, ports] = await Promise.all([getListingStats(), getListedProviders(), getActivePorts()]);
+  const [stats, providers] = await Promise.all([getListingStats(), getListedProviders()]);
   const newest = providers.slice(0, 6);
   const ticker = providers.slice(0, 24);
   const guides = [...BLOG_POSTS].sort((a, b) => String(b.publishedDate).localeCompare(String(a.publishedDate))).slice(0, 6);
@@ -115,7 +115,7 @@ export default async function Home() {
           )}
           <p className="j-sub">Ship agents, shipchandlers and marine service companies are listing their ports now. Listing is free during our launch period.</p>
           <Link href="/for-providers/signup" className="btn gold j-cta">
-            List your company free →
+            List<span className="j-long"> your company</span> free →
           </Link>
         </div>
       </section>
@@ -150,16 +150,6 @@ export default async function Home() {
               <small>Country · Port · Service</small>
             </span>
           </FinderButton>
-          {ports.length > 0 && (
-          <p className="popular">
-            Popular:{' '}
-            {ports.slice(0, 5).map((p) => (
-              <Link key={p.slug} href={`/ports/${p.slug}`}>
-                {p.flag} {p.name}
-              </Link>
-            ))}
-          </p>
-          )}
         </div>
 
         <aside className="panel" aria-labelledby="new-h">
@@ -211,26 +201,6 @@ export default async function Home() {
         </div>
       )}
 
-      {ports.length > 0 && (
-        <section className="wrap sec">
-          <div className="sec-h">
-            <h2>Ports with listed companies</h2>
-            <Link href="/ports">All ports →</Link>
-          </div>
-          <div className="grid4">
-            {ports.slice(0, 12).map((p) => (
-              <Link key={p.slug} href={`/ports/${p.slug}`} className="card port">
-                <b>
-                  {p.flag} {p.name}
-                </b>
-                <small>
-                  {p.country} · {p.providers} {p.providers === 1 ? 'company' : 'companies'}
-                </small>
-              </Link>
-            ))}
-          </div>
-        </section>
-      )}
 
       <section className="wrap sec">
         <h2>How it works</h2>
@@ -399,11 +369,11 @@ const CSS = `
   .home .ticker .lab{margin-left:16px}
   .home .row em{display:none}
 }
-.home .joined-wrap{padding-top:22px}
-.home .joined{display:grid;grid-template-columns:auto auto minmax(0,1fr) auto;align-items:center;gap:18px 28px;padding:18px 24px;border-radius:18px;border:1px solid color-mix(in srgb,var(--ok) 35%,var(--line));background:linear-gradient(120deg,color-mix(in srgb,var(--ok) 12%,var(--card)),var(--card) 60%);box-shadow:var(--shadow)}
+.home .joined-wrap{padding-top:16px}
+.home .joined{display:grid;grid-template-columns:auto auto minmax(0,1fr) auto;align-items:center;gap:14px 28px;padding:12px 20px;border-radius:18px;border:1px solid color-mix(in srgb,var(--ok) 35%,var(--line));background:linear-gradient(120deg,color-mix(in srgb,var(--ok) 12%,var(--card)),var(--card) 60%);box-shadow:var(--shadow)}
 .home .j-num{display:flex;align-items:center;gap:12px}
 .home .j-num .pulse{width:11px;height:11px;flex:none}
-.home .j-num b{font-size:clamp(40px,4.4vw,56px);line-height:1;font-weight:850;letter-spacing:-0.04em;color:var(--ok)}
+.home .j-num b{font-size:clamp(34px,3.4vw,44px);line-height:1;font-weight:850;letter-spacing:-0.04em;color:var(--ok)}
 .home .j-t{font-size:15px;font-weight:650;line-height:1.3;color:var(--ink)}
 .home .j-faces{display:flex;align-items:center}
 .home .j-face{display:inline-flex;border-radius:10px;box-shadow:0 0 0 2px var(--card);margin-left:4px;background:var(--card)}
@@ -419,11 +389,13 @@ const CSS = `
   .home .hs-mob{display:flex;width:100%;align-items:center;gap:12px;padding:14px 16px;border-radius:14px;border:0;background:var(--acc);color:var(--on-acc);font:inherit;text-align:left;cursor:pointer;box-shadow:var(--shadow)}
   .home .hs-mob span{display:flex;flex-direction:column;line-height:1.25}
   .home .hs-mob b{font-size:17px}.home .hs-mob small{font-size:13px;opacity:.85}
-  .home .joined{grid-template-columns:minmax(0,1fr);gap:12px;padding:16px}
-  .home .j-faces{display:flex}
-  .home .j-num b{font-size:46px}
-  .home .j-t{font-size:15.5px}
-  .home .j-cta{text-align:center;justify-content:center;display:flex;font-size:16px;padding:14px}
+  .home .joined{grid-template-columns:minmax(0,1fr) auto;gap:10px;padding:12px 14px;border-radius:14px}
+  .home .j-faces,.home .j-sub,.home .j-long{display:none}
+  .home .j-num{gap:9px}
+  .home .j-num .pulse{width:9px;height:9px}
+  .home .j-num b{font-size:32px}
+  .home .j-t{font-size:13.5px;line-height:1.25}
+  .home .j-cta{padding:10px 12px;font-size:14px;white-space:nowrap}
   .home .popular{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin-right:calc(var(--gutter) * -1);padding-right:var(--gutter)}
   .home .popular::-webkit-scrollbar{display:none}
   .home .popular a{white-space:nowrap;flex:none}

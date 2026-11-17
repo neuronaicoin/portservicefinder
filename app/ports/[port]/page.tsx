@@ -124,7 +124,7 @@ export default async function PortPage({ params }: { params: Promise<{ port: str
         </p>
 
         {dir && (
-          <section className="card facts" aria-label="Port facts">
+          <section className="card facts more" aria-label="Port facts">
             <h2>{port.name} at a glance</h2>
             <dl>
               <div>
@@ -183,7 +183,7 @@ export default async function PortPage({ params }: { params: Promise<{ port: str
           </section>
         )}
 
-        <section className="card join">
+        <section className="card join more">
           <div>
             <h2>{providers.length ? `Work in ${port.name}? Join ${providers.length === 1 ? 'the company' : `the ${providers.length} companies`} listed here.` : `Be the first company listed in ${port.name}.`}</h2>
             <p>Operators search by port. Your listing appears here and on its own company page you can share. Free during our launch period.</p>
@@ -194,7 +194,7 @@ export default async function PortPage({ params }: { params: Promise<{ port: str
         </section>
 
         {cats.length > 0 && (
-          <section className="sec">
+          <section className="sec more">
             <h2>Services available in {port.name}</h2>
             <div className="links">
               {cats.map(({ c, n }) => (
@@ -207,7 +207,7 @@ export default async function PortPage({ params }: { params: Promise<{ port: str
         )}
 
         {guides.length > 0 && (
-          <section className="sec">
+          <section className="sec more">
             <h2>Guides for {port.name}</h2>
             <div className="links col">
               {guides.map((g) => (
@@ -219,7 +219,7 @@ export default async function PortPage({ params }: { params: Promise<{ port: str
           </section>
         )}
 
-        <section className="sec">
+        <section className="sec more">
           <h2>Questions about {port.name}</h2>
           <dl className="faq">
             {faq.map((f) => (
@@ -232,7 +232,7 @@ export default async function PortPage({ params }: { params: Promise<{ port: str
         </section>
 
         {otherPorts.length > 0 && (
-          <section className="sec">
+          <section className="sec more">
             <h2>Other ports in {port.country}</h2>
             <div className="links">
               {otherPorts.map((p) => (
