@@ -4,6 +4,8 @@ import { SiteHeader } from '@/components/SiteHeader';
 import { SiteFooter } from '@/components/SiteFooter';
 import { HomeSearch } from '@/components/home/HomeSearch';
 import { HeroFinder } from '@/components/home/HeroFinder';
+import { TypedHeadline } from '@/components/home/TypedHeadline';
+import { CountUp } from '@/components/home/CountUp';
 import { ProviderAvatar } from '@/components/home/ProviderAvatar';
 import { agoText, getListedProviders, getListingStats, initials } from '@/lib/providers-db';
 import { BLOG_POSTS } from './data/blog';
@@ -147,21 +149,22 @@ export default async function Home() {
 
       <section className="wrap hero">
         <div className="hero-main">
-          <h1>Ship agents, chandlers and marine services, <span className="h1-acc">port by port.</span></h1>
+          <TypedHeadline />
+          <p className="tagline">Ship agents, chandlers &amp; marine services, <span className="h1-acc">port by port.</span></p>
           <p className="sub">
             Find providers at 1,200+ ports in 150+ countries and contact them directly. Free for ship operators, no commission on any job.
           </p>
           <div className="hstats" aria-label="Coverage">
             <div>
-              <b>1,200+</b>
+              <b><CountUp to={1200} suffix="+" /></b>
               <span>ports</span>
             </div>
             <div>
-              <b>150+</b>
+              <b><CountUp to={150} suffix="+" /></b>
               <span>countries</span>
             </div>
             <div>
-              <b>34</b>
+              <b><CountUp to={34} /></b>
               <span>service categories</span>
             </div>
           </div>
@@ -184,15 +187,16 @@ export default async function Home() {
             <section className="livereq lr-mob" aria-labelledby="lr-h">
               <div className="sec-h">
                 <h2 id="lr-h">
-                  <span className="pulse" aria-hidden="true" /> Live port requests
+                  <span className="pulse" aria-hidden="true" /> Operators are looking for
                 </h2>
+                <span className="lr-live">live now</span>
                 <Link href="/requests">See all →</Link>
               </div>
               <ul className="lr">
                 {live.map((d) => (
                   <li key={d.id}>
-                    <Link href={d.kind === 'request' ? '/requests' : demandHref(d)}>
-                      <span className={`lk ${d.kind}`}>{d.kind === 'request' ? 'Request' : 'Looking for'}</span>
+                    <Link className="lm" href={d.kind === 'request' ? '/requests' : demandHref(d)}>
+                      <span className={`lk ${d.kind}`}>{d.kind === 'request' ? 'Quote request' : 'Needed'}</span>
                       <span className="lt">
                         <b>{d.service}</b>
                         <small>
@@ -200,6 +204,7 @@ export default async function Home() {
                         </small>
                       </span>
                     </Link>
+                    <Link className="lhelp" href="/for-providers/signup">I can help →</Link>
                   </li>
                 ))}
               </ul>
@@ -212,15 +217,16 @@ export default async function Home() {
               <section className="livereq lr-desk" aria-labelledby="lr-h2">
                 <div className="sec-h">
                   <h2 id="lr-h2">
-                    <span className="pulse" aria-hidden="true" /> Live port requests
+                    <span className="pulse" aria-hidden="true" /> Operators are looking for
                   </h2>
-                  <Link href="/requests">See all →</Link>
+                  <span className="lr-live">live now</span>
+                <Link href="/requests">See all →</Link>
                 </div>
                 <ul className="lr">
                   {live.map((d) => (
                     <li key={d.id}>
-                      <Link href={d.kind === 'request' ? '/requests' : demandHref(d)}>
-                        <span className={`lk ${d.kind}`}>{d.kind === 'request' ? 'Request' : 'Looking for'}</span>
+                      <Link className="lm" href={d.kind === 'request' ? '/requests' : demandHref(d)}>
+                        <span className={`lk ${d.kind}`}>{d.kind === 'request' ? 'Quote request' : 'Needed'}</span>
                         <span className="lt">
                           <b>{d.service}</b>
                           <small>
@@ -228,6 +234,7 @@ export default async function Home() {
                           </small>
                         </span>
                       </Link>
+                      <Link className="lhelp" href="/for-providers/signup">I can help →</Link>
                     </li>
                   ))}
                 </ul>
@@ -607,4 +614,28 @@ const CSS = `
   .home h1{font-size:clamp(32px,3.3vw,46px)}
   .home .sub{font-size:16px;margin:10px 0 16px}
 }
+
+/* typed headline + live rows */
+.sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.home .typed-h1{min-height:2.2em}
+.home .typed-h1 .tw{color:#c9a227}
+.home .typed-h1 .tc{display:inline-block;margin-left:2px;color:#c9a227;font-weight:400;animation:psfBlink 1s steps(1) infinite}
+@keyframes psfBlink{50%{opacity:0}}
+.home .tagline{margin:10px 0 0;font-size:clamp(17px,1.6vw,21px);font-weight:700;letter-spacing:-0.01em;color:var(--ink)}
+.home .lr li{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:0 10px 0 0;min-width:0;animation:psfUp .5s ease both}
+.home .lr li:hover{border-color:color-mix(in srgb,var(--acc) 55%,var(--line))}
+.home .lr a.lm{flex:1;border:0;background:none;animation:none;padding-right:4px}
+.home .lr a.lhelp{flex:none;padding:6px 10px;border:0;border-radius:999px;background:color-mix(in srgb,#c9a227 18%,var(--card));color:#8a6d12;font-size:12px;font-weight:700;white-space:nowrap;animation:none}
+[data-theme=dark] .home .lr a.lhelp{color:#e3c25a}
+.home .lr a.lhelp:hover{background:#c9a227;color:#0b1b2b}
+.home .lk.search{background:color-mix(in srgb,#e5484d 12%,var(--card));color:#d13438}
+.home .lr-live{margin-left:auto;margin-right:10px;font-size:11.5px;font-weight:600;color:var(--ok);border:1px solid color-mix(in srgb,var(--ok) 35%,var(--line));padding:2px 8px;border-radius:999px;white-space:nowrap}
+@media (max-width:820px){
+  .home .typed-h1{min-height:2.3em}
+  .home .tagline{font-size:16px;margin:6px 0 14px}
+  .home .lr a.lhelp{font-size:11.5px;padding:6px 9px}
+  .home .livereq h2{font-size:17px}
+}
+@media (max-width:430px){.home .lr-live{display:none}}
+@media (prefers-reduced-motion:reduce){.home .typed-h1 .tc{animation:none}}
 `;
