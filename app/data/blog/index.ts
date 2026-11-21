@@ -240,6 +240,8 @@ import { mundraKandlaGuide2026 } from './mundra-kandla-ship-agents-chandlers-guj
 import { brazilPortCall2026 } from './brazil-port-call-santos-paranagua-rio-grande-agents-chandlers-2026';
 import { shipSparesInTransit2026 } from './ship-spares-in-transit-delivery-to-vessel-customs-guide-2026';
 import { howToWinPortRequests2026 } from './how-to-win-port-requests-marine-service-providers-respond-fast-2026';
+import { shipChandlingBusinessFirstYear2026 } from './ship-chandling-business-first-year-customers-margins-suppliers-2026';
+import { singaporePortInfo2026 } from './singapore-port-information-2026-anchorages-terminals-port-call-basics';
 import { shipAgentsPortSaidSuezTransit2026 } from './ship-agents-port-said-suez-canal-transit-2026-operator-guide';
 import { shipAgentsBalboaCristobal2026 } from './ship-agents-balboa-cristobal-panama-canal-2026-operator-guide';
 import { gibraltarPortCall2026 } from './gibraltar-port-call-bunkers-agents-chandlers-2026-operator-guide';
@@ -258,6 +260,8 @@ const ALL_POSTS: BlogPost[] = [
   brazilPortCall2026,
   shipSparesInTransit2026,
   howToWinPortRequests2026,
+  shipChandlingBusinessFirstYear2026,
+  singaporePortInfo2026,
   shipAgentsPortSaidSuezTransit2026,
   shipAgentsBalboaCristobal2026,
   gibraltarPortCall2026,

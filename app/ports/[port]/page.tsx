@@ -30,7 +30,7 @@ export async function generateMetadata({ params }: { params: Promise<{ port: str
   const dir = directoryEntry(port);
   const guides = guidesFor(port);
   const n = providers.length;
-  const title = `Ship Agents & Marine Services in ${port.name}, ${port.country}`;
+  const title = `${port.name} Port, ${port.country}: Ship Agents, Chandlers & Port Info`;
   const description = n
     ? `${n} ${n === 1 ? 'company' : 'companies'} at ${port.name}, ${port.country}: ship agents, shipchandlers and marine services. Contact them directly, free, no commission.`
     : `Ship agents, shipchandlers and marine services at ${port.name}, ${port.country}${dir ? `: port facts, pilotage and VHF` : ''}. Free for vessel operators. Providers list free.`;
@@ -38,7 +38,7 @@ export async function generateMetadata({ params }: { params: Promise<{ port: str
     title,
     description: description.slice(0, 165),
     alternates: { canonical: `/ports/${port.slug}` },
-    openGraph: { title: `${port.name} ship agents & marine services`, description, url: `/ports/${port.slug}` },
+    openGraph: { title, description, url: `/ports/${port.slug}` },
     // a port page with nothing on it yet stays out of search results until it has
     ...(n === 0 && !dir && guides.length === 0 ? { robots: { index: false, follow: true } } : {}),
   };
