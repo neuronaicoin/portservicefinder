@@ -262,6 +262,16 @@ import { AntwerpAgentsGuide2026 } from './ship-agents-shipchandlers-antwerp-brug
 import { HamburgAgentsGuide2026 } from './ship-agents-shipchandlers-hamburg-find-appoint-2026';
 import { LalbAgentsGuide2026 } from './ship-agents-shipchandlers-los-angeles-and-long-beach-find-appoint-2026';
 import { ValenciaAgentsGuide2026 } from './ship-agents-shipchandlers-valencia-find-appoint-2026';
+import { SavannahPortCall2026 } from './savannah-port-call-guide-agents-chandlers-bunkers-crew-change-2026';
+import { CallaoPortCall2026 } from './callao-port-call-guide-agents-chandlers-bunkers-crew-change-2026';
+import { CartagenaPortCall2026 } from './cartagena-port-call-guide-agents-chandlers-bunkers-crew-change-2026';
+import { MontevideoPortCall2026 } from './montevideo-port-call-guide-agents-chandlers-bunkers-crew-change-2026';
+import { TemaPortCall2026 } from './tema-port-call-guide-agents-chandlers-bunkers-crew-change-2026';
+import { AbidjanPortCall2026 } from './abidjan-port-call-guide-agents-chandlers-bunkers-crew-change-2026';
+import { DakarPortCall2026 } from './dakar-port-call-guide-agents-chandlers-bunkers-crew-change-2026';
+import { DaressalaamPortCall2026 } from './dar-es-salaam-port-call-guide-agents-chandlers-bunkers-crew-change-2026';
+import { DjiboutiPortCall2026 } from './djibouti-port-call-guide-agents-chandlers-bunkers-crew-change-2026';
+import { SalalahPortCall2026 } from './salalah-port-call-guide-agents-chandlers-bunkers-crew-change-2026';
 import { ColomboPortCall2026 } from './colombo-port-call-guide-agents-chandlers-bunkers-crew-change-2026';
 import { PiraeusPortCall2026 } from './piraeus-port-call-guide-agents-chandlers-bunkers-crew-change-2026';
 import { TangermedPortCall2026 } from './tanger-med-port-call-guide-agents-chandlers-bunkers-crew-change-2026';
@@ -322,6 +332,16 @@ const ALL_POSTS: BlogPost[] = [
   HamburgAgentsGuide2026,
   LalbAgentsGuide2026,
   ValenciaAgentsGuide2026,
+  SavannahPortCall2026,
+  CallaoPortCall2026,
+  CartagenaPortCall2026,
+  MontevideoPortCall2026,
+  TemaPortCall2026,
+  AbidjanPortCall2026,
+  DakarPortCall2026,
+  DaressalaamPortCall2026,
+  DjiboutiPortCall2026,
+  SalalahPortCall2026,
   ColomboPortCall2026,
   PiraeusPortCall2026,
   TangermedPortCall2026,
