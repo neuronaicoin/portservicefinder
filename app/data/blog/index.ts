@@ -262,6 +262,12 @@ import { AntwerpAgentsGuide2026 } from './ship-agents-shipchandlers-antwerp-brug
 import { HamburgAgentsGuide2026 } from './ship-agents-shipchandlers-hamburg-find-appoint-2026';
 import { LalbAgentsGuide2026 } from './ship-agents-shipchandlers-los-angeles-and-long-beach-find-appoint-2026';
 import { ValenciaAgentsGuide2026 } from './ship-agents-shipchandlers-valencia-find-appoint-2026';
+import { ShipAgencyNominations2026 } from './ship-agency-nominations-how-to-get-appointed-by-owners-managers-2026';
+import { ImpaCodesExplained2026 } from './impa-codes-explained-shipchandlers-requisitions-quotes-2026';
+import { MarineServices30DayPlan2026 } from './marine-service-company-30-day-plan-get-first-vessel-clients-2026';
+import { AgentVsChandlerBusiness2026 } from './ship-agent-vs-shipchandler-which-business-to-start-2026';
+import { ApprovedVendorList2026 } from './how-ship-managers-choose-new-suppliers-approved-vendor-list-2026';
+import { WhyOperatorsCantFindYou2026 } from './why-ship-operators-cant-find-you-local-marine-companies-2026';
 import { SavannahPortCall2026 } from './savannah-port-call-guide-agents-chandlers-bunkers-crew-change-2026';
 import { CallaoPortCall2026 } from './callao-port-call-guide-agents-chandlers-bunkers-crew-change-2026';
 import { CartagenaPortCall2026 } from './cartagena-port-call-guide-agents-chandlers-bunkers-crew-change-2026';
@@ -332,6 +338,12 @@ const ALL_POSTS: BlogPost[] = [
   HamburgAgentsGuide2026,
   LalbAgentsGuide2026,
   ValenciaAgentsGuide2026,
+  ShipAgencyNominations2026,
+  ImpaCodesExplained2026,
+  MarineServices30DayPlan2026,
+  AgentVsChandlerBusiness2026,
+  ApprovedVendorList2026,
+  WhyOperatorsCantFindYou2026,
   SavannahPortCall2026,
   CallaoPortCall2026,
   CartagenaPortCall2026,
