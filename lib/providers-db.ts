@@ -125,7 +125,7 @@ function unclaimedListings(members: ListedProvider[], rows: Row[]): ListedProvid
       ports: [port],
       svc: [type],
       phone: '',
-      email: '',
+      email: website ? email : '',
       whatsapp: '',
       website,
       address: '',

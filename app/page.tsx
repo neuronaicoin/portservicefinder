@@ -91,21 +91,11 @@ export default async function Home() {
         <div className="joined">
           <div className="j-num">
             <span className="pulse" aria-hidden="true" />
-            <b>{stats.last30 > 0 ? stats.last30 : stats.total}</b>
+            <b>{stats.members}</b>
             <span className="j-t">
-              {stats.last30 > 0 ? (
-                <>
-                  {stats.last30 === 1 ? 'company' : 'companies'} joined
-                  <br />
-                  in the last 30 days
-                </>
-              ) : (
-                <>
-                  companies
-                  <br />
-                  listed so far
-                </>
-              )}
+              member
+              <br />
+              companies
             </span>
           </div>
           {newest.length > 0 && (
@@ -115,7 +105,9 @@ export default async function Home() {
                   <ProviderAvatar text={initials(p.name)} size={34} />
                 </span>
               ))}
-              <span className="j-more">{stats.total} companies listed</span>
+              <span className="j-more">
+                <b style={{ color: '#3ddc97' }}>+{stats.last30}</b> joined in the last 30 days · {stats.total} companies listed
+              </span>
             </div>
           )}
           <p className="j-sub">Ship agents, shipchandlers and marine service companies are listing their ports now. Listing is free during our launch period.</p>
