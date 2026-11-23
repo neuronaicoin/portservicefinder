@@ -7,7 +7,8 @@
 // Read with the service key on the server only; contact details are what the company itself
 // chose to publish when it listed.
 // ============================================================
-import { ALL_PORTS, FLAG, PROVIDER_TYPES, findPort, toSlug, type PortRef } from './ports';
+import { ALL_PORTS, FLAG, PROVIDER_TYPES, findPort, portBySlug, toSlug, type PortRef } from './ports';
+import { UNCLAIMED } from './unclaimed-data';
 
 export type ListedProvider = {
   id: string;
@@ -27,6 +28,8 @@ export type ListedProvider = {
   address: string;
   contactPerson: string;
   joinedAt: string; // ISO
+  /** false for a company we listed from public information that has not claimed its page yet */
+  claimed: boolean;
 };
 
 const HIDDEN = new Set(['cancelled', 'canceled', 'expired', 'deleted', 'rejected', 'hidden']);
@@ -61,6 +64,7 @@ function toProvider(row: Row): Omit<ListedProvider, 'slug'> {
     address: str(row.address),
     contactPerson: str(row.contact_person),
     joinedAt: str(row.created_at) || new Date(0).toISOString(),
+    claimed: str(row.status).toLowerCase() !== 'unclaimed',
   };
 }
 
@@ -75,7 +79,7 @@ function withSlugs(list: Omit<ListedProvider, 'slug'>[]): ListedProvider[] {
       seen.set(base, n);
       return { ...p, slug: n === 1 ? base : `${base}-${n}` };
     })
-    .sort((a, b) => b.joinedAt.localeCompare(a.joinedAt));
+    .sort((a, b) => Number(b.claimed) - Number(a.claimed) || b.joinedAt.localeCompare(a.joinedAt));
 }
 
 async function fetchRows(): Promise<Row[]> {
@@ -95,6 +99,44 @@ async function fetchRows(): Promise<Row[]> {
   return (data || []) as Row[];
 }
 
+/** Companies listed from public information that have not claimed their page yet. A company that has
+ *  signed up (same email or same name) or asked to be removed (a row with that email, any status) is left out. */
+function unclaimedListings(members: ListedProvider[], rows: Row[]): ListedProvider[] {
+  const emails = new Set(rows.map((r) => str(r.email).toLowerCase()).filter(Boolean));
+  const names = new Set(members.map((m) => toSlug(m.name)));
+  const used = new Set(members.map((m) => m.slug));
+  const out: ListedProvider[] = [];
+  UNCLAIMED.forEach(([name, portSlug, type, website, email], i) => {
+    const port = portBySlug(portSlug);
+    if (!port || emails.has(email.toLowerCase()) || names.has(toSlug(name))) return;
+    let slug = `${toSlug(name) || 'company'}-${port.slug}`;
+    if (used.has(slug)) slug = `${slug}-${i}`;
+    used.add(slug);
+    const typeLabel = PROVIDER_TYPES[type] || 'Marine services';
+    out.push({
+      id: `u-${i}`,
+      slug,
+      type,
+      typeLabel,
+      name,
+      bio: `${name} is listed on PortServiceFinder as a ${typeLabel.toLowerCase()} company at ${port.name}, ${port.country}. This page was created from publicly available business information and has not been claimed by the company yet, so services, contact numbers and the description may be incomplete. Check details with the company directly before appointing.`,
+      country: port.country,
+      flag: port.flag,
+      ports: [port],
+      svc: [type],
+      phone: '',
+      email: '',
+      whatsapp: '',
+      website,
+      address: '',
+      contactPerson: '',
+      joinedAt: '2026-11-23T00:00:00.000Z',
+      claimed: false,
+    });
+  });
+  return out;
+}
+
 let memo: { at: number; list: ListedProvider[] } | null = null;
 
 /** Every listed company, newest first. Cached for 5 minutes per server. */
@@ -104,7 +146,8 @@ export async function getListedProviders(): Promise<ListedProvider[]> {
     const rows = await fetchRows();
     // a listing that was cancelled or expired is hidden, and so is one whose profile isn't
     // finished yet (no country or no port: nothing to show)
-    const list = withSlugs(rows.filter((r) => !HIDDEN.has(str(r.status).toLowerCase())).map(toProvider).filter((p) => p.country && p.ports.length > 0));
+    const members = withSlugs(rows.filter((r) => !HIDDEN.has(str(r.status).toLowerCase())).map(toProvider).filter((p) => p.country && p.ports.length > 0));
+    const list = [...members, ...unclaimedListings(members, rows)];
     memo = { at: Date.now(), list };
     return list;
   } catch (e) {
@@ -130,10 +173,12 @@ export async function getProvidersForPortSlug(portSlug: string) {
 
 /** Numbers for the homepage: total companies, new in the last 30 days, countries they are in. */
 export async function getListingStats() {
-  const list = await getListedProviders();
+  const all = await getListedProviders();
+  const list = all.filter((p) => p.claimed);
   const since = Date.now() - 30 * 86400_000;
   return {
-    total: list.length,
+    total: all.length,
+    members: list.length,
     last30: list.filter((p) => Date.parse(p.joinedAt) >= since).length,
     countries: new Set(list.map((p) => p.country).filter(Boolean)).size,
     ports: new Set(list.flatMap((p) => p.ports.map((x) => x.slug))).size,

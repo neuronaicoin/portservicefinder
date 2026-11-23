@@ -36,7 +36,7 @@ export function ProviderCard({ p, now = Date.now() }: { p: ListedProvider; now?:
       </span>
       {p.bio && <span className="pc-bio">{p.bio}</span>}
       <span className="pc-foot">
-        <span className="pc-joined">Joined {agoText(p.joinedAt, now)}</span>
+        {p.claimed ? <span className="pc-joined">Joined {agoText(p.joinedAt, now)}</span> : <span className="pc-joined" style={{ color: 'var(--muted, #8a97a8)' }}>Unclaimed listing</span>}
         <span className="pc-go">View &amp; contact →</span>
       </span>
     </Link>

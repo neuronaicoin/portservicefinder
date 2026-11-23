@@ -59,8 +59,9 @@ const FAQ = [
 export default async function Home() {
   const [stats, providers, demand] = await Promise.all([getListingStats(), getListedProviders(), getDemand()]);
   const live = demand.slice(0, 4);
-  const newest = providers.slice(0, 6);
-  const ticker = providers.slice(0, 24);
+  const members = providers.filter((p) => p.claimed);
+  const newest = members.slice(0, 6);
+  const ticker = members.slice(0, 24);
   const guides = [...BLOG_POSTS].sort((a, b) => String(b.publishedDate).localeCompare(String(a.publishedDate))).slice(0, 6);
   const now = Date.now();
 

@@ -65,10 +65,22 @@ export async function POST(request: Request) {
       expires_at: expiresAt.toISOString(),
     };
 
-    const { data, error } = await supabaseAdmin
+    // A company that we had listed from public information (status 'unclaimed') claims its page
+    // by signing up with the same email: update that row instead of creating a duplicate.
+    const { data: unclaimed } = await supabaseAdmin
       .from('providers')
-      .insert([newProvider])
-      .select();
+      .select('id')
+      .ilike('email', String(email).trim())
+      .eq('status', 'unclaimed')
+      .limit(1);
+    const claimId = unclaimed && unclaimed[0]?.id;
+
+    const { data, error } = claimId
+      ? await supabaseAdmin.from('providers').update(newProvider).eq('id', claimId).select()
+      : await supabaseAdmin
+          .from('providers')
+          .insert([newProvider])
+          .select();
 
     if (error) {
       console.error('Supabase insert error:', error);
