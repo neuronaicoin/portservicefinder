@@ -262,6 +262,26 @@ import { AntwerpAgentsGuide2026 } from './ship-agents-shipchandlers-antwerp-brug
 import { HamburgAgentsGuide2026 } from './ship-agents-shipchandlers-hamburg-find-appoint-2026';
 import { LalbAgentsGuide2026 } from './ship-agents-shipchandlers-los-angeles-and-long-beach-find-appoint-2026';
 import { ValenciaAgentsGuide2026 } from './ship-agents-shipchandlers-valencia-find-appoint-2026';
+import { ColomboPortCall2026 } from './colombo-port-call-guide-agents-chandlers-bunkers-crew-change-2026';
+import { PiraeusPortCall2026 } from './piraeus-port-call-guide-agents-chandlers-bunkers-crew-change-2026';
+import { TangermedPortCall2026 } from './tanger-med-port-call-guide-agents-chandlers-bunkers-crew-change-2026';
+import { SantosPortCall2026 } from './santos-port-call-guide-agents-chandlers-bunkers-crew-change-2026';
+import { JnptPortCall2026 } from './nhava-sheva-port-call-guide-agents-chandlers-bunkers-crew-change-2026';
+import { JeddahPortCall2026 } from './jeddah-port-call-guide-agents-chandlers-bunkers-crew-change-2026';
+import { FujairahPortCall2026 } from './fujairah-port-call-guide-agents-chandlers-bunkers-crew-change-2026';
+import { AlgecirasPortCall2026 } from './algeciras-port-call-guide-agents-chandlers-bunkers-crew-change-2026';
+import { NynjPortCall2026 } from './new-york-and-new-jersey-port-call-guide-agents-chandlers-bunkers-crew-change-2026';
+import { HoustonPortCall2026 } from './houston-port-call-guide-agents-chandlers-bunkers-crew-change-2026';
+import { IstanbulPortCall2026 } from './istanbul-port-call-guide-agents-chandlers-bunkers-crew-change-2026';
+import { LehavrePortCall2026 } from './le-havre-port-call-guide-agents-chandlers-bunkers-crew-change-2026';
+import { DurbanPortCall2026 } from './durban-port-call-guide-agents-chandlers-bunkers-crew-change-2026';
+import { LagosPortCall2026 } from './lagos-port-call-guide-agents-chandlers-bunkers-crew-change-2026';
+import { ManilaPortCall2026 } from './manila-port-call-guide-agents-chandlers-bunkers-crew-change-2026';
+import { JakartaPortCall2026 } from './jakarta-port-call-guide-agents-chandlers-bunkers-crew-change-2026';
+import { ChittagongPortCall2026 } from './chittagong-port-call-guide-agents-chandlers-bunkers-crew-change-2026';
+import { KarachiPortCall2026 } from './karachi-port-call-guide-agents-chandlers-bunkers-crew-change-2026';
+import { MombasaPortCall2026 } from './mombasa-port-call-guide-agents-chandlers-bunkers-crew-change-2026';
+import { BalboaPortCall2026 } from './balboa-port-call-guide-agents-chandlers-bunkers-crew-change-2026';
 import { shipAgentsPortSaidSuezTransit2026 } from './ship-agents-port-said-suez-canal-transit-2026-operator-guide';
 import { shipAgentsBalboaCristobal2026 } from './ship-agents-balboa-cristobal-panama-canal-2026-operator-guide';
 import { gibraltarPortCall2026 } from './gibraltar-port-call-bunkers-agents-chandlers-2026-operator-guide';
@@ -302,6 +322,26 @@ const ALL_POSTS: BlogPost[] = [
   HamburgAgentsGuide2026,
   LalbAgentsGuide2026,
   ValenciaAgentsGuide2026,
+  ColomboPortCall2026,
+  PiraeusPortCall2026,
+  TangermedPortCall2026,
+  SantosPortCall2026,
+  JnptPortCall2026,
+  JeddahPortCall2026,
+  FujairahPortCall2026,
+  AlgecirasPortCall2026,
+  NynjPortCall2026,
+  HoustonPortCall2026,
+  IstanbulPortCall2026,
+  LehavrePortCall2026,
+  DurbanPortCall2026,
+  LagosPortCall2026,
+  ManilaPortCall2026,
+  JakartaPortCall2026,
+  ChittagongPortCall2026,
+  KarachiPortCall2026,
+  MombasaPortCall2026,
+  BalboaPortCall2026,
   shipAgentsPortSaidSuezTransit2026,
   shipAgentsBalboaCristobal2026,
   gibraltarPortCall2026,
