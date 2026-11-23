@@ -242,6 +242,26 @@ import { shipSparesInTransit2026 } from './ship-spares-in-transit-delivery-to-ve
 import { howToWinPortRequests2026 } from './how-to-win-port-requests-marine-service-providers-respond-fast-2026';
 import { shipChandlingBusinessFirstYear2026 } from './ship-chandling-business-first-year-customers-margins-suppliers-2026';
 import { singaporePortInfo2026 } from './singapore-port-information-2026-anchorages-terminals-port-call-basics';
+import { ShanghaiAgentsGuide2026 } from './ship-agents-shipchandlers-shanghai-find-appoint-2026';
+import { ShenzhenAgentsGuide2026 } from './ship-agents-shipchandlers-shenzhen-find-appoint-2026';
+import { NingboAgentsGuide2026 } from './ship-agents-shipchandlers-ningbo-zhoushan-find-appoint-2026';
+import { QingdaoAgentsGuide2026 } from './ship-agents-shipchandlers-qingdao-find-appoint-2026';
+import { GuangzhouAgentsGuide2026 } from './ship-agents-shipchandlers-guangzhou-find-appoint-2026';
+import { TianjinAgentsGuide2026 } from './ship-agents-shipchandlers-tianjin-find-appoint-2026';
+import { XiamenAgentsGuide2026 } from './ship-agents-shipchandlers-xiamen-find-appoint-2026';
+import { BusanAgentsGuide2026 } from './ship-agents-shipchandlers-busan-find-appoint-2026';
+import { KaohsiungAgentsGuide2026 } from './ship-agents-shipchandlers-kaohsiung-find-appoint-2026';
+import { HongkongAgentsGuide2026 } from './ship-agents-shipchandlers-hong-kong-find-appoint-2026';
+import { PortklangAgentsGuide2026 } from './ship-agents-shipchandlers-port-klang-find-appoint-2026';
+import { TppAgentsGuide2026 } from './ship-agents-shipchandlers-tanjung-pelepas-find-appoint-2026';
+import { LaemchabangAgentsGuide2026 } from './ship-agents-shipchandlers-laem-chabang-find-appoint-2026';
+import { HcmcAgentsGuide2026 } from './ship-agents-shipchandlers-ho-chi-minh-city-find-appoint-2026';
+import { JebelaliAgentsGuide2026 } from './ship-agents-shipchandlers-jebel-ali-find-appoint-2026';
+import { RotterdamAgentsGuide2026 } from './ship-agents-shipchandlers-rotterdam-find-appoint-2026';
+import { AntwerpAgentsGuide2026 } from './ship-agents-shipchandlers-antwerp-bruges-find-appoint-2026';
+import { HamburgAgentsGuide2026 } from './ship-agents-shipchandlers-hamburg-find-appoint-2026';
+import { LalbAgentsGuide2026 } from './ship-agents-shipchandlers-los-angeles-and-long-beach-find-appoint-2026';
+import { ValenciaAgentsGuide2026 } from './ship-agents-shipchandlers-valencia-find-appoint-2026';
 import { shipAgentsPortSaidSuezTransit2026 } from './ship-agents-port-said-suez-canal-transit-2026-operator-guide';
 import { shipAgentsBalboaCristobal2026 } from './ship-agents-balboa-cristobal-panama-canal-2026-operator-guide';
 import { gibraltarPortCall2026 } from './gibraltar-port-call-bunkers-agents-chandlers-2026-operator-guide';
@@ -262,6 +282,26 @@ const ALL_POSTS: BlogPost[] = [
   howToWinPortRequests2026,
   shipChandlingBusinessFirstYear2026,
   singaporePortInfo2026,
+  ShanghaiAgentsGuide2026,
+  ShenzhenAgentsGuide2026,
+  NingboAgentsGuide2026,
+  QingdaoAgentsGuide2026,
+  GuangzhouAgentsGuide2026,
+  TianjinAgentsGuide2026,
+  XiamenAgentsGuide2026,
+  BusanAgentsGuide2026,
+  KaohsiungAgentsGuide2026,
+  HongkongAgentsGuide2026,
+  PortklangAgentsGuide2026,
+  TppAgentsGuide2026,
+  LaemchabangAgentsGuide2026,
+  HcmcAgentsGuide2026,
+  JebelaliAgentsGuide2026,
+  RotterdamAgentsGuide2026,
+  AntwerpAgentsGuide2026,
+  HamburgAgentsGuide2026,
+  LalbAgentsGuide2026,
+  ValenciaAgentsGuide2026,
   shipAgentsPortSaidSuezTransit2026,
   shipAgentsBalboaCristobal2026,
   gibraltarPortCall2026,
