@@ -89,14 +89,15 @@ export default async function Home() {
 
       <section className="wrap joined-wrap" aria-label="Companies joining PortServiceFinder">
         <div className="joined">
-          <div className="j-num">
-            <span className="pulse" aria-hidden="true" />
-            <b>{stats.total}</b>
-            <span className="j-t">
-              companies listed
-              <br />
-              <span style={{ color: 'var(--ok)' }}>+{stats.last30}</span> joined in the last 30 days
-            </span>
+          <div className="j-stats">
+            <div className="j-stat">
+              <b>{stats.total.toLocaleString('en-US')}</b>
+              <span>companies listed</span>
+            </div>
+            <div className="j-stat">
+              <b className="j-up"><span className="pulse" aria-hidden="true" />+{stats.last30}</b>
+              <span>joined in 30 days</span>
+            </div>
           </div>
           {newest.length > 0 && (
             <div className="j-faces" aria-hidden="true">
@@ -445,6 +446,14 @@ const CSS = `
 .home .joined-wrap{padding-top:16px}
 .home .joined{display:grid;grid-template-columns:auto auto minmax(0,1fr) auto;align-items:center;gap:14px 28px;padding:12px 20px;border-radius:18px;border:1px solid color-mix(in srgb,var(--ok) 35%,var(--line));background:linear-gradient(120deg,color-mix(in srgb,var(--ok) 12%,var(--card)),var(--card) 60%);box-shadow:var(--shadow)}
 .home .j-num{display:flex;align-items:center;gap:12px}
+.home .j-stats{display:flex;align-items:stretch;gap:0;flex:none}
+.home .j-stat{display:flex;flex-direction:column;justify-content:center;padding:0 22px;min-width:0}
+.home .j-stat:first-child{padding-left:0}
+.home .j-stat+.j-stat{border-left:1px solid rgba(255,255,255,.12)}
+.home .j-stat b{font-size:clamp(30px,3vw,40px);line-height:1;font-weight:850;letter-spacing:-0.03em;color:var(--ink);display:flex;align-items:center;gap:8px;white-space:nowrap}
+.home .j-stat b.j-up{color:var(--ok)}
+.home .j-stat b .pulse{width:10px;height:10px;flex:none}
+.home .j-stat>span{margin-top:6px;font-size:13.5px;font-weight:600;color:var(--muted,#9aa7bb);white-space:nowrap}
 .home .j-num .pulse{width:11px;height:11px;flex:none}
 .home .j-num b{font-size:clamp(34px,3.4vw,44px);line-height:1;font-weight:850;letter-spacing:-0.04em;color:var(--ok)}
 .home .j-t{font-size:15px;font-weight:650;line-height:1.3;color:var(--ink)}
@@ -465,6 +474,10 @@ const CSS = `
   .home .joined{grid-template-columns:minmax(0,1fr) auto;gap:10px;padding:12px 14px;border-radius:14px}
   .home .j-faces,.home .j-sub,.home .j-long{display:none}
   .home .j-num{gap:9px}
+  .home .j-stat{padding:0 14px}
+  .home .j-stat:first-child{padding-left:0}
+  .home .j-stat b{font-size:26px}
+  .home .j-stat>span{font-size:12px;margin-top:4px}
   .home .j-num .pulse{width:9px;height:9px}
   .home .j-num b{font-size:32px}
   .home .j-t{font-size:13.5px;line-height:1.25}

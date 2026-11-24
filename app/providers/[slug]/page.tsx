@@ -120,23 +120,11 @@ export default async function ProviderPage({ params }: { params: Promise<{ slug:
           <div style={{ minWidth: 0 }}>
             <h1>{p.name}</h1>
             <p className="meta">
-              {p.flag} {place} · {p.typeLabel} · {p.claimed ? `Joined ${joined}` : 'Unclaimed listing'}
+              {p.flag} {place} · {p.typeLabel}{p.claimed ? ` · Joined ${joined}` : ''}
             </p>
           </div>
         </header>
 
-        {!p.claimed && (
-          <section className="card" style={{ borderColor: 'rgba(212,175,85,.55)' }}>
-            <h2 style={{ marginTop: 0 }}>Is this your company?</h2>
-            <p>
-              This page was created from publicly available business information so operators can find {p.name}. It has not been claimed yet. Claim it free to add your services, ports, phone, WhatsApp and description, and to receive enquiries directly.
-            </p>
-            <p style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 0 }}>
-              <Link href={`/for-providers/signup?claim=${encodeURIComponent(p.slug)}`} className="btn gold">Claim this page free</Link>
-              <a href={`mailto:contact@portservicefinder.com?subject=${encodeURIComponent('Remove listing: ' + p.name)}`}>Request removal</a>
-            </p>
-          </section>
-        )}
 
         <section className="card m-only">
           <ContactActions providerId={p.id} name={p.name} phone={p.phone} email={p.email} whatsapp={p.whatsapp} website={p.website} />
@@ -209,6 +197,11 @@ export default async function ProviderPage({ params }: { params: Promise<{ slug:
             <section className="card">
               <h2>Share this company</h2>
               <ShareListing url={url} name={p.name} place={place} service={svc[0]} />
+              {!p.claimed && (
+                <p style={{ fontSize: 13, color: 'var(--muted, #8a97a8)', margin: '12px 0 0' }}>
+                  Is this your company? <Link href={`/for-providers/signup?claim=${encodeURIComponent(p.slug)}`}>Update this page free</Link> · <a href={`mailto:contact@portservicefinder.com?subject=${encodeURIComponent('Remove listing: ' + p.name)}`}>Remove</a>
+                </p>
+              )}
               <details className="owner">
                 <summary>Is this your company? Share your listing</summary>
                 <ShareListing url={url} name={p.name} place={place} service={svc[0]} owner />
