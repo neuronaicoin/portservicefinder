@@ -52,7 +52,7 @@ const FAQ = [
   },
   {
     q: 'Do you check the companies?',
-    a: 'Each listing is created by the company itself with its contact details and the ports it serves. Operators should still check references and certificates before appointing any provider, as with any new supplier.',
+    a: 'Most listings are created by the company itself with its contact details and the ports it serves; some are added from publicly available business information, and those companies can update or remove their page at any time. Operators should still check references and certificates before appointing any provider, as with any new supplier.',
   },
 ];
 
