@@ -6448,5 +6448,243 @@ export const UNCLAIMED: [name: string, portSlug: string, type: string, website: 
 "service",
 "https://www.vships.com",
 "agency.singapore@vships.com"
+],
+[
+"Aarcon Marine Services",
+"mundra",
+"chandler",
+"https://www.aarconmarineservices.com",
+""
+],
+[
+"AM Global Ship Supply and Catering",
+"mongla",
+"chandler",
+"https://amgssbd.com",
+""
+],
+[
+"Atlantic Maritime Works & Supply",
+"suez",
+"service",
+"https://www.atlanticnavi.com",
+""
+],
+[
+"Atlantic Ship Supply",
+"abidjan",
+"chandler",
+"https://atlanticshipssuppliers.com",
+""
+],
+[
+"Four Star Enterprises",
+"chittagong",
+"chandler",
+"https://fourstarbd.weebly.com",
+""
+],
+[
+"Gulf Oil Tankers FZE",
+"hamriyah",
+"chandler",
+"https://www.gulfoiltankers.com",
+""
+],
+[
+"Seafarers Ship Supply",
+"houston",
+"chandler",
+"",
+""
+],
+[
+"ASH Marine Ships Services",
+"port-said",
+"chandler",
+"https://www.ash-marine.com",
+""
+],
+[
+"Augustine Services",
+"abidjan",
+"chandler",
+"https://www.augustineservices.net",
+""
+],
+[
+"Anchor Chandling (Pty) Ltd",
+"cape-town",
+"chandler",
+"https://www.anchorchandling.co.za",
+""
+],
+[
+"Anchor Marine Supplies",
+"singapore",
+"chandler",
+"https://anchormarinesupplies.com.sg",
+""
+],
+[
+"Deckhouse Ship Supply",
+"houston",
+"chandler",
+"https://www.deckhouseusa.com",
+""
+],
+[
+"Deckhouse Ship Supply NOLA",
+"new-orleans",
+"chandler",
+"https://www.deckhouseusa.com",
+""
+],
+[
+"Wiersema General Ship Supply",
+"eemshaven",
+"chandler",
+"https://www.wiersemasupply.nl",
+""
+],
+[
+"Ital Marine Group",
+"puerto-cabello",
+"chandler",
+"https://www.italmarinegroup.com",
+""
+],
+[
+"Millennium Ship Services",
+"paranagua",
+"chandler",
+"https://www.millenniumarine.com",
+""
+],
+[
+"Seaworld Maritime",
+"haldia",
+"chandler",
+"https://www.seaworldmaritime.co.in",
+""
+],
+[
+"WJG Ship Chandler",
+"santos",
+"chandler",
+"https://www.wjgshipchandler.com.br",
+""
+],
+[
+"Marespacific Peru",
+"salaverry",
+"chandler",
+"https://www.marespacific.com",
+""
+],
+[
+"Anchor Ship Chandlers",
+"kandla",
+"chandler",
+"https://www.anchorshipchandlers.com",
+""
+],
+[
+"ATC Vessel Support Services",
+"kingston",
+"chandler",
+"https://www.atcvesselsupport.com",
+""
+],
+[
+"Clean Seas Ship Chandler & Sludge Disposal",
+"callao",
+"chandler",
+"https://www.cleanseas.live",
+""
+],
+[
+"Polaris LLC Ship Supply",
+"murmansk",
+"chandler",
+"https://polarismurmansk.ru",
+""
+],
+[
+"Provimar",
+"moin",
+"chandler",
+"https://www.provimarcr.com",
+""
+],
+[
+"Seny Marine Ltd",
+"varna",
+"chandler",
+"https://www.senyltd.com",
+""
+],
+[
+"Adamar International Ship Supply",
+"aliaga",
+"chandler",
+"https://www.adamarine.com",
+""
+],
+[
+"Ocean Shipping Services Egypt",
+"damietta",
+"chandler",
+"https://www.oceanshipping.com.eg",
+""
+],
+[
+"OPS Maritime",
+"lagos-apapa",
+"chandler",
+"https://opsmaritime.com",
+""
+],
+[
+"Aria Ship Supply",
+"istanbul",
+"chandler",
+"https://ariashipsupply.com",
+""
+],
+[
+"Viking Agency",
+"mindelo",
+"agent",
+"https://www.vikingcv.com",
+""
+],
+[
+"Epic Marine W.L.L.",
+"khalifa-bin-salman",
+"chandler",
+"https://epicmarinewll.com",
+""
+],
+[
+"Suez Canal Marine Supplies",
+"port-said",
+"chandler",
+"https://www.suezcanalmarine.com",
+""
+],
+[
+"Chandlerita Ship Supply",
+"riga",
+"chandler",
+"https://www.chandlerita.com",
+""
+],
+[
+"Horizon International Supplies",
+"visakhapatnam",
+"chandler",
+"https://horizonshipstores.com",
+""
 ]
 ];
