@@ -262,6 +262,16 @@ import { AntwerpAgentsGuide2026 } from './ship-agents-shipchandlers-antwerp-brug
 import { HamburgAgentsGuide2026 } from './ship-agents-shipchandlers-hamburg-find-appoint-2026';
 import { LalbAgentsGuide2026 } from './ship-agents-shipchandlers-los-angeles-and-long-beach-find-appoint-2026';
 import { ValenciaAgentsGuide2026 } from './ship-agents-shipchandlers-valencia-find-appoint-2026';
+import { ConstantaPortCall2026 } from './constanta-port-call-guide-agents-chandlers-bunkers-crew-change-2026';
+import { KoperPortCall2026 } from './koper-port-call-guide-agents-chandlers-bunkers-crew-change-2026';
+import { GothenburgPortCall2026 } from './gothenburg-port-call-guide-agents-chandlers-bunkers-crew-change-2026';
+import { BarcelonaPortCall2026 } from './barcelona-port-call-guide-agents-chandlers-bunkers-crew-change-2026';
+import { LomePortCall2026 } from './lome-port-call-guide-agents-chandlers-bunkers-crew-change-2026';
+import { PortLouisPortCall2026 } from './port-louis-port-call-guide-agents-chandlers-bunkers-crew-change-2026';
+import { VisakhapatnamPortCall2026 } from './visakhapatnam-port-call-guide-agents-chandlers-bunkers-crew-change-2026';
+import { CochinPortCall2026 } from './cochin-port-call-guide-agents-chandlers-bunkers-crew-change-2026';
+import { HaiPhongPortCall2026 } from './hai-phong-port-call-guide-agents-chandlers-bunkers-crew-change-2026';
+import { VeracruzPortCall2026 } from './veracruz-port-call-guide-agents-chandlers-bunkers-crew-change-2026';
 import { ShipAgencyNominations2026 } from './ship-agency-nominations-how-to-get-appointed-by-owners-managers-2026';
 import { ImpaCodesExplained2026 } from './impa-codes-explained-shipchandlers-requisitions-quotes-2026';
 import { MarineServices30DayPlan2026 } from './marine-service-company-30-day-plan-get-first-vessel-clients-2026';
@@ -338,6 +348,16 @@ const ALL_POSTS: BlogPost[] = [
   HamburgAgentsGuide2026,
   LalbAgentsGuide2026,
   ValenciaAgentsGuide2026,
+  ConstantaPortCall2026,
+  KoperPortCall2026,
+  GothenburgPortCall2026,
+  BarcelonaPortCall2026,
+  LomePortCall2026,
+  PortLouisPortCall2026,
+  VisakhapatnamPortCall2026,
+  CochinPortCall2026,
+  HaiPhongPortCall2026,
+  VeracruzPortCall2026,
   ShipAgencyNominations2026,
   ImpaCodesExplained2026,
   MarineServices30DayPlan2026,
