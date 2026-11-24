@@ -399,7 +399,7 @@ const CSS = `
 .home .hstats div{display:flex;flex-direction:column;line-height:1.2}
 .home .hstats b{font-size:26px;font-weight:800;letter-spacing:-0.03em;color:var(--ink)}
 .home .hstats span{font-size:13.5px;color:var(--ink3);margin-top:2px}
-@media (max-width:820px){.home .hstats{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;border:0;padding:0}.home .hstats div{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 8px;text-align:center;align-items:center;min-width:0}.home .hstats b{font-size:clamp(19px,5.6vw,24px)}.home .hstats span{font-size:12px;line-height:1.25;overflow-wrap:break-word}}
+@media (max-width:820px){.home .hstats{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;border:0;padding:0;margin-bottom:14px}.home .hstats div{background:transparent;border:1px solid var(--line);border-radius:10px;padding:6px 6px;text-align:center;align-items:center;min-width:0}.home .hstats b{font-size:16px;font-weight:750;color:var(--ink2,var(--ink))}.home .hstats span{font-size:11px;line-height:1.2;margin-top:1px;overflow-wrap:break-word}}
 .home .stats{display:flex;flex-wrap:wrap;gap:16px 44px;padding-top:30px;padding-bottom:10px}
 .home .stats div{display:flex;flex-direction:column}
 .home .stats b{font-size:28px;letter-spacing:-0.03em;font-weight:800}
@@ -515,8 +515,8 @@ const CSS = `
   .home .hero{padding-bottom:8px}
   .home h1{margin-bottom:16px}
   .home .hstats{margin-bottom:10px}
-  .home .hstats div{padding:0 4px;height:56px;justify-content:center}
-  .home .hstats b{font-size:clamp(16px,4.6vw,19px);line-height:1.1}
+  .home .hstats div{padding:0 4px;height:40px;justify-content:center;opacity:.85}
+  .home .hstats b{font-size:15px;line-height:1.05}
   .home .hstats span{font-size:10.5px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
   .home .hs-mob{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding:0;background:none;box-shadow:none;border-radius:0}
   .home .fb{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-width:0;height:56px;padding:0 6px;border:0;border-radius:12px;font:inherit;cursor:pointer;color:#fff;box-shadow:0 6px 16px -8px rgba(0,0,0,.45);position:relative;overflow:hidden}
