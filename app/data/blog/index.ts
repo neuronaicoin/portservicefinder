@@ -262,6 +262,16 @@ import { AntwerpAgentsGuide2026 } from './ship-agents-shipchandlers-antwerp-brug
 import { HamburgAgentsGuide2026 } from './ship-agents-shipchandlers-hamburg-find-appoint-2026';
 import { LalbAgentsGuide2026 } from './ship-agents-shipchandlers-los-angeles-and-long-beach-find-appoint-2026';
 import { ValenciaAgentsGuide2026 } from './ship-agents-shipchandlers-valencia-find-appoint-2026';
+import { KlaipedaPortCall2026 } from './klaipeda-port-call-guide-agents-chandlers-bunkers-crew-change-2026';
+import { RigaPortCall2026 } from './riga-port-call-guide-agents-chandlers-bunkers-crew-change-2026';
+import { TallinnPortCall2026 } from './tallinn-port-call-guide-agents-chandlers-bunkers-crew-change-2026';
+import { SoharPortCall2026 } from './sohar-port-call-guide-agents-chandlers-bunkers-crew-change-2026';
+import { ChennaiPortCall2026 } from './chennai-port-call-guide-agents-chandlers-bunkers-crew-change-2026';
+import { TuticorinPortCall2026 } from './tuticorin-port-call-guide-agents-chandlers-bunkers-crew-change-2026';
+import { NewOrleansPortCall2026 } from './new-orleans-port-call-guide-agents-chandlers-bunkers-crew-change-2026';
+import { DalianPortCall2026 } from './dalian-port-call-guide-agents-chandlers-bunkers-crew-change-2026';
+import { TriestePortCall2026 } from './trieste-port-call-guide-agents-chandlers-bunkers-crew-change-2026';
+import { KocaeliPortCall2026 } from './kocaeli-port-call-guide-agents-chandlers-bunkers-crew-change-2026';
 import { ConstantaPortCall2026 } from './constanta-port-call-guide-agents-chandlers-bunkers-crew-change-2026';
 import { KoperPortCall2026 } from './koper-port-call-guide-agents-chandlers-bunkers-crew-change-2026';
 import { GothenburgPortCall2026 } from './gothenburg-port-call-guide-agents-chandlers-bunkers-crew-change-2026';
@@ -348,6 +358,16 @@ const ALL_POSTS: BlogPost[] = [
   HamburgAgentsGuide2026,
   LalbAgentsGuide2026,
   ValenciaAgentsGuide2026,
+  KlaipedaPortCall2026,
+  RigaPortCall2026,
+  TallinnPortCall2026,
+  SoharPortCall2026,
+  ChennaiPortCall2026,
+  TuticorinPortCall2026,
+  NewOrleansPortCall2026,
+  DalianPortCall2026,
+  TriestePortCall2026,
+  KocaeliPortCall2026,
   ConstantaPortCall2026,
   KoperPortCall2026,
   GothenburgPortCall2026,
