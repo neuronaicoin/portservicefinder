@@ -199,7 +199,7 @@ export default async function ProviderPage({ params }: { params: Promise<{ slug:
               <ShareListing url={url} name={p.name} place={place} service={svc[0]} />
               {!p.claimed && (
                 <p style={{ fontSize: 13, color: 'var(--muted, #8a97a8)', margin: '12px 0 0' }}>
-                  Is this your company? <Link href={`/for-providers/signup?claim=${encodeURIComponent(p.slug)}`}>Update this page free</Link> · <a href={`mailto:contact@portservicefinder.com?subject=${encodeURIComponent('Remove listing: ' + p.name)}`}>Remove</a>
+                  Is this your company? <Link href={`/claim/${p.slug}`}><b>Activate this page free (1 click)</b></Link> · <a href={`mailto:contact@portservicefinder.com?subject=${encodeURIComponent('Remove listing: ' + p.name)}`}>Remove</a>
                 </p>
               )}
               <details className="owner">
