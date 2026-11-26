@@ -262,6 +262,16 @@ import { AntwerpAgentsGuide2026 } from './ship-agents-shipchandlers-antwerp-brug
 import { HamburgAgentsGuide2026 } from './ship-agents-shipchandlers-hamburg-find-appoint-2026';
 import { LalbAgentsGuide2026 } from './ship-agents-shipchandlers-los-angeles-and-long-beach-find-appoint-2026';
 import { ValenciaAgentsGuide2026 } from './ship-agents-shipchandlers-valencia-find-appoint-2026';
+import { KolkataPortCall2026 } from './kolkata-port-call-guide-agents-chandlers-bunkers-crew-change-2026';
+import { HaldiaPortCall2026 } from './haldia-port-call-guide-agents-chandlers-bunkers-crew-change-2026';
+import { ParadipPortCall2026 } from './paradip-port-call-guide-agents-chandlers-bunkers-crew-change-2026';
+import { KakinadaPortCall2026 } from './kakinada-port-call-guide-agents-chandlers-bunkers-crew-change-2026';
+import { DamiettaPortCall2026 } from './damietta-port-call-guide-agents-chandlers-bunkers-crew-change-2026';
+import { DammamKingAbdulazizPortCall2026 } from './dammam-port-call-guide-agents-chandlers-bunkers-crew-change-2026';
+import { DohaHamadPortPortCall2026 } from './hamad-port-port-call-guide-agents-chandlers-bunkers-crew-change-2026';
+import { GdyniaPortCall2026 } from './gdynia-port-call-guide-agents-chandlers-bunkers-crew-change-2026';
+import { AarhusPortCall2026 } from './aarhus-port-call-guide-agents-chandlers-bunkers-crew-change-2026';
+import { KobePortCall2026 } from './kobe-port-call-guide-agents-chandlers-bunkers-crew-change-2026';
 import { KlaipedaPortCall2026 } from './klaipeda-port-call-guide-agents-chandlers-bunkers-crew-change-2026';
 import { RigaPortCall2026 } from './riga-port-call-guide-agents-chandlers-bunkers-crew-change-2026';
 import { TallinnPortCall2026 } from './tallinn-port-call-guide-agents-chandlers-bunkers-crew-change-2026';
@@ -358,6 +368,16 @@ const ALL_POSTS: BlogPost[] = [
   HamburgAgentsGuide2026,
   LalbAgentsGuide2026,
   ValenciaAgentsGuide2026,
+  KolkataPortCall2026,
+  HaldiaPortCall2026,
+  ParadipPortCall2026,
+  KakinadaPortCall2026,
+  DamiettaPortCall2026,
+  DammamKingAbdulazizPortCall2026,
+  DohaHamadPortPortCall2026,
+  GdyniaPortCall2026,
+  AarhusPortCall2026,
+  KobePortCall2026,
   KlaipedaPortCall2026,
   RigaPortCall2026,
   TallinnPortCall2026,
