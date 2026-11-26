@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { submitRfq } from "@/lib/rfq";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
@@ -26,6 +26,22 @@ export default function RequestQuotePage() {
   const [error, setError] = useState<string | null>(null);
 
   const availablePorts = country ? PORT_DATA[country] || [] : [];
+
+  // Prefill from a port page link: /request-quote?country=..&port=..&service=..
+  useEffect(() => {
+    const q = new URLSearchParams(window.location.search);
+    const c = q.get("country") || "";
+    if (c && PORT_DATA[c]) {
+      setCountry(c);
+      const p = q.get("port") || "";
+      const list = (PORT_DATA[c] || []) as unknown[];
+      const names = list.map((x) => (typeof x === "string" ? x : String((x as { name?: string }).name || "")));
+      const hit = names.find((n) => n.toLowerCase() === p.toLowerCase());
+      if (hit) setPort(hit);
+    }
+    const s = q.get("service") || "";
+    if (s) setServiceType(s);
+  }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();

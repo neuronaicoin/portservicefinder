@@ -4,6 +4,7 @@ import { MoreToggle } from '@/components/MoreToggle';
 import { notFound, permanentRedirect } from 'next/navigation';
 import { SiteHeader } from '@/components/SiteHeader';
 import { SiteFooter } from '@/components/SiteFooter';
+import { RfqCta } from '@/components/RfqCta';
 import { ProviderCard } from '@/components/providers/ProviderCard';
 import { getListedProviders, getProvidersForPortSlug, providerOffers } from '@/lib/providers-db';
 import { getDemandForPort } from '@/lib/port-requests';
@@ -124,6 +125,8 @@ export default async function PortPage({ params }: { params: Promise<{ port: str
             ? `${providers.length} ${providers.length === 1 ? 'company is' : 'companies are'} listed at ${port.name}: ${groups.filter((g) => g[2].length).map((g) => `${g[2].length} ${g[1].toLowerCase()}`).join(', ')}. Contact them directly, free.`
             : `No company has listed ${port.name} yet. Operators: see nearby ports below. Providers: your company can be the first one here.`}
         </p>
+
+        <RfqCta port={port.name} country={port.country} />
 
         {dir && (
           <section className="card facts more" aria-label="Port facts">

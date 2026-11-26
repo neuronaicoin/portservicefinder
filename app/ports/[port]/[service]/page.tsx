@@ -4,6 +4,7 @@ import { MoreToggle } from '@/components/MoreToggle';
 import { notFound, permanentRedirect } from 'next/navigation';
 import { SiteHeader } from '@/components/SiteHeader';
 import { SiteFooter } from '@/components/SiteFooter';
+import { RfqCta } from '@/components/RfqCta';
 import { ProviderCard } from '@/components/providers/ProviderCard';
 import { getListedProviders, getProvidersForPortSlug, providerOffers } from '@/lib/providers-db';
 import { ALL_PORTS, legacySlug, portBySlug } from '@/lib/ports';
@@ -103,6 +104,7 @@ export default async function PortServicePage({ params }: { params: Promise<{ po
           {cat.label} in {port.name}, {port.country}
         </h1>
         <p className="lead">{cat.longDescription}</p>
+        <RfqCta port={port.name} country={port.country} label={cat.shortLabel} service={cat.type === 'service' ? cat.svcKey : cat.type} />
 
         {list.length > 0 ? (
           <section className="sec">
