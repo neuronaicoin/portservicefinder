@@ -262,6 +262,18 @@ import { AntwerpAgentsGuide2026 } from './ship-agents-shipchandlers-antwerp-brug
 import { HamburgAgentsGuide2026 } from './ship-agents-shipchandlers-hamburg-find-appoint-2026';
 import { LalbAgentsGuide2026 } from './ship-agents-shipchandlers-los-angeles-and-long-beach-find-appoint-2026';
 import { ValenciaAgentsGuide2026 } from './ship-agents-shipchandlers-valencia-find-appoint-2026';
+import { SuezMarineServices2026 } from './marine-services-suez-canal-port-said-suez-engine-repair-diving-supplies-2026';
+import { PanamaMarineServices2026 } from './marine-services-panama-canal-balboa-cristobal-repairs-supplies-crew-change-2026';
+import { GibraltarMarineServices2026 } from './marine-services-gibraltar-bunkers-supplies-crew-change-repairs-2026';
+import { IstanbulMarineServices2026 } from './marine-services-istanbul-bosphorus-tuzla-engine-repair-diving-supplies-2026';
+import { RotterdamMarineServices2026 } from './marine-services-rotterdam-technical-diving-bunkers-waste-2026';
+import { AmsterdamMarineServices2026 } from './marine-services-amsterdam-ijmuiden-repairs-supplies-waste-2026';
+import { HamburgMarineServices2026 } from './marine-services-hamburg-repairs-elbe-supplies-crew-change-2026';
+import { GhentMarineServices2026 } from './marine-services-ghent-north-sea-port-terneuzen-canal-supplies-repairs-2026';
+import { AntwerpMarineServices2026 } from './marine-services-antwerp-bruges-chemical-tankers-repairs-supplies-2026';
+import { CapeTownMarineServices2026 } from './marine-services-cape-town-repairs-supplies-crew-change-cape-route-2026';
+import { SingaporeAnchorageServices2026 } from './singapore-anchorage-opl-services-launch-supplies-surveys-crew-diving-2026';
+import { SingaporeDivingUwild2026 } from './singapore-underwater-diving-uwild-propeller-polishing-underwater-repair-2026';
 import { ImoFalForms2026 } from './imo-fal-forms-explained-fal-1-to-7-ship-agents-port-clearance-2026';
 import { BunkerBdnChecklist2026 } from './bunker-delivery-note-bdn-marpol-sample-checklist-2026';
 import { PscDeficiencies2026 } from './port-state-control-inspection-common-deficiencies-how-agents-chandlers-help-2026';
@@ -373,6 +385,18 @@ const ALL_POSTS: BlogPost[] = [
   HamburgAgentsGuide2026,
   LalbAgentsGuide2026,
   ValenciaAgentsGuide2026,
+  SuezMarineServices2026,
+  PanamaMarineServices2026,
+  GibraltarMarineServices2026,
+  IstanbulMarineServices2026,
+  RotterdamMarineServices2026,
+  AmsterdamMarineServices2026,
+  HamburgMarineServices2026,
+  GhentMarineServices2026,
+  AntwerpMarineServices2026,
+  CapeTownMarineServices2026,
+  SingaporeAnchorageServices2026,
+  SingaporeDivingUwild2026,
   ImoFalForms2026,
   BunkerBdnChecklist2026,
   PscDeficiencies2026,
