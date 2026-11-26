@@ -262,6 +262,11 @@ import { AntwerpAgentsGuide2026 } from './ship-agents-shipchandlers-antwerp-brug
 import { HamburgAgentsGuide2026 } from './ship-agents-shipchandlers-hamburg-find-appoint-2026';
 import { LalbAgentsGuide2026 } from './ship-agents-shipchandlers-los-angeles-and-long-beach-find-appoint-2026';
 import { ValenciaAgentsGuide2026 } from './ship-agents-shipchandlers-valencia-find-appoint-2026';
+import { ImoFalForms2026 } from './imo-fal-forms-explained-fal-1-to-7-ship-agents-port-clearance-2026';
+import { BunkerBdnChecklist2026 } from './bunker-delivery-note-bdn-marpol-sample-checklist-2026';
+import { PscDeficiencies2026 } from './port-state-control-inspection-common-deficiencies-how-agents-chandlers-help-2026';
+import { BondedShipStores2026 } from './bonded-ship-stores-duty-free-supply-foreign-vessels-chandlers-customs-2026';
+import { BiofoulingRules2026 } from './biofouling-rules-in-water-hull-cleaning-permits-operators-providers-2026';
 import { KolkataPortCall2026 } from './kolkata-port-call-guide-agents-chandlers-bunkers-crew-change-2026';
 import { HaldiaPortCall2026 } from './haldia-port-call-guide-agents-chandlers-bunkers-crew-change-2026';
 import { ParadipPortCall2026 } from './paradip-port-call-guide-agents-chandlers-bunkers-crew-change-2026';
@@ -368,6 +373,11 @@ const ALL_POSTS: BlogPost[] = [
   HamburgAgentsGuide2026,
   LalbAgentsGuide2026,
   ValenciaAgentsGuide2026,
+  ImoFalForms2026,
+  BunkerBdnChecklist2026,
+  PscDeficiencies2026,
+  BondedShipStores2026,
+  BiofoulingRules2026,
   KolkataPortCall2026,
   HaldiaPortCall2026,
   ParadipPortCall2026,
