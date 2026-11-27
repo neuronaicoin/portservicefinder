@@ -262,6 +262,9 @@ import { AntwerpAgentsGuide2026 } from './ship-agents-shipchandlers-antwerp-brug
 import { HamburgAgentsGuide2026 } from './ship-agents-shipchandlers-hamburg-find-appoint-2026';
 import { LalbAgentsGuide2026 } from './ship-agents-shipchandlers-los-angeles-and-long-beach-find-appoint-2026';
 import { ValenciaAgentsGuide2026 } from './ship-agents-shipchandlers-valencia-find-appoint-2026';
+import { ShipSizeClasses2026 } from './ship-size-classes-explained-panamax-neopanamax-suezmax-capesize-vlcc-2026';
+import { ShipTypesPortNeeds2026 } from './ship-types-explained-what-each-vessel-needs-in-port-2026';
+import { MarineFuelTypes2026 } from './marine-fuel-types-explained-hsfo-vlsfo-mgo-lng-methanol-biofuel-2026';
 import { SuezMarineServices2026 } from './marine-services-suez-canal-port-said-suez-engine-repair-diving-supplies-2026';
 import { PanamaMarineServices2026 } from './marine-services-panama-canal-balboa-cristobal-repairs-supplies-crew-change-2026';
 import { GibraltarMarineServices2026 } from './marine-services-gibraltar-bunkers-supplies-crew-change-repairs-2026';
@@ -385,6 +388,9 @@ const ALL_POSTS: BlogPost[] = [
   HamburgAgentsGuide2026,
   LalbAgentsGuide2026,
   ValenciaAgentsGuide2026,
+  ShipSizeClasses2026,
+  ShipTypesPortNeeds2026,
+  MarineFuelTypes2026,
   SuezMarineServices2026,
   PanamaMarineServices2026,
   GibraltarMarineServices2026,
