@@ -3,6 +3,7 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 import { SiteHeader } from '@/components/SiteHeader';
 import { SiteFooter } from '@/components/SiteFooter';
+import { RfqCta } from '@/components/RfqCta';
 import {
   BLOG_POSTS,
   getBlogPost,
@@ -252,6 +253,8 @@ export default async function BlogPostPage({ params }: PageProps) {
                 <span>{readingTime} min read</span>
               </div>
             </header>
+
+            {port && !isProviderPost(post) && <RfqCta port={port.name} country={port.country} />}
 
             {toc.length >= 3 && (
               <nav className="bp-toc" aria-label="In this guide">

@@ -28,7 +28,7 @@ export function ClaimForm({ slug, t, mode, masked }: { slug: string; t: string; 
     <form onSubmit={go} className="cl-form">
       {mode === 'confirm' && (
         <>
-          <label>Phone / WhatsApp (optional, shown on your page)<input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+90 532 000 00 00" /></label>
+          <label>Phone / WhatsApp (optional, shown on your page)<input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+44 20 0000 0000" /></label>
           <label>Contact person (optional)<input value={person} onChange={(e) => setPerson(e.target.value)} placeholder="Name Surname" /></label>
         </>
       )}
