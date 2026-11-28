@@ -79,7 +79,7 @@ export function MobileFinder() {
     };
   }, [sheet]);
 
-  if (path === '/admin' || HIDE_ON.some((h) => path.startsWith(h))) return null;
+  if (path === '/admin' || path === '/x' || HIDE_ON.some((h) => path.startsWith(h))) return null;
 
   /** slug: a service category slug, or 'agent' / 'chandler' / 'marine' (all marine services) */
   const go = (slug: string) => {

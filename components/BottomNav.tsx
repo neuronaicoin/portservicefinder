@@ -8,7 +8,7 @@ const HIDE_ON = ['/admin', '/for-providers/dashboard', '/for-providers/complete-
 
 export function BottomNav() {
   const path = usePathname() || '/';
-  if (HIDE_ON.some((h) => path.startsWith(h))) return null;
+  if (path === '/x' || HIDE_ON.some((h) => path.startsWith(h))) return null;
   const on = (h: string) => (h === '/' ? path === '/' : path === h || path.startsWith(h + '/'));
   return (
     <>
