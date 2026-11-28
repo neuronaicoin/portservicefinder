@@ -1,12 +1,12 @@
 'use client';
 import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { LogoMark } from '@/components/Logo';
-import { ALL_PORTS, MARINE_SERVICES, portBySlug, type PortRef } from '@/lib/ports';
+import { ALL_PORTS, FLAG, MARINE_SERVICES, PORT_DATA, portBySlug, type PortRef } from '@/lib/ports';
 import { submitRfq } from '@/lib/rfq';
 
 export type FeedItem = { id: string; kind: 'member' | 'guide' | 'data'; at: string; author: string; handle: string; badge?: boolean; text: string; sub?: string; href: string };
 export type XProvider = { s: string; n: string; t: string; tl: string; c: string; f: string; p: string[]; sv: string[]; b: string; wa: string; ph: string; em: string; w: string; cl: boolean; j: string };
-type View = { v: 'home' | 'search' | 'profile' | 'port' | 'notifs' | 'chat' | 'saved' | 'request'; a?: string; q?: string };
+type View = { v: 'home' | 'search' | 'profile' | 'port' | 'notifs' | 'chat' | 'saved' | 'request' | 'tools'; a?: string; q?: string };
 
 /* ---------- icons (outline, X-like weight) ---------- */
 const P = {
@@ -37,6 +37,9 @@ const P = {
   phone: 'M5.5 3.5h3.5l1.8 4.6-2.3 1.4a11 11 0 0 0 6 6l1.4-2.3 4.6 1.8v3.5a2 2 0 0 1-2 2A16.5 16.5 0 0 1 3.5 5.5a2 2 0 0 1 2-2z',
   trend: 'M3.5 16.5l6-6 4 4 7-7M15 7.5h5.5V13',
   more: 'M5 12h.01M12 12h.01M19 12h.01',
+  tool: 'M14.5 6.5a4 4 0 0 0-5.3 5.3L3.5 17.5l3 3 5.7-5.7a4 4 0 0 0 5.3-5.3l-2.6 2.6-2.3-.7-.7-2.3z',
+  globe: 'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM3 12h18M12 3c2.5 2.5 3.8 5.5 3.8 9s-1.3 6.5-3.8 9c-2.5-2.5-3.8-5.5-3.8-9S9.5 5.5 12 3z',
+  chev: 'M9 6l6 6-6 6',
 };
 const Ico = ({ d, s = 24, w = 1.8, fill }: { d: string; s?: number; w?: number; fill?: boolean }) => (
   <svg width={s} height={s} viewBox="0 0 24 24" aria-hidden="true" fill={fill ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth={w} strokeLinecap="round" strokeLinejoin="round"><path d={P[d as keyof typeof P] || d} /></svg>
@@ -87,7 +90,7 @@ function parseQuery(q: string) {
 /* ---------- app ---------- */
 export function XApp({ items, providers, trending, listed, joined }: { items: FeedItem[]; providers: XProvider[]; trending: [string, number][]; listed: number; joined: number }) {
   const [view, setView] = useState<View>({ v: 'home' });
-  const [tab, setTab] = useState<'for' | 'following'>('for');
+  const [tab, setTab] = useState<'for' | 'find'>('for');
   const [drawer, setDrawer] = useState(false);
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
   const [hide, setHide] = useState(false);
@@ -131,7 +134,7 @@ export function XApp({ items, providers, trending, listed, joined }: { items: Fe
   const open = (href: string) => { if (href.startsWith('/')) location.href = href; else go({ v: 'profile', a: href }); };
   const tagSearch = (t: string) => go({ v: 'search', q: t });
 
-  const feed = tab === 'for' ? items : items.filter((i) => st.f[i.handle]);
+  const feed = items;
 
   /* ---------- pieces ---------- */
   const Rich = ({ text }: { text: string }) => (
@@ -192,16 +195,16 @@ export function XApp({ items, providers, trending, listed, joined }: { items: Fe
   let body: React.ReactNode = null;
   if (view.v === 'home') {
     body = (<>
-      <Head tabs={<Tabs list={[['for', 'For you'], ['following', 'Following']]} on={tab} set={setTab} />} />
-      <div className="x-ask" onClick={() => go({ v: 'request' })}>
-        <span className="x-av off" style={{ width: 40, height: 40 }}><Ico d="anchor" s={20} /></span>
-        <div><b>What do you need, and in which port?</b><small>Agents, chandlers and service companies reply with quotes</small></div>
-      </div>
-      <div className="x-chips">{QUICK.slice(0, 8).map((k) => <button key={k} onClick={() => go({ v: 'search', q: svcLabel(k) })}>{EMO[k] || '🔧'} {svcLabel(k)}</button>)}</div>
-      {feed.length ? feed.map((i) => <Post key={i.id} i={i} />) : (
-        <Empty t="Welcome to your timeline" s="Follow ship agents, chandlers and service companies. Their news shows up here." cta={<button className="x-btn" onClick={() => go({ v: 'search' })}>Find companies</button>} />
-      )}
-      <div className="x-endpad" />
+      <Head tabs={<Tabs list={[['for', 'For you'], ['find', '🔎 Find a service']]} on={tab} set={(t) => { setTab(t); window.scrollTo(0, 0); }} />} />
+      {tab === 'find' ? <FindView providers={providers} trending={trending} go={go} Cell={Cell} /> : (<>
+        <div className="x-ask" onClick={() => setTab('find')}>
+          <span className="x-av off" style={{ width: 40, height: 40 }}><Ico d="search" s={20} /></span>
+          <div><b>Find an agent, chandler or service</b><small>Pick a country, a port and what you need</small></div>
+          <span className="x-go"><Ico d="chev" s={18} /></span>
+        </div>
+        {feed.map((i) => <Post key={i.id} i={i} />)}
+        <div className="x-endpad" />
+      </>)}
     </>);
   } else if (view.v === 'search') {
     body = <SearchView q={view.q || ''} providers={providers} trending={trending} hide={hide} onBack={back} go={go} Cell={Cell} onDrawer={() => setDrawer(true)} />;
@@ -224,11 +227,15 @@ export function XApp({ items, providers, trending, listed, joined }: { items: Fe
   } else if (view.v === 'saved') {
     const saved = items.filter((i) => st.b[i.id]);
     body = (<><Head title="Bookmarks" />{saved.length ? saved.map((i) => <Post key={i.id} i={i} />) : <Empty t="Save posts for later" s="Bookmark posts to easily find them again in the future." />}</>);
+  } else if (view.v === 'tools') {
+    body = (<><Head title="Voyage tools" sub="Free calculators and checklists" />
+      {TOOLS.map(([g, rows]) => (<section key={g}><h2 className="x-h2">{g}</h2>{rows.map(([slug, e, t, d]) => <a key={slug} className="x-prow" href={`/voyage/${slug}`}><span className="x-pin">{e}</span><span><b>{t}</b><small>{d}</small></span></a>)}</section>))}
+      <div className="x-endpad" /></>);
   } else if (view.v === 'request') {
     body = <RequestView initial={view.q || ''} onClose={back} />;
   }
 
-  const NAV: [View['v'], string, string][] = [['home', 'home', 'Home'], ['search', 'search', 'Explore'], ['notifs', 'bell', 'Notifications'], ['chat', 'chat', 'Chat'], ['saved', 'bookmark', 'Bookmarks']];
+  const NAV: [View['v'], string, string][] = [['home', 'home', 'Home'], ['search', 'search', 'Explore'], ['notifs', 'bell', 'Notifications'], ['chat', 'chat', 'Chat'], ['saved', 'bookmark', 'Bookmarks'], ['tools', 'tool', 'Voyage tools']];
   return (
     <div className="xapp">
       <aside className="x-left">
@@ -280,7 +287,8 @@ export function XApp({ items, providers, trending, listed, joined }: { items: Fe
             <a className="x-dwi" href="/for-providers/login"><Ico d="user" />Profile</a>
             <button className="x-dwi" onClick={() => go({ v: 'request' })}><Ico d="anchor" />Get quotes</button>
             <button className="x-dwi" onClick={() => go({ v: 'saved' })}><Ico d="bookmark" />Bookmarks</button>
-            <button className="x-dwi" onClick={() => go({ v: 'search' })}><Ico d="pin" />Ports</button>
+            <button className="x-dwi" onClick={() => { setTab('find'); go({ v: 'home' }); }}><Ico d="pin" />Find a service</button>
+            <button className="x-dwi" onClick={() => go({ v: 'tools' })}><Ico d="tool" />Voyage tools</button>
             <a className="x-dwi" href="/blog"><Ico d="book" />Guides</a>
             <a className="x-dwi" href="/psc-detentions"><Ico d="shield" />PSC data</a>
             <a className="x-dwi" href="/for-providers/signup"><Ico d="biz" />List your company</a>
@@ -295,6 +303,99 @@ export function XApp({ items, providers, trending, listed, joined }: { items: Fe
       <style>{CSS}</style>
     </div>
   );
+}
+
+/* ---------- voyage tools ---------- */
+const TOOLS: [string, [string, string, string, string][]][] = [
+  ['Voyage & commercial', [
+    ['distance', '🧭', 'Sea distance', 'Port to port distance and days at sea'],
+    ['laytime', '⏱️', 'Laytime calculator', 'Demurrage and despatch'],
+    ['tce', '💵', 'TCE calculator', 'Time charter equivalent per day'],
+    ['hire', '📄', 'Hire calculator', 'Charter hire and off-hire'],
+    ['bunker-prices', '⛽', 'Bunker prices', 'VLSFO, MGO and HSFO by port'],
+    ['bunker', '🛢️', 'Bunker calculator', 'Consumption and cost'],
+    ['bunker-plan', '🗺️', 'Bunker planning', 'Where and how much to stem'],
+    ['cii', '🌱', 'CII calculator', 'Carbon intensity rating'],
+    ['indices', '📈', 'Freight indices', 'Market overview'],
+  ]],
+  ['Port call', [
+    ['disbursement', '🧾', 'Port disbursement (DA)', 'Estimate port costs'],
+    ['congestion', '🚢', 'Port congestion', 'Waiting times'],
+    ['holidays', '📅', 'Port holidays', 'Public holidays by country'],
+    ['visa', '🛂', 'Crew visa', 'Visa rules for crew'],
+    ['psc', '🛡️', 'PSC checklist', 'Prepare for port state control'],
+    ['weather', '🌦️', 'Marine weather', 'Wind and sea forecast'],
+    ['tide', '🌊', 'Tide times', 'High and low water'],
+  ]],
+  ['On board', [
+    ['noon', '📝', 'Noon report', 'Daily position report'],
+    ['draft', '📏', 'Draft survey', 'Cargo quantity by draft'],
+    ['stability', '⚖️', 'Stability', 'GM and stability checks'],
+    ['lashing', '🔗', 'Lashing', 'Cargo securing'],
+    ['maintenance', '🔧', 'Maintenance', 'Planned maintenance'],
+    ['drills', '🚨', 'Drills', 'Drill schedule'],
+    ['marpol', '♻️', 'MARPOL', 'Discharge rules'],
+    ['mlc', '👷', 'MLC', 'Rest hours and crew rules'],
+    ['wages', '💰', 'Crew wages', 'Wage calculator'],
+  ]],
+];
+
+/* ---------- find (country → port → service) ---------- */
+const COUNTRIES = Object.keys(PORT_DATA).sort();
+function FindView({ providers, trending, go, Cell }: { providers: XProvider[]; trending: [string, number][]; go: (v: View) => void; Cell: (x: { p: XProvider }) => React.ReactNode }) {
+  const [country, setCountry] = useState('');
+  const [port, setPort] = useState('');
+  const [svc, setSvc] = useState('');
+  const [open, setOpen] = useState<'' | 'country' | 'port' | 'svc'>('country');
+  const [q, setQ] = useState('');
+  useEffect(() => { try { const s = JSON.parse(sessionStorage.getItem('psfx_find') || '{}'); if (s.country) { setCountry(s.country); setPort(s.port || ''); setSvc(s.svc || ''); setOpen(s.port ? (s.svc ? '' : 'svc') : 'port'); } } catch {} }, []);
+  useEffect(() => { try { sessionStorage.setItem('psfx_find', JSON.stringify({ country, port, svc })); } catch {} }, [country, port, svc]);
+  const count = useMemo(() => { const m = new Map<string, number>(); for (const p of providers) for (const s of p.p) m.set(s, (m.get(s) || 0) + 1); return m; }, [providers]);
+  const cCount = useMemo(() => { const m = new Map<string, number>(); for (const p of providers) m.set(p.c, (m.get(p.c) || 0) + 1); return m; }, [providers]);
+  const nq = norm(q);
+  const countries = COUNTRIES.filter((c) => !nq || norm(c).startsWith(nq)).sort((a, b) => (nq ? 0 : (cCount.get(b) || 0) - (cCount.get(a) || 0)) || a.localeCompare(b));
+  const ports = ALL_PORTS.filter((p) => p.country === country && (!nq || norm(p.name).includes(nq))).sort((a, b) => (count.get(b.slug) || 0) - (count.get(a.slug) || 0) || a.name.localeCompare(b.name));
+  const portRef = port ? portBySlug(port) : null;
+  const results = useMemo(() => {
+    if (!country) return [];
+    return providers.filter((p) => (port ? p.p.includes(port) : p.c === country) && (!svc || offers(p, svc))).sort((a, b) => Number(b.cl) - Number(a.cl) || a.n.localeCompare(b.n));
+  }, [providers, country, port, svc]);
+  const pick = (k: typeof open) => { setOpen(open === k ? '' : k); setQ(''); };
+  const Step = ({ k, n, icon, label, value, disabled }: { k: typeof open; n: number; icon: string; label: string; value: string; disabled?: boolean }) => (
+    <button className={'x-step' + (open === k ? ' on' : '') + (value ? ' set' : '')} disabled={disabled} onClick={() => pick(k)}>
+      <span className="x-sn">{value ? '✓' : n}</span><span className="x-se">{icon}</span>
+      <span className="x-sl"><small>{label}</small><b>{value || 'Choose'}</b></span><Ico d="chev" s={18} />
+    </button>
+  );
+  return (<div className="x-find">
+    <div className="x-fhd"><h2>Find a service in any port</h2><p>Three taps. Then get quotes from every company at once.</p></div>
+    <Step k="country" n={1} icon="🌍" label="Country" value={country ? `${FLAG[country] || ''} ${country}` : ''} />
+    {open === 'country' && (<div className="x-pick">
+      <label className="x-sin"><Ico d="search" s={17} /><input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search country" /></label>
+      {!q && <div className="x-tags pad">{trending.slice(0, 6).map(([s]) => { const p = portBySlug(s); return p && <button key={s} onClick={() => { setCountry(p.country); setPort(s); setOpen('svc'); }}>📍 {p.name}</button>; })}</div>}
+      <div className="x-list">{countries.slice(0, q ? 40 : 60).map((c) => <button key={c} onClick={() => { setCountry(c); setPort(''); setOpen('port'); setQ(''); }}><span>{FLAG[c] || '🏳️'} {c}</span><small>{cCount.get(c) || 0}</small></button>)}</div>
+    </div>)}
+    <Step k="port" n={2} icon="📍" label="Port" value={portRef ? portRef.name : country && open !== 'port' && open !== 'country' ? 'All ports' : ''} disabled={!country} />
+    {open === 'port' && country && (<div className="x-pick">
+      {ports.length > 8 && <label className="x-sin"><Ico d="search" s={17} /><input value={q} onChange={(e) => setQ(e.target.value)} placeholder={`Search ports in ${country}`} /></label>}
+      <div className="x-list"><button onClick={() => { setPort(''); setOpen('svc'); }}><span>All ports in {country}</span><small>{cCount.get(country) || 0}</small></button>
+        {ports.map((p) => <button key={p.slug} onClick={() => { setPort(p.slug); setOpen('svc'); setQ(''); }}><span>{p.name}</span><small>{count.get(p.slug) || 0}</small></button>)}</div>
+    </div>)}
+    <Step k="svc" n={3} icon="🧰" label="What do you need?" value={svc ? `${EMO[svc] || '🔧'} ${svcLabel(svc)}` : ''} disabled={!country} />
+    {open === 'svc' && country && (<div className="x-pick">
+      <div className="x-grid">{QUICK.map((k) => <button key={k} className={svc === k ? 'on' : ''} onClick={() => { setSvc(k); setOpen(''); }}><span>{EMO[k] || '🔧'}</span>{svcLabel(k)}</button>)}</div>
+      <div style={{ padding: '0 16px 12px' }}><select className="x-in" value={QUICK.includes(svc) ? '' : svc} onChange={(e) => { setSvc(e.target.value); setOpen(''); }}><option value="">More services…</option>{SERVICES.filter((s) => !QUICK.includes(s.key)).map((s) => <option key={s.key} value={s.key}>{s.label}</option>)}</select></div>
+      {svc && <button className="x-hint" onClick={() => { setSvc(''); setOpen(''); }}>Show all companies</button>}
+    </div>)}
+    {country && (<>
+      <div className="x-reqbar"><span>{results.length} {results.length === 1 ? 'company' : 'companies'}{portRef ? ` in ${portRef.name}` : ` in ${country}`}{svc ? ` · ${svcLabel(svc)}` : ''}</span>
+        {port && <button className="x-btn ac sm" onClick={() => go({ v: 'request', q: `${svc}|${port}` })}>Get quotes</button>}</div>
+      {results.slice(0, 60).map((p) => <Cell key={p.s} p={p} />)}
+      {!results.length && <div className="x-empty"><h2>No company listed yet</h2><p>Send a request anyway. We will find one for you.</p>{port && <button className="x-btn" onClick={() => go({ v: 'request', q: `${svc}|${port}` })}>Get quotes</button>}</div>}
+      {(country || port || svc) && <button className="x-hint" onClick={() => { setCountry(''); setPort(''); setSvc(''); setOpen('country'); }}>↺ Start over</button>}
+    </>)}
+    <div className="x-endpad" />
+  </div>);
 }
 
 /* ---------- search ---------- */
@@ -549,6 +650,22 @@ html[data-psfx=dark] .xapp{--bg:#000;--fg:#e7e9ea;--mu:#71767b;--ln:#2f3336;--hv
 .x-empty{padding:40px 32px;max-width:400px;margin:0 auto;display:flex;flex-direction:column;gap:10px;align-items:flex-start}
 .x-empty h2{font-size:31px;line-height:36px;font-weight:800}.x-empty p{color:var(--mu)}.x-empty .x-btn{height:52px;padding:0 32px!important;font-size:17px;margin-top:16px}
 .x-endpad{height:120px}
+.x-go{margin-left:auto;color:var(--mu)}
+.x-find{padding-bottom:8px}
+.x-fhd{padding:16px 16px 8px}.x-fhd h2{font-size:23px;line-height:28px;font-weight:800}.x-fhd p{color:var(--mu);margin-top:4px}
+.x-step{display:flex!important;align-items:center;gap:12px;width:calc(100% - 32px);margin:8px 16px 0;padding:12px 14px!important;border:1px solid var(--ln)!important;border-radius:16px;color:var(--fg)}
+.x-step:disabled{opacity:.45;cursor:default}.x-step.on{border-color:var(--acb)!important;box-shadow:0 0 0 1px var(--acb)}
+.x-step svg{color:var(--mu);transition:transform .2s}.x-step.on svg{transform:rotate(90deg)}
+.x-sn{width:24px;height:24px;border-radius:50%;background:var(--ch);display:grid;place-items:center;font-size:13px;font-weight:700;flex:none}.x-step.set .x-sn{background:#00ba7c;color:#fff}
+.x-se{font-size:22px}.x-sl{flex:1;min-width:0}.x-sl small{display:block;color:var(--mu);font-size:13px;line-height:16px}.x-sl b{display:block;font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.x-pick{margin:0 16px;border:1px solid var(--ln);border-top:0;border-radius:0 0 16px 16px;padding:12px 0 4px}
+.x-pick>.x-sin{margin:0 12px 8px}
+.x-pick .x-grid{padding:0 12px 8px}
+.x-grid button.on{background:var(--fg)!important;color:var(--bg)!important}
+.x-tags.pad{padding:0 12px 8px}
+.x-list{max-height:320px;overflow-y:auto}
+.x-list button{display:flex!important;justify-content:space-between;width:100%;padding:12px 16px!important;font-size:16px}.x-list button:hover{background:var(--hv)}.x-list small{color:var(--mu)}
+
 .x-h2{font-size:20px;line-height:24px;font-weight:800;padding:12px 16px}
 .x-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 16px 8px}
 .x-grid button{display:flex!important;align-items:center;gap:10px;border:1px solid var(--ln)!important;border-radius:14px;padding:12px!important;font-weight:600;font-size:14px;line-height:18px}.x-grid button:hover{background:var(--hv)}.x-grid span{font-size:20px}
