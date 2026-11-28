@@ -3,10 +3,11 @@ import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'rea
 import { LogoMark } from '@/components/Logo';
 import { ALL_PORTS, FLAG, MARINE_SERVICES, PORT_DATA, portBySlug, type PortRef } from '@/lib/ports';
 import { submitRfq } from '@/lib/rfq';
+import { supabaseBrowser } from '@/lib/supabase-browser';
 
-export type FeedItem = { id: string; kind: 'member' | 'guide' | 'data'; at: string; author: string; handle: string; badge?: boolean; text: string; sub?: string; href: string };
-export type XProvider = { s: string; n: string; t: string; tl: string; c: string; f: string; p: string[]; sv: string[]; b: string; wa: string; ph: string; em: string; w: string; cl: boolean; j: string };
-type View = { v: 'home' | 'search' | 'profile' | 'port' | 'notifs' | 'chat' | 'saved' | 'request' | 'tools'; a?: string; q?: string };
+export type FeedItem = { id: string; kind: 'member' | 'guide' | 'data' | 'post'; at: string; author: string; handle: string; badge?: boolean; text: string; sub?: string; href: string; pid?: string; img?: string; likes?: number; replies?: number; reposts?: number; op?: boolean };
+export type XProvider = { id: string; s: string; n: string; t: string; tl: string; c: string; f: string; p: string[]; sv: string[]; b: string; wa: string; ph: string; em: string; w: string; cl: boolean; j: string };
+type View = { v: 'home' | 'search' | 'find' | 'profile' | 'port' | 'post' | 'notifs' | 'chat' | 'saved' | 'request' | 'tools' | 'login' | 'compose' | 'me'; a?: string; q?: string };
 
 /* ---------- icons (outline, X-like weight) ---------- */
 const P = {
@@ -88,6 +89,12 @@ function parseQuery(q: string) {
 }
 
 /* ---------- app ---------- */
+type Me = { user_id: string; kind: 'operator' | 'provider'; name: string; provider_id: string | null; gold: boolean };
+type DbPost = { id: string; body: string; image_url: string | null; likes: number; replies: number; reposts: number; created_at: string; user_id: string; x_profiles: { name: string; kind: string; provider_id: string | null; gold: boolean } | null };
+const POST_COLS = 'id,body,image_url,likes,replies,reposts,created_at,user_id,x_profiles(name,kind,provider_id,gold)';
+const LINK_RE = /(https?:\/\/|www\.|\b[a-z0-9-]+\.(com|net|org|io|co|uk|tr|gr|sg|nl|de|info|biz|me|app|xyz)\b)/i;
+const plain = (e: unknown) => (e && typeof e === 'object' && 'message' in e ? String((e as { message: string }).message) : 'Something went wrong').replace(/^.*?:\s*/, '');
+
 export function XApp({ items, providers, trending, listed, joined }: { items: FeedItem[]; providers: XProvider[]; trending: [string, number][]; listed: number; joined: number }) {
   const [view, setView] = useState<View>({ v: 'home' });
   const [tab, setTab] = useState<'for' | 'find'>('for');
@@ -95,17 +102,49 @@ export function XApp({ items, providers, trending, listed, joined }: { items: Fe
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
   const [hide, setHide] = useState(false);
   const [toast, setToast] = useState('');
-  const [st, setSt] = useState<{ l: Record<string, 1>; r: Record<string, 1>; b: Record<string, 1>; f: Record<string, 1> }>({ l: {}, r: {}, b: {}, f: {} });
+  const [loc, setLoc] = useState<{ l: Record<string, 1>; r: Record<string, 1>; b: Record<string, 1> }>({ l: {}, r: {}, b: {} });
+  const [me, setMe] = useState<Me | null>(null);
+  const [db, setDb] = useState<DbPost[]>([]);
+  const [myL, setMyL] = useState<Record<string, 1>>({});
+  const [myR, setMyR] = useState<Record<string, 1>>({});
+  const [fol, setFol] = useState<Record<string, 1>>({});
+  const [unread, setUnread] = useState(0);
   const homeY = useRef(0);
   const bySlug = useMemo(() => new Map(providers.map((p) => [p.s, p])), [providers]);
+  const byId = useMemo(() => new Map(providers.map((p) => [p.id, p])), [providers]);
+
+  const say = (t: string) => { setToast(t); setTimeout(() => setToast(''), 2400); };
+
+  const loadFeed = useCallback(async () => {
+    const { data } = await supabaseBrowser.from('x_posts').select(POST_COLS).order('created_at', { ascending: false }).limit(40);
+    if (data) setDb(data as unknown as DbPost[]);
+  }, []);
+  const loadMine = useCallback(async (uid: string) => {
+    const [l, r, f, n] = await Promise.all([
+      supabaseBrowser.from('x_likes').select('post_id').eq('user_id', uid).limit(500),
+      supabaseBrowser.from('x_reposts').select('post_id').eq('user_id', uid).limit(500),
+      supabaseBrowser.from('x_follows').select('provider_id').eq('user_id', uid).limit(1000),
+      supabaseBrowser.from('x_notifications').select('id', { count: 'exact', head: true }).eq('user_id', uid).eq('read', false),
+    ]);
+    setMyL(Object.fromEntries((l.data || []).map((x) => [x.post_id, 1 as const])));
+    setMyR(Object.fromEntries((r.data || []).map((x) => [x.post_id, 1 as const])));
+    setFol(Object.fromEntries((f.data || []).map((x) => [x.provider_id, 1 as const])));
+    setUnread(n.count || 0);
+  }, []);
+  const ensure = useCallback(async (name?: string) => {
+    const { data, error } = await supabaseBrowser.rpc('x_ensure_profile', { p_name: name || null });
+    if (error || !data) return null;
+    const p = data as Me; setMe(p); loadMine(p.user_id); return p;
+  }, [loadMine]);
 
   useEffect(() => {
     setTheme((document.documentElement.dataset.psfx as 'dark' | 'light') || 'dark');
-    try { setSt({ l: {}, r: {}, b: {}, f: {}, ...JSON.parse(localStorage.getItem('psfx_state') || '{}') }); } catch {}
+    try { setLoc({ l: {}, r: {}, b: {}, ...JSON.parse(localStorage.getItem('psfx_state') || '{}') }); } catch {}
     const fromUrl = (): View => {
       const u = new URLSearchParams(location.search);
       if (u.get('c')) return { v: 'profile', a: u.get('c')! };
       if (u.get('port')) return { v: 'port', a: u.get('port')! };
+      if (u.get('post')) return { v: 'post', a: u.get('post')! };
       const v = u.get('v') as View['v'] | null;
       return v ? { v, q: u.get('q') || '' } : { v: 'home' };
     };
@@ -115,61 +154,97 @@ export function XApp({ items, providers, trending, listed, joined }: { items: Fe
     let last = 0;
     const sc = () => { const y = window.scrollY; setHide(y > 80 && y > last); last = y; };
     window.addEventListener('scroll', sc, { passive: true });
-    return () => { window.removeEventListener('popstate', pop); window.removeEventListener('scroll', sc); };
-  }, []);
+    loadFeed();
+    supabaseBrowser.auth.getSession().then(({ data }) => { if (data.session) ensure(); });
+    const { data: sub } = supabaseBrowser.auth.onAuthStateChange((ev) => { if (ev === 'SIGNED_OUT') { setMe(null); setMyL({}); setMyR({}); setFol({}); setUnread(0); } });
+    return () => { window.removeEventListener('popstate', pop); window.removeEventListener('scroll', sc); sub.subscription.unsubscribe(); };
+  }, [loadFeed, ensure]);
 
   const go = useCallback((n: View) => {
     if (view.v === 'home') homeY.current = window.scrollY;
-    const u = n.v === 'profile' ? `?c=${n.a}` : n.v === 'port' ? `?port=${n.a}` : n.v === 'home' ? '' : `?v=${n.v}${n.q ? '&q=' + encodeURIComponent(n.q) : ''}`;
+    const u = n.v === 'profile' ? `?c=${n.a}` : n.v === 'port' ? `?port=${n.a}` : n.v === 'post' ? `?post=${n.a}` : n.v === 'home' ? '' : `?v=${n.v}${n.q ? '&q=' + encodeURIComponent(n.q) : ''}`;
     history.pushState(null, '', '/x' + u);
     setView(n); setDrawer(false);
     requestAnimationFrame(() => window.scrollTo(0, n.v === 'home' ? homeY.current : 0));
   }, [view.v]);
   const back = () => (history.length > 1 ? history.back() : go({ v: 'home' }));
-  const say = (t: string) => { setToast(t); setTimeout(() => setToast(''), 2000); };
-  const flip = (k: 'l' | 'r' | 'b' | 'f', id: string) => {
-    setSt((o) => { const m = { ...o[k] }; if (m[id]) delete m[id]; else m[id] = 1; const n = { ...o, [k]: m }; try { localStorage.setItem('psfx_state', JSON.stringify(n)); } catch {} return n; });
+  const needLogin = () => { say('Log in or join to do that'); go({ v: 'login' }); };
+  const flipLoc = (k: 'l' | 'r' | 'b', id: string) => {
+    setLoc((o) => { const m = { ...o[k] }; if (m[id]) delete m[id]; else m[id] = 1; const n = { ...o, [k]: m }; try { localStorage.setItem('psfx_state', JSON.stringify(n)); } catch {} return n; });
   };
   const toggleTheme = () => { const t = theme === 'dark' ? 'light' : 'dark'; setTheme(t); document.documentElement.dataset.psfx = t; try { localStorage.setItem('psfx_theme', t); } catch {} };
-  const open = (href: string) => { if (href.startsWith('/')) location.href = href; else go({ v: 'profile', a: href }); };
-  const tagSearch = (t: string) => go({ v: 'search', q: t });
 
-  const feed = items;
+  const bump = (pid: string, k: 'likes' | 'reposts' | 'replies', d: number) => setDb((xs) => xs.map((x) => (x.id === pid ? { ...x, [k]: Math.max(0, x[k] + d) } : x)));
+  const like = async (pid: string) => {
+    if (!me) return needLogin();
+    const on = !!myL[pid];
+    setMyL((m) => { const n = { ...m }; if (on) delete n[pid]; else n[pid] = 1; return n; }); bump(pid, 'likes', on ? -1 : 1);
+    const r = on ? await supabaseBrowser.from('x_likes').delete().eq('post_id', pid).eq('user_id', me.user_id) : await supabaseBrowser.from('x_likes').insert({ post_id: pid, user_id: me.user_id });
+    if (r.error) { bump(pid, 'likes', on ? 1 : -1); setMyL((m) => { const n = { ...m }; if (on) n[pid] = 1; else delete n[pid]; return n; }); }
+  };
+  const repost = async (pid: string) => {
+    if (!me) return needLogin();
+    const on = !!myR[pid];
+    setMyR((m) => { const n = { ...m }; if (on) delete n[pid]; else n[pid] = 1; return n; }); bump(pid, 'reposts', on ? -1 : 1);
+    const r = on ? await supabaseBrowser.from('x_reposts').delete().eq('post_id', pid).eq('user_id', me.user_id) : await supabaseBrowser.from('x_reposts').insert({ post_id: pid, user_id: me.user_id });
+    if (r.error) { bump(pid, 'reposts', on ? 1 : -1); setMyR((m) => { const n = { ...m }; if (on) n[pid] = 1; else delete n[pid]; return n; }); }
+  };
+  const follow = async (p: XProvider) => {
+    if (!me) return needLogin();
+    if (me.provider_id === p.id) return say('This is your company');
+    const on = !!fol[p.id];
+    setFol((m) => { const n = { ...m }; if (on) delete n[p.id]; else n[p.id] = 1; return n; });
+    const r = on ? await supabaseBrowser.from('x_follows').delete().eq('provider_id', p.id).eq('user_id', me.user_id) : await supabaseBrowser.from('x_follows').insert({ provider_id: p.id, user_id: me.user_id });
+    if (r.error) setFol((m) => { const n = { ...m }; if (on) n[p.id] = 1; else delete n[p.id]; return n; });
+  };
+
+  const toItem = useCallback((d: DbPost): FeedItem => {
+    const pr = d.x_profiles; const comp = pr?.provider_id ? byId.get(pr.provider_id) : undefined;
+    return { id: 'p-' + d.id, pid: d.id, kind: 'post', at: d.created_at, author: pr?.name || 'Member', handle: comp?.s || (pr?.kind === 'operator' ? 'operator' : 'member'), badge: !!pr?.gold, text: d.body, img: d.image_url || undefined, likes: d.likes, replies: d.replies, reposts: d.reposts, href: comp ? comp.s : '', op: pr?.kind === 'operator' };
+  }, [byId]);
+  const feed = useMemo(() => [...db.map(toItem), ...items].sort((a, b) => b.at.localeCompare(a.at)), [db, items, toItem]);
 
   /* ---------- pieces ---------- */
   const Rich = ({ text }: { text: string }) => (
     <>{text.split(/(#[A-Za-z0-9_]+)/g).map((part, i) => part.startsWith('#')
-      ? <button key={i} className="x-ht" onClick={(e) => { e.stopPropagation(); tagSearch(part.slice(1)); }}>{part}</button>
+      ? <button key={i} className="x-ht" onClick={(e) => { e.stopPropagation(); go({ v: 'search', q: part.slice(1) }); }}>{part}</button>
       : <Fragment key={i}>{part}</Fragment>)}</>
   );
-  const Post = ({ i }: { i: FeedItem }) => (
-    <article className="x-post" onClick={() => open(i.href)}>
-      <div className="x-pl" onClick={(e) => { e.stopPropagation(); if (i.kind === 'member') go({ v: 'profile', a: i.handle }); }}><Av name={i.author} handle={i.handle} /></div>
-      <div className="x-pr">
-        <div className="x-hd"><b>{i.author}</b>{i.badge && <Badge />}<span>@{i.handle.slice(0, 20)}</span><span>·</span><span>{ago(i.at)}</span></div>
-        <div className="x-tx"><Rich text={i.text} /></div>
-        {i.sub && <div className={'x-cd' + (i.kind === 'guide' ? ' g' : '')}>{i.kind === 'guide' && <small>portservicefinder.com</small>}<span>{i.sub}</span></div>}
-        <div className="x-ac" onClick={(e) => e.stopPropagation()}>
-          <button aria-label="Reply" onClick={() => open(i.href)}><Ico d="reply" s={18.5} /></button>
-          <button aria-label="Repost" className={st.r[i.id] ? 'rp' : ''} onClick={() => flip('r', i.id)}><Ico d="repost" s={18.5} /><em>{st.r[i.id] ? 1 : ''}</em></button>
-          <button aria-label="Like" className={st.l[i.id] ? 'lk' : ''} onClick={() => flip('l', i.id)}><Ico d="heart" s={18.5} fill={!!st.l[i.id]} /><em>{st.l[i.id] ? 1 : ''}</em></button>
-          <span className="x-ac2">
-            <button aria-label="Bookmark" className={st.b[i.id] ? 'bm' : ''} onClick={() => { flip('b', i.id); if (!st.b[i.id]) say('Added to your Bookmarks'); }}><Ico d="bookmark" s={18.5} fill={!!st.b[i.id]} /></button>
-            <button aria-label="Share" onClick={() => { const u = location.origin + (i.href.startsWith('/') ? i.href : '/providers/' + i.href); try { if (navigator.share) navigator.share({ url: u }); else { navigator.clipboard.writeText(u); say('Copied to clipboard'); } } catch {} }}><Ico d="share" s={18.5} /></button>
-          </span>
+  const openItem = (i: FeedItem) => { if (i.pid) go({ v: 'post', a: i.pid }); else if (i.href.startsWith('/')) location.href = i.href; else if (i.href) go({ v: 'profile', a: i.href }); };
+  const Post = ({ i, big }: { i: FeedItem; big?: boolean }) => {
+    const db1 = !!i.pid;
+    const lk = db1 ? !!myL[i.pid!] : !!loc.l[i.id]; const rp = db1 ? !!myR[i.pid!] : !!loc.r[i.id];
+    const nL = db1 ? i.likes || 0 : lk ? 1 : 0; const nR = db1 ? i.reposts || 0 : rp ? 1 : 0; const nC = db1 ? i.replies || 0 : 0;
+    return (
+      <article className={'x-post' + (big ? ' big' : '')} onClick={() => !big && openItem(i)}>
+        <div className="x-pl" onClick={(e) => { e.stopPropagation(); if (bySlug.has(i.handle)) go({ v: 'profile', a: i.handle }); }}><Av name={i.author} handle={i.handle === 'operator' || i.handle === 'member' ? i.author : i.handle} /></div>
+        <div className="x-pr">
+          <div className="x-hd"><b>{i.author}</b>{i.badge && <Badge />}<span>{i.op ? 'Operator' : '@' + i.handle.slice(0, 20)}</span><span>·</span><span>{ago(i.at)}</span></div>
+          <div className="x-tx"><Rich text={i.text} /></div>
+          {i.img && <img className="x-img" src={i.img} alt="" loading="lazy" />}
+          {i.sub && <div className={'x-cd' + (i.kind === 'guide' ? ' g' : '')}>{i.kind === 'guide' && <small>portservicefinder.com</small>}<span>{i.sub}</span></div>}
+          <div className="x-ac" onClick={(e) => e.stopPropagation()}>
+            <button aria-label="Reply" onClick={() => openItem(i)}><Ico d="reply" s={18.5} /><em>{nC || ''}</em></button>
+            <button aria-label="Repost" className={rp ? 'rp' : ''} onClick={() => (db1 ? repost(i.pid!) : flipLoc('r', i.id))}><Ico d="repost" s={18.5} /><em>{nR || ''}</em></button>
+            <button aria-label="Like" className={lk ? 'lk' : ''} onClick={() => (db1 ? like(i.pid!) : flipLoc('l', i.id))}><Ico d="heart" s={18.5} fill={lk} /><em>{nL || ''}</em></button>
+            <span className="x-ac2">
+              <button aria-label="Bookmark" className={loc.b[i.id] ? 'bm' : ''} onClick={() => { flipLoc('b', i.id); if (!loc.b[i.id]) say('Added to your Bookmarks'); }}><Ico d="bookmark" s={18.5} fill={!!loc.b[i.id]} /></button>
+              <button aria-label="Share" onClick={() => { const u = location.origin + (i.pid ? '/x?post=' + i.pid : i.href.startsWith('/') ? i.href : '/providers/' + i.href); try { if (navigator.share) navigator.share({ url: u }); else { navigator.clipboard.writeText(u); say('Copied to clipboard'); } } catch {} }}><Ico d="share" s={18.5} /></button>
+            </span>
+          </div>
         </div>
-      </div>
-    </article>
-  );
+      </article>
+    );
+  };
   const Cell = ({ p }: { p: XProvider }) => (
     <div className="x-cell" onClick={() => go({ v: 'profile', a: p.s })}>
       <Av name={p.n} handle={p.s} />
       <div className="x-cm">
-        <div className="x-hd"><b>{p.n}</b>{p.cl && <Badge />}</div>
+        <div className="x-hd"><b>{p.n}</b></div>
         <div className="x-mu">{p.tl} · {p.f} {p.p.slice(0, 2).map((s) => portBySlug(s)?.name).filter(Boolean).join(', ') || p.c}</div>
         {p.b && <div className="x-cb">{p.b.slice(0, 120)}</div>}
       </div>
-      <button className={'x-btn sm' + (st.f[p.s] ? ' ol' : '')} onClick={(e) => { e.stopPropagation(); flip('f', p.s); }}>{st.f[p.s] ? 'Following' : 'Follow'}</button>
+      <button className={'x-btn sm' + (fol[p.id] ? ' ol' : '')} onClick={(e) => { e.stopPropagation(); follow(p); }}>{fol[p.id] ? 'Following' : 'Follow'}</button>
     </div>
   );
   const Head = ({ title, sub, tabs }: { title?: string; sub?: string; tabs?: React.ReactNode }) => (
@@ -178,9 +253,9 @@ export function XApp({ items, providers, trending, listed, joined }: { items: Fe
         <div className="x-bar"><button className="x-ib" onClick={back} aria-label="Back"><Ico d="back" s={20} w={2} /></button><div className="x-tt"><b>{title}</b>{sub && <small>{sub}</small>}</div></div>
       ) : (
         <div className="x-bar m">
-          <button className="x-me" onClick={() => setDrawer(true)} aria-label="Open menu"><Ico d="user" s={18} /></button>
+          <button className="x-me" onClick={() => setDrawer(true)} aria-label="Open menu">{me ? <Av name={me.name} handle={me.provider_id ? byId.get(me.provider_id)?.s || me.name : me.name} size={32} /> : <Ico d="user" s={18} />}</button>
           <span className="x-mid"><LogoMark size={27} /></span>
-          <button className="x-ib" onClick={() => go({ v: 'search' })} aria-label="Search"><Ico d="search" s={21} /></button>
+          <button className="x-ib r" onClick={() => go({ v: 'search' })} aria-label="Search"><Ico d="search" s={21} /></button>
         </div>
       )}
       {tabs}
@@ -195,9 +270,9 @@ export function XApp({ items, providers, trending, listed, joined }: { items: Fe
   let body: React.ReactNode = null;
   if (view.v === 'home') {
     body = (<>
-      <Head tabs={<Tabs list={[['for', 'For you'], ['find', '🔎 Find a service']]} on={tab} set={(t) => { setTab(t); window.scrollTo(0, 0); }} />} />
+      <Head tabs={<Tabs list={[['for', 'For you'], ['find', 'Find a service']]} on={tab} set={(t) => { setTab(t); window.scrollTo(0, 0); }} />} />
       {tab === 'find' ? <FindView providers={providers} trending={trending} go={go} Cell={Cell} /> : (<>
-        <div className="x-ask" onClick={() => setTab('find')}>
+        <div className="x-ask" onClick={() => go({ v: 'find' })}>
           <span className="x-av off" style={{ width: 40, height: 40 }}><Ico d="search" s={20} /></span>
           <div><b>Find an agent, chandler or service</b><small>Pick a country, a port and what you need</small></div>
           <span className="x-go"><Ico d="chev" s={18} /></span>
@@ -206,45 +281,58 @@ export function XApp({ items, providers, trending, listed, joined }: { items: Fe
         <div className="x-endpad" />
       </>)}
     </>);
+  } else if (view.v === 'find') {
+    body = <><Head title="Find a service" sub="Country, port, service" /><FindView providers={providers} trending={trending} go={go} Cell={Cell} /></>;
   } else if (view.v === 'search') {
     body = <SearchView q={view.q || ''} providers={providers} trending={trending} hide={hide} onBack={back} go={go} Cell={Cell} onDrawer={() => setDrawer(true)} />;
   } else if (view.v === 'profile') {
     const p = bySlug.get(view.a || '');
-    const posts = items.filter((i) => i.handle === view.a);
-    body = p ? <Profile p={p} posts={posts} Post={Post} Head={Head} following={!!st.f[p.s]} onFollow={() => flip('f', p.s)} go={go} /> : <><Head title="Profile" /><Empty t="This account doesn’t exist" s="Try searching for another." /></>;
+    body = p ? <Profile key={p.s} p={p} statics={items.filter((i) => i.handle === p.s)} toItem={toItem} Post={Post} Head={Head} following={!!fol[p.id]} onFollow={() => follow(p)} go={go} /> : <><Head title="Profile" /><Empty t="This account doesn’t exist" s="Try searching for another." /></>;
   } else if (view.v === 'port') {
     body = <PortView slug={view.a || ''} providers={providers} Head={Head} Cell={Cell} go={go} />;
+  } else if (view.v === 'post') {
+    body = <Thread key={view.a} pid={view.a || ''} me={me} toItem={toItem} Post={Post} Head={Head} needLogin={needLogin} onReply={(pid) => bump(pid, 'replies', 1)} />;
   } else if (view.v === 'notifs') {
-    body = (<>
-      <Head title="Notifications" tabs={<Tabs list={[['all', 'All'], ['req', 'Requests']]} on={'all'} set={() => {}} />} />
-      <Empty t="Nothing to see here — yet" s="Quotes for your requests, replies and new companies in the ports you follow will show up here." cta={<div className="x-row"><a className="x-btn" href="/for-providers/signup">Create account</a><a className="x-btn ol" href="/for-providers/login">Log in</a></div>} />
-    </>);
+    body = <Notifs me={me} Head={Head} go={go} onRead={() => setUnread(0)} />;
   } else if (view.v === 'chat') {
     body = (<>
       <Head title="Chat" />
-      <Empty t="Welcome to your inbox!" s="Talk to ship agents, chandlers and service companies directly. Open a company and tap the message button." cta={<button className="x-btn ac" onClick={() => go({ v: 'search' })}>Find a company</button>} />
+      <Empty t="Messages are coming soon" s="Soon you can message ship agents, chandlers and service companies directly here. For now, open a company and use WhatsApp, email or call." cta={<button className="x-btn ac" onClick={() => go({ v: 'find' })}>Find a company</button>} />
     </>);
   } else if (view.v === 'saved') {
-    const saved = items.filter((i) => st.b[i.id]);
+    const saved = feed.filter((i) => loc.b[i.id]);
     body = (<><Head title="Bookmarks" />{saved.length ? saved.map((i) => <Post key={i.id} i={i} />) : <Empty t="Save posts for later" s="Bookmark posts to easily find them again in the future." />}</>);
   } else if (view.v === 'tools') {
     body = (<><Head title="Voyage tools" sub="Free calculators and checklists" />
-      {TOOLS.map(([g, rows]) => (<section key={g}><h2 className="x-h2">{g}</h2>{rows.map(([slug, e, t, d]) => <a key={slug} className="x-prow" href={`/voyage/${slug}`}><span className="x-pin">{e}</span><span><b>{t}</b><small>{d}</small></span></a>)}</section>))}
+      {TOOLS.map(([g, rows]) => (<section key={g}><h2 className="x-h2">{g}</h2>{rows.map(([href, e, t, d]) => <a key={href} className="x-prow" href={href.startsWith('/') ? href : `/voyage/${href}`}><span className="x-pin">{e}</span><span><b>{t}</b><small>{d}</small></span></a>)}</section>))}
       <div className="x-endpad" /></>);
   } else if (view.v === 'request') {
     body = <RequestView initial={view.q || ''} onClose={back} />;
+  } else if (view.v === 'login') {
+    body = <Login onDone={async (name) => { await ensure(name); back(); say('Welcome to PortServiceFinder'); }} onClose={back} />;
+  } else if (view.v === 'compose') {
+    body = me ? <Compose me={me} onClose={back} onPosted={(d) => { setDb((xs) => [d, ...xs]); go({ v: 'home' }); say('Your post was sent'); }} /> : <Login onDone={async (name) => { await ensure(name); }} onClose={back} note="Log in or join to post updates." />;
+  } else if (view.v === 'me') {
+    body = me && me.provider_id && byId.get(me.provider_id)
+      ? <Profile p={byId.get(me.provider_id)!} statics={[]} toItem={toItem} Post={Post} Head={Head} following={false} onFollow={() => {}} go={go} mine />
+      : me ? <MyPosts me={me} toItem={toItem} Post={Post} Head={Head} go={go} /> : <Login onDone={async (name) => { await ensure(name); }} onClose={back} />;
   }
 
-  const NAV: [View['v'], string, string][] = [['home', 'home', 'Home'], ['search', 'search', 'Explore'], ['notifs', 'bell', 'Notifications'], ['chat', 'chat', 'Chat'], ['saved', 'bookmark', 'Bookmarks'], ['tools', 'tool', 'Voyage tools']];
+  const signOut = async () => { await supabaseBrowser.auth.signOut(); setMe(null); setDrawer(false); say('Logged out'); };
+  const NAV: [View['v'], string, string][] = [['home', 'home', 'Home'], ['search', 'search', 'Explore'], ['find', 'anchor', 'Find a service'], ['notifs', 'bell', 'Notifications'], ['chat', 'chat', 'Chat'], ['saved', 'bookmark', 'Bookmarks'], ['tools', 'tool', 'Voyage tools'], ['me', 'user', 'Profile']];
+  const meHandle = me ? (me.provider_id ? byId.get(me.provider_id)?.s : '') || me.name : '';
   return (
     <div className="xapp">
       <aside className="x-left">
         <button className="x-logo" onClick={() => go({ v: 'home' })} aria-label="Home"><LogoMark size={32} /></button>
-        {NAV.map(([v, d, l]) => <button key={v} className={'x-nav' + (view.v === v ? ' on' : '')} onClick={() => go({ v })}><Ico d={d} s={26} w={view.v === v ? 2.4 : 1.8} /><span>{l}</span></button>)}
-        <a className="x-nav" href="/for-providers/login"><Ico d="user" s={26} /><span>Profile</span></a>
+        {NAV.map(([v, d, l]) => <button key={v} className={'x-nav' + (view.v === v ? ' on' : '')} onClick={() => go({ v })}><span className="x-ni"><Ico d={d} s={26} w={view.v === v ? 2.4 : 1.8} />{v === 'notifs' && unread > 0 && <i className="x-dot">{unread > 9 ? '9+' : unread}</i>}</span><span>{l}</span></button>)}
         <button className="x-nav" onClick={toggleTheme}><Ico d="bulb" s={26} /><span>{theme === 'dark' ? 'Light mode' : 'Dark mode'}</span></button>
-        <button className="x-big" onClick={() => go({ v: 'request' })}><span>Get quotes</span><Ico d="plus" s={24} w={2.4} /></button>
-        <a className="x-acct" href="/for-providers/signup"><span className="x-av" style={{ width: 40, height: 40, background: '#536471' }}><Ico d="user" s={20} /></span><span><b>List your company</b><small>Free for providers</small></span></a>
+        <button className="x-big" onClick={() => go({ v: 'compose' })}><span>Post</span><Ico d="plus" s={24} w={2.4} /></button>
+        {me ? (
+          <button className="x-acct" onClick={signOut} title="Log out"><Av name={me.name} handle={meHandle} /><span><b>{me.name}</b><small>{me.kind === 'provider' ? 'Company' : 'Operator'} · Log out</small></span></button>
+        ) : (
+          <button className="x-acct" onClick={() => go({ v: 'login' })}><span className="x-av" style={{ width: 40, height: 40, background: '#536471' }}><Ico d="user" s={20} /></span><span><b>Log in or join</b><small>Free for everyone</small></span></button>
+        )}
       </aside>
 
       <main className="x-main">{body}</main>
@@ -264,16 +352,18 @@ export function XApp({ items, providers, trending, listed, joined }: { items: Fe
           <h3>Who to follow</h3>
           {providers.filter((p) => p.cl).sort((a, b) => b.j.localeCompare(a.j)).slice(0, 3).map((p) => <Cell key={p.s} p={p} />)}
         </section>
-        <p className="x-foot"><a href="/about">About</a><a href="/privacy">Privacy</a><a href="/terms">Terms</a><a href="/psc-detentions">PSC data</a><span>{listed.toLocaleString('en-US')} companies · +{joined} this month</span></p>
+        <p className="x-foot"><a href="/about">About</a><a href="/privacy">Privacy</a><a href="/terms">Terms</a><span>{listed.toLocaleString('en-US')} companies · +{joined} this month</span></p>
       </aside>
 
-      {(view.v === 'home' || view.v === 'search' || view.v === 'chat') && (
-        <button className={'x-fab' + (hide ? ' dim' : '')} onClick={() => go({ v: view.v === 'chat' ? 'search' : 'request' })} aria-label={view.v === 'chat' ? 'New message' : 'Get quotes'}><Ico d={view.v === 'chat' ? 'mail' : 'plus'} s={26} w={2.2} /></button>
+      {(view.v === 'home' || view.v === 'search' || view.v === 'find' || view.v === 'profile' || view.v === 'port') && (
+        <button className={'x-fab' + (hide ? ' dim' : '')} onClick={() => go({ v: 'compose' })} aria-label="Post"><Ico d="plus" s={26} w={2.2} /></button>
       )}
-      {view.v !== 'request' && (
+      {!['request', 'compose', 'login'].includes(view.v) && (
         <nav className={'x-bot' + (hide ? ' dim' : '')} aria-label="Main">
-          {([['home', 'home'], ['search', 'search'], ['request', 'anchor'], ['notifs', 'bell'], ['chat', 'chat']] as [View['v'], string][]).map(([v, d]) => (
-            <button key={v} className={view.v === v ? 'on' : ''} onClick={() => (v === 'home' && view.v === 'home' ? window.scrollTo({ top: 0, behavior: 'smooth' }) : go({ v }))} aria-label={v}><Ico d={d} s={26} w={view.v === v ? 2.4 : 1.8} fill={view.v === v && v !== 'search' && v !== 'request'} /></button>
+          {([['home', 'home', 'Home'], ['search', 'search', 'Search'], ['find', 'anchor', 'Find a service'], ['notifs', 'bell', 'Notifications'], ['chat', 'chat', 'Chat']] as [View['v'], string, string][]).map(([v, d, l]) => (
+            <button key={v} className={view.v === v ? 'on' : ''} onClick={() => (v === 'home' && view.v === 'home' ? window.scrollTo({ top: 0, behavior: 'smooth' }) : go({ v }))} aria-label={l}>
+              <span className="x-ni"><Ico d={d} s={26} w={view.v === v ? 2.4 : 1.8} fill={view.v === v && (v === 'home' || v === 'notifs' || v === 'chat')} />{v === 'notifs' && unread > 0 && <i className="x-dot">{unread > 9 ? '9+' : unread}</i>}</span>
+            </button>
           ))}
         </nav>
       )}
@@ -281,20 +371,21 @@ export function XApp({ items, providers, trending, listed, joined }: { items: Fe
       {drawer && (
         <div className="x-dw" onClick={() => setDrawer(false)}>
           <div className="x-dwp" onClick={(e) => e.stopPropagation()}>
-            <span className="x-av" style={{ width: 40, height: 40, background: '#536471' }}><Ico d="user" s={20} /></span>
-            <b className="x-dwn">Guest</b><span className="x-mu">@guest</span>
-            <div className="x-dwc"><b>{Object.keys(st.f).length}</b> Following <b style={{ marginLeft: 14 }}>0</b> Followers</div>
-            <a className="x-dwi" href="/for-providers/login"><Ico d="user" />Profile</a>
-            <button className="x-dwi" onClick={() => go({ v: 'request' })}><Ico d="anchor" />Get quotes</button>
+            {me ? <Av name={me.name} handle={meHandle} /> : <span className="x-av" style={{ width: 40, height: 40, background: '#536471' }}><Ico d="user" s={20} /></span>}
+            <b className="x-dwn">{me ? me.name : 'Guest'}</b><span className="x-mu">{me ? (me.kind === 'provider' ? 'Company account' : 'Operator account') : 'Not logged in'}</span>
+            <div className="x-dwc"><b>{Object.keys(fol).length}</b> Following</div>
+            {!me && <button className="x-btn full" style={{ marginTop: 0, marginBottom: 6 }} onClick={() => go({ v: 'login' })}>Log in or join</button>}
+            <button className="x-dwi" onClick={() => go({ v: 'me' })}><Ico d="user" />Profile</button>
+            <button className="x-dwi" onClick={() => go({ v: 'find' })}><Ico d="anchor" />Find a service</button>
+            <button className="x-dwi" onClick={() => go({ v: 'request' })}><Ico d="mail" />Get quotes</button>
             <button className="x-dwi" onClick={() => go({ v: 'saved' })}><Ico d="bookmark" />Bookmarks</button>
-            <button className="x-dwi" onClick={() => { setTab('find'); go({ v: 'home' }); }}><Ico d="pin" />Find a service</button>
             <button className="x-dwi" onClick={() => go({ v: 'tools' })}><Ico d="tool" />Voyage tools</button>
             <a className="x-dwi" href="/blog"><Ico d="book" />Guides</a>
-            <a className="x-dwi" href="/psc-detentions"><Ico d="shield" />PSC data</a>
-            <a className="x-dwi" href="/for-providers/signup"><Ico d="biz" />List your company</a>
+            {(!me || me.kind === 'operator') && <a className="x-dwi" href="/for-providers/signup"><Ico d="biz" />List your company</a>}
             <hr />
-            <a className="x-dwi sm" href="/for-providers/login"><Ico d="gear" s={20} />Settings and privacy</a>
+            <a className="x-dwi sm" href={me?.kind === 'provider' ? '/for-providers/dashboard' : '/for-providers/login'}><Ico d="gear" s={20} />Settings and privacy</a>
             <a className="x-dwi sm" href="/contact"><Ico d="help" s={20} />Help Center</a>
+            {me && <button className="x-dwi sm" onClick={signOut}><Ico d="back" s={20} />Log out</button>}
             <button className="x-bulb" onClick={toggleTheme} aria-label="Switch theme"><Ico d="bulb" s={24} /></button>
           </div>
         </div>
@@ -303,6 +394,202 @@ export function XApp({ items, providers, trending, listed, joined }: { items: Fe
       <style>{CSS}</style>
     </div>
   );
+}
+
+/* ---------- auth ---------- */
+function Login({ onDone, onClose, note }: { onDone: (name?: string) => Promise<void>; onClose: () => void; note?: string }) {
+  const [mode, setMode] = useState<'login' | 'join'>('join');
+  const [role, setRole] = useState<'' | 'operator'>('');
+  const [name, setName] = useState(''); const [email, setEmail] = useState(''); const [pw, setPw] = useState('');
+  const [busy, setBusy] = useState(false); const [err, setErr] = useState('');
+  const submit = async () => {
+    setErr('');
+    if (!/\S+@\S+\.\S+/.test(email)) return setErr('Enter a valid email.');
+    if (pw.length < 8) return setErr('Password must be at least 8 characters.');
+    if (mode === 'join' && name.trim().length < 2) return setErr('Enter your name or company.');
+    setBusy(true);
+    try {
+      if (mode === 'login') {
+        const { error } = await supabaseBrowser.auth.signInWithPassword({ email: email.trim(), password: pw });
+        if (error) throw error;
+        await onDone();
+      } else {
+        const { data, error } = await supabaseBrowser.auth.signUp({ email: email.trim(), password: pw });
+        if (error) throw error;
+        if (!data.session) { setErr('Check your email to confirm your account, then log in.'); setBusy(false); return; }
+        await onDone(name.trim());
+      }
+    } catch (e) { setErr(plain(e)); }
+    setBusy(false);
+  };
+  return (
+    <div className="x-cmp">
+      <div className="x-bar sp"><button className="x-ib" onClick={onClose} aria-label="Close"><Ico d="close" s={20} w={2} /></button><LogoMark size={28} /><span style={{ width: 28 }} /></div>
+      <div className="x-auth">
+        <h1>{mode === 'login' ? 'Log in to PortServiceFinder' : 'Join PortServiceFinder'}</h1>
+        {note && <p className="x-mu">{note}</p>}
+        {mode === 'join' && !role ? (<>
+          <p className="x-mu">Free for everyone. Who are you?</p>
+          <button className="x-role" onClick={() => setRole('operator')}><span>🚢</span><span><b>Ship operator, owner or crew</b><small>Find services, follow companies, comment</small></span></button>
+          <a className="x-role" href="/for-providers/signup"><span>⚓</span><span><b>Service company</b><small>Agent, chandler or marine service: list your company free</small></span></a>
+        </>) : (<>
+          {mode === 'join' && <input className="x-in" value={name} onChange={(e) => setName(e.target.value)} placeholder="Your name or company" autoComplete="name" />}
+          <input className="x-in" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" type="email" autoComplete="email" />
+          <input className="x-in" value={pw} onChange={(e) => setPw(e.target.value)} placeholder="Password (8+ characters)" type="password" autoComplete={mode === 'login' ? 'current-password' : 'new-password'} onKeyDown={(e) => e.key === 'Enter' && submit()} />
+          {err && <p className="x-err">{err}</p>}
+          <button className="x-btn full" disabled={busy} onClick={submit}>{busy ? 'Please wait…' : mode === 'login' ? 'Log in' : 'Create account'}</button>
+          {mode === 'login' && <a className="x-hint" href="/for-providers/login">Forgot password?</a>}
+        </>)}
+        <p className="x-swap">{mode === 'login' ? <>Don’t have an account? <button onClick={() => { setMode('join'); setRole(''); setErr(''); }}>Join</button></> : <>Already have an account? <button onClick={() => { setMode('login'); setErr(''); }}>Log in</button></>}</p>
+      </div>
+    </div>
+  );
+}
+
+/* ---------- compose ---------- */
+async function shrink(file: File): Promise<Blob> {
+  const img = await createImageBitmap(file);
+  const k = Math.min(1, 1080 / Math.max(img.width, img.height));
+  const c = document.createElement('canvas'); c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
+  c.getContext('2d')!.drawImage(img, 0, 0, c.width, c.height);
+  for (const q of [0.75, 0.6, 0.45]) {
+    const b = await new Promise<Blob | null>((r) => c.toBlob(r, 'image/webp', q));
+    if (b && b.size < 380000) return b.type === 'image/webp' ? b : new Blob([b], { type: 'image/jpeg' });
+  }
+  const j = await new Promise<Blob | null>((r) => c.toBlob(r, 'image/jpeg', 0.5));
+  if (!j) throw new Error('Could not read this image');
+  return j;
+}
+function Compose({ me, onClose, onPosted }: { me: Me; onClose: () => void; onPosted: (d: DbPost) => void }) {
+  const max = me.gold ? 600 : 160;
+  const [text, setText] = useState('');
+  const [img, setImg] = useState<{ blob: Blob; url: string } | null>(null);
+  const [busy, setBusy] = useState(false); const [err, setErr] = useState('');
+  const left = max - text.length;
+  const hasLink = !me.gold && LINK_RE.test(text);
+  const ok = text.trim().length > 0 && left >= 0 && !hasLink && !busy;
+  const pick = async (f?: File) => { if (!f) return; setErr(''); try { const b = await shrink(f); setImg({ blob: b, url: URL.createObjectURL(b) }); } catch (e) { setErr(plain(e)); } };
+  const send = async () => {
+    if (!ok) return; setBusy(true); setErr('');
+    try {
+      let image_url: string | null = null;
+      if (img) {
+        const path = `${me.user_id}/${Date.now()}.${img.blob.type === 'image/webp' ? 'webp' : 'jpg'}`;
+        const up = await supabaseBrowser.storage.from('x-media').upload(path, img.blob, { contentType: img.blob.type, upsert: false });
+        if (up.error) throw up.error;
+        image_url = supabaseBrowser.storage.from('x-media').getPublicUrl(path).data.publicUrl;
+      }
+      const { data, error } = await supabaseBrowser.from('x_posts').insert({ user_id: me.user_id, body: text.trim(), image_url }).select(POST_COLS).single();
+      if (error) throw error;
+      onPosted(data as unknown as DbPost);
+    } catch (e) { setErr(plain(e)); }
+    setBusy(false);
+  };
+  const pct = Math.min(1, text.length / max);
+  return (
+    <div className="x-cmp">
+      <div className="x-bar sp"><button className="x-tl" onClick={onClose}>Cancel</button><button className="x-btn ac sm" disabled={!ok} onClick={send}>{busy ? 'Posting…' : 'Post'}</button></div>
+      <div className="x-cbody">
+        <Av name={me.name} handle={me.name} />
+        <div className="x-cf">
+          <textarea autoFocus value={text} onChange={(e) => setText(e.target.value.slice(0, max + 20))} placeholder={me.kind === 'provider' ? 'Share news from your port: a delivery done, a new service, a special offer ⚓' : 'What’s happening in port?'} rows={5} />
+          {img && <div className="x-prev"><img src={img.url} alt="" /><button onClick={() => setImg(null)} aria-label="Remove image"><Ico d="close" s={16} w={2.6} /></button></div>}
+          {hasLink && <p className="x-err">Links are available with the gold badge (coming soon).</p>}
+          {err && <p className="x-err">{err}</p>}
+          <div className="x-ctool">
+            <label className="x-ib" aria-label="Add a photo"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="3.5" y="4.5" width="17" height="15" rx="2.5" /><circle cx="9" cy="10" r="1.8" /><path d="M20.5 16l-5-5-8.5 8.5" /></svg><input type="file" accept="image/*" hidden onChange={(e) => pick(e.target.files?.[0])} /></label>
+            <span className={'x-cnt' + (left < 0 ? ' over' : left <= 20 ? ' warn' : '')}>
+              <svg width="26" height="26" viewBox="0 0 26 26"><circle cx="13" cy="13" r="10" fill="none" stroke="var(--ln)" strokeWidth="2.5" /><circle cx="13" cy="13" r="10" fill="none" stroke="currentColor" strokeWidth="2.5" strokeDasharray={`${pct * 62.8} 62.8`} transform="rotate(-90 13 13)" /></svg>
+              {left <= 20 && <em>{left}</em>}
+            </span>
+          </div>
+          <p className="x-mu sm">{me.gold ? 'Gold: up to 600 characters and links.' : 'Up to 160 characters, one photo. Gold badge (coming soon): 600 characters and links.'}</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ---------- thread ---------- */
+type DbComment = { id: string; body: string; created_at: string; user_id: string; x_profiles: { name: string; kind: string; provider_id: string | null } | null };
+function Thread({ pid, me, toItem, Post, Head, needLogin, onReply }: { pid: string; me: Me | null; toItem: (d: DbPost) => FeedItem; Post: (x: { i: FeedItem; big?: boolean }) => React.ReactNode; Head: (x: { title?: string; sub?: string; tabs?: React.ReactNode }) => React.ReactNode; needLogin: () => void; onReply: (pid: string) => void }) {
+  const [post, setPost] = useState<DbPost | null | undefined>(undefined);
+  const [cs, setCs] = useState<DbComment[]>([]);
+  const [text, setText] = useState(''); const [busy, setBusy] = useState(false); const [err, setErr] = useState('');
+  useEffect(() => {
+    supabaseBrowser.from('x_posts').select(POST_COLS).eq('id', pid).maybeSingle().then(({ data }) => setPost((data as unknown as DbPost) || null));
+    supabaseBrowser.from('x_comments').select('id,body,created_at,user_id,x_profiles(name,kind,provider_id)').eq('post_id', pid).order('created_at').limit(200).then(({ data }) => setCs((data as unknown as DbComment[]) || []));
+  }, [pid]);
+  const send = async () => {
+    if (!me) return needLogin();
+    const t = text.trim(); if (!t || t.length > 100 || busy) return;
+    setBusy(true); setErr('');
+    const { data, error } = await supabaseBrowser.from('x_comments').insert({ post_id: pid, user_id: me.user_id, body: t }).select('id,body,created_at,user_id,x_profiles(name,kind,provider_id)').single();
+    if (error) setErr(plain(error)); else { setCs((x) => [...x, data as unknown as DbComment]); setText(''); onReply(pid); setPost((p) => (p ? { ...p, replies: p.replies + 1 } : p)); }
+    setBusy(false);
+  };
+  if (post === undefined) return <><Head title="Post" /><div className="x-load" /></>;
+  if (!post) return <><Head title="Post" /><div className="x-empty"><h2>This post was deleted</h2></div></>;
+  return (<>
+    <Head title="Post" />
+    <Post i={toItem(post)} big />
+    <div className="x-reply">
+      {me ? <Av name={me.name} handle={me.name} size={36} /> : <span className="x-av" style={{ width: 36, height: 36, background: '#536471' }}><Ico d="user" s={18} /></span>}
+      <input value={text} maxLength={100} onFocus={() => !me && needLogin()} onChange={(e) => setText(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && send()} placeholder="Post your reply" />
+      <span className="x-mu sm">{100 - text.length}</span>
+      <button className="x-btn ac sm" disabled={!text.trim() || busy} onClick={send}>Reply</button>
+    </div>
+    {err && <p className="x-err" style={{ padding: '0 16px' }}>{err}</p>}
+    {cs.map((c) => (
+      <div key={c.id} className="x-post">
+        <div className="x-pl"><Av name={c.x_profiles?.name || 'Member'} handle={c.x_profiles?.name || 'm'} /></div>
+        <div className="x-pr"><div className="x-hd"><b>{c.x_profiles?.name || 'Member'}</b><span>{c.x_profiles?.kind === 'provider' ? 'Company' : 'Operator'}</span><span>·</span><span>{ago(c.created_at)}</span></div><div className="x-tx">{c.body}</div></div>
+      </div>
+    ))}
+    <div className="x-endpad" />
+  </>);
+}
+
+/* ---------- notifications ---------- */
+type DbNotif = { id: string; kind: string; actor: string; post_id: string | null; read: boolean; created_at: string };
+function Notifs({ me, Head, go, onRead }: { me: Me | null; Head: (x: { title?: string; sub?: string; tabs?: React.ReactNode }) => React.ReactNode; go: (v: View) => void; onRead: () => void }) {
+  const [list, setList] = useState<DbNotif[] | null>(null);
+  useEffect(() => {
+    if (!me) return;
+    supabaseBrowser.from('x_notifications').select('id,kind,actor,post_id,read,created_at').eq('user_id', me.user_id).order('created_at', { ascending: false }).limit(60).then(({ data }) => {
+      setList((data as DbNotif[]) || []);
+      if ((data || []).some((n: DbNotif) => !n.read)) supabaseBrowser.from('x_notifications').update({ read: true }).eq('user_id', me.user_id).eq('read', false).then(() => onRead());
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [me?.user_id]);
+  const TXT: Record<string, [string, string, string]> = { like: ['heart', '#f91880', 'liked your post'], repost: ['repost', '#00ba7c', 'reposted your post'], reply: ['reply', '#1d9bf0', 'replied to your post'], follow: ['user', '#d6a838', 'followed your company'] };
+  return (<>
+    <Head title="Notifications" />
+    {!me ? <div className="x-empty"><h2>Nothing to see here — yet</h2><p>Log in to see likes, replies and new followers.</p><button className="x-btn" onClick={() => go({ v: 'login' })}>Log in or join</button></div>
+      : list === null ? <div className="x-load" />
+      : !list.length ? <div className="x-empty"><h2>Nothing to see here — yet</h2><p>Likes, replies and new followers will show up here.</p></div>
+      : list.map((n) => { const t = TXT[n.kind] || ['bell', '#71767b', n.kind]; return (
+        <div key={n.id} className={'x-ntf' + (n.read ? '' : ' new')} onClick={() => n.post_id && go({ v: 'post', a: n.post_id })}>
+          <span style={{ color: t[1] }}><Ico d={t[0]} s={26} fill={n.kind === 'like'} /></span>
+          <div><Av name={n.actor} handle={n.actor} size={32} /><p><b>{n.actor}</b> {t[2]}</p><small className="x-mu">{ago(n.created_at)}</small></div>
+        </div>); })}
+    <div className="x-endpad" />
+  </>);
+}
+
+/* ---------- operator profile ---------- */
+function MyPosts({ me, toItem, Post, Head, go }: { me: Me; toItem: (d: DbPost) => FeedItem; Post: (x: { i: FeedItem }) => React.ReactNode; Head: (x: { title?: string; sub?: string; tabs?: React.ReactNode }) => React.ReactNode; go: (v: View) => void }) {
+  const [list, setList] = useState<DbPost[] | null>(null);
+  useEffect(() => { supabaseBrowser.from('x_posts').select(POST_COLS).eq('user_id', me.user_id).order('created_at', { ascending: false }).limit(50).then(({ data }) => setList((data as unknown as DbPost[]) || [])); }, [me.user_id]);
+  return (<>
+    <Head title={me.name} sub="Operator" />
+    <div className="x-ban" style={{ background: `linear-gradient(135deg, ${hue(me.name)}, #0d1b4a)` }} />
+    <div className="x-pf"><span className="x-pfav"><Av name={me.name} handle={me.name} size={80} /></span><h1 className="x-pfn">{me.name}</h1><div className="x-mu">Operator account</div>
+      <button className="x-btn full" onClick={() => go({ v: 'compose' })}>Write a post</button></div>
+    <nav className="x-tabs"><button className="on"><span>Posts</span></button></nav>
+    {list === null ? <div className="x-load" /> : list.length ? list.map((d) => <Post key={d.id} i={toItem(d)} />) : <div className="x-empty"><h2>No posts yet</h2><p>Your posts will show up here.</p></div>}
+    <div className="x-endpad" />
+  </>);
 }
 
 /* ---------- voyage tools ---------- */
@@ -324,6 +611,7 @@ const TOOLS: [string, [string, string, string, string][]][] = [
     ['holidays', '📅', 'Port holidays', 'Public holidays by country'],
     ['visa', '🛂', 'Crew visa', 'Visa rules for crew'],
     ['psc', '🛡️', 'PSC checklist', 'Prepare for port state control'],
+    ['/psc-detentions', '📊', 'PSC detentions by port', 'U.S. data and PSC regimes worldwide'],
     ['weather', '🌦️', 'Marine weather', 'Wind and sea forecast'],
     ['tide', '🌊', 'Tide times', 'High and low water'],
   ]],
@@ -475,25 +763,33 @@ function PortView({ slug, providers, Head, Cell, go }: { slug: string; providers
 }
 
 /* ---------- profile ---------- */
-function Profile({ p, posts, Post, Head, following, onFollow, go }: { p: XProvider; posts: FeedItem[]; Post: (x: { i: FeedItem }) => React.ReactNode; Head: (x: { title?: string; sub?: string; tabs?: React.ReactNode }) => React.ReactNode; following: boolean; onFollow: () => void; go: (v: View) => void }) {
+function Profile({ p, statics, toItem, Post, Head, following, onFollow, go, mine }: { p: XProvider; statics: FeedItem[]; toItem: (d: DbPost) => FeedItem; Post: (x: { i: FeedItem }) => React.ReactNode; Head: (x: { title?: string; sub?: string; tabs?: React.ReactNode }) => React.ReactNode; following: boolean; onFollow: () => void; go: (v: View) => void; mine?: boolean }) {
   const [t, setT] = useState<'posts' | 'about'>('posts');
+  const [dbp, setDbp] = useState<DbPost[]>([]);
+  const [followers, setFollowers] = useState<number | null>(null);
+  useEffect(() => {
+    supabaseBrowser.from('x_posts').select('id,body,image_url,likes,replies,reposts,created_at,user_id,x_profiles!inner(name,kind,provider_id,gold)').eq('x_profiles.provider_id', p.id).order('created_at', { ascending: false }).limit(50).then(({ data }) => setDbp((data as unknown as DbPost[]) || []));
+    supabaseBrowser.from('x_follows').select('user_id', { count: 'exact', head: true }).eq('provider_id', p.id).then(({ count }) => setFollowers(count || 0));
+  }, [p.id]);
+  const shownF = (followers || 0) + (following && followers !== null ? 0 : 0);
+  const posts = [...dbp.map(toItem), ...statics].sort((a, b) => b.at.localeCompare(a.at));
   const ports = p.p.map((s) => portBySlug(s)).filter(Boolean) as PortRef[];
   const wa = p.wa.replace(/[^0-9]/g, '');
   const web = p.w ? (p.w.startsWith('http') ? p.w : 'https://' + p.w) : '';
   return (<>
-    <Head title={p.n} sub={p.tl} />
+    <Head title={p.n} sub={`${posts.length} posts`} />
     <div className="x-ban" style={{ background: `linear-gradient(135deg, ${hue(p.s)}, #0d1b4a)` }} />
     <div className="x-pf">
       <div className="x-pfr">
         <span className="x-pfav"><Av name={p.n} handle={p.s} size={80} /></span>
         <div className="x-row r">
-          {wa && <a className="x-cir" href={`https://wa.me/${wa}`} target="_blank" rel="noopener" aria-label="WhatsApp"><Ico d="chat" s={19} /></a>}
-          {p.em && <a className="x-cir" href={`mailto:${p.em}`} aria-label="Email"><Ico d="mail" s={19} /></a>}
-          {p.ph && <a className="x-cir" href={`tel:${p.ph.replace(/\s/g, '')}`} aria-label="Call"><Ico d="phone" s={18} /></a>}
-          <button className={'x-btn' + (following ? ' ol' : '')} onClick={onFollow}>{following ? 'Following' : 'Follow'}</button>
+          {!mine && wa && <a className="x-cir" href={`https://wa.me/${wa}`} target="_blank" rel="noopener" aria-label="WhatsApp"><Ico d="chat" s={19} /></a>}
+          {!mine && p.em && <a className="x-cir" href={`mailto:${p.em}`} aria-label="Email"><Ico d="mail" s={19} /></a>}
+          {!mine && p.ph && <a className="x-cir" href={`tel:${p.ph.replace(/\s/g, '')}`} aria-label="Call"><Ico d="phone" s={18} /></a>}
+          {mine ? <a className="x-btn ol" href="/for-providers/dashboard">Edit profile</a> : <button className={'x-btn' + (following ? ' ol' : '')} onClick={onFollow}>{following ? 'Following' : 'Follow'}</button>}
         </div>
       </div>
-      <h1 className="x-pfn">{p.n}{p.cl && <Badge />}</h1>
+      <h1 className="x-pfn">{p.n}</h1>
       <div className="x-mu">@{p.s}</div>
       {p.b && <p className="x-pfb">{p.b}</p>}
       <div className="x-pfm">
@@ -502,11 +798,13 @@ function Profile({ p, posts, Post, Head, following, onFollow, go }: { p: XProvid
         {web && <a href={web} target="_blank" rel="noopener nofollow"><Ico d="link" s={17} />{p.w.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '').slice(0, 28)}</a>}
         {p.cl && <span><Ico d="cal" s={17} />Joined {new Date(p.j).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</span>}
       </div>
-      <button className="x-btn ac full" onClick={() => go({ v: 'request', q: `${p.t === 'service' ? p.sv[0] || '' : p.t}|${p.p[0] || ''}` })}>Request a quote</button>
+      <div className="x-ff"><span><b>{followers === null ? '–' : shownF}</b> Followers</span></div>
+      {mine ? <button className="x-btn ac full" onClick={() => go({ v: 'compose' })}>Write a post</button>
+        : <button className="x-btn ac full" onClick={() => go({ v: 'request', q: `${p.t === 'service' ? p.sv[0] || '' : p.t}|${p.p[0] || ''}` })}>Request a quote</button>}
       {!p.cl && <p className="x-claim">Listed from public information. <a href={`/claim/${p.s}`}>Is this your company? Claim it free</a></p>}
     </div>
     <nav className="x-tabs"><button className={t === 'posts' ? 'on' : ''} onClick={() => setT('posts')}><span>Posts</span></button><button className={t === 'about' ? 'on' : ''} onClick={() => setT('about')}><span>About</span></button></nav>
-    {t === 'posts' ? (posts.length ? posts.map((i) => <Post key={i.id} i={i} />) : <div className="x-empty"><h2>No posts yet</h2><p>When they do, their posts will show up here.</p></div>) : (
+    {t === 'posts' ? (posts.length ? posts.map((i) => <Post key={i.id} i={i} />) : <div className="x-empty"><h2>No posts yet</h2><p>When they post, it will show up here.</p></div>) : (
       <div className="x-about">
         <h3>Ports</h3><div className="x-tags">{ports.map((x) => <button key={x.slug} onClick={() => go({ v: 'port', a: x.slug })}>📍 {x.name}</button>)}</div>
         {p.sv.length > 0 && (<><h3>Services</h3><div className="x-tags">{p.sv.map((k) => <span key={k}>{EMO[k] || '🔧'} {svcLabel(k)}</span>)}</div></>)}
@@ -719,7 +1017,29 @@ html[data-psfx=dark] .xapp{--bg:#000;--fg:#e7e9ea;--mu:#71767b;--ln:#2f3336;--hv
 .x-opt{display:block!important;width:100%;padding:10px 4px!important;border-bottom:1px solid var(--ln)!important}.x-opt small{color:var(--mu)}
 .x-pill{align-self:flex-start;border:1px solid var(--ln)!important;border-radius:99px;padding:6px 12px!important;font-weight:600}.x-pill.on{background:var(--ch)}
 .x-urg{display:flex;gap:8px;align-items:center;margin-top:6px;font-weight:600}
-.x-err{color:#f4212e}
+.x-err{color:#f4212e;font-size:14px}
+.x-ni{position:relative;display:inline-flex}
+.x-dot{position:absolute;top:-5px;right:-8px;min-width:18px;height:18px;padding:0 5px;border-radius:99px;background:var(--acb);color:#0d1b4a;font-size:11px;font-style:normal;font-weight:700;line-height:18px;text-align:center;border:2px solid var(--bg)}
+.x-ib.r{margin-left:0;margin-right:-8px}
+.x-me .x-av{font-size:12px!important}
+.x-img{display:block;width:100%;max-height:510px;object-fit:cover;border-radius:16px;border:1px solid var(--ln);margin-top:12px}
+.x-post.big{cursor:default}.x-post.big .x-tx{font-size:17px;line-height:24px}
+.x-ff{margin-top:12px;color:var(--mu)}.x-ff b{color:var(--fg)}
+.x-prev{position:relative;margin-top:8px}.x-prev img{width:100%;border-radius:16px;display:block}.x-prev button{position:absolute;top:8px;left:8px;width:30px;height:30px;border-radius:50%;background:rgba(15,20,25,.75)!important;color:#fff!important;display:grid!important;place-items:center}
+.x-ctool{display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--ln);padding-top:8px;color:var(--acb)}
+.x-ctool .x-ib{margin-left:-8px;cursor:pointer}
+.x-cnt{position:relative;display:grid;place-items:center;color:var(--acb)}.x-cnt.warn{color:#ffd400}.x-cnt.over{color:#f4212e}.x-cnt em{position:absolute;font-style:normal;font-size:11px;color:var(--mu)}
+.x-reply{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--ln)}
+.x-reply input{flex:1;min-width:0;background:none;border:0;outline:0;color:var(--fg);font-size:17px}
+.x-ntf{display:flex;gap:12px;padding:12px 16px;border-bottom:1px solid var(--ln);cursor:pointer}.x-ntf.new{background:var(--hv)}.x-ntf>span{width:40px;display:flex;justify-content:flex-end;flex:none}.x-ntf p{margin-top:8px}
+.x-load{height:3px;margin:20px 16px;border-radius:3px;background:linear-gradient(90deg,var(--ln),var(--acb),var(--ln));background-size:200% 100%;animation:xl 1s linear infinite}@keyframes xl{to{background-position:-200% 0}}
+.x-auth{max-width:420px;margin:0 auto;padding:16px 24px;display:flex;flex-direction:column;gap:12px}
+.x-auth h1{font-size:28px;line-height:34px;font-weight:800;margin:8px 0 4px}
+.x-role{display:flex!important;gap:14px;align-items:center;border:1px solid var(--ln)!important;border-radius:16px;padding:16px!important}.x-role:hover{background:var(--hv)}.x-role>span:first-child{font-size:28px}.x-role b,.x-role small{display:block}.x-role small{color:var(--mu);font-size:14px;margin-top:2px}
+.x-swap{color:var(--mu);margin-top:12px}.x-swap button{color:var(--ac)!important;font-weight:600}
+.x-pfr{flex-wrap:wrap}
+@media (max-width:360px){.x-cir{width:32px;height:32px}.x-row.r{gap:6px}.x-btn{padding:0 12px!important}.x-grid button{font-size:13px;padding:10px!important}}
+
 @media (max-width:1265px){.x-left{width:88px;align-items:center}.x-nav span,.x-acct span:nth-child(2){display:none}.x-big{width:52px;height:52px}.x-big span{display:none}.x-big svg{display:block}.x-acct{width:auto}}
 @media (max-width:1000px){.x-right{display:none}}
 @media (max-width:600px){

@@ -13,7 +13,7 @@ const tag = (s: string) => '#' + s.replace(/[^A-Za-z0-9]/g, '');
 export default async function XPreview() {
   const [all, stats] = await Promise.all([getListedProviders(), getListingStats()]);
   const providers: XProvider[] = all.map((p) => ({
-    s: p.slug, n: p.name, t: p.type, tl: p.typeLabel, c: p.country, f: p.flag,
+    id: String(p.id), s: p.slug, n: p.name, t: p.type, tl: p.typeLabel, c: p.country, f: p.flag,
     p: p.ports.map((x) => x.slug), sv: p.svc, b: (p.bio || '').slice(0, 220),
     wa: p.whatsapp || '', ph: p.phone || '', em: p.email || '', w: p.website || '',
     cl: p.claimed, j: p.joinedAt,
@@ -25,7 +25,7 @@ export default async function XPreview() {
     const ports = p.ports.slice(0, 3);
     const where = ports.length ? ports.map((x) => tag(x.name)).join(' ') : tag(p.country);
     items.push({
-      id: 'm-' + p.id, kind: 'member', at: p.joinedAt, author: p.name, handle: p.slug, badge: true,
+      id: 'm-' + p.id, kind: 'member', at: p.joinedAt, author: p.name, handle: p.slug,
       text: `Just joined PortServiceFinder 👋\n${p.typeLabel} in ${where} ${p.flag}`.trim(),
       sub: p.bio ? p.bio.slice(0, 160) : undefined, href: p.slug,
     });
