@@ -262,6 +262,7 @@ import { AntwerpAgentsGuide2026 } from './ship-agents-shipchandlers-antwerp-brug
 import { HamburgAgentsGuide2026 } from './ship-agents-shipchandlers-hamburg-find-appoint-2026';
 import { LalbAgentsGuide2026 } from './ship-agents-shipchandlers-los-angeles-and-long-beach-find-appoint-2026';
 import { ValenciaAgentsGuide2026 } from './ship-agents-shipchandlers-valencia-find-appoint-2026';
+import { UsPscDetentionsByPort2025 } from './us-port-state-control-detentions-by-port-2025-miami-houston-new-orleans-data';
 import { ShipSizeClasses2026 } from './ship-size-classes-explained-panamax-neopanamax-suezmax-capesize-vlcc-2026';
 import { ShipTypesPortNeeds2026 } from './ship-types-explained-what-each-vessel-needs-in-port-2026';
 import { MarineFuelTypes2026 } from './marine-fuel-types-explained-hsfo-vlsfo-mgo-lng-methanol-biofuel-2026';
@@ -388,6 +389,7 @@ const ALL_POSTS: BlogPost[] = [
   HamburgAgentsGuide2026,
   LalbAgentsGuide2026,
   ValenciaAgentsGuide2026,
+  UsPscDetentionsByPort2025,
   ShipSizeClasses2026,
   ShipTypesPortNeeds2026,
   MarineFuelTypes2026,
