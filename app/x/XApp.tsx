@@ -200,7 +200,7 @@ export function XApp({ items, providers, trending, listed, joined }: { items: Fe
 
   const toItem = useCallback((d: DbPost): FeedItem => {
     const pr = d.x_profiles; const comp = pr?.provider_id ? byId.get(pr.provider_id) : undefined;
-    return { id: 'p-' + d.id, pid: d.id, kind: 'post', at: d.created_at, author: pr?.name || 'Member', handle: comp?.s || (pr?.kind === 'operator' ? 'operator' : 'member'), badge: !!pr?.gold, text: d.body, img: d.image_url || undefined, likes: d.likes, replies: d.replies, reposts: d.reposts, href: comp ? comp.s : '', op: pr?.kind === 'operator' };
+    return { id: 'p-' + d.id, pid: d.id, kind: 'post', at: d.created_at, author: pr?.name || 'Member', handle: comp?.s || (pr?.kind === 'operator' ? 'operator' : 'member'), badge: !!pr?.gold, text: d.body, img: d.image_url || undefined, likes: d.likes, replies: d.replies, reposts: d.reposts, href: comp ? comp.s : '', op: !comp };
   }, [byId]);
   const feed = useMemo(() => [...db.map(toItem), ...items].sort((a, b) => b.at.localeCompare(a.at)), [db, items, toItem]);
 
@@ -219,7 +219,7 @@ export function XApp({ items, providers, trending, listed, joined }: { items: Fe
       <article className={'x-post' + (big ? ' big' : '')} onClick={() => !big && openItem(i)}>
         <div className="x-pl" onClick={(e) => { e.stopPropagation(); if (bySlug.has(i.handle)) go({ v: 'profile', a: i.handle }); }}><Av name={i.author} handle={i.handle === 'operator' || i.handle === 'member' ? i.author : i.handle} /></div>
         <div className="x-pr">
-          <div className="x-hd"><b>{i.author}</b>{i.badge && <Badge />}<span>{i.op ? 'Operator' : '@' + i.handle.slice(0, 20)}</span><span>·</span><span>{ago(i.at)}</span></div>
+          <div className="x-hd"><b>{i.author}</b>{i.badge && <Badge />}<span>{i.op ? (i.handle === 'operator' ? 'Operator' : 'Company') : '@' + i.handle.slice(0, 20)}</span><span>·</span><span>{ago(i.at)}</span></div>
           <div className="x-tx"><Rich text={i.text} /></div>
           {i.img && <img className="x-img" src={i.img} alt="" loading="lazy" />}
           {i.sub && <div className={'x-cd' + (i.kind === 'guide' ? ' g' : '')}>{i.kind === 'guide' && <small>portservicefinder.com</small>}<span>{i.sub}</span></div>}
