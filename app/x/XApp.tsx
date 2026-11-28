@@ -1040,7 +1040,7 @@ html[data-psfx=dark] .xapp{--bg:#000;--fg:#e7e9ea;--mu:#71767b;--ln:#2f3336;--hv
 .x-pfr{flex-wrap:wrap}
 @media (max-width:360px){.x-cir{width:32px;height:32px}.x-row.r{gap:6px}.x-btn{padding:0 12px!important}.x-grid button{font-size:13px;padding:10px!important}}
 
-@media (max-width:1265px){.x-left{width:88px;align-items:center}.x-nav span,.x-acct span:nth-child(2){display:none}.x-big{width:52px;height:52px}.x-big span{display:none}.x-big svg{display:block}.x-acct{width:auto}}
+@media (max-width:1265px){.x-left{width:88px;align-items:center}.x-nav>span:not(.x-ni),.x-acct span:nth-child(2){display:none}.x-big{width:52px;height:52px}.x-big span{display:none}.x-big svg{display:block}.x-acct{width:auto}}
 @media (max-width:1000px){.x-right{display:none}}
 @media (max-width:600px){
   .x-left{display:none}.x-main{border:0}
