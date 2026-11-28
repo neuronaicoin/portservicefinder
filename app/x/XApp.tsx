@@ -91,7 +91,7 @@ function parseQuery(q: string) {
 /* ---------- app ---------- */
 type Me = { user_id: string; kind: 'operator' | 'provider'; name: string; provider_id: string | null; gold: boolean };
 type DbPost = { id: string; body: string; image_url: string | null; likes: number; replies: number; reposts: number; created_at: string; user_id: string; x_profiles: { name: string; kind: string; provider_id: string | null; gold: boolean } | null };
-const POST_COLS = 'id,body,image_url,likes,replies,reposts,created_at,user_id,x_profiles(name,kind,provider_id,gold)';
+const POST_COLS = 'id,body,image_url,likes,replies,reposts,created_at,user_id,x_profiles!x_posts_user_id_fkey(name,kind,provider_id,gold)';
 const LINK_RE = /(https?:\/\/|www\.|\b[a-z0-9-]+\.(com|net|org|io|co|uk|tr|gr|sg|nl|de|info|biz|me|app|xyz)\b)/i;
 const plain = (e: unknown) => (e && typeof e === 'object' && 'message' in e ? String((e as { message: string }).message) : 'Something went wrong').replace(/^.*?:\s*/, '');
 
@@ -518,13 +518,13 @@ function Thread({ pid, me, toItem, Post, Head, needLogin, onReply }: { pid: stri
   const [text, setText] = useState(''); const [busy, setBusy] = useState(false); const [err, setErr] = useState('');
   useEffect(() => {
     supabaseBrowser.from('x_posts').select(POST_COLS).eq('id', pid).maybeSingle().then(({ data }) => setPost((data as unknown as DbPost) || null));
-    supabaseBrowser.from('x_comments').select('id,body,created_at,user_id,x_profiles(name,kind,provider_id)').eq('post_id', pid).order('created_at').limit(200).then(({ data }) => setCs((data as unknown as DbComment[]) || []));
+    supabaseBrowser.from('x_comments').select('id,body,created_at,user_id,x_profiles!x_comments_user_id_fkey(name,kind,provider_id)').eq('post_id', pid).order('created_at').limit(200).then(({ data }) => setCs((data as unknown as DbComment[]) || []));
   }, [pid]);
   const send = async () => {
     if (!me) return needLogin();
     const t = text.trim(); if (!t || t.length > 100 || busy) return;
     setBusy(true); setErr('');
-    const { data, error } = await supabaseBrowser.from('x_comments').insert({ post_id: pid, user_id: me.user_id, body: t }).select('id,body,created_at,user_id,x_profiles(name,kind,provider_id)').single();
+    const { data, error } = await supabaseBrowser.from('x_comments').insert({ post_id: pid, user_id: me.user_id, body: t }).select('id,body,created_at,user_id,x_profiles!x_comments_user_id_fkey(name,kind,provider_id)').single();
     if (error) setErr(plain(error)); else { setCs((x) => [...x, data as unknown as DbComment]); setText(''); onReply(pid); setPost((p) => (p ? { ...p, replies: p.replies + 1 } : p)); }
     setBusy(false);
   };
@@ -768,7 +768,7 @@ function Profile({ p, statics, toItem, Post, Head, following, onFollow, go, mine
   const [dbp, setDbp] = useState<DbPost[]>([]);
   const [followers, setFollowers] = useState<number | null>(null);
   useEffect(() => {
-    supabaseBrowser.from('x_posts').select('id,body,image_url,likes,replies,reposts,created_at,user_id,x_profiles!inner(name,kind,provider_id,gold)').eq('x_profiles.provider_id', p.id).order('created_at', { ascending: false }).limit(50).then(({ data }) => setDbp((data as unknown as DbPost[]) || []));
+    supabaseBrowser.from('x_posts').select('id,body,image_url,likes,replies,reposts,created_at,user_id,x_profiles!x_posts_user_id_fkey!inner(name,kind,provider_id,gold)').eq('x_profiles.provider_id', p.id).order('created_at', { ascending: false }).limit(50).then(({ data }) => setDbp((data as unknown as DbPost[]) || []));
     supabaseBrowser.from('x_follows').select('user_id', { count: 'exact', head: true }).eq('provider_id', p.id).then(({ count }) => setFollowers(count || 0));
   }, [p.id]);
   const shownF = (followers || 0) + (following && followers !== null ? 0 : 0);
