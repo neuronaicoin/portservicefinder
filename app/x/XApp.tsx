@@ -298,6 +298,7 @@ export function XApp({ items, providers, trending, listed, joined }: { items: Fe
     body = (<>
       <Head tabs={<Tabs list={[['for', 'For you'], ['find', 'Find a service']]} on={tab} set={(t) => { setTab(t); window.scrollTo(0, 0); }} />} />
       {tab === 'find' ? <FindView providers={providers} trending={trending} go={go} Cell={Cell} /> : (<>
+        <div className="x-stats"><span><b>{listed.toLocaleString('en-US')}</b> companies</span><span><b className="g">+{joined}</b> joined in 30 days</span><span><b>{ALL_PORTS.length.toLocaleString('en-US')}</b> ports</span></div>
         <div className="x-ask" onClick={() => go({ v: 'find' })}>
           <span className="x-av off" style={{ width: 40, height: 40 }}><Ico d="search" s={20} /></span>
           <div><b>Find an agent, chandler or service</b><small>Pick a country, a port and what you need</small></div>
@@ -1156,6 +1157,7 @@ html[data-psfx=dark] .xapp{--bg:#000;--fg:#e7e9ea;--mu:#71767b;--ln:#2f3336;--hv
 .x-empty h2{font-size:31px;line-height:36px;font-weight:800}.x-empty p{color:var(--mu)}.x-empty .x-btn{height:52px;padding:0 32px!important;font-size:17px;margin-top:16px}
 .x-endpad{height:120px}
 .x-go{margin-left:auto;color:var(--mu)}
+.x-stats{display:flex;flex-wrap:wrap;gap:4px 16px;padding:10px 16px;border-bottom:1px solid var(--ln);color:var(--mu);font-size:14px}.x-stats b{color:var(--fg)}.x-stats b.g{color:#00ba7c}
 .x-find{padding-bottom:8px}
 .x-fhd{padding:16px 16px 8px}.x-fhd h2{font-size:23px;line-height:28px;font-weight:800}.x-fhd p{color:var(--mu);margin-top:4px}
 .x-step{display:flex!important;align-items:center;gap:12px;width:calc(100% - 32px);margin:8px 16px 0;padding:12px 14px!important;border:1px solid var(--ln)!important;border-radius:16px;color:var(--fg)}
