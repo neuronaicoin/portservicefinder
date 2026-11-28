@@ -4,9 +4,10 @@ import { SiteHeader } from '@/components/SiteHeader';
 import { SiteFooter } from '@/components/SiteFooter';
 import { PSC_US_ZONES, PSC_US_TOTAL, PSC_US_BREAKDOWN, PSC_US_SOURCE, pscRate } from '@/lib/psc-us';
 import { portBySlug } from '@/lib/ports';
+import { PSC_REGIMES } from '@/lib/psc-regimes';
 
 export const metadata: Metadata = {
-  title: 'U.S. Port State Control Detentions by Port (2025) | PortServiceFinder',
+  title: 'Port State Control Detentions by Port 2025: U.S. Data & PSC Regimes Worldwide',
   description: 'U.S. Coast Guard port state control by port: safety exams, detentions and detention rates for Houston, New Orleans, Miami, Los Angeles and every U.S. Captain of the Port zone, plus the most common detainable deficiencies.',
   alternates: { canonical: '/psc-detentions' },
 };
@@ -61,6 +62,20 @@ export default function PscDetentionsPage() {
           <li>Report known defects in the advance notice of arrival, as the Coast Guard expects.</li>
         </ul>
         <p>Read more in our guide to <Link href="/blog/port-state-control-inspection-common-deficiencies-how-agents-chandlers-help-2026">common PSC deficiencies and how agents and chandlers help</Link>, or look up deficiency codes in the <Link href="/voyage/psc">PSC tool</Link>.</p>
+
+        <h2>Port state control regimes worldwide</h2>
+        <p>Outside the United States, port state control is organised in regional agreements. Each publishes its own inspection and detention database. Find the regime for your next port:</p>
+        <div className="pd-tablewrap">
+          <table className="pd-table">
+            <thead><tr><th>Regime</th><th>Region</th><th>Member states (coastal)</th><th>Official site</th></tr></thead>
+            <tbody>
+              {PSC_REGIMES.filter((r) => r.key !== 'uscg').map((r) => (
+                <tr key={r.key}><td>{r.name}</td><td>{r.region}</td><td>{r.countries.join(', ')}</td><td><a href={r.url} target="_blank" rel="nofollow noopener">Detentions →</a></td></tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p className="pd-note">Some countries belong to more than one regime (for example Turkey, Russia, Australia, Canada, Chile and Panama). Membership lists are for guidance; check the regime's own site.</p>
 
         <section className="pd-cta">
           <h2>Find help at a U.S. port</h2>

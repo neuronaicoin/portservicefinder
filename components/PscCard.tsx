@@ -1,10 +1,32 @@
 import Link from 'next/link';
 import { pscZoneForPort, pscRate, PSC_US_TOTAL, PSC_US_SOURCE } from '@/lib/psc-us';
+import { pscRegimesFor } from '@/lib/psc-regimes';
 
 /** Port state control figures for a U.S. port (U.S. Coast Guard data), with links to the services that fix common detainable deficiencies. */
-export function PscCard({ slug, portName }: { slug: string; portName: string }) {
+export function PscCard({ slug, portName, country }: { slug: string; portName: string; country: string }) {
   const z = pscZoneForPort(slug);
-  if (!z) return null;
+  if (!z) {
+    const regs = pscRegimesFor(country).filter((r) => r.key !== 'uscg');
+    if (!regs.length) return null;
+    return (
+      <section className="psc-card" aria-label={`Port state control in ${portName}`}>
+        <p className="psc-k">Port state control</p>
+        <h2>PSC inspections in {portName}</h2>
+        <p className="psc-t">
+          Foreign ships calling at {portName} are inspected under the{' '}
+          {regs.map((r, i) => (
+            <span key={r.key}>{i ? (i === regs.length - 1 ? ' and the ' : ', the ') : ''}<b>{r.name}</b> ({r.region})</span>
+          ))}
+          . Check current detentions on the official {regs.length > 1 ? 'sites' : 'site'}:{' '}
+          {regs.map((r, i) => <span key={r.key}>{i ? ' · ' : ''}<a href={r.url} target="_blank" rel="nofollow noopener">{r.name}</a></span>)}.
+        </p>
+        <p className="psc-links">
+          Prepare before arrival: <Link href={`/ports/${slug}/firefighting-safety`}>firefighting &amp; safety</Link> · <Link href={`/ports/${slug}/liferaft-lsa`}>liferaft &amp; LSA</Link> · <Link href={`/ports/${slug}/classification-survey`}>class surveys</Link> · <Link href="/psc-detentions">PSC regimes worldwide</Link>
+        </p>
+        <style>{`.psc-card{margin:18px 0;padding:18px 20px;border-radius:14px;border:1px solid var(--line,#24304d);background:var(--card)}.psc-k{margin:0 0 4px;color:#d6b25e;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em}.psc-card h2{margin:0 0 10px;font-size:20px;color:var(--ink)}.psc-t,.psc-links{margin:0 0 6px;font-size:14px;line-height:1.55;color:var(--ink2,var(--ink))}.psc-card a{color:#d6b25e}`}</style>
+      </section>
+    );
+  }
   const rate = pscRate(z);
   const nat = pscRate(PSC_US_TOTAL);
   const cmp = z.exams < 30 ? '' : rate > nat * 1.5 ? 'above' : rate < nat * 0.6 ? 'below' : 'close to';

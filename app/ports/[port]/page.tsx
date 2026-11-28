@@ -189,7 +189,7 @@ export default async function PortPage({ params }: { params: Promise<{ port: str
           </section>
         )}
 
-        <PscCard slug={port.slug} portName={port.name} />
+        <PscCard slug={port.slug} portName={port.name} country={port.country} />
 
         <section className="card join more">
           <div>
