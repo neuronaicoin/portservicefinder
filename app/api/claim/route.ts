@@ -59,8 +59,8 @@ export async function POST(request: Request) {
         website: p.website,
         address: '',
         contact_person: String(contact_person || '').trim(),
-        plan: 'free',
-        plan_type: 'free',
+        plan: 'free_trial',
+        plan_type: 'free_trial',
         status: 'active',
         verified: true,
         verified_at: new Date().toISOString(),
@@ -68,7 +68,10 @@ export async function POST(request: Request) {
         expires_at: expires.toISOString(),
       };
       const { error } = await supabaseAdmin.from('providers').insert([row]);
-      if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+      if (error) {
+        await supabaseAdmin.from('debug_logs').insert({ step: 'claim_error', detail: `${p.name} | ${error.message}` });
+        return NextResponse.json({ error: 'Something went wrong. Please try again or email portservicefinder@gmail.com.' }, { status: 500 });
+      }
       await supabaseAdmin.from('debug_logs').insert({ step: 'claim', detail: `${p.name} | ${p.email}` });
       const fresh = await getListedProvidersFresh();
       const m = fresh.find((x) => x.claimed && x.email.toLowerCase() === p.email.toLowerCase());
