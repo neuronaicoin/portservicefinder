@@ -405,7 +405,7 @@ function Profile({ p, posts, Post, Head, following, onFollow, go }: { p: XProvid
       {!p.cl && <p className="x-claim">Listed from public information. <a href={`/claim/${p.s}`}>Is this your company? Claim it free</a></p>}
     </div>
     <nav className="x-tabs"><button className={t === 'posts' ? 'on' : ''} onClick={() => setT('posts')}><span>Posts</span></button><button className={t === 'about' ? 'on' : ''} onClick={() => setT('about')}><span>About</span></button></nav>
-    {t === 'posts' ? (posts.length ? posts.map((i) => <Post key={i.id} i={i} />) : <div className="x-empty"><h2>@{p.s.slice(0, 24)} hasn’t posted</h2><p>When they do, their posts will show up here.</p></div>) : (
+    {t === 'posts' ? (posts.length ? posts.map((i) => <Post key={i.id} i={i} />) : <div className="x-empty"><h2>No posts yet</h2><p>When they do, their posts will show up here.</p></div>) : (
       <div className="x-about">
         <h3>Ports</h3><div className="x-tags">{ports.map((x) => <button key={x.slug} onClick={() => go({ v: 'port', a: x.slug })}>📍 {x.name}</button>)}</div>
         {p.sv.length > 0 && (<><h3>Services</h3><div className="x-tags">{p.sv.map((k) => <span key={k}>{EMO[k] || '🔧'} {svcLabel(k)}</span>)}</div></>)}

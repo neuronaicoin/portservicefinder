@@ -5,7 +5,7 @@ import { PSC_US_ZONES, pscRate } from '@/lib/psc-us';
 import { XApp, type FeedItem, type XProvider } from './XApp';
 
 // Private preview of the X-style app. Not indexed; every real page and URL stays as it is.
-export const metadata: Metadata = { title: 'PortServiceFinder', robots: { index: false, follow: false } };
+export const metadata: Metadata = { title: { absolute: 'PortServiceFinder' }, robots: { index: false, follow: false } };
 export const revalidate = 600;
 
 const tag = (s: string) => '#' + s.replace(/[^A-Za-z0-9]/g, '');
