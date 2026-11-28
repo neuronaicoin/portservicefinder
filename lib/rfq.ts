@@ -16,7 +16,7 @@ export interface RfqInput {
 // Bir RFQ olusturur ve eslesen provider'lara otomatik dagitir.
 // Eslesme: ayni ulke + provider'in ports listesinde bu liman + tur eslesmesi
 // (agent/chandler direkt type eslesir, marine service kategorileri svc icinde aranir).
-export async function submitRfq(input: RfqInput): Promise<{ ok: boolean; distributedCount: number }> {
+export async function submitRfq(input: RfqInput): Promise<{ ok: boolean; distributedCount: number; rfqId?: string }> {
   const { data: rfq, error: rfqError } = await supabaseBrowser
     .from("rfq_requests")
     .insert([
@@ -59,7 +59,7 @@ export async function submitRfq(input: RfqInput): Promise<{ ok: boolean; distrib
   });
 
   if (matched.length === 0) {
-    return { ok: true, distributedCount: 0 };
+    return { ok: true, distributedCount: 0, rfqId: rfq.id };
   }
 
   const rows = matched.map((p: any) => ({ rfq_id: rfq.id, provider_id: p.id }));
@@ -67,10 +67,10 @@ export async function submitRfq(input: RfqInput): Promise<{ ok: boolean; distrib
 
   if (distError) {
     console.error("submitRfq distribution error:", distError.message);
-    return { ok: true, distributedCount: 0 };
+    return { ok: true, distributedCount: 0, rfqId: rfq.id };
   }
 
-  return { ok: true, distributedCount: matched.length };
+  return { ok: true, distributedCount: matched.length, rfqId: rfq.id };
 }
 
 export interface ReceivedRfq {

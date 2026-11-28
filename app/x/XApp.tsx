@@ -5,7 +5,7 @@ import { ALL_PORTS, FLAG, MARINE_SERVICES, PORT_DATA, portBySlug, type PortRef }
 import { submitRfq } from '@/lib/rfq';
 import { supabaseBrowser } from '@/lib/supabase-browser';
 
-export type FeedItem = { id: string; kind: 'member' | 'guide' | 'data' | 'post'; at: string; author: string; handle: string; badge?: boolean; text: string; sub?: string; href: string; pid?: string; img?: string; likes?: number; replies?: number; reposts?: number; op?: boolean };
+export type FeedItem = { id: string; kind: 'member' | 'guide' | 'data' | 'post'; at: string; author: string; handle: string; badge?: boolean; text: string; sub?: string; href: string; pid?: string; img?: string; likes?: number; replies?: number; reposts?: number; op?: boolean; req?: { port: string; country: string; service: string; vessel: string; eta: string; urgent: boolean } };
 export type XProvider = { id: string; s: string; n: string; t: string; tl: string; c: string; f: string; p: string[]; sv: string[]; b: string; wa: string; ph: string; em: string; w: string; cl: boolean; j: string };
 type View = { v: 'home' | 'search' | 'find' | 'profile' | 'port' | 'post' | 'notifs' | 'chat' | 'saved' | 'request' | 'tools' | 'login' | 'compose' | 'me' | 'settings' | 'edit' | 'u'; a?: string; q?: string };
 
@@ -53,7 +53,7 @@ const Badge = () => (
 const HUES = ['#1f6feb', '#0f766e', '#7c3aed', '#b45309', '#be123c', '#0369a1', '#15803d', '#4338ca', '#9d174d', '#0e7490'];
 const hue = (s: string) => { let h = 0; for (const c of s) h = (h * 31 + c.charCodeAt(0)) | 0; return HUES[Math.abs(h) % HUES.length]; };
 const ini = (n: string) => n.replace(/[^A-Za-z0-9 ]/g, '').split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0]).join('').toUpperCase() || 'PS';
-const OFFICIAL = new Set(['portservicefinder', 'psfdata']);
+const OFFICIAL = new Set(['portservicefinder', 'psfdata', 'requests']);
 function Av({ name, handle, size = 40 }: { name: string; handle: string; size?: number }) {
   if (OFFICIAL.has(handle)) return <span className="x-av off" style={{ width: size, height: size }}><LogoMark size={Math.round(size * 0.62)} /></span>;
   return <span className="x-av" style={{ width: size, height: size, background: hue(handle), fontSize: size * 0.36 }}>{ini(name)}</span>;
@@ -90,8 +90,8 @@ function parseQuery(q: string) {
 
 /* ---------- app ---------- */
 type Me = { user_id: string; kind: 'operator' | 'provider'; name: string; provider_id: string | null; gold: boolean; handle: string | null; handle_changed_at: string | null; bio: string | null; country: string | null; created_at: string };
-type DbPost = { id: string; body: string; image_url: string | null; likes: number; replies: number; reposts: number; created_at: string; user_id: string; x_profiles: { name: string; kind: string; provider_id: string | null; gold: boolean } | null };
-const POST_COLS = 'id,body,image_url,likes,replies,reposts,created_at,user_id,x_profiles!x_posts_user_id_fkey(name,kind,provider_id,gold)';
+type DbPost = { id: string; body: string; image_url: string | null; likes: number; replies: number; reposts: number; created_at: string; user_id: string | null; kind?: string; req_port?: string | null; req_country?: string | null; req_service?: string | null; req_vessel?: string | null; req_eta?: string | null; req_urgent?: boolean; x_profiles: { name: string; kind: string; provider_id: string | null; gold: boolean } | null };
+const POST_COLS = 'id,body,image_url,likes,replies,reposts,created_at,user_id,kind,req_port,req_country,req_service,req_vessel,req_eta,req_urgent,x_profiles!x_posts_user_id_fkey(name,kind,provider_id,gold)';
 const LINK_RE = /(https?:\/\/|www\.|\b[a-z0-9-]+\.(com|net|org|io|co|uk|tr|gr|sg|nl|de|info|biz|me|app|xyz)\b)/i;
 const plain = (e: unknown) => (e && typeof e === 'object' && 'message' in e ? String((e as { message: string }).message) : 'Something went wrong').replace(/^.*?:\s*/, '');
 
@@ -200,7 +200,19 @@ export function XApp({ items, providers, trending, listed, joined }: { items: Fe
     if (r.error) setFol((m) => { const n = { ...m }; if (on) n[p.id] = 1; else delete n[p.id]; return n; });
   };
 
+  const takeReq = async (pid: string) => {
+    if (!me) return needLogin();
+    const { error } = await supabaseBrowser.rpc('x_take_request', { p_post: pid });
+    if (error) return say(plain(error));
+    say('Added to your requests. Opening your dashboard…');
+    setTimeout(() => { location.href = '/for-providers/dashboard'; }, 900);
+  };
   const toItem = useCallback((d: DbPost): FeedItem => {
+    if (d.kind === 'request') {
+      const ref = ALL_PORTS.find((x) => x.name === d.req_port && x.country === d.req_country);
+      const svcL = d.req_service ? svcLabel(d.req_service) : 'Any service';
+      return { id: 'p-' + d.id, pid: d.id, kind: 'post', at: d.created_at, author: 'Quote request', handle: 'requests', text: `${d.req_urgent ? '⚡ Urgent · ' : ''}${svcL} needed in #${(d.req_port || '').replace(/[^A-Za-z0-9]/g, '')} ${ref?.flag || FLAG[d.req_country || ''] || ''}\n\n${d.body}`, likes: d.likes, replies: d.replies, reposts: d.reposts, href: ref ? '/ports/' + ref.slug : '', req: { port: d.req_port || '', country: d.req_country || '', service: d.req_service || '', vessel: d.req_vessel || '', eta: d.req_eta || '', urgent: !!d.req_urgent } };
+    }
     const pr = d.x_profiles; const comp = pr?.provider_id ? byId.get(pr.provider_id) : undefined;
     return { id: 'p-' + d.id, pid: d.id, kind: 'post', at: d.created_at, author: pr?.name || 'Member', handle: comp?.s || (pr?.kind === 'operator' ? 'operator' : 'member'), badge: !!pr?.gold, text: d.body, img: d.image_url || undefined, likes: d.likes, replies: d.replies, reposts: d.reposts, href: comp ? comp.s : '', op: !comp };
   }, [byId]);
@@ -224,6 +236,14 @@ export function XApp({ items, providers, trending, listed, joined }: { items: Fe
           <div className="x-hd"><b>{i.author}</b>{i.badge && <Badge />}<span>{i.op ? (i.handle === 'operator' ? 'Operator' : 'Company') : '@' + i.handle.slice(0, 20)}</span><span>·</span><span>{ago(i.at)}</span></div>
           <div className="x-tx"><Rich text={i.text} /></div>
           {i.img && <img className="x-img" src={i.img} alt="" loading="lazy" />}
+          {i.req && (
+            <div className="x-rq" onClick={(e) => e.stopPropagation()}>
+              <div className="x-rqm">{i.req.vessel && <span>🚢 {i.req.vessel}</span>}{i.req.eta && <span>📅 ETA {new Date(i.req.eta).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}</span>}<span>📍 {i.req.port}, {i.req.country}</span></div>
+              {me?.kind === 'provider'
+                ? <button className="x-btn ac sm" onClick={() => takeReq(i.pid!)}>Send a quote</button>
+                : <button className="x-btn ol sm" onClick={() => go({ v: 'request', q: `${i.req!.service}||${i.req!.country}` })}>Need this too? Get quotes</button>}
+            </div>
+          )}
           {i.sub && <div className={'x-cd' + (i.kind === 'guide' ? ' g' : '')}>{i.kind === 'guide' && <small>portservicefinder.com</small>}<span>{i.sub}</span></div>}
           <div className="x-ac" onClick={(e) => e.stopPropagation()}>
             <button aria-label="Reply" onClick={() => openItem(i)}><Ico d="reply" s={18.5} /><em>{nC || ''}</em></button>
@@ -311,7 +331,7 @@ export function XApp({ items, providers, trending, listed, joined }: { items: Fe
       {TOOLS.map(([g, rows]) => (<section key={g}><h2 className="x-h2">{g}</h2>{rows.map(([href, e, t, d]) => <a key={href} className="x-prow" href={href.startsWith('/') ? href : `/voyage/${href}`}><span className="x-pin">{e}</span><span><b>{t}</b><small>{d}</small></span></a>)}</section>))}
       <div className="x-endpad" /></>);
   } else if (view.v === 'request') {
-    body = <RequestView initial={view.q || ''} onClose={back} />;
+    body = <RequestView initial={view.q || ''} onClose={back} onPublished={loadFeed} />;
   } else if (view.v === 'login') {
     body = <Login onDone={async (name) => { await ensure(name); back(); say('Welcome to PortServiceFinder'); }} onClose={back} />;
   } else if (view.v === 'compose') {
@@ -624,59 +644,76 @@ const TOOLS: [string, [string, string, string, string][]][] = [
   ]],
 ];
 
-/* ---------- find (country → port → service) ---------- */
-const COUNTRIES = Object.keys(PORT_DATA).sort();
-function FindView({ providers, trending, go, Cell }: { providers: XProvider[]; trending: [string, number][]; go: (v: View) => void; Cell: (x: { p: XProvider }) => React.ReactNode }) {
+/* ---------- find (country → port → category → search) ---------- */
+const COUNTRIES = Object.keys(PORT_DATA).sort((a, b) => a.localeCompare(b));
+const CATS: [string, string, string, string][] = [['agent', '🧭', 'Ship agent', 'Port agency, husbandry, clearance'], ['chandler', '📦', 'Ship chandler', 'Provisions, stores, spares'], ['marine', '🔧', 'Marine services', 'Repairs, bunker, diving, surveys and more']];
+function FindView({ providers, go, Cell }: { providers: XProvider[]; trending?: [string, number][]; go: (v: View) => void; Cell: (x: { p: XProvider }) => React.ReactNode }) {
   const [country, setCountry] = useState('');
   const [port, setPort] = useState('');
+  const [cat, setCat] = useState('');
   const [svc, setSvc] = useState('');
-  const [open, setOpen] = useState<'' | 'country' | 'port' | 'svc'>('country');
+  const [open, setOpen] = useState<'' | 'country' | 'port' | 'cat'>('country');
   const [q, setQ] = useState('');
-  useEffect(() => { try { const s = JSON.parse(sessionStorage.getItem('psfx_find') || '{}'); if (s.country) { setCountry(s.country); setPort(s.port || ''); setSvc(s.svc || ''); setOpen(s.port ? (s.svc ? '' : 'svc') : 'port'); } } catch {} }, []);
-  useEffect(() => { try { sessionStorage.setItem('psfx_find', JSON.stringify({ country, port, svc })); } catch {} }, [country, port, svc]);
+  const [done, setDone] = useState(false);
+  const top = useRef<HTMLDivElement>(null);
+  useEffect(() => { try { const s = JSON.parse(sessionStorage.getItem('psfx_find2') || '{}'); if (s.country) { setCountry(s.country); setPort(s.port || ''); setCat(s.cat || ''); setSvc(s.svc || ''); setDone(!!s.done); setOpen(s.done ? '' : s.port ? 'cat' : 'port'); } } catch {} }, []);
+  useEffect(() => { try { sessionStorage.setItem('psfx_find2', JSON.stringify({ country, port, cat, svc, done })); } catch {} }, [country, port, cat, svc, done]);
   const count = useMemo(() => { const m = new Map<string, number>(); for (const p of providers) for (const s of p.p) m.set(s, (m.get(s) || 0) + 1); return m; }, [providers]);
   const cCount = useMemo(() => { const m = new Map<string, number>(); for (const p of providers) m.set(p.c, (m.get(p.c) || 0) + 1); return m; }, [providers]);
   const nq = norm(q);
-  const countries = COUNTRIES.filter((c) => !nq || norm(c).startsWith(nq)).sort((a, b) => (nq ? 0 : (cCount.get(b) || 0) - (cCount.get(a) || 0)) || a.localeCompare(b));
-  const ports = ALL_PORTS.filter((p) => p.country === country && (!nq || norm(p.name).includes(nq))).sort((a, b) => (count.get(b.slug) || 0) - (count.get(a.slug) || 0) || a.name.localeCompare(b.name));
+  const countries = COUNTRIES.filter((c) => !nq || norm(c).includes(nq));
+  const ports = ALL_PORTS.filter((p) => p.country === country && (!nq || norm(p.name).includes(nq))).sort((a, b) => a.name.localeCompare(b.name));
   const portRef = port ? portBySlug(port) : null;
+  const key = cat === 'marine' ? svc : cat;
   const results = useMemo(() => {
-    if (!country) return [];
-    return providers.filter((p) => (port ? p.p.includes(port) : p.c === country) && (!svc || offers(p, svc))).sort((a, b) => Number(b.cl) - Number(a.cl) || a.n.localeCompare(b.n));
-  }, [providers, country, port, svc]);
-  const pick = (k: typeof open) => { setOpen(open === k ? '' : k); setQ(''); };
+    if (!done || !country) return [];
+    return providers.filter((p) => (port ? p.p.includes(port) : p.c === country) && (!key ? (cat === 'marine' ? p.t === 'service' : true) : offers(p, key))).sort((a, b) => Number(b.cl) - Number(a.cl) || a.n.localeCompare(b.n));
+  }, [providers, country, port, cat, key, done]);
+  const toTop = () => requestAnimationFrame(() => top.current?.scrollIntoView({ block: 'start' }));
+  const pick = (k: typeof open) => { setOpen(open === k ? '' : k); setQ(''); setDone(false); };
+  const catLabel = cat === 'marine' ? (svc ? svcLabel(svc) : 'Marine services') : cat ? svcLabel(cat) : '';
+  const ready = !!country && !!cat && (cat !== 'marine' || !!svc);
   const Step = ({ k, n, icon, label, value, disabled }: { k: typeof open; n: number; icon: string; label: string; value: string; disabled?: boolean }) => (
     <button className={'x-step' + (open === k ? ' on' : '') + (value ? ' set' : '')} disabled={disabled} onClick={() => pick(k)}>
       <span className="x-sn">{value ? '✓' : n}</span><span className="x-se">{icon}</span>
       <span className="x-sl"><small>{label}</small><b>{value || 'Choose'}</b></span><Ico d="chev" s={18} />
     </button>
   );
-  return (<div className="x-find">
-    <div className="x-fhd"><h2>Find a service in any port</h2><p>Three taps. Then get quotes from every company at once.</p></div>
+  return (<div className="x-find" ref={top}>
+    <div className="x-fhd"><h2>Find a service in any port</h2><p>Choose a country, a port and what you need. Then search.</p></div>
     <Step k="country" n={1} icon="🌍" label="Country" value={country ? `${FLAG[country] || ''} ${country}` : ''} />
     {open === 'country' && (<div className="x-pick">
-      <label className="x-sin"><Ico d="search" s={17} /><input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search country" /></label>
-      {!q && <div className="x-tags pad">{trending.slice(0, 6).map(([s]) => { const p = portBySlug(s); return p && <button key={s} onClick={() => { setCountry(p.country); setPort(s); setOpen('svc'); }}>📍 {p.name}</button>; })}</div>}
-      <div className="x-list">{countries.slice(0, q ? 40 : 60).map((c) => <button key={c} onClick={() => { setCountry(c); setPort(''); setOpen('port'); setQ(''); }}><span>{FLAG[c] || '🏳️'} {c}</span><small>{cCount.get(c) || 0}</small></button>)}</div>
+      <label className="x-sin"><Ico d="search" s={17} /><input value={q} onChange={(e) => setQ(e.target.value)} placeholder={`Search ${COUNTRIES.length} countries`} /></label>
+      <div className="x-list">{countries.map((c) => <button key={c} onClick={() => { setCountry(c); setPort(''); setDone(false); setOpen('port'); setQ(''); toTop(); }}><span>{FLAG[c] || '🏳️'} {c}</span><small>{cCount.get(c) || ''}</small></button>)}
+        {!countries.length && <p className="x-hint">No country matches “{q}”.</p>}</div>
     </div>)}
-    <Step k="port" n={2} icon="📍" label="Port" value={portRef ? portRef.name : country && open !== 'port' && open !== 'country' ? 'All ports' : ''} disabled={!country} />
+    <Step k="port" n={2} icon="📍" label="Port" value={portRef ? portRef.name : country && open !== 'port' && open !== 'country' ? `All ports in ${country}` : ''} disabled={!country} />
     {open === 'port' && country && (<div className="x-pick">
       {ports.length > 8 && <label className="x-sin"><Ico d="search" s={17} /><input value={q} onChange={(e) => setQ(e.target.value)} placeholder={`Search ports in ${country}`} /></label>}
-      <div className="x-list"><button onClick={() => { setPort(''); setOpen('svc'); }}><span>All ports in {country}</span><small>{cCount.get(country) || 0}</small></button>
-        {ports.map((p) => <button key={p.slug} onClick={() => { setPort(p.slug); setOpen('svc'); setQ(''); }}><span>{p.name}</span><small>{count.get(p.slug) || 0}</small></button>)}</div>
+      <div className="x-list"><button onClick={() => { setPort(''); setOpen('cat'); setQ(''); toTop(); }}><span>All ports in {country}</span><small>{cCount.get(country) || ''}</small></button>
+        {ports.map((p) => <button key={p.slug} onClick={() => { setPort(p.slug); setOpen('cat'); setQ(''); toTop(); }}><span>{p.name}</span><small>{count.get(p.slug) || ''}</small></button>)}</div>
     </div>)}
-    <Step k="svc" n={3} icon="🧰" label="What do you need?" value={svc ? `${EMO[svc] || '🔧'} ${svcLabel(svc)}` : ''} disabled={!country} />
-    {open === 'svc' && country && (<div className="x-pick">
-      <div className="x-grid">{QUICK.map((k) => <button key={k} className={svc === k ? 'on' : ''} onClick={() => { setSvc(k); setOpen(''); }}><span>{EMO[k] || '🔧'}</span>{svcLabel(k)}</button>)}</div>
-      <div style={{ padding: '0 16px 12px' }}><select className="x-in" value={QUICK.includes(svc) ? '' : svc} onChange={(e) => { setSvc(e.target.value); setOpen(''); }}><option value="">More services…</option>{SERVICES.filter((s) => !QUICK.includes(s.key)).map((s) => <option key={s.key} value={s.key}>{s.label}</option>)}</select></div>
-      {svc && <button className="x-hint" onClick={() => { setSvc(''); setOpen(''); }}>Show all companies</button>}
+    <Step k="cat" n={3} icon="🧰" label="What do you need?" value={catLabel} disabled={!country} />
+    {open === 'cat' && country && (<div className="x-pick">
+      <div className="x-cats">{CATS.map(([k, e, l, d]) => <button key={k} className={cat === k ? 'on' : ''} onClick={() => { setCat(k); if (k !== 'marine') { setSvc(''); setOpen(''); } }}><span>{e}</span><b>{l}</b><small>{d}</small></button>)}</div>
+      {cat === 'marine' && (<>
+        <div className="x-lbl" style={{ padding: '8px 12px 6px' }}>Choose a marine service</div>
+        <div className="x-list">{MARINE_SERVICES.map((m) => <button key={m.key} className={svc === m.key ? 'on' : ''} onClick={() => { setSvc(m.key); setOpen(''); }}><span>{EMO[m.key] || '🔧'} {m.label}</span>{svc === m.key && <small>✓</small>}</button>)}</div>
+      </>)}
     </div>)}
-    {country && (<>
-      <div className="x-reqbar"><span>{results.length} {results.length === 1 ? 'company' : 'companies'}{portRef ? ` in ${portRef.name}` : ` in ${country}`}{svc ? ` · ${svcLabel(svc)}` : ''}</span>
-        {port && <button className="x-btn ac sm" onClick={() => go({ v: 'request', q: `${svc}|${port}` })}>Get quotes</button>}</div>
-      {results.slice(0, 60).map((p) => <Cell key={p.s} p={p} />)}
-      {!results.length && <div className="x-empty"><h2>No company listed yet</h2><p>Send a request anyway. We will find one for you.</p>{port && <button className="x-btn" onClick={() => go({ v: 'request', q: `${svc}|${port}` })}>Get quotes</button>}</div>}
-      {(country || port || svc) && <button className="x-hint" onClick={() => { setCountry(''); setPort(''); setSvc(''); setOpen('country'); }}>↺ Start over</button>}
+    <div style={{ padding: '14px 16px 4px' }}><button className="x-btn ac full" style={{ marginTop: 0 }} disabled={!ready} onClick={() => { setDone(true); setOpen(''); }}><Ico d="search" s={18} w={2.4} />&nbsp; Search</button></div>
+    {done && ready && (<>
+      <div className="x-reqbar"><span>{results.length} {results.length === 1 ? 'company' : 'companies'} · {catLabel} · {portRef ? portRef.name : country}</span>
+        {results.length > 0 && <button className="x-btn sm" onClick={() => go({ v: 'request', q: `${key || ''}|${port}|${country}` })}>Get quotes</button>}</div>
+      {results.slice(0, 80).map((p) => <Cell key={p.s} p={p} />)}
+      {!results.length && (
+        <div className="x-empty">
+          <h2>No company listed yet</h2>
+          <p>Send a free quote request. It goes to the companies we know {portRef ? `in ${portRef.name}` : `in ${country}`} and is posted on the feed so more companies can reply.</p>
+          <button className="x-btn ac" onClick={() => go({ v: 'request', q: `${key || ''}|${port}|${country}` })}>Get quotes</button>
+        </div>
+      )}
+      <button className="x-hint" onClick={() => { setCountry(''); setPort(''); setCat(''); setSvc(''); setDone(false); setOpen('country'); toTop(); }}>↺ New search</button>
     </>)}
     <div className="x-endpad" />
   </div>);
@@ -975,8 +1012,9 @@ function Settings({ me, theme, toggleTheme, Head, go, signOut }: { me: Me; theme
 }
 
 /* ---------- request (compose) ---------- */
-function RequestView({ initial, onClose }: { initial: string; onClose: () => void }) {
-  const [svc0, port0] = initial.split('|');
+function RequestView({ initial, onClose, onPublished }: { initial: string; onClose: () => void; onPublished?: () => void }) {
+  const [svc0, port0, country0] = initial.split('|');
+  const [pub, setPub] = useState(true);
   const [svc, setSvc] = useState(svc0 || '');
   const [port, setPort] = useState<PortRef | null>(port0 ? portBySlug(port0) : null);
   const [pq, setPq] = useState('');
@@ -984,21 +1022,25 @@ function RequestView({ initial, onClose }: { initial: string; onClose: () => voi
   const [urgent, setUrgent] = useState(false);
   const [name, setName] = useState(''); const [email, setEmail] = useState(''); const [phone, setPhone] = useState(''); const [vessel, setVessel] = useState('');
   const [busy, setBusy] = useState(false); const [done, setDone] = useState<number | null>(null); const [err, setErr] = useState('');
-  const hits = useMemo(() => { const n = norm(pq); return n.length < 2 ? [] : ALL_PORTS.filter((p) => norm(p.name).startsWith(n)).slice(0, 6); }, [pq]);
+  const inCountry = useMemo(() => (country0 ? ALL_PORTS.filter((p) => p.country === country0) : []), [country0]);
+  const hits = useMemo(() => { const n = norm(pq); if (inCountry.length && n.length < 2) return inCountry.slice(0, 40); return n.length < 2 ? [] : (inCountry.length ? inCountry : ALL_PORTS).filter((p) => norm(p.name).includes(n)).slice(0, 12); }, [pq, inCountry]);
   const ok = !!(svc && port && text.trim().length >= 5 && name.trim() && /\S+@\S+\.\S+/.test(email));
   const send = async () => {
     if (!ok || !port || busy) return;
     setBusy(true); setErr('');
     try {
       const r = await submitRfq({ country: port.country, port: port.name, serviceType: svc, vesselType: vessel, eta: '', requirementDetails: text.trim(), urgency: urgent ? 'urgent' : 'standard', operatorName: name.trim(), operatorEmail: email.trim(), operatorPhone: phone.trim() });
-      if (r.ok) setDone(r.distributedCount); else setErr('Could not send. Please try again.');
+      if (r.ok) {
+        if (pub && r.rfqId) { const p = await supabaseBrowser.rpc('x_publish_request', { p_rfq: r.rfqId }); if (!p.error) onPublished?.(); }
+        setDone(r.distributedCount);
+      } else setErr('Could not send. Please try again.');
     } catch { setErr('Could not send. Please try again.'); }
     setBusy(false);
   };
   if (done !== null) return (
     <div className="x-cmp">
       <div className="x-bar"><button className="x-ib" onClick={onClose} aria-label="Close"><Ico d="close" s={20} w={2} /></button></div>
-      <div className="x-empty"><h2>Request sent ✅</h2><p>{done > 0 ? `${done} ${done === 1 ? 'company' : 'companies'} in ${port?.name} got your request. Quotes come to ${email}.` : `We received it and will pass it to companies in ${port?.name}. Quotes come to ${email}.`}</p><button className="x-btn" onClick={onClose}>Done</button></div>
+      <div className="x-empty"><h2>Request sent ✅</h2><p>{done > 0 ? `${done} ${done === 1 ? 'company' : 'companies'} in ${port?.name} got your request. Quotes come to ${email}.` : `We received it and will pass it to companies in ${port?.name}. Quotes come to ${email}.`}{pub ? ' It is also on the feed, so more companies can see it and reply.' : ''}</p><button className="x-btn" onClick={onClose}>Done</button></div>
     </div>
   );
   return (
@@ -1010,7 +1052,7 @@ function RequestView({ initial, onClose }: { initial: string; onClose: () => voi
           <textarea autoFocus value={text} onChange={(e) => setText(e.target.value)} placeholder="What do you need? e.g. Fresh provisions for 22 crew, ETA Friday 🥩🥖" rows={4} maxLength={2000} />
           <div className="x-lbl">📍 Port</div>
           {port ? <button className="x-pill on" onClick={() => setPort(null)}>{port.flag} {port.name}, {port.country} ✕</button> : (
-            <div><input className="x-in" value={pq} onChange={(e) => setPq(e.target.value)} placeholder="Type a port name" />{hits.map((p) => <button key={p.slug} className="x-opt" onClick={() => { setPort(p); setPq(''); }}>{p.flag} {p.name} <small>{p.country}</small></button>)}</div>
+            <div><input className="x-in" value={pq} onChange={(e) => setPq(e.target.value)} placeholder={country0 ? `Type a port in ${country0}` : 'Type a port name'} />{hits.map((p) => <button key={p.slug} className="x-opt" onClick={() => { setPort(p); setPq(''); }}>{p.flag} {p.name} <small>{p.country}</small></button>)}</div>
           )}
           <div className="x-lbl">🧰 Service</div>
           <div className="x-tags">{QUICK.map((k) => <button key={k} className={svc === k ? 'on' : ''} onClick={() => setSvc(k)}>{EMO[k] || '🔧'} {svcLabel(k)}</button>)}
@@ -1023,7 +1065,8 @@ function RequestView({ initial, onClose }: { initial: string; onClose: () => voi
           <input className="x-in" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Phone / WhatsApp (optional)" type="tel" autoComplete="tel" />
           <input className="x-in" value={vessel} onChange={(e) => setVessel(e.target.value)} placeholder="Vessel type (optional)" />
           {err && <p className="x-err">{err}</p>}
-          <p className="x-mu sm">Your request goes to matching companies in that port. They reply to your email.</p>
+          <label className="x-urg"><input type="checkbox" checked={pub} onChange={(e) => setPub(e.target.checked)} /> 📣 Also post it on the feed so more companies can reply</label>
+          <p className="x-mu sm">Your request goes to matching companies in that port and they reply to your email. On the feed we show only the port, service, vessel type and your text: your name, email and phone stay private.</p>
         </div>
       </div>
     </div>
@@ -1119,7 +1162,13 @@ html[data-psfx=dark] .xapp{--bg:#000;--fg:#e7e9ea;--mu:#71767b;--ln:#2f3336;--hv
 .x-pick .x-grid{padding:0 12px 8px}
 .x-grid button.on{background:var(--fg)!important;color:var(--bg)!important}
 .x-tags.pad{padding:0 12px 8px}
-.x-list{max-height:320px;overflow-y:auto}
+.x-list{}
+.x-list button.on{font-weight:700}
+.x-cats{display:flex;flex-direction:column;gap:8px;padding:0 12px 8px}
+.x-cats button{display:grid!important;grid-template-columns:36px 1fr;column-gap:10px;align-items:center;border:1px solid var(--ln)!important;border-radius:14px;padding:12px!important}
+.x-cats button span{grid-row:span 2;font-size:26px}.x-cats button small{color:var(--mu);font-size:13px}.x-cats button.on{border-color:var(--acb)!important;box-shadow:0 0 0 1px var(--acb)}
+.x-rq{margin-top:10px;border:1px solid var(--ln);border-radius:16px;padding:12px;display:flex;flex-direction:column;gap:10px;align-items:flex-start}
+.x-rqm{display:flex;flex-wrap:wrap;gap:6px 12px;color:var(--mu);font-size:14px}
 .x-list button{display:flex!important;justify-content:space-between;width:100%;padding:12px 16px!important;font-size:16px}.x-list button:hover{background:var(--hv)}.x-list small{color:var(--mu)}
 
 .x-h2{font-size:20px;line-height:24px;font-weight:800;padding:12px 16px}
