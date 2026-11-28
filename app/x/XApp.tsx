@@ -7,7 +7,7 @@ import { supabaseBrowser } from '@/lib/supabase-browser';
 
 export type FeedItem = { id: string; kind: 'member' | 'guide' | 'data' | 'post'; at: string; author: string; handle: string; badge?: boolean; text: string; sub?: string; href: string; pid?: string; img?: string; likes?: number; replies?: number; reposts?: number; op?: boolean; req?: { port: string; country: string; service: string; vessel: string; eta: string; urgent: boolean } };
 export type XProvider = { id: string; s: string; n: string; t: string; tl: string; c: string; f: string; p: string[]; sv: string[]; b: string; wa: string; ph: string; em: string; w: string; cl: boolean; j: string };
-type View = { v: 'home' | 'search' | 'find' | 'profile' | 'port' | 'post' | 'notifs' | 'chat' | 'saved' | 'request' | 'tools' | 'login' | 'compose' | 'me' | 'settings' | 'edit' | 'u'; a?: string; q?: string };
+type View = { v: 'home' | 'search' | 'find' | 'profile' | 'port' | 'post' | 'notifs' | 'chat' | 'saved' | 'request' | 'tools' | 'login' | 'compose' | 'me' | 'settings' | 'edit' | 'u' | 'requests'; a?: string; q?: string };
 
 /* ---------- icons (outline, X-like weight) ---------- */
 const P = {
@@ -250,7 +250,7 @@ export function XApp({ items, providers, trending, listed, joined }: { items: Fe
             <button aria-label="Repost" className={rp ? 'rp' : ''} onClick={() => (db1 ? repost(i.pid!) : flipLoc('r', i.id))}><Ico d="repost" s={18.5} /><em>{nR || ''}</em></button>
             <button aria-label="Like" className={lk ? 'lk' : ''} onClick={() => (db1 ? like(i.pid!) : flipLoc('l', i.id))}><Ico d="heart" s={18.5} fill={lk} /><em>{nL || ''}</em></button>
             <span className="x-ac2">
-              <button aria-label="Bookmark" className={loc.b[i.id] ? 'bm' : ''} onClick={() => { flipLoc('b', i.id); if (!loc.b[i.id]) say('Added to your Bookmarks'); }}><Ico d="bookmark" s={18.5} fill={!!loc.b[i.id]} /></button>
+              
               <button aria-label="Share" onClick={() => { const u = location.origin + (i.pid ? '/x?post=' + i.pid : i.href.startsWith('/') ? i.href : '/providers/' + i.href); try { if (navigator.share) navigator.share({ url: u }); else { navigator.clipboard.writeText(u); say('Copied to clipboard'); } } catch {} }}><Ico d="share" s={18.5} /></button>
             </span>
           </div>
@@ -288,6 +288,8 @@ export function XApp({ items, providers, trending, listed, joined }: { items: Fe
   );
   const Empty = ({ t, s, cta }: { t: string; s: string; cta?: React.ReactNode }) => <div className="x-empty"><h2>{t}</h2><p>{s}</p>{cta}</div>;
 
+  const isCo = me?.kind === 'provider';
+  const primary = () => go({ v: isCo ? 'compose' : 'request' });
   const signOut = async () => { await supabaseBrowser.auth.signOut(); setMe(null); setDrawer(false); say('Logged out'); go({ v: 'home' }); };
 
   /* ---------- views ---------- */
@@ -326,6 +328,12 @@ export function XApp({ items, providers, trending, listed, joined }: { items: Fe
   } else if (view.v === 'saved') {
     const saved = feed.filter((i) => loc.b[i.id]);
     body = (<><Head title="Bookmarks" />{saved.length ? saved.map((i) => <Post key={i.id} i={i} />) : <Empty t="Save posts for later" s="Bookmark posts to easily find them again in the future." />}</>);
+  } else if (view.v === 'requests') {
+    const reqs = feed.filter((i) => i.req);
+    body = (<><Head title="Port requests" sub="What operators need right now" />
+      <div className="x-reqbar"><span>{isCo ? 'Tap “Send a quote” to add a request to your dashboard.' : 'Need something in port? Post a free request.'}</span>{!isCo && <button className="x-btn sm" onClick={() => go({ v: 'request' })}>Get quotes</button>}</div>
+      {reqs.length ? reqs.map((i) => <Post key={i.id} i={i} />) : <Empty t="No requests yet" s="Quote requests from operators will show up here." />}
+      <div className="x-endpad" /></>);
   } else if (view.v === 'tools') {
     body = (<><Head title="Voyage tools" sub="Free calculators and checklists" />
       {TOOLS.map(([g, rows]) => (<section key={g}><h2 className="x-h2">{g}</h2>{rows.map(([href, e, t, d]) => <a key={href} className="x-prow" href={href.startsWith('/') ? href : `/voyage/${href}`}><span className="x-pin">{e}</span><span><b>{t}</b><small>{d}</small></span></a>)}</section>))}
@@ -348,9 +356,7 @@ export function XApp({ items, providers, trending, listed, joined }: { items: Fe
       : me ? <UserView handle={me.handle || ''} me={me} Head={Head} go={go} byId={byId} /> : <Login onDone={async (name) => { await ensure(name); }} onClose={back} />;
   }
 
-  const isCo = me?.kind === 'provider';
-  const primary = () => go({ v: isCo ? 'compose' : 'request' });
-  const NAV: [View['v'], string, string][] = [['home', 'home', 'Home'], ['search', 'search', 'Explore'], ['find', 'anchor', 'Find a service'], ['notifs', 'bell', 'Notifications'], ['chat', 'chat', 'Chat'], ['saved', 'bookmark', 'Bookmarks'], ['tools', 'tool', 'Voyage tools'], ['me', 'user', 'Profile']];
+  const NAV: [View['v'], string, string][] = [['home', 'home', 'Home'], ['search', 'search', 'Explore'], ['find', 'anchor', 'Find a service'], ['notifs', 'bell', 'Notifications'], ['chat', 'chat', 'Chat'], ['requests', 'bell', 'Requests'], ['tools', 'tool', 'Voyage tools'], ['me', 'user', 'Profile']];
   const meHandle = me ? (me.provider_id ? byId.get(me.provider_id)?.s : '') || me.name : '';
   return (
     <div className="xapp">
@@ -409,7 +415,7 @@ export function XApp({ items, providers, trending, listed, joined }: { items: Fe
             <button className="x-dwi" onClick={() => go({ v: 'me' })}><Ico d="user" />Profile</button>
             <button className="x-dwi" onClick={() => go({ v: 'find' })}><Ico d="anchor" />Find a service</button>
             <button className="x-dwi" onClick={() => go({ v: 'request' })}><Ico d="mail" />Get quotes</button>
-            <button className="x-dwi" onClick={() => go({ v: 'saved' })}><Ico d="bookmark" />Bookmarks</button>
+            <button className="x-dwi" onClick={() => go({ v: 'requests' })}><Ico d="mail" />Port requests</button>
             <button className="x-dwi" onClick={() => go({ v: 'tools' })}><Ico d="tool" />Voyage tools</button>
             <a className="x-dwi" href="/blog"><Ico d="book" />Guides</a>
             {(!me || me.kind === 'operator') && <a className="x-dwi" href="/for-providers/signup"><Ico d="biz" />List your company</a>}

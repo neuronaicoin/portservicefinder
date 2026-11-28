@@ -24,7 +24,7 @@ const Ico = ({ d, w = 2 }: { d: string; w?: number }) => (
 );
 const NAV: [string, string, string][] = [
   ['/x', 'home', 'Home'], ['/x?v=search', 'search', 'Explore'], ['/x?v=find', 'anchor', 'Find a service'],
-  ['/x?v=notifs', 'bell', 'Notifications'], ['/x?v=chat', 'chat', 'Chat'], ['/x?v=saved', 'bookmark', 'Bookmarks'],
+  ['/x?v=notifs', 'bell', 'Notifications'], ['/x?v=chat', 'chat', 'Chat'], ['/x?v=requests', 'bookmark', 'Port requests'],
   ['/x?v=tools', 'tool', 'Voyage tools'], ['/x?v=me', 'user', 'Profile'],
 ];
 const BOTTOM = NAV.slice(0, 5);
