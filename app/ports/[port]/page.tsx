@@ -5,6 +5,7 @@ import { notFound, permanentRedirect } from 'next/navigation';
 import { SiteHeader } from '@/components/SiteHeader';
 import { SiteFooter } from '@/components/SiteFooter';
 import { RfqCta } from '@/components/RfqCta';
+import { PscCard } from '@/components/PscCard';
 import { ProviderCard } from '@/components/providers/ProviderCard';
 import { getListedProviders, getProvidersForPortSlug, providerOffers } from '@/lib/providers-db';
 import { getDemandForPort } from '@/lib/port-requests';
@@ -187,6 +188,8 @@ export default async function PortPage({ params }: { params: Promise<{ port: str
             </div>
           </section>
         )}
+
+        <PscCard slug={port.slug} portName={port.name} />
 
         <section className="card join more">
           <div>

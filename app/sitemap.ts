@@ -20,6 +20,7 @@ const STATIC: [string, MetadataRoute.Sitemap[number]['changeFrequency'], number]
   ['/for-providers/signup', 'monthly', 0.8],
   ['/blog', 'daily', 0.8],
   ['/voyage', 'weekly', 0.8],
+  ['/psc-detentions', 'monthly', 0.7],
   ['/request-quote', 'monthly', 0.6],
   ['/pricing', 'monthly', 0.6],
   ['/about', 'monthly', 0.5],
