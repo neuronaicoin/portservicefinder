@@ -7,7 +7,7 @@ import { supabaseBrowser } from '@/lib/supabase-browser';
 
 export type FeedItem = { id: string; kind: 'member' | 'guide' | 'data' | 'post'; at: string; author: string; handle: string; badge?: boolean; text: string; sub?: string; href: string; pid?: string; img?: string; likes?: number; replies?: number; reposts?: number; op?: boolean };
 export type XProvider = { id: string; s: string; n: string; t: string; tl: string; c: string; f: string; p: string[]; sv: string[]; b: string; wa: string; ph: string; em: string; w: string; cl: boolean; j: string };
-type View = { v: 'home' | 'search' | 'find' | 'profile' | 'port' | 'post' | 'notifs' | 'chat' | 'saved' | 'request' | 'tools' | 'login' | 'compose' | 'me'; a?: string; q?: string };
+type View = { v: 'home' | 'search' | 'find' | 'profile' | 'port' | 'post' | 'notifs' | 'chat' | 'saved' | 'request' | 'tools' | 'login' | 'compose' | 'me' | 'settings' | 'edit' | 'u'; a?: string; q?: string };
 
 /* ---------- icons (outline, X-like weight) ---------- */
 const P = {
@@ -46,7 +46,7 @@ const Ico = ({ d, s = 24, w = 1.8, fill }: { d: string; s?: number; w?: number; 
   <svg width={s} height={s} viewBox="0 0 24 24" aria-hidden="true" fill={fill ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth={w} strokeLinecap="round" strokeLinejoin="round"><path d={P[d as keyof typeof P] || d} /></svg>
 );
 const Badge = () => (
-  <svg className="x-badge" width="17" height="17" viewBox="0 0 24 24" aria-label="Verified member"><path fill="#d6a838" d="M12 1.8l2.4 1.8 3-.2.9 2.8 2.5 1.7-.9 2.9.9 2.9-2.5 1.7-.9 2.8-3-.2L12 22.2l-2.4-1.8-3 .2-.9-2.8-2.5-1.7.9-2.9-.9-2.9 2.5-1.7.9-2.8 3 .2z" /><path d="M8 12.3l2.7 2.7L16.3 9.4" fill="none" stroke="#0d1b4a" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+  <svg className="x-badge" width="20" height="20" viewBox="0 0 24 24" aria-label="Verified member"><path fill="#d6a838" d="M12 1.8l2.4 1.8 3-.2.9 2.8 2.5 1.7-.9 2.9.9 2.9-2.5 1.7-.9 2.8-3-.2L12 22.2l-2.4-1.8-3 .2-.9-2.8-2.5-1.7.9-2.9-.9-2.9 2.5-1.7.9-2.8 3 .2z" /><path d="M8 12.3l2.7 2.7L16.3 9.4" fill="none" stroke="#0d1b4a" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" /></svg>
 );
 
 /* ---------- helpers ---------- */
@@ -89,7 +89,7 @@ function parseQuery(q: string) {
 }
 
 /* ---------- app ---------- */
-type Me = { user_id: string; kind: 'operator' | 'provider'; name: string; provider_id: string | null; gold: boolean };
+type Me = { user_id: string; kind: 'operator' | 'provider'; name: string; provider_id: string | null; gold: boolean; handle: string | null; handle_changed_at: string | null; bio: string | null; country: string | null; created_at: string };
 type DbPost = { id: string; body: string; image_url: string | null; likes: number; replies: number; reposts: number; created_at: string; user_id: string; x_profiles: { name: string; kind: string; provider_id: string | null; gold: boolean } | null };
 const POST_COLS = 'id,body,image_url,likes,replies,reposts,created_at,user_id,x_profiles!x_posts_user_id_fkey(name,kind,provider_id,gold)';
 const LINK_RE = /(https?:\/\/|www\.|\b[a-z0-9-]+\.(com|net|org|io|co|uk|tr|gr|sg|nl|de|info|biz|me|app|xyz)\b)/i;
@@ -139,12 +139,14 @@ export function XApp({ items, providers, trending, listed, joined }: { items: Fe
 
   useEffect(() => {
     setTheme((document.documentElement.dataset.psfx as 'dark' | 'light') || 'dark');
+    try { localStorage.setItem('psfx_on', '1'); } catch {}
     try { setLoc({ l: {}, r: {}, b: {}, ...JSON.parse(localStorage.getItem('psfx_state') || '{}') }); } catch {}
     const fromUrl = (): View => {
       const u = new URLSearchParams(location.search);
       if (u.get('c')) return { v: 'profile', a: u.get('c')! };
       if (u.get('port')) return { v: 'port', a: u.get('port')! };
       if (u.get('post')) return { v: 'post', a: u.get('post')! };
+      if (u.get('u')) return { v: 'u', a: u.get('u')! };
       const v = u.get('v') as View['v'] | null;
       return v ? { v, q: u.get('q') || '' } : { v: 'home' };
     };
@@ -162,7 +164,7 @@ export function XApp({ items, providers, trending, listed, joined }: { items: Fe
 
   const go = useCallback((n: View) => {
     if (view.v === 'home') homeY.current = window.scrollY;
-    const u = n.v === 'profile' ? `?c=${n.a}` : n.v === 'port' ? `?port=${n.a}` : n.v === 'post' ? `?post=${n.a}` : n.v === 'home' ? '' : `?v=${n.v}${n.q ? '&q=' + encodeURIComponent(n.q) : ''}`;
+    const u = n.v === 'profile' ? `?c=${n.a}` : n.v === 'port' ? `?port=${n.a}` : n.v === 'post' ? `?post=${n.a}` : n.v === 'u' ? `?u=${n.a}` : n.v === 'home' ? '' : `?v=${n.v}${n.q ? '&q=' + encodeURIComponent(n.q) : ''}`;
     history.pushState(null, '', '/x' + u);
     setView(n); setDrawer(false);
     requestAnimationFrame(() => window.scrollTo(0, n.v === 'home' ? homeY.current : 0));
@@ -172,7 +174,7 @@ export function XApp({ items, providers, trending, listed, joined }: { items: Fe
   const flipLoc = (k: 'l' | 'r' | 'b', id: string) => {
     setLoc((o) => { const m = { ...o[k] }; if (m[id]) delete m[id]; else m[id] = 1; const n = { ...o, [k]: m }; try { localStorage.setItem('psfx_state', JSON.stringify(n)); } catch {} return n; });
   };
-  const toggleTheme = () => { const t = theme === 'dark' ? 'light' : 'dark'; setTheme(t); document.documentElement.dataset.psfx = t; try { localStorage.setItem('psfx_theme', t); } catch {} };
+  const toggleTheme = () => { const t = theme === 'dark' ? 'light' : 'dark'; setTheme(t); document.documentElement.dataset.psfx = t; try { localStorage.setItem('psfx_theme', t); localStorage.setItem('psf-theme', t); } catch {} };
 
   const bump = (pid: string, k: 'likes' | 'reposts' | 'replies', d: number) => setDb((xs) => xs.map((x) => (x.id === pid ? { ...x, [k]: Math.max(0, x[k] + d) } : x)));
   const like = async (pid: string) => {
@@ -266,6 +268,8 @@ export function XApp({ items, providers, trending, listed, joined }: { items: Fe
   );
   const Empty = ({ t, s, cta }: { t: string; s: string; cta?: React.ReactNode }) => <div className="x-empty"><h2>{t}</h2><p>{s}</p>{cta}</div>;
 
+  const signOut = async () => { await supabaseBrowser.auth.signOut(); setMe(null); setDrawer(false); say('Logged out'); go({ v: 'home' }); };
+
   /* ---------- views ---------- */
   let body: React.ReactNode = null;
   if (view.v === 'home') {
@@ -311,14 +315,21 @@ export function XApp({ items, providers, trending, listed, joined }: { items: Fe
   } else if (view.v === 'login') {
     body = <Login onDone={async (name) => { await ensure(name); back(); say('Welcome to PortServiceFinder'); }} onClose={back} />;
   } else if (view.v === 'compose') {
-    body = me ? <Compose me={me} onClose={back} onPosted={(d) => { setDb((xs) => [d, ...xs]); go({ v: 'home' }); say('Your post was sent'); }} /> : <Login onDone={async (name) => { await ensure(name); }} onClose={back} note="Log in or join to post updates." />;
+    body = me && me.kind === 'operator' ? <><Head title="Post" /><Empty t="Posting is for company accounts" s="Agents, chandlers and service companies share news here. As an operator you can get quotes, reply, like and follow." cta={<button className="x-btn ac" onClick={() => go({ v: 'request' })}>Get quotes</button>} /></> : me ? <Compose me={me} onClose={back} onPosted={(d) => { setDb((xs) => [d, ...xs]); go({ v: 'home' }); say('Your post was sent'); }} /> : <Login onDone={async (name) => { await ensure(name); }} onClose={back} note="Log in or join to post updates." />;
+  } else if (view.v === 'settings') {
+    body = me ? <Settings me={me} theme={theme} toggleTheme={toggleTheme} Head={Head} go={go} signOut={signOut} /> : <Login onDone={async (name) => { await ensure(name); }} onClose={back} />;
+  } else if (view.v === 'edit') {
+    body = me ? <EditProfile me={me} onClose={back} onSaved={(p) => { setMe(p); back(); say('Profile saved'); }} /> : <Login onDone={async (name) => { await ensure(name); }} onClose={back} />;
+  } else if (view.v === 'u') {
+    body = <UserView handle={view.a || ''} me={me} Head={Head} go={go} byId={byId} />;
   } else if (view.v === 'me') {
     body = me && me.provider_id && byId.get(me.provider_id)
       ? <Profile p={byId.get(me.provider_id)!} statics={[]} toItem={toItem} Post={Post} Head={Head} following={false} onFollow={() => {}} go={go} mine />
-      : me ? <MyPosts me={me} toItem={toItem} Post={Post} Head={Head} go={go} /> : <Login onDone={async (name) => { await ensure(name); }} onClose={back} />;
+      : me ? <UserView handle={me.handle || ''} me={me} Head={Head} go={go} byId={byId} /> : <Login onDone={async (name) => { await ensure(name); }} onClose={back} />;
   }
 
-  const signOut = async () => { await supabaseBrowser.auth.signOut(); setMe(null); setDrawer(false); say('Logged out'); };
+  const isCo = me?.kind === 'provider';
+  const primary = () => go({ v: isCo ? 'compose' : 'request' });
   const NAV: [View['v'], string, string][] = [['home', 'home', 'Home'], ['search', 'search', 'Explore'], ['find', 'anchor', 'Find a service'], ['notifs', 'bell', 'Notifications'], ['chat', 'chat', 'Chat'], ['saved', 'bookmark', 'Bookmarks'], ['tools', 'tool', 'Voyage tools'], ['me', 'user', 'Profile']];
   const meHandle = me ? (me.provider_id ? byId.get(me.provider_id)?.s : '') || me.name : '';
   return (
@@ -327,7 +338,7 @@ export function XApp({ items, providers, trending, listed, joined }: { items: Fe
         <button className="x-logo" onClick={() => go({ v: 'home' })} aria-label="Home"><LogoMark size={32} /></button>
         {NAV.map(([v, d, l]) => <button key={v} className={'x-nav' + (view.v === v ? ' on' : '')} onClick={() => go({ v })}><span className="x-ni"><Ico d={d} s={26} w={view.v === v ? 2.4 : 1.8} />{v === 'notifs' && unread > 0 && <i className="x-dot">{unread > 9 ? '9+' : unread}</i>}</span><span>{l}</span></button>)}
         <button className="x-nav" onClick={toggleTheme}><Ico d="bulb" s={26} /><span>{theme === 'dark' ? 'Light mode' : 'Dark mode'}</span></button>
-        <button className="x-big" onClick={() => go({ v: 'compose' })}><span>Post</span><Ico d="plus" s={24} w={2.4} /></button>
+        <button className="x-big" onClick={primary}><span>{isCo ? 'Post' : 'Get quotes'}</span><Ico d="plus" s={24} w={2.4} /></button>
         {me ? (
           <button className="x-acct" onClick={signOut} title="Log out"><Av name={me.name} handle={meHandle} /><span><b>{me.name}</b><small>{me.kind === 'provider' ? 'Company' : 'Operator'} · Log out</small></span></button>
         ) : (
@@ -356,13 +367,13 @@ export function XApp({ items, providers, trending, listed, joined }: { items: Fe
       </aside>
 
       {(view.v === 'home' || view.v === 'search' || view.v === 'find' || view.v === 'profile' || view.v === 'port') && (
-        <button className={'x-fab' + (hide ? ' dim' : '')} onClick={() => go({ v: 'compose' })} aria-label="Post"><Ico d="plus" s={26} w={2.2} /></button>
+        <button className={'x-fab' + (hide ? ' dim' : '')} onClick={primary} aria-label={isCo ? 'Post' : 'Get quotes'}><Ico d="plus" s={26} w={2.2} /></button>
       )}
       {!['request', 'compose', 'login'].includes(view.v) && (
-        <nav className={'x-bot' + (hide ? ' dim' : '')} aria-label="Main">
+        <nav className={'x-bot' + (hide ? ' hid' : '')} aria-label="Main">
           {([['home', 'home', 'Home'], ['search', 'search', 'Search'], ['find', 'anchor', 'Find a service'], ['notifs', 'bell', 'Notifications'], ['chat', 'chat', 'Chat']] as [View['v'], string, string][]).map(([v, d, l]) => (
             <button key={v} className={view.v === v ? 'on' : ''} onClick={() => (v === 'home' && view.v === 'home' ? window.scrollTo({ top: 0, behavior: 'smooth' }) : go({ v }))} aria-label={l}>
-              <span className="x-ni"><Ico d={d} s={26} w={view.v === v ? 2.4 : 1.8} fill={view.v === v && (v === 'home' || v === 'notifs' || v === 'chat')} />{v === 'notifs' && unread > 0 && <i className="x-dot">{unread > 9 ? '9+' : unread}</i>}</span>
+              <span className="x-ni"><Ico d={d} s={26} w={view.v === v ? 2.5 : 2} fill={view.v === v && (v === 'home' || v === 'notifs' || v === 'chat')} />{v === 'notifs' && unread > 0 && <i className="x-dot">{unread > 9 ? '9+' : unread}</i>}</span>
             </button>
           ))}
         </nav>
@@ -372,7 +383,7 @@ export function XApp({ items, providers, trending, listed, joined }: { items: Fe
         <div className="x-dw" onClick={() => setDrawer(false)}>
           <div className="x-dwp" onClick={(e) => e.stopPropagation()}>
             {me ? <Av name={me.name} handle={meHandle} /> : <span className="x-av" style={{ width: 40, height: 40, background: '#536471' }}><Ico d="user" s={20} /></span>}
-            <b className="x-dwn">{me ? me.name : 'Guest'}</b><span className="x-mu">{me ? (me.kind === 'provider' ? 'Company account' : 'Operator account') : 'Not logged in'}</span>
+            <b className="x-dwn">{me ? me.name : 'Guest'}</b><span className="x-mu">{me ? '@' + (me.handle || '') : 'Not logged in'}</span>
             <div className="x-dwc"><b>{Object.keys(fol).length}</b> Following</div>
             {!me && <button className="x-btn full" style={{ marginTop: 0, marginBottom: 6 }} onClick={() => go({ v: 'login' })}>Log in or join</button>}
             <button className="x-dwi" onClick={() => go({ v: 'me' })}><Ico d="user" />Profile</button>
@@ -383,7 +394,7 @@ export function XApp({ items, providers, trending, listed, joined }: { items: Fe
             <a className="x-dwi" href="/blog"><Ico d="book" />Guides</a>
             {(!me || me.kind === 'operator') && <a className="x-dwi" href="/for-providers/signup"><Ico d="biz" />List your company</a>}
             <hr />
-            <a className="x-dwi sm" href={me?.kind === 'provider' ? '/for-providers/dashboard' : '/for-providers/login'}><Ico d="gear" s={20} />Settings and privacy</a>
+            <button className="x-dwi sm" onClick={() => go({ v: me ? 'settings' : 'login' })}><Ico d="gear" s={20} />Settings and privacy</button>
             <a className="x-dwi sm" href="/contact"><Ico d="help" s={20} />Help Center</a>
             {me && <button className="x-dwi sm" onClick={signOut}><Ico d="back" s={20} />Log out</button>}
             <button className="x-bulb" onClick={toggleTheme} aria-label="Switch theme"><Ico d="bulb" s={24} /></button>
@@ -577,21 +588,6 @@ function Notifs({ me, Head, go, onRead }: { me: Me | null; Head: (x: { title?: s
   </>);
 }
 
-/* ---------- operator profile ---------- */
-function MyPosts({ me, toItem, Post, Head, go }: { me: Me; toItem: (d: DbPost) => FeedItem; Post: (x: { i: FeedItem }) => React.ReactNode; Head: (x: { title?: string; sub?: string; tabs?: React.ReactNode }) => React.ReactNode; go: (v: View) => void }) {
-  const [list, setList] = useState<DbPost[] | null>(null);
-  useEffect(() => { supabaseBrowser.from('x_posts').select(POST_COLS).eq('user_id', me.user_id).order('created_at', { ascending: false }).limit(50).then(({ data }) => setList((data as unknown as DbPost[]) || [])); }, [me.user_id]);
-  return (<>
-    <Head title={me.name} sub="Operator" />
-    <div className="x-ban" style={{ background: `linear-gradient(135deg, ${hue(me.name)}, #0d1b4a)` }} />
-    <div className="x-pf"><span className="x-pfav"><Av name={me.name} handle={me.name} size={80} /></span><h1 className="x-pfn">{me.name}</h1><div className="x-mu">Operator account</div>
-      <button className="x-btn full" onClick={() => go({ v: 'compose' })}>Write a post</button></div>
-    <nav className="x-tabs"><button className="on"><span>Posts</span></button></nav>
-    {list === null ? <div className="x-load" /> : list.length ? list.map((d) => <Post key={d.id} i={toItem(d)} />) : <div className="x-empty"><h2>No posts yet</h2><p>Your posts will show up here.</p></div>}
-    <div className="x-endpad" />
-  </>);
-}
-
 /* ---------- voyage tools ---------- */
 const TOOLS: [string, [string, string, string, string][]][] = [
   ['Voyage & commercial', [
@@ -762,31 +758,50 @@ function PortView({ slug, providers, Head, Cell, go }: { slug: string; providers
   </>);
 }
 
-/* ---------- profile ---------- */
-function Profile({ p, statics, toItem, Post, Head, following, onFollow, go, mine }: { p: XProvider; statics: FeedItem[]; toItem: (d: DbPost) => FeedItem; Post: (x: { i: FeedItem }) => React.ReactNode; Head: (x: { title?: string; sub?: string; tabs?: React.ReactNode }) => React.ReactNode; following: boolean; onFollow: () => void; go: (v: View) => void; mine?: boolean }) {
+/* ---------- profile (company) ---------- */
+function useScrolled(px: number) {
+  const [s, setS] = useState(false);
+  useEffect(() => { const f = () => setS(window.scrollY > px); f(); window.addEventListener('scroll', f, { passive: true }); return () => window.removeEventListener('scroll', f); }, [px]);
+  return s;
+}
+function ProfileTop({ title, sub, onBack }: { title: string; sub: string; onBack: () => void }) {
+  const solid = useScrolled(110);
+  return (
+    <div className={'x-phd' + (solid ? ' on' : '')}>
+      <button className="x-circ" onClick={onBack} aria-label="Back"><Ico d="back" s={19} w={2.2} /></button>
+      <div className="x-phd-t"><b>{title}</b><small>{sub}</small></div>
+    </div>
+  );
+}
+function Profile({ p, statics, toItem, Post, following, onFollow, go, mine }: { p: XProvider; statics: FeedItem[]; toItem: (d: DbPost) => FeedItem; Post: (x: { i: FeedItem }) => React.ReactNode; Head?: unknown; following: boolean; onFollow: () => void; go: (v: View) => void; mine?: boolean }) {
   const [t, setT] = useState<'posts' | 'about'>('posts');
   const [dbp, setDbp] = useState<DbPost[]>([]);
   const [followers, setFollowers] = useState<number | null>(null);
+  const [contact, setContact] = useState(false);
   useEffect(() => {
     supabaseBrowser.from('x_posts').select('id,body,image_url,likes,replies,reposts,created_at,user_id,x_profiles!x_posts_user_id_fkey!inner(name,kind,provider_id,gold)').eq('x_profiles.provider_id', p.id).order('created_at', { ascending: false }).limit(50).then(({ data }) => setDbp((data as unknown as DbPost[]) || []));
     supabaseBrowser.from('x_follows').select('user_id', { count: 'exact', head: true }).eq('provider_id', p.id).then(({ count }) => setFollowers(count || 0));
   }, [p.id]);
-  const shownF = (followers || 0) + (following && followers !== null ? 0 : 0);
   const posts = [...dbp.map(toItem), ...statics].sort((a, b) => b.at.localeCompare(a.at));
   const ports = p.p.map((s) => portBySlug(s)).filter(Boolean) as PortRef[];
   const wa = p.wa.replace(/[^0-9]/g, '');
   const web = p.w ? (p.w.startsWith('http') ? p.w : 'https://' + p.w) : '';
+  const back = () => (history.length > 1 ? history.back() : go({ v: 'home' }));
+  const share = () => { const u = location.origin + '/providers/' + p.s; try { if (navigator.share) navigator.share({ url: u, title: p.n }); else navigator.clipboard.writeText(u); } catch {} };
   return (<>
-    <Head title={p.n} sub={`${posts.length} posts`} />
+    <ProfileTop title={p.n} sub={`${posts.length} posts`} onBack={back} />
     <div className="x-ban" style={{ background: `linear-gradient(135deg, ${hue(p.s)}, #0d1b4a)` }} />
     <div className="x-pf">
       <div className="x-pfr">
         <span className="x-pfav"><Av name={p.n} handle={p.s} size={80} /></span>
         <div className="x-row r">
-          {!mine && wa && <a className="x-cir" href={`https://wa.me/${wa}`} target="_blank" rel="noopener" aria-label="WhatsApp"><Ico d="chat" s={19} /></a>}
-          {!mine && p.em && <a className="x-cir" href={`mailto:${p.em}`} aria-label="Email"><Ico d="mail" s={19} /></a>}
-          {!mine && p.ph && <a className="x-cir" href={`tel:${p.ph.replace(/\s/g, '')}`} aria-label="Call"><Ico d="phone" s={18} /></a>}
-          {mine ? <a className="x-btn ol" href="/for-providers/dashboard">Edit profile</a> : <button className={'x-btn' + (following ? ' ol' : '')} onClick={onFollow}>{following ? 'Following' : 'Follow'}</button>}
+          {mine ? (<>
+            <button className="x-btn ol" onClick={share}>Share profile</button>
+            <button className="x-btn ol" onClick={() => go({ v: 'edit' })}>Edit profile</button>
+          </>) : (<>
+            {(wa || p.em || p.ph) && <button className="x-btn ol" onClick={() => setContact(true)}>Message</button>}
+            <button className={'x-btn' + (following ? ' ol' : '')} onClick={onFollow}>{following ? 'Following' : 'Follow'}</button>
+          </>)}
         </div>
       </div>
       <h1 className="x-pfn">{p.n}</h1>
@@ -794,13 +809,12 @@ function Profile({ p, statics, toItem, Post, Head, following, onFollow, go, mine
       {p.b && <p className="x-pfb">{p.b}</p>}
       <div className="x-pfm">
         <span><Ico d="biz" s={17} />{p.tl}</span>
-        <span><Ico d="pin" s={17} />{ports.slice(0, 2).map((x) => x.name).join(', ') || p.c}{ports.length > 2 ? ` +${ports.length - 2}` : ''} {p.f}</span>
+        <span><Ico d="pin" s={17} />Based in {p.c} {p.f}</span>
         {web && <a href={web} target="_blank" rel="noopener nofollow"><Ico d="link" s={17} />{p.w.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '').slice(0, 28)}</a>}
         {p.cl && <span><Ico d="cal" s={17} />Joined {new Date(p.j).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</span>}
       </div>
-      <div className="x-ff"><span><b>{followers === null ? '–' : shownF}</b> Followers</span></div>
-      {mine ? <button className="x-btn ac full" onClick={() => go({ v: 'compose' })}>Write a post</button>
-        : <button className="x-btn ac full" onClick={() => go({ v: 'request', q: `${p.t === 'service' ? p.sv[0] || '' : p.t}|${p.p[0] || ''}` })}>Request a quote</button>}
+      <div className="x-ff"><span><b>{ports.length}</b> Ports</span><span><b>{followers === null ? '–' : followers}</b> Followers</span></div>
+      {!mine && <button className="x-btn ac full" onClick={() => go({ v: 'request', q: `${p.t === 'service' ? p.sv[0] || '' : p.t}|${p.p[0] || ''}` })}>Request a quote</button>}
       {!p.cl && <p className="x-claim">Listed from public information. <a href={`/claim/${p.s}`}>Is this your company? Claim it free</a></p>}
     </div>
     <nav className="x-tabs"><button className={t === 'posts' ? 'on' : ''} onClick={() => setT('posts')}><span>Posts</span></button><button className={t === 'about' ? 'on' : ''} onClick={() => setT('about')}><span>About</span></button></nav>
@@ -808,10 +822,154 @@ function Profile({ p, statics, toItem, Post, Head, following, onFollow, go, mine
       <div className="x-about">
         <h3>Ports</h3><div className="x-tags">{ports.map((x) => <button key={x.slug} onClick={() => go({ v: 'port', a: x.slug })}>📍 {x.name}</button>)}</div>
         {p.sv.length > 0 && (<><h3>Services</h3><div className="x-tags">{p.sv.map((k) => <span key={k}>{EMO[k] || '🔧'} {svcLabel(k)}</span>)}</div></>)}
-        <h3>Country</h3><p>{p.f} {p.c}</p>
-        <a className="x-hint" href={`/providers/${p.s}`}>Open full company page →</a>
+        <h3>Based in</h3><p>{p.f} {p.c}</p>
+        <a className="x-hint" href={`/providers/${p.s}`}>Full company page →</a>
       </div>
     )}
+    {contact && (
+      <div className="x-sheet" onClick={() => setContact(false)}>
+        <div onClick={(e) => e.stopPropagation()}>
+          <b>Contact {p.n}</b>
+          {wa && <a href={`https://wa.me/${wa}`} target="_blank" rel="noopener"><Ico d="chat" s={22} />WhatsApp</a>}
+          {p.em && <a href={`mailto:${p.em}`}><Ico d="mail" s={22} />Email</a>}
+          {p.ph && <a href={`tel:${p.ph.replace(/\s/g, '')}`}><Ico d="phone" s={22} />Call</a>}
+          <button className="x-btn ol full" onClick={() => setContact(false)}>Cancel</button>
+        </div>
+      </div>
+    )}
+    <div className="x-endpad" />
+  </>);
+}
+
+/* ---------- user profile (any account, by @username) ---------- */
+type PubProfile = { user_id: string; kind: string; name: string; provider_id: string | null; handle: string | null; bio: string | null; country: string | null; created_at: string };
+type MyReply = { id: string; body: string; created_at: string; post_id: string };
+function UserView({ handle, me, go, byId }: { handle: string; me: Me | null; Head?: unknown; go: (v: View) => void; byId: Map<string, XProvider> }) {
+  const [u, setU] = useState<PubProfile | null | undefined>(undefined);
+  const [replies, setReplies] = useState<MyReply[]>([]);
+  const [following, setFollowing] = useState(0);
+  useEffect(() => {
+    if (!handle) { setU(null); return; }
+    supabaseBrowser.from('x_profiles').select('user_id,kind,name,provider_id,handle,bio,country,created_at').ilike('handle', handle).maybeSingle().then(({ data }) => {
+      const pr = data as PubProfile | null; setU(pr);
+      if (!pr) return;
+      const comp = pr.provider_id ? byId.get(pr.provider_id) : undefined;
+      if (comp) { go({ v: 'profile', a: comp.s }); return; }
+      supabaseBrowser.from('x_comments').select('id,body,created_at,post_id').eq('user_id', pr.user_id).order('created_at', { ascending: false }).limit(50).then(({ data: d }) => setReplies((d as MyReply[]) || []));
+      supabaseBrowser.from('x_follows').select('provider_id', { count: 'exact', head: true }).eq('user_id', pr.user_id).then(({ count }) => setFollowing(count || 0));
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [handle]);
+  const back = () => (history.length > 1 ? history.back() : go({ v: 'home' }));
+  if (u === undefined) return <><ProfileTop title="Profile" sub="" onBack={back} /><div style={{ height: 60 }} /><div className="x-load" /></>;
+  if (!u) return <><ProfileTop title="Profile" sub="" onBack={back} /><div style={{ height: 60 }} /><div className="x-empty"><h2>This account doesn’t exist</h2><p>Try searching for another.</p></div></>;
+  const mine = me?.user_id === u.user_id;
+  const flag = u.country ? FLAG[u.country] || '' : '';
+  return (<>
+    <ProfileTop title={u.name} sub={`${replies.length} replies`} onBack={back} />
+    <div className="x-ban" style={{ background: `linear-gradient(135deg, ${hue(u.handle || u.name)}, #0d1b4a)` }} />
+    <div className="x-pf">
+      <div className="x-pfr">
+        <span className="x-pfav"><Av name={u.name} handle={u.handle || u.name} size={80} /></span>
+        {mine && <div className="x-row r"><button className="x-btn ol" onClick={() => go({ v: 'settings' })}>Settings</button><button className="x-btn ol" onClick={() => go({ v: 'edit' })}>Edit profile</button></div>}
+      </div>
+      <h1 className="x-pfn">{u.name}</h1>
+      <div className="x-mu">@{u.handle}</div>
+      {u.bio && <p className="x-pfb">{u.bio}</p>}
+      <div className="x-pfm">
+        <span><Ico d="user" s={17} />{u.kind === 'provider' ? 'Company' : 'Operator'}</span>
+        {u.country && <span><Ico d="pin" s={17} />Based in {u.country} {flag}</span>}
+        <span><Ico d="cal" s={17} />Joined {new Date(u.created_at).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</span>
+      </div>
+      <div className="x-ff"><span><b>{following}</b> Following</span></div>
+    </div>
+    <nav className="x-tabs"><button className="on"><span>Replies</span></button></nav>
+    {replies.length ? replies.map((r) => (
+      <div key={r.id} className="x-post" onClick={() => go({ v: 'post', a: r.post_id })}>
+        <div className="x-pl"><Av name={u.name} handle={u.handle || u.name} /></div>
+        <div className="x-pr"><div className="x-hd"><b>{u.name}</b><span>@{u.handle}</span><span>·</span><span>{ago(r.created_at)}</span></div><div className="x-tx">{r.body}</div></div>
+      </div>
+    )) : <div className="x-empty"><h2>No replies yet</h2><p>{mine ? 'Reply to company posts and it will show up here.' : 'Replies will show up here.'}</p></div>}
+    <div className="x-endpad" />
+  </>);
+}
+
+/* ---------- edit profile ---------- */
+function EditProfile({ me, onClose, onSaved }: { me: Me; onClose: () => void; onSaved: (p: Me) => void }) {
+  const [name, setName] = useState(me.name);
+  const [bio, setBio] = useState(me.bio || '');
+  const [country, setCountry] = useState(me.country || '');
+  const [handle, setHandle] = useState(me.handle || '');
+  const [busy, setBusy] = useState(false); const [err, setErr] = useState('');
+  const next = me.handle_changed_at ? new Date(Date.parse(me.handle_changed_at) + 30 * 864e5) : null;
+  const locked = !!next && next.getTime() > Date.now();
+  const save = async () => {
+    setBusy(true); setErr('');
+    try {
+      const a = await supabaseBrowser.rpc('x_update_profile', { p_name: name, p_bio: bio, p_country: country });
+      if (a.error) throw a.error;
+      let p = a.data as Me;
+      if (handle.trim().toLowerCase() !== (me.handle || '').toLowerCase()) {
+        const b = await supabaseBrowser.rpc('x_set_handle', { p_handle: handle });
+        if (b.error) throw b.error;
+        p = b.data as Me;
+      }
+      onSaved(p);
+    } catch (e) { setErr(plain(e)); }
+    setBusy(false);
+  };
+  return (
+    <div className="x-cmp">
+      <div className="x-bar sp"><button className="x-tl" onClick={onClose}>Cancel</button><b style={{ fontSize: 17 }}>Edit profile</b><button className="x-tl b" disabled={busy} onClick={save}>{busy ? 'Saving…' : 'Save'}</button></div>
+      <div className="x-ban sm" style={{ background: `linear-gradient(135deg, ${hue(me.handle || me.name)}, #0d1b4a)` }} />
+      <div className="x-pf"><span className="x-pfav"><Av name={name || me.name} handle={me.handle || me.name} size={72} /></span></div>
+      <div className="x-form">
+        <label><span>Name</span><input value={name} maxLength={80} onChange={(e) => setName(e.target.value)} /></label>
+        <label><span>Username</span><div className="x-at"><em>@</em><input value={handle} maxLength={15} disabled={locked} onChange={(e) => setHandle(e.target.value.replace(/[^A-Za-z0-9_]/g, ''))} /></div>
+          <small>{locked ? `You can change your username again on ${next!.toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}.` : 'You can change your username once every 30 days. Your name can be changed any time.'}</small></label>
+        <label><span>Bio</span><textarea value={bio} maxLength={160} rows={3} onChange={(e) => setBio(e.target.value)} /><small>{160 - bio.length} characters left</small></label>
+        {me.kind === 'operator' ? (
+          <label><span>Location</span><select value={country} onChange={(e) => setCountry(e.target.value)}><option value="">Add your country</option>{COUNTRIES.map((c) => <option key={c} value={c}>{c}</option>)}</select></label>
+        ) : (
+          <a className="x-frow" href="/for-providers/dashboard"><span><b>Company details</b><small>Ports, services, phone, WhatsApp, website</small></span><Ico d="chev" s={18} /></a>
+        )}
+        {err && <p className="x-err">{err}</p>}
+      </div>
+    </div>
+  );
+}
+
+/* ---------- settings ---------- */
+function Settings({ me, theme, toggleTheme, Head, go, signOut }: { me: Me; theme: string; toggleTheme: () => void; Head: (x: { title?: string; sub?: string; tabs?: React.ReactNode }) => React.ReactNode; go: (v: View) => void; signOut: () => void }) {
+  const [email, setEmail] = useState('');
+  const [pw, setPw] = useState(''); const [msg, setMsg] = useState(''); const [busy, setBusy] = useState(false);
+  useEffect(() => { supabaseBrowser.auth.getUser().then(({ data }) => setEmail(data.user?.email || '')); }, []);
+  const changePw = async () => {
+    if (pw.length < 8) return setMsg('Password must be at least 8 characters.');
+    setBusy(true); const { error } = await supabaseBrowser.auth.updateUser({ password: pw }); setBusy(false);
+    setMsg(error ? plain(error) : 'Password updated.'); if (!error) setPw('');
+  };
+  const classic = () => { try { localStorage.removeItem('psfx_on'); } catch {} location.href = '/'; };
+  return (<>
+    <Head title="Settings and privacy" sub={'@' + (me.handle || '')} />
+    <h2 className="x-h2">Your account</h2>
+    <div className="x-set"><span><b>Email</b><small>{email || '…'} · never shown publicly</small></span></div>
+    <button className="x-set" onClick={() => go({ v: 'edit' })}><span><b>Username</b><small>@{me.handle} · change once every 30 days</small></span><Ico d="chev" s={18} /></button>
+    <button className="x-set" onClick={() => go({ v: 'edit' })}><span><b>Name and bio</b><small>{me.name}</small></span><Ico d="chev" s={18} /></button>
+    {me.kind === 'provider' && <a className="x-set" href="/for-providers/dashboard"><span><b>Company details</b><small>Ports, services and contacts on your listing</small></span><Ico d="chev" s={18} /></a>}
+    <div className="x-set col">
+      <b>Change password</b>
+      <div className="x-row" style={{ justifyContent: 'flex-start', width: '100%' }}><input className="x-in" type="password" autoComplete="new-password" value={pw} onChange={(e) => setPw(e.target.value)} placeholder="New password (8+ characters)" style={{ flex: 1, minWidth: 0 }} /><button className="x-btn" disabled={busy} onClick={changePw}>Save</button></div>
+      {msg && <small>{msg}</small>}
+    </div>
+    <div className="x-set"><span><b>Stay logged in</b><small>You stay logged in on this device until you log out. Your browser can also save your email and password.</small></span></div>
+    <h2 className="x-h2">Display</h2>
+    <button className="x-set" onClick={toggleTheme}><span><b>Dark mode</b><small>{theme === 'dark' ? 'On' : 'Off'}</small></span><span className={'x-sw' + (theme === 'dark' ? ' on' : '')}><i /></span></button>
+    <h2 className="x-h2">More</h2>
+    <a className="x-set" href="/contact"><span><b>Help Center</b><small>Contact the PortServiceFinder team</small></span><Ico d="chev" s={18} /></a>
+    <a className="x-set" href="/privacy"><span><b>Privacy policy</b></span><Ico d="chev" s={18} /></a>
+    <button className="x-set" onClick={classic}><span><b>Use the classic website</b><small>Switch back to the old design on this device</small></span><Ico d="chev" s={18} /></button>
+    <button className="x-set red" onClick={signOut}><span><b>Log out</b></span></button>
     <div className="x-endpad" />
   </>);
 }
@@ -1018,6 +1176,32 @@ html[data-psfx=dark] .xapp{--bg:#000;--fg:#e7e9ea;--mu:#71767b;--ln:#2f3336;--hv
 .x-pill{align-self:flex-start;border:1px solid var(--ln)!important;border-radius:99px;padding:6px 12px!important;font-weight:600}.x-pill.on{background:var(--ch)}
 .x-urg{display:flex;gap:8px;align-items:center;margin-top:6px;font-weight:600}
 .x-err{color:#f4212e;font-size:14px}
+.x-phd{position:sticky;top:0;z-index:30;height:53px;margin-bottom:-53px;display:flex;align-items:center;gap:20px;padding:0 12px;transition:background .2s}
+.x-phd.on{background:var(--hd);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--ln)}
+.x-phd-t{min-width:0;opacity:0;transition:opacity .2s}.x-phd.on .x-phd-t{opacity:1}.x-phd-t b{display:block;font-size:17px;line-height:20px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.x-phd-t small{color:var(--mu);font-size:13px}
+.x-circ{width:34px;height:34px;flex:none;border-radius:50%;background:rgba(15,20,25,.6)!important;color:#fff!important;display:grid!important;place-items:center}
+.x-phd.on .x-circ{background:transparent!important;color:var(--fg)!important}
+.x-ban.sm{height:110px}
+.x-ff{display:flex;gap:18px}
+.x-sheet{position:fixed;inset:0;background:var(--ov);z-index:85;display:flex;align-items:flex-end;justify-content:center;animation:xf .2s}
+.x-sheet>div{width:100%;max-width:600px;background:var(--bg);border-radius:16px 16px 0 0;padding:18px 18px calc(18px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:4px}
+.x-sheet b{font-size:19px;margin-bottom:8px}.x-sheet a{display:flex;align-items:center;gap:16px;padding:14px 4px;font-size:17px;font-weight:600}
+.x-form{padding:4px 16px 24px;display:flex;flex-direction:column;gap:18px}
+.x-form label{display:flex;flex-direction:column;gap:6px;border-bottom:1px solid var(--ln);padding-bottom:10px}
+.x-form label>span{font-weight:700;font-size:15px}
+.x-form input,.x-form textarea,.x-form select{background:none;border:0;outline:0;color:var(--fg);font:inherit;font-size:17px;padding:2px 0;resize:none;width:100%}
+.x-form select{appearance:none}.x-form select option{color:#0f1419}
+.x-form small{color:var(--mu);font-size:13px}
+.x-form input:disabled{opacity:.55}
+.x-at{display:flex;align-items:center;gap:2px}.x-at em{font-style:normal;color:var(--mu);font-size:17px}
+.x-frow{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--ln);padding-bottom:10px}.x-frow b,.x-frow small{display:block}.x-frow small{color:var(--mu);font-size:13px}
+.x-tl.b{font-weight:700}.x-tl:disabled{opacity:.5}
+.x-set{display:flex!important;justify-content:space-between;align-items:center;gap:12px;width:100%;padding:14px 16px!important;border-bottom:1px solid var(--ln)!important}
+.x-set:hover{background:var(--hv)}.x-set b,.x-set small{display:block}.x-set small{color:var(--mu);font-size:13px;line-height:17px;margin-top:2px}
+.x-set.col{flex-direction:column;align-items:flex-start}.x-set.red b{color:#f4212e}
+.x-sw{width:44px;height:26px;border-radius:99px;background:var(--ch);position:relative;flex:none;transition:background .2s}.x-sw i{position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.3);transition:left .2s}
+.x-sw.on{background:var(--acb)}.x-sw.on i{left:21px}
+
 .x-ni{position:relative;display:inline-flex}
 .x-dot{position:absolute;top:-5px;right:-8px;min-width:18px;height:18px;padding:0 5px;border-radius:99px;background:var(--acb);color:#0d1b4a;font-size:11px;font-style:normal;font-weight:700;line-height:18px;text-align:center;border:2px solid var(--bg)}
 .x-ib.r{margin-left:0;margin-right:-8px}
@@ -1047,8 +1231,9 @@ html[data-psfx=dark] .xapp{--bg:#000;--fg:#e7e9ea;--mu:#71767b;--ln:#2f3336;--hv
   .x-bar.m{display:flex}.sm-only{display:grid!important}
   .x-top.hid{transform:translateY(-54px)}
   .x-fab{display:grid!important;place-items:center;position:fixed;right:16px;bottom:calc(70px + env(safe-area-inset-bottom));width:56px;height:56px;border-radius:50%;background:var(--acb)!important;color:#0d1b4a!important;box-shadow:var(--sh);z-index:40;transition:opacity .2s}
-  .x-fab.dim,.x-bot.dim{opacity:.55}
-  .x-bot{display:flex!important;justify-content:space-around;position:fixed;left:0;right:0;bottom:0;height:calc(53px + env(safe-area-inset-bottom));padding-bottom:env(safe-area-inset-bottom);background:var(--bg);border-top:1px solid var(--ln);z-index:40;transition:opacity .2s}
+  .x-fab.dim{opacity:.6}
+  .x-bot.hid{transform:translateY(100%)}
+  .x-bot{display:flex!important;justify-content:space-around;position:fixed;left:0;right:0;bottom:0;height:calc(53px + env(safe-area-inset-bottom));padding-bottom:env(safe-area-inset-bottom);background:var(--bg);border-top:1px solid var(--ln);z-index:40;transition:transform .2s ease}
   .x-bot button{flex:1;display:grid!important;place-items:center;color:var(--fg)!important}
   .x-empty h2{font-size:26px;line-height:32px}
   .x-pfr .x-btn{padding:0 14px!important}

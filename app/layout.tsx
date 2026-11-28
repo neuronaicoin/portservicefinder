@@ -4,6 +4,7 @@ import "./globals.css";
 import { siteConfig, getKeywordsString, getOrganizationSchema, getWebsiteSchema } from "@/lib/site-config";
 import { MobileFinder } from '@/components/MobileFinder';
 import { BottomNav } from '@/components/BottomNav';
+import { XChrome } from '@/components/XChrome';
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
@@ -107,7 +108,7 @@ export default function RootLayout({
         {/* Theme before first paint: the visitor's choice, else their system setting */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `try{var t=localStorage.getItem('psf-theme');if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)}catch(e){}`,
+            __html: `try{var t=localStorage.getItem('psf-theme');if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t);if(localStorage.getItem('psfx_on')==='1'&&!/^\\/(x|admin)(\\/|$)/.test(location.pathname)){var x=localStorage.getItem('psfx_theme')||t;document.documentElement.setAttribute('data-theme',x);document.documentElement.dataset.psfx=x;document.documentElement.dataset.psfxon='1'}}catch(e){}`,
           }}
         />
         <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
@@ -174,6 +175,7 @@ export default function RootLayout({
         {children}
         <MobileFinder />
         <BottomNav />
+        <XChrome />
       </body>
     </html>
   );
